@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1A2D50">
+<title>원팀4팀 통합분석 플랫폼</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { height:100%; }
+body {
+  font-family:'Pretendard','맑은 고딕','Malgun Gothic',sans-serif;
+  background:#f4f6fa; color:#222;
+  display:flex; flex-direction:column; height:100vh; overflow:hidden;
+}
+
+/* ───────── 상단 헤더 ───────── */
+header.topbar {
+  background:linear-gradient(90deg,#1A2D50 0%,#243962 100%);
+  color:#fff;
+  padding:0 22px;
+  height:56px;
+  display:flex; align-items:center; gap:14px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.18);
+  flex-shrink:0;
+  z-index:200;
+}
+.brand {
+  display:flex; align-items:center; gap:12px;
+}
+.brand .logo {
+  width:36px; height:36px;
+  background:linear-gradient(135deg,#4a90d9,#2c5f9e);
+  border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; font-weight:800; color:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,0.25);
+  letter-spacing:-.5px;
+}
+.brand .tit { font-size:17px; font-weight:700; letter-spacing:-.3px; }
+.brand .sub { font-size:11px; color:#a8b8cf; margin-top:2px; }
+.topbar .spacer { flex:1; }
+.topbar .meta {
+  font-size:12px; color:#b8c4d6;
+  display:flex; align-items:center; gap:18px;
+}
+.topbar .meta .item .l { color:#7e8da3; font-size:10px; display:block; }
+.topbar .meta .item .v { color:#fff; font-weight:600; font-size:12px; }
+.topbar .toggle-sb {
+  width:34px; height:34px; border:none; cursor:pointer;
+  background:rgba(255,255,255,0.08); border-radius:8px;
+  color:#fff; font-size:16px;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.15s;
+}
+.topbar .toggle-sb:hover { background:rgba(255,255,255,0.18); }
+
+/* ───────── 본문 레이아웃 ───────── */
+.layout {
+  flex:1; display:flex; min-height:0;
+}
+
+/* ───────── 사이드바 ───────── */
+aside.sidebar {
+  width:172px; flex-shrink:0;
+  background:#fff;
+  border-right:1px solid #e5e9f0;
+  display:flex; flex-direction:column;
+  box-shadow:1px 0 3px rgba(0,0,0,0.04);
+  transition:width 0.25s ease, opacity 0.25s ease;
+  overflow:hidden;
+}
+body.sb-collapsed aside.sidebar { width:0; opacity:0; }
+
+.sb-nav { flex:1; overflow-y:auto; padding:10px 0; }
+.sb-nav::-webkit-scrollbar { width:5px; }
+.sb-nav::-webkit-scrollbar-thumb { background:#cfd8e3; border-radius:4px; }
+
+.nav-section {
+  padding:8px 12px 3px;
+  font-size:9px; font-weight:700;
+  color:#7a8597; letter-spacing:1px;
+  text-transform:uppercase;
+  margin-top:6px;
+}
+.nav-section:first-child { margin-top:0; }
+
+.nav-item {
+  display:flex; align-items:center; gap:8px;
+  padding:7px 12px;
+  cursor:pointer;
+  color:#4a5568; font-size:12px; font-weight:500;
+  border-left:3px solid transparent;
+  transition:all 0.12s;
+  white-space:nowrap;
+}
+.nav-item:hover { background:#f4f6fa; color:#1A2D50; }
+.nav-item.active {
+  background:#eef2f8; color:#1A2D50;
+  border-left-color:#1A2D50; font-weight:700;
+}
+.nav-item .ic {
+  width:16px; height:16px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; flex-shrink:0;
+}
+.nav-item .lbl { flex:1; }
+.nav-item .badge {
+  font-size:8px; font-weight:700;
+  background:#1A2D50; color:#fff;
+  padding:2px 5px; border-radius:7px;
+  letter-spacing:0.3px;
+}
+
+.sb-footer {
+  padding:10px 12px; border-top:1px solid #e5e9f0;
+  font-size:10px; color:#7a8597; background:#fafbfd;
+}
+.sb-footer .team { font-weight:700; color:#1A2D50; font-size:11px; }
+.sb-footer .ver { margin-top:2px; font-size:10px; }
+
+/* ───────── 메인 컨텐츠 ───────── */
+main.content {
+  flex:1; background:#f4f6fa;
+  display:flex; flex-direction:column;
+  min-width:0; position:relative;
+}
+
+.content-header {
+  background:#fff;
+  border-bottom:1px solid #e5e9f0;
+  padding:12px 22px;
+  display:flex; align-items:center; gap:14px;
+  flex-shrink:0;
+  box-shadow:0 1px 2px rgba(0,0,0,0.03);
+}
+.content-header .breadcrumb {
+  font-size:12px; color:#7a8597;
+}
+.content-header .breadcrumb .sep { margin:0 6px; color:#cfd8e3; }
+.content-header .breadcrumb .cur { color:#1A2D50; font-weight:700; }
+.content-header .actions { margin-left:auto; display:flex; gap:8px; }
+.content-header .actions .btn {
+  padding:6px 12px; font-size:12px;
+  background:#fff; border:1px solid #d4dae5;
+  border-radius:7px; cursor:pointer;
+  color:#4a5568; font-weight:600;
+  transition:all 0.12s;
+  text-decoration:none;
+  display:inline-flex; align-items:center; gap:6px;
+}
+.content-header .actions .btn:hover {
+  border-color:#1A2D50; color:#1A2D50; background:#f8fafd;
+}
+.content-header .actions .btn.primary {
+  background:#1A2D50; color:#fff; border-color:#1A2D50;
+}
+.content-header .actions .btn.primary:hover {
+  background:#243962;
+}
+
+.frame-wrap {
+  flex:1; position:relative; overflow:hidden;
+  background:#f4f6fa;
+}
+.frame-wrap iframe {
+  width:100%; height:100%; border:none;
+  background:#fff;
+  display:block;
+}
+
+/* ───────── 환영 화면 ───────── */
+.welcome {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  padding:40px;
+  background:linear-gradient(135deg,#f4f6fa 0%,#e8eef7 100%);
+  overflow-y:auto;
+}
+.welcome-inner {
+  max-width:920px; width:100%;
+}
+.welcome h2 {
+  font-size:26px; color:#1A2D50; font-weight:800;
+  letter-spacing:-.5px; margin-bottom:6px;
+}
+.welcome p.lead {
+  font-size:14px; color:#5a6577; margin-bottom:28px; line-height:1.6;
+}
+.card-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:16px;
+}
+.card {
+  background:#fff;
+  border-radius:12px;
+  padding:20px 22px;
+  border:1px solid #e5e9f0;
+  box-shadow:0 1px 3px rgba(0,0,0,0.05);
+  cursor:pointer;
+  transition:all 0.18s ease;
+  position:relative; overflow:hidden;
+}
+.card:hover {
+  transform:translateY(-3px);
+  box-shadow:0 8px 20px rgba(26,45,80,0.12);
+  border-color:#1A2D50;
+}
+.card::before {
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:4px;
+  background:linear-gradient(90deg,#1A2D50,#4a90d9);
+}
+.card .cat {
+  font-size:10px; color:#7a8597; font-weight:700;
+  letter-spacing:1.2px; text-transform:uppercase;
+  margin-bottom:8px;
+}
+.card .ttl {
+  font-size:16px; color:#1A2D50; font-weight:700;
+  margin-bottom:8px; letter-spacing:-.3px;
+}
+.card .desc {
+  font-size:12.5px; color:#5a6577; line-height:1.55;
+  margin-bottom:12px;
+}
+.card .tags {
+  display:flex; gap:6px; flex-wrap:wrap;
+}
+.card .tag {
+  font-size:10px; padding:3px 8px;
+  background:#eef2f8; color:#1A2D50;
+  border-radius:10px; font-weight:600;
+}
+
+.welcome-foot {
+  margin-top:32px;
+  padding:18px 22px;
+  background:rgba(255,255,255,0.6);
+  border-left:3px solid #1A2D50;
+  border-radius:8px;
+  font-size:12.5px; color:#4a5568; line-height:1.7;
+}
+.welcome-foot strong { color:#1A2D50; }
+
+/* ───────── 로딩 인디케이터 ───────── */
+.loading {
+  position:absolute; inset:0;
+  display:none; align-items:center; justify-content:center;
+  background:rgba(244,246,250,0.9); z-index:50;
+}
+.loading.show { display:flex; }
+.spinner {
+  width:36px; height:36px;
+  border:3px solid #e5e9f0;
+  border-top-color:#1A2D50;
+  border-radius:50%;
+  animation:spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ───────── 모바일 ───────── */
+@media (max-width:780px) {
+  aside.sidebar {
+    position:absolute; top:0; left:0; bottom:0;
+    z-index:150; width:200px;
+  }
+  body:not(.sb-open) aside.sidebar {
+    width:0; opacity:0;
+  }
+  .topbar .meta { display:none; }
+  .brand .tit { font-size:14px; }
+  .content-header { padding:10px 14px; }
+}
+</style>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1A2D50">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="원팀4팀">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(()=>{});
+      });
+    }
+  </script>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="toggle-sb" id="toggleSb" title="사이드바 토글">☰</button>
+  <div class="brand">
+    <div class="logo">원4</div>
+    <div>
+      <div class="tit">원팀4팀 통합분석 플랫폼</div>
+      <div class="sub">One Team 4 · Integrated Analytics</div>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <div class="meta">
+    <div class="item">
+      <span class="l">팀장</span>
+      <span class="v">임정빈</span>
+    </div>
+    <div class="item">
+      <span class="l">팀원</span>
+      <span class="v">전은성 · 임대현 · 황태영 · 김혜성</span>
+    </div>
+    <div class="item">
+      <span class="l">업데이트</span>
+      <span class="v" id="updateDate">2026-06-01</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <nav class="sb-nav">
+
+      <div class="nav-section">실적</div>
+      <div class="nav-item" data-src="거래처처방현황통합관리_4팀.html" data-title="처방실적 분석" data-cat="실적">
+        <span class="ic">📊</span>
+        <span class="lbl">처방실적 분석</span>
+      </div>
+      <div class="nav-item" data-src="API_실적분석.html" data-title="API 실적분석" data-cat="실적">
+        <span class="ic">📈</span>
+        <span class="lbl">API 실적분석</span>
+      </div>
+
+      <div class="nav-section">개원처</div>
+      <div class="nav-item" data-src="팀개원처현황.html" data-title="팀 개원처 현황" data-cat="개원처">
+        <span class="ic">🏥</span>
+        <span class="lbl">팀 개원처 현황</span>
+      </div>
+
+      <div class="nav-section">R&amp;P</div>
+      <div class="nav-item" data-src="RnP규정.html" data-title="R&amp;P 규정" data-cat="R&amp;P">
+        <span class="ic">📋</span>
+        <span class="lbl">R&amp;P 규정</span>
+      </div>
+      <div class="nav-item" data-src="RnP결과.html" data-title="R&amp;P 결과" data-cat="R&amp;P">
+        <span class="ic">🏆</span>
+        <span class="lbl">R&amp;P 결과</span>
+      </div>
+
+    </nav>
+    <div class="sb-footer">
+      <div class="team">인천일병4팀</div>
+      <div class="ver">통합분석 v1.0</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="content-header">
+      <div class="breadcrumb">
+        <span>원팀4팀 통합분석</span>
+        <span class="sep">›</span>
+        <span class="cur" id="curBreadcrumb">홈</span>
+      </div>
+      <div class="actions">
+        <a href="#" class="btn" id="openNewTab" target="_blank" rel="noopener" style="display:none">새 탭으로 열기 ↗</a>
+        <button class="btn" id="reloadFrame" style="display:none">새로고침 ⟳</button>
+      </div>
+    </div>
+
+    <div class="frame-wrap">
+      <div class="welcome" id="welcome">
+        <div class="welcome-inner">
+          <h2>원팀4팀 통합분석 플랫폼</h2>
+          <p class="lead">처방실적과 평가실적을 한곳에서 분석하는 팀 전용 대시보드입니다.<br>왼쪽 메뉴에서 보고 싶은 자료를 선택하거나, 아래 카드를 클릭하세요.</p>
+
+          <div class="card-grid">
+            <div class="card" data-target="거래처처방현황통합관리_4팀.html" data-title="처방실적 분석" data-cat="실적">
+              <div class="cat">실적</div>
+              <div class="ttl">처방실적 분석</div>
+              <div class="desc">거래처 검색 피벗, 담당자별 품목별, 전체 품목별 3개 탭으로 처방 추이와 의미있는 변화를 분석합니다. 약효군 6분류 + 평가실적 통합 뷰.</div>
+              <div class="tags">
+                <span class="tag">최신월 13개월 추이</span>
+                <span class="tag">담당자별</span>
+                <span class="tag">약효군 6분류</span>
+                <span class="tag">평가실적 통합</span>
+              </div>
+            </div>
+
+            <div class="card" data-target="API_실적분석.html" data-title="API 실적분석" data-cat="실적">
+              <div class="cat">실적</div>
+              <div class="ttl">API 실적분석</div>
+              <div class="desc">도매 API 실적 기반 평가실적 사전 분석. 담당자별·약국별·품목별 실적 추이와 229개 약국 마스킹 해제 통합 뷰를 제공합니다.</div>
+              <div class="tags">
+                <span class="tag">담당자별 5명</span>
+                <span class="tag">약국 229개</span>
+                <span class="tag">월별 추이</span>
+                <span class="tag">평가실적 선행</span>
+              </div>
+            </div>
+
+            <div class="card" data-target="팀개원처현황.html" data-title="팀 개원처 현황" data-cat="개원처">
+              <div class="cat">개원처</div>
+              <div class="ttl">팀 개원처 현황</div>
+              <div class="desc">병원정보서비스 최신본 기반 1,341개 병원 드릴다운. 지역·담당자·종별로 전개되며 팀 종합분석 뷰를 함께 제공합니다.</div>
+              <div class="tags">
+                <span class="tag">병원 1,341개</span>
+                <span class="tag">지역/담당자/종별</span>
+                <span class="tag">드릴다운</span>
+                <span class="tag">팀 종합</span>
+              </div>
+            </div>
+
+            <div class="card" data-target="RnP규정.html" data-title="R&amp;P 규정" data-cat="R&amp;P">
+              <div class="cat">R&amp;P</div>
+              <div class="ttl">R&amp;P 규정</div>
+              <div class="desc">제104기 R&amp;P 규정 — 시상 그룹, 지점장/부지점장/담당자 시상기준, 일반병원 평가항목·점수 적용, KPI 중점품목 현황 등 한눈에 정리.</div>
+              <div class="tags">
+                <span class="tag">시상 그룹</span>
+                <span class="tag">평가항목</span>
+                <span class="tag">KPI 품목</span>
+                <span class="tag">2026</span>
+              </div>
+            </div>
+
+            <div class="card" data-target="RnP결과.html" data-title="R&amp;P 결과" data-cat="R&amp;P">
+              <div class="cat">R&amp;P</div>
+              <div class="ttl">R&amp;P 결과</div>
+              <div class="desc">연도 → 반기 → 그룹(지점장/부지점장/담당자) 순으로 드릴다운하여 직원별 R&amp;P 순위를 확인합니다. 4팀 표시·검색·정렬 지원.</div>
+              <div class="tags">
+                <span class="tag">2024~2025</span>
+                <span class="tag">상/하반기</span>
+                <span class="tag">3개 그룹</span>
+                <span class="tag">드릴다운</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="welcome-foot">
+            <strong>📌 사용 안내</strong> · 좌측 사이드바에서 분석 자료를 선택하면 본 화면에 표시됩니다.
+            <strong>새 탭으로 열기</strong>를 누르면 단일 자료를 전체 화면으로 볼 수 있습니다.
+            향후 <strong>거래처지도, 팀개원처현황, 평가실적전국분석</strong> 등 추가 섹션이 본 플랫폼에 통합될 예정입니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="loading" id="loading"><div class="spinner"></div></div>
+      <iframe id="mainFrame" style="display:none" title="콘텐츠"></iframe>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  const navItems = document.querySelectorAll('.nav-item[data-src]');
+  const cards = document.querySelectorAll('.card[data-target]');
+  const frame = document.getElementById('mainFrame');
+  const welcome = document.getElementById('welcome');
+  const loading = document.getElementById('loading');
+  const breadcrumb = document.getElementById('curBreadcrumb');
+  const openNewTab = document.getElementById('openNewTab');
+  const reloadFrame = document.getElementById('reloadFrame');
+  const toggleSb = document.getElementById('toggleSb');
+
+  function loadView(src, title, cat){
+    if(!src){
+      // 홈
+      welcome.style.display = 'flex';
+      frame.style.display = 'none';
+      frame.src = 'about:blank';
+      breadcrumb.textContent = '홈';
+      openNewTab.style.display = 'none';
+      reloadFrame.style.display = 'none';
+      navItems.forEach(n=>n.classList.remove('active'));
+      location.hash = '';
+      return;
+    }
+    welcome.style.display = 'none';
+    loading.classList.add('show');
+    frame.style.display = 'block';
+    frame.src = src;
+    frame.onload = ()=> loading.classList.remove('show');
+    // 5초 후 강제 해제 (안전장치)
+    setTimeout(()=> loading.classList.remove('show'), 5000);
+
+    breadcrumb.innerHTML = (cat ? cat + '<span class="sep" style="color:#cfd8e3;margin:0 6px">›</span>' : '') + title;
+    openNewTab.href = src;
+    openNewTab.style.display = 'inline-flex';
+    reloadFrame.style.display = 'inline-flex';
+
+    navItems.forEach(n=>{
+      n.classList.toggle('active', n.dataset.src === src);
+    });
+
+    // 해시 갱신
+    location.hash = encodeURIComponent(src);
+
+    // 모바일: 사이드바 자동 닫기
+    if(window.innerWidth <= 780){
+      document.body.classList.remove('sb-open');
+    }
+  }
+
+  navItems.forEach(n=>{
+    n.addEventListener('click', ()=>{
+      loadView(n.dataset.src, n.dataset.title, n.dataset.cat);
+    });
+  });
+  cards.forEach(c=>{
+    c.addEventListener('click', ()=>{
+      loadView(c.dataset.target, c.dataset.title, c.dataset.cat);
+    });
+  });
+
+  reloadFrame.addEventListener('click', ()=>{
+    if(frame.src && frame.src !== 'about:blank'){
+      loading.classList.add('show');
+      frame.src = frame.src;
+    }
+  });
+
+  // 사이드바 토글
+  toggleSb.addEventListener('click', ()=>{
+    if(window.innerWidth <= 780){
+      document.body.classList.toggle('sb-open');
+    } else {
+      document.body.classList.toggle('sb-collapsed');
+    }
+  });
+
+  // 해시 라우팅 (새로고침 시 마지막 화면 복원)
+  const hash = decodeURIComponent(location.hash.replace(/^#/, ''));
+  if(hash){
+    const match = Array.from(navItems).find(n=> n.dataset.src === hash);
+    if(match){
+      loadView(match.dataset.src, match.dataset.title, match.dataset.cat);
+    }
+  }
+
+  // 오늘 날짜 표시
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth()+1).padStart(2,'0');
+  const d = String(now.getDate()).padStart(2,'0');
+  document.getElementById('updateDate').textContent = `${y}-${m}-${d}`;
+})();
+</script>
+
+</body>
+</html>
