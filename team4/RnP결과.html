@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>R&amp;P 결과 - 인천일병4팀</title>
+<style>
+
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family:'Pretendard','맑은 고딕','Malgun Gothic',sans-serif;
+  background:#f4f6fa; color:#222; min-height:100vh;
+}
+.topbar {
+  background:linear-gradient(90deg,#1A2D50 0%,#243962 100%);
+  color:#fff; padding:14px 22px;
+  display:flex; align-items:center; gap:14px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
+  position:sticky; top:0; z-index:50;
+}
+.topbar h1 { font-size:17px; font-weight:700; letter-spacing:-.3px; }
+.topbar .sub { font-size:12px; color:#a8b8cf; margin-top:2px; }
+.topbar .spacer { flex:1; }
+.topbar .meta { font-size:12px; color:#cfd8e3; }
+
+.wrap { padding:18px 22px 60px; max-width:1200px; margin:0 auto; }
+.section { margin-bottom:26px; background:#fff; border-radius:12px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06); overflow:hidden;
+  border:1px solid #e5e9f0; }
+.section-h {
+  padding:14px 18px; background:#f8fafd;
+  border-bottom:1px solid #e5e9f0;
+  display:flex; align-items:center; gap:10px;
+}
+.section-h .num {
+  width:24px; height:24px; background:#1A2D50; color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:6px; font-size:12px; font-weight:700;
+}
+.section-h .ttl { font-size:15px; color:#1A2D50; font-weight:700; }
+.section-h .note { font-size:11.5px; color:#7a8597; margin-left:auto; }
+.section-body { padding:16px 18px; }
+
+table.r {
+  width:100%; border-collapse:separate; border-spacing:0;
+  font-size:12.5px; margin-bottom:6px;
+}
+table.r th, table.r td {
+  padding:9px 10px; text-align:center;
+  border-bottom:1px solid #eef1f6;
+  white-space:nowrap;
+}
+table.r th {
+  background:#1A2D50; color:#fff; font-weight:600;
+  border-bottom:none;
+}
+table.r th.sub { background:#243962; font-size:11.5px; }
+table.r tbody tr:hover td { background:#f8faff; }
+table.r td.label { text-align:left; font-weight:600; color:#243962; }
+table.r td.A { background:#fff3e0; color:#b85c00; font-weight:700; }
+table.r td.B { background:#e8f0fe; color:#1A2D50; font-weight:700; }
+
+.notes { font-size:12px; color:#5a6577; line-height:1.7; padding:6px 4px; }
+.notes li { margin-left:18px; margin-bottom:4px; }
+.notes .hl { background:#fff3e0; padding:1px 6px; border-radius:4px; color:#b85c00; }
+.notes b { color:#1A2D50; }
+
+.kpi-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:12px; margin-top:6px;
+}
+.kpi-card {
+  background:#f8fafd; border:1px solid #e5e9f0;
+  border-radius:10px; padding:12px 14px;
+  border-left:4px solid #1A2D50;
+}
+.kpi-card .cat {
+  font-size:11px; color:#7a8597; font-weight:700;
+  text-transform:uppercase; letter-spacing:.5px;
+}
+.kpi-card .grp {
+  font-size:13px; color:#1A2D50; font-weight:700;
+  margin:4px 0 6px;
+}
+.kpi-card .items { font-size:12px; color:#4a5568; line-height:1.65; }
+.kpi-card .items .item {
+  display:inline-block; background:#fff; padding:2px 8px;
+  border-radius:10px; margin:2px 4px 2px 0;
+  border:1px solid #d4dae5;
+}
+.kpi-card.g1 { border-left-color:#b85c00; background:#fff8f0; }
+.kpi-card.g1 .grp { color:#b85c00; }
+.kpi-card.g1 .items .item { border-color:#f0c4a1; background:#fff; }
+
+/* ───────── 드릴다운 카드 ───────── */
+.crumb {
+  padding:10px 22px; background:#fff; border-bottom:1px solid #e5e9f0;
+  font-size:13px; color:#5a6577;
+  display:flex; align-items:center; gap:8px;
+  position:sticky; top:65px; z-index:40;
+}
+.crumb .step { cursor:pointer; color:#1A2D50; font-weight:600; }
+.crumb .step:hover { text-decoration:underline; }
+.crumb .sep { color:#cfd8e3; }
+.crumb .cur { color:#222; font-weight:700; }
+.crumb .back {
+  margin-left:auto; padding:5px 12px; font-size:12px;
+  background:#1A2D50; color:#fff; border:none; border-radius:6px;
+  cursor:pointer; font-weight:600;
+}
+.crumb .back:hover { background:#243962; }
+.crumb .back.hide { display:none; }
+
+.drill {
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:14px; margin:20px 0 8px;
+}
+.drill .opt {
+  background:#fff; border-radius:14px; border:1px solid #e5e9f0;
+  padding:22px 18px; cursor:pointer;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06);
+  transition:all 0.18s ease;
+  position:relative; overflow:hidden;
+}
+.drill .opt:hover {
+  transform:translateY(-3px);
+  box-shadow:0 8px 20px rgba(26,45,80,0.15);
+  border-color:#1A2D50;
+}
+.drill .opt::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:5px;
+  background:linear-gradient(90deg,#1A2D50,#4a90d9);
+}
+.drill .opt .label {
+  font-size:11px; color:#7a8597; font-weight:700;
+  text-transform:uppercase; letter-spacing:1px;
+}
+.drill .opt .big {
+  font-size:26px; color:#1A2D50; font-weight:800;
+  letter-spacing:-1px; margin:4px 0 6px;
+}
+.drill .opt .sub { font-size:12px; color:#5a6577; }
+
+/* ───────── 누적 순위 카드 그리드 ───────── */
+.cum-section {
+  margin-top:16px; background:#fff; border-radius:12px;
+  border:1px solid #e5e9f0; box-shadow:0 1px 4px rgba(0,0,0,0.06);
+  overflow:hidden;
+}
+.cum-section h3 {
+  padding:12px 18px; background:#f8fafd;
+  border-bottom:1px solid #e5e9f0;
+  font-size:14px; color:#1A2D50; font-weight:700;
+  display:flex; align-items:center; gap:10px;
+}
+.cum-section h3 .tag {
+  font-size:10px; background:#1A2D50; color:#fff;
+  padding:3px 8px; border-radius:8px; font-weight:600;
+}
+
+.cum-grid {
+  padding:14px 18px;
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+  gap:12px;
+}
+.member-card {
+  background:#f8fafd; border:1px solid #e5e9f0;
+  border-radius:10px; padding:14px;
+  position:relative;
+}
+.member-card.bjj { background:#fff8f0; border-color:#f0c4a1; }
+.member-card .name {
+  font-size:15px; font-weight:700; color:#1A2D50;
+  margin-bottom:2px;
+}
+.member-card .role {
+  font-size:11px; color:#7a8597;
+}
+.member-card .rank-box {
+  display:flex; align-items:baseline; gap:6px;
+  margin-top:10px;
+}
+.member-card .rank-box .num {
+  font-size:30px; font-weight:800; color:#1A2D50;
+  letter-spacing:-1.5px;
+}
+.member-card .rank-box .of {
+  font-size:12px; color:#7a8597; font-weight:600;
+}
+.member-card .score {
+  font-size:11.5px; color:#5a6577; margin-top:4px;
+}
+.member-card .score b { color:#1A2D50; font-weight:700; }
+.member-card.A { background:linear-gradient(135deg,#fff3e0,#fff8f0); border-color:#f5b76b; }
+.member-card.A .num { color:#b85c00; }
+.member-card.A::after {
+  content:'A그룹'; position:absolute; top:10px; right:10px;
+  background:#b85c00; color:#fff; font-size:10px; font-weight:700;
+  padding:2px 8px; border-radius:10px;
+}
+.member-card.B { background:linear-gradient(135deg,#e8f0fe,#f4f7fc); border-color:#a8c5f0; }
+.member-card.B::after {
+  content:'B그룹'; position:absolute; top:10px; right:10px;
+  background:#1A2D50; color:#fff; font-size:10px; font-weight:700;
+  padding:2px 8px; border-radius:10px;
+}
+.member-card.no-data { background:#f4f6fa; color:#9aa5b8; }
+.member-card.no-data .num { color:#bcc4d2; font-size:18px; }
+.member-card.no-data .rank-box .of { display:none; }
+
+/* ───────── 월별 매트릭스 ───────── */
+.month-section {
+  margin-top:16px; background:#fff; border-radius:12px;
+  border:1px solid #e5e9f0; box-shadow:0 1px 4px rgba(0,0,0,0.06);
+  overflow:hidden;
+}
+.month-section h3 {
+  padding:12px 18px; background:#f8fafd;
+  border-bottom:1px solid #e5e9f0;
+  font-size:14px; color:#1A2D50; font-weight:700;
+}
+.month-section .hint {
+  font-size:11px; color:#7a8597; font-weight:500;
+  margin-left:10px;
+}
+.matrix-wrap {
+  padding:0; overflow-x:auto;
+}
+table.matrix {
+  width:100%; border-collapse:separate; border-spacing:0;
+  font-size:12.5px; min-width:700px;
+}
+table.matrix th, table.matrix td {
+  padding:9px 8px; text-align:center;
+  border-bottom:1px solid #eef1f6; white-space:nowrap;
+}
+table.matrix th {
+  background:#1A2D50; color:#fff; font-weight:600;
+}
+table.matrix td.name {
+  text-align:left; padding-left:14px; font-weight:700;
+  color:#1A2D50; background:#f8fafd;
+}
+table.matrix td.bjj-name { background:#fff8f0; color:#b85c00; }
+table.matrix td.cum-col {
+  background:#fff3e0; font-weight:800; color:#b85c00; font-size:13px;
+}
+table.matrix td.rank-cell { font-variant-numeric:tabular-nums; }
+table.matrix td.r-best { color:#b85c00; font-weight:800; }
+table.matrix td.r-good { color:#1A2D50; font-weight:700; }
+table.matrix td.empty { color:#cfd8e3; }
+table.matrix tbody tr:hover td { background:#f8faff; }
+table.matrix tbody tr:hover td.name { background:#eef2f8; }
+table.matrix tbody tr:hover td.bjj-name { background:#ffeed5; }
+
+.legend-bar {
+  padding:10px 18px; background:#f8fafd;
+  border-top:1px solid #e5e9f0;
+  font-size:11.5px; color:#5a6577;
+  display:flex; gap:14px; flex-wrap:wrap;
+}
+.legend-bar .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+.legend-bar .l-best { background:#b85c00; }
+.legend-bar .l-good { background:#1A2D50; }
+.legend-bar b { color:#1A2D50; }
+
+.empty-period {
+  padding:50px 20px; text-align:center; color:#9aa5b8;
+  background:#fff; border-radius:12px; border:1px solid #e5e9f0;
+  margin-top:14px;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <h1>R&amp;P 결과 — 인천일병4팀</h1>
+    <div class="sub">2024 ~ 2026.4 · 반기 누적 + 월별 세부 순위</div>
+  </div>
+  <div class="spacer"></div>
+  <div class="meta" id="metaInfo">담당자 5명 + 부지점장 1명</div>
+</div>
+
+<div class="crumb">
+  <span class="step" id="crumbHome" onclick="goHome()">홈</span>
+  <span class="sep">›</span>
+  <span class="cur" id="crumbCur">연도 선택</span>
+  <button class="back hide" id="backBtn" onclick="goBack()">← 뒤로</button>
+</div>
+
+<div class="wrap"><div id="view"></div></div>
+
+<script>
+const PAYLOAD = {"members": [{"sabun": "20140489", "name": "전은성", "role": "부장(Ⅱ)", "type": "담당자"}, {"sabun": "20180110", "name": "임대현", "role": "대리(Ⅰ)", "type": "담당자"}, {"sabun": "20180119", "name": "황태영", "role": "대리(Ⅰ)", "type": "담당자"}, {"sabun": "20250062", "name": "김혜성", "role": "사원", "type": "담당자"}, {"sabun": "20250147", "name": "송창훈", "role": "사원", "type": "담당자"}, {"sabun": "20082411", "name": "임정빈", "role": "부장(Ⅰ)", "type": "부지점장"}], "periods": {"24상반기": {"months": ["1월", "2월", "3월", "4월", "5월", "6월"], "cumulative": {"담당자": {"20082411": {"rank": 93, "score": 406.29263651351545}, "20140489": {"rank": 154, "score": 366.68227256464957}, "20180119": {"rank": 160, "score": 363.4210833172334}}, "부지점장": {}, "total_count_dam": 279, "total_count_bjj": 60}, "monthly": {"1월": {"20082411": {"rank": 83, "score": 628.1823200444255}, "20140489": {"rank": 46, "score": 695.643463160792}, "20180119": {"rank": 64, "score": 655.3027303706298}, "_total_dam": 255, "_total_bjj": 56}, "2월": {"20082411": {"rank": 176, "score": 305.33437119367755}, "20140489": {"rank": 76, "score": 387.21820421270786}, "20180119": {"rank": 80, "score": 380.03186800797266}, "_total_dam": 256, "_total_bjj": 56}, "3월": {"20082411": {"rank": 152, "score": 321.77522500384043}, "20140489": {"rank": 214, "score": 255.30782800110543}, "20180119": {"rank": 116, "score": 349.69625309237796}, "_total_dam": 258, "_total_bjj": 56}, "4월": {"20082411": {"rank": 88, "score": 442.3739771414719}, "20140489": {"rank": 16, "score": 570.9168360919592}, "20180119": {"rank": 204, "score": 335.8745059908544}, "_total_dam": 257, "_total_bjj": 57}, "5월": {"20082411": {"rank": 16, "score": 566.3369177272907}, "20140489": {"rank": 217, "score": 318.5089169581526}, "20180119": {"rank": 131, "score": 410.1134244864842}, "_total_dam": 254, "_total_bjj": 56}, "6월": {"20082411": {"rank": 198, "score": 147.1666087593519}, "20140489": {"rank": 252, "score": -50.61158225679378}, "20180119": {"rank": 248, "score": 31.427313642207196}, "_total_dam": 254, "_total_bjj": 56}}}, "24하반기": {"months": ["7월", "8월", "9월", "10월", "11월", "12월"], "cumulative": {"담당자": {"20082411": {"rank": 4, "score": 587.7175394475003}, "20140489": {"rank": 69, "score": 468.89044664188015}, "20180119": {"rank": 140, "score": 415.97969972280646}, "20180110": {"rank": 170, "score": 399.7388982622229}}, "부지점장": {}, "total_count_dam": 279, "total_count_bjj": 60}, "monthly": {"7월": {"20082411": {"rank": 35, "score": 800.7431685765129}, "20140489": {"rank": 39, "score": 787.4451483788831}, "20180119": {"rank": 163, "score": 579.6683100724148}, "_total_dam": 253, "_total_bjj": 56}, "8월": {"20082411": {"rank": 3, "score": 531.6805041938119}, "20140489": {"rank": 241, "score": 163.06601119095276}, "20180119": {"rank": 150, "score": 286.2152942949784}, "_total_dam": 254, "_total_bjj": 56}, "9월": {"20082411": {"rank": 9, "score": 589.7863956486138}, "20140489": {"rank": 62, "score": 468.24067638035467}, "20180110": {"rank": 123, "score": 393.67879593541164}, "20180119": {"rank": 97, "score": 418.0611497876601}, "_total_dam": 262, "_total_bjj": 56}, "10월": {"20082411": {"rank": 50, "score": 451.6263198337346}, "20140489": {"rank": 47, "score": 455.83269699916264}, "20180110": {"rank": 93, "score": 395.09866619470455}, "20180119": {"rank": 165, "score": 347.7818437445543}, "_total_dam": 262, "_total_bjj": 56}, "11월": {"20082411": {"rank": 29, "score": 442.5244724984216}, "20140489": {"rank": 171, "score": 301.9774172691124}, "20180110": {"rank": 168, "score": 303.3404655543307}, "20180119": {"rank": 148, "score": 317.8965574041487}, "_total_dam": 261, "_total_bjj": 56}, "12월": {"20082411": {"rank": 15, "score": 711.8669491188136}, "20140489": {"rank": 42, "score": 637.1762016730759}, "20180110": {"rank": 139, "score": 506.7608873953018}, "20180119": {"rank": 102, "score": 547.2696778294842}, "_total_dam": 261, "_total_bjj": 56}}}, "25상반기": {"months": ["1월", "2월", "3월", "4월", "5월", "6월"], "cumulative": {"담당자": {"20140489": {"rank": 51, "score": 339.217296252095}, "20180110": {"rank": 180, "score": 262.7820870349961}, "20180119": {"rank": 187, "score": 257.5041237336423}, "20250062": {"rank": 251, "score": 122.6706365611528}}, "부지점장": {"20082411": {"rank": 54, "score": 208.8081718133402}}, "total_count_dam": 264, "total_count_bjj": 60}, "monthly": {"1월": {"20082411": {"rank": 91, "score": 491.70774313761973}, "20140489": {"rank": 206, "score": 380.4836118813036}, "20180119": {"rank": 119, "score": 466.23936676344}, "20180110": {"rank": 102, "score": 482.0803062514356}, "_total_dam": 259, "_total_bjj": 56}, "2월": {"20082411": {"rank": 161, "score": 223.36239809116606}, "20140489": {"rank": 15, "score": 384.3393953059608}, "20180119": {"rank": 154, "score": 225.73646443349597}, "20180110": {"rank": 146, "score": 232.9586297233625}, "_total_dam": 258, "_total_bjj": 56}, "3월": {"20082411": {"rank": 165, "score": 231.26326364625214}, "20140489": {"rank": 86, "score": 289.51319899263245}, "20180119": {"rank": 113, "score": 268.89313261887105}, "20180110": {"rank": 190, "score": 209.36970719955914}, "_total_dam": 256, "_total_bjj": 56}, "4월": {"20082411": {"rank": 64, "score": 400.7633784930237}, "20140489": {"rank": 80, "score": 383.4747412306907}, "20180119": {"rank": 240, "score": 227.6178668012344}, "20180110": {"rank": 193, "score": 280.5841843218745}, "_total_dam": 256, "_total_bjj": 56}, "5월": {"20082411": {"rank": 31, "score": 359.9813715214499}, "20140489": {"rank": 210, "score": 203.94376938290773}, "20180119": {"rank": 230, "score": 181.02096347212154}, "20180110": {"rank": 187, "score": 222.81771804037757}, "_total_dam": 255, "_total_bjj": 56}, "6월": {"20140489": {"rank": 11, "score": 395.61207626914717}, "20180110": {"rank": 197, "score": 149.54507723856665}, "20180119": {"rank": 166, "score": 175.85079126106342}, "20250062": {"rank": 223, "score": 122.6706365611528}, "20082411": {"rank": 34, "score": 208.8081718133402}, "_total_dam": 235, "_total_bjj": 79}}}, "25하반기": {"months": ["7월", "8월", "9월", "10월", "11월", "12월"], "cumulative": {"담당자": {"20140489": {"rank": 2, "score": 479.19609753812705}, "20180110": {"rank": 100, "score": 329.6889260642239}, "20180119": {"rank": 122, "score": 317.8259576599588}, "20250062": {"rank": 221, "score": 251.73174038781573}}, "부지점장": {"20082411": {"rank": 10, "score": 343.6541587035974}}, "total_count_dam": 264, "total_count_bjj": 60}, "monthly": {"7월": {"20140489": {"rank": 2, "score": 610.1867148013049}, "20180110": {"rank": 156, "score": 304.2862279783422}, "20180119": {"rank": 80, "score": 370.5987144200053}, "20250062": {"rank": 196, "score": 270.266374969486}, "20082411": {"rank": 8, "score": 378.2905242761326}, "_total_dam": 257, "_total_bjj": 56}, "8월": {"20140489": {"rank": 31, "score": 268.3776721620461}, "20180110": {"rank": 123, "score": 165.1465302410631}, "20180119": {"rank": 175, "score": 127.08519185846782}, "20250062": {"rank": 112, "score": 173.60427494232385}, "20082411": {"rank": 14, "score": 204.57384601624653}, "_total_dam": 257, "_total_bjj": 56}, "9월": {"20140489": {"rank": 61, "score": 603.3597137772731}, "20180110": {"rank": 68, "score": 595.649356752879}, "20180119": {"rank": 73, "score": 581.4738936487757}, "20250062": {"rank": 195, "score": 416.92956760621206}, "20082411": {"rank": 22, "score": 522.6653528903544}, "_total_dam": 257, "_total_bjj": 56}, "10월": {"20140489": {"rank": 9, "score": 492.7645470948538}, "20180110": {"rank": 142, "score": 251.00606581418558}, "20180119": {"rank": 70, "score": 315.4656407517319}, "20250062": {"rank": 163, "score": 230.5699147460907}, "20082411": {"rank": 10, "score": 318.7465331080433}, "_total_dam": 255, "_total_bjj": 56}, "11월": {"20140489": {"rank": 35, "score": 321.1699868191073}, "20180110": {"rank": 22, "score": 342.1844733689979}, "20180119": {"rank": 187, "score": 171.9567544149783}, "20250062": {"rank": 238, "score": 92.27275007945605}, "20082411": {"rank": 17, "score": 247.24730729626867}, "_total_dam": 255, "_total_bjj": 56}, "12월": {"20140489": {"rank": 16, "score": 581.0570983893668}, "20180110": {"rank": 182, "score": 320.7967215778421}, "20180119": {"rank": 147, "score": 343.06553559774926}, "20250062": {"rank": 171, "score": 327.3940109221904}, "20082411": {"rank": 21, "score": 391.5244946302746}, "_total_dam": 255, "_total_bjj": 56}}}, "26상반기": {"months": ["1월", "2월", "3월", "4월"], "cumulative": {"담당자": {"20140489": {"rank": 13, "score": 447.8042820518657}, "20250147": {"rank": 81, "score": 366.85127221467906}, "20250062": {"rank": 99, "score": 353.57511696580707}, "20180110": {"rank": 143, "score": 325.90258383236824}, "20180119": {"rank": 201, "score": 293.6870932084614}}, "부지점장": {"20082411": {"rank": 17, "score": 354.4897875361157}}, "total_count_dam": 265, "total_count_bjj": 60}, "monthly": {"1월": {"20140489": {"rank": 51, "score": 386.84922628264684}, "20180110": {"rank": 92, "score": 352.6889314820565}, "20180119": {"rank": 140, "score": 312.4796050828207}, "20250062": {"rank": 117, "score": 332.74679589706966}, "20250147": {"rank": 237, "score": 222.2462594735901}, "20082411": {"rank": 28, "score": 320.47163457995896}, "_total_dam": 260, "_total_bjj": 56}, "2월": {"20140489": {"rank": 89, "score": 244.11552433901778}, "20180110": {"rank": 216, "score": 155.84349061243412}, "20180119": {"rank": 106, "score": 233.78396813759667}, "20250062": {"rank": 101, "score": 239.2019758997319}, "20250147": {"rank": 30, "score": 296.6255333680196}, "20082411": {"rank": 18, "score": 233.85998307027592}, "_total_dam": 260, "_total_bjj": 56}, "3월": {"20140489": {"rank": 30, "score": 519.7001593770966}, "20180110": {"rank": 186, "score": 350.87181688695983}, "20180119": {"rank": 220, "score": 312.4472907350369}, "20250062": {"rank": 71, "score": 453.32125936152636}, "20250147": {"rank": 138, "score": 393.1969643578377}, "20082411": {"rank": 32, "score": 401.13467437800585}, "_total_dam": 260, "_total_bjj": 56}, "4월": {"20140489": {"rank": 9, "score": 640.4415433917558}, "20180110": {"rank": 82, "score": 443.5128218829012}, "20180119": {"rank": 227, "score": 316.57816344335214}, "20250062": {"rank": 140, "score": 389.17854696107116}, "20250147": {"rank": 22, "score": 556.1678637098428}, "20082411": {"rank": 8, "score": 462.577953026916}, "_total_dam": 258, "_total_bjj": 56}}}}};
+const MEMBERS = PAYLOAD.members;
+const PERIODS_DATA = PAYLOAD.periods;
+
+// 연도 → [반기키]
+const YEAR_MAP = {
+  '2024': [['24상반기','상반기'], ['24하반기','하반기']],
+  '2025': [['25상반기','상반기'], ['25하반기','하반기']],
+  '2026': [['26상반기','상반기 (1~4월)']],
+};
+
+let state = { year:null, half:null };
+
+function goHome(){ state = {year:null, half:null}; render(); }
+function goBack(){
+  if(state.half){ state.half = null; }
+  else if(state.year){ state.year = null; }
+  render();
+}
+
+// 시상 등급 판정 (담당자: 1~5 A / 6~21 B / 부지점장: 1 A / 2~7 B)
+function awardTier(rank, type){
+  if(rank == null) return '';
+  if(type === '담당자'){
+    if(rank <= 5) return 'A';
+    if(rank <= 21) return 'B';
+  } else if(type === '부지점장'){
+    if(rank === 1) return 'A';
+    if(rank <= 7) return 'B';
+  }
+  return '';
+}
+
+function rankCellClass(rank){
+  if(rank == null) return 'empty';
+  if(rank <= 5) return 'r-best';
+  if(rank <= 21) return 'r-good';
+  return '';
+}
+
+function render(){
+  const view = document.getElementById('view');
+  const crumb = document.getElementById('crumbCur');
+  const back = document.getElementById('backBtn');
+
+  let parts = [];
+  if(state.year) parts.push(state.year + '년');
+  if(state.half) parts.push(state.half);
+  crumb.textContent = parts.length ? parts.join(' › ') : '연도 선택';
+  back.classList.toggle('hide', parts.length === 0);
+
+  if(!state.year){
+    view.innerHTML = `
+      <div class="drill">
+        ${Object.keys(YEAR_MAP).map(y=>`
+          <div class="opt" onclick="state.year='${y}'; render();">
+            <div class="label">YEAR</div>
+            <div class="big">${y}</div>
+            <div class="sub">${YEAR_MAP[y].map(h=>h[1]).join(' · ')}</div>
+          </div>
+        `).join('')}
+      </div>`;
+    return;
+  }
+  if(!state.half){
+    const halves = YEAR_MAP[state.year] || [];
+    view.innerHTML = `
+      <div class="drill">
+        ${halves.map(([key, label])=>{
+          const p = PERIODS_DATA[key];
+          const months = p ? p.months.length : 0;
+          return `
+            <div class="opt" onclick="state.half='${key}'; render();">
+              <div class="label">${state.year}년</div>
+              <div class="big">${label}</div>
+              <div class="sub">${months}개월 · 우리팀 순위</div>
+            </div>`;
+        }).join('')}
+      </div>`;
+    return;
+  }
+
+  // 누적 + 월별
+  const period = PERIODS_DATA[state.half];
+  if(!period){
+    view.innerHTML = '<div class="empty-period">해당 반기 데이터가 없습니다</div>';
+    return;
+  }
+  renderPeriod(period);
+}
+
+function renderPeriod(period){
+  const view = document.getElementById('view');
+  const months = period.months;
+  const cum = period.cumulative;
+  const monthly = period.monthly;
+
+  // 1) 누적 순위 카드 — 담당자
+  const damCards = MEMBERS.filter(m=>m.type==='담당자').map(m=>{
+    const d = cum['담당자'][m.sabun];
+    const total = cum['total_count_dam'];
+    if(!d || d.rank == null){
+      return `
+        <div class="member-card no-data">
+          <div class="name">${m.name}</div>
+          <div class="role">${m.role}</div>
+          <div class="rank-box"><span class="num">—</span></div>
+          <div class="score">누적 데이터 없음</div>
+        </div>`;
+    }
+    const tier = awardTier(d.rank, '담당자');
+    return `
+      <div class="member-card ${tier}">
+        <div class="name">${m.name}</div>
+        <div class="role">${m.role}</div>
+        <div class="rank-box">
+          <span class="num">${d.rank}</span>
+          <span class="of">/ ${total || '—'}위</span>
+        </div>
+        <div class="score">총점 <b>${d.score != null ? d.score.toFixed(1) : '-'}</b></div>
+      </div>`;
+  }).join('');
+
+  // 부지점장
+  const bjjMember = MEMBERS.find(m=>m.type==='부지점장');
+  let bjjCard = '';
+  if(bjjMember){
+    const d = cum['부지점장'][bjjMember.sabun];
+    const total = cum['total_count_bjj'];
+    if(!d || d.rank == null){
+      bjjCard = `
+        <div class="member-card bjj no-data">
+          <div class="name">${bjjMember.name}</div>
+          <div class="role">${bjjMember.role} · 부지점장</div>
+          <div class="rank-box"><span class="num">—</span></div>
+          <div class="score">누적 데이터 없음</div>
+        </div>`;
+    } else {
+      const tier = awardTier(d.rank, '부지점장');
+      bjjCard = `
+        <div class="member-card bjj ${tier}">
+          <div class="name">${bjjMember.name}</div>
+          <div class="role">${bjjMember.role} · 부지점장</div>
+          <div class="rank-box">
+            <span class="num">${d.rank}</span>
+            <span class="of">/ ${total || '—'}위</span>
+          </div>
+          <div class="score">총점 <b>${d.score != null ? d.score.toFixed(1) : '-'}</b></div>
+        </div>`;
+    }
+  }
+
+  // 2) 월별 매트릭스 (담당자 + 부지점장)
+  const allMembers = [...MEMBERS.filter(m=>m.type==='담당자'), ...MEMBERS.filter(m=>m.type==='부지점장')];
+  const matrixRows = allMembers.map(m=>{
+    const isBjj = m.type === '부지점장';
+    const monthCells = months.map(mo=>{
+      const md = monthly[mo] && monthly[mo][m.sabun];
+      if(!md || md.rank == null){
+        return `<td class="rank-cell empty">—</td>`;
+      }
+      const cls = rankCellClass(md.rank);
+      const totalKey = isBjj ? '_total_bjj' : '_total_dam';
+      const tot = monthly[mo][totalKey];
+      const title = tot ? `${md.rank} / ${tot}위 · 총점 ${md.score?md.score.toFixed(1):'-'}` : `${md.rank}위 · 총점 ${md.score?md.score.toFixed(1):'-'}`;
+      return `<td class="rank-cell ${cls}" title="${title}">${md.rank}</td>`;
+    }).join('');
+
+    // 누적
+    const cumKey = isBjj ? '부지점장' : '담당자';
+    const cumData = cum[cumKey][m.sabun];
+    const cumCell = (cumData && cumData.rank != null)
+      ? `<td class="cum-col">${cumData.rank}</td>`
+      : `<td class="cum-col empty">—</td>`;
+
+    return `<tr>
+      <td class="name ${isBjj?'bjj-name':''}">${m.name}<span style="font-size:10px; color:#7a8597; font-weight:500; margin-left:6px">${m.role}</span></td>
+      ${monthCells}
+      ${cumCell}
+    </tr>`;
+  }).join('');
+
+  view.innerHTML = `
+    <div class="cum-section">
+      <h3>반기 누적 순위 <span class="tag">담당자 ${MEMBERS.filter(m=>m.type==='담당자').length}명</span></h3>
+      <div class="cum-grid">${damCards}</div>
+    </div>
+
+    ${bjjCard ? `
+    <div class="cum-section">
+      <h3>반기 누적 순위 <span class="tag" style="background:#b85c00">부지점장</span></h3>
+      <div class="cum-grid">${bjjCard}</div>
+    </div>` : ''}
+
+    <div class="month-section">
+      <h3>월별 세부 순위 <span class="hint">셀에 마우스 올리면 전체 인원 대비 순위·총점 표시</span></h3>
+      <div class="matrix-wrap">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th style="text-align:left; padding-left:14px">담당</th>
+              ${months.map(mo=>`<th>${mo}</th>`).join('')}
+              <th>누적</th>
+            </tr>
+          </thead>
+          <tbody>${matrixRows}</tbody>
+        </table>
+      </div>
+      <div class="legend-bar">
+        <span><span class="dot l-best"></span>1~5위 (A그룹)</span>
+        <span><span class="dot l-good"></span>6~21위 (B그룹 권역)</span>
+        <span style="margin-left:auto"><b>참고</b> · 부지점장 시상권: A(1위) / B(2~7위)</span>
+      </div>
+    </div>
+  `;
+}
+
+render();
+</script>
+</body></html>

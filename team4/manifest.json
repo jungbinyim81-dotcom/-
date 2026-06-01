@@ -1,0 +1,20 @@
+{
+  "name": "원팀4팀 통합분석 플랫폼",
+  "short_name": "원팀4팀",
+  "description": "인천일병4팀 처방·평가실적·개원처·R&P 통합분석",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1A2D50",
+  "theme_color": "#1A2D50",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
