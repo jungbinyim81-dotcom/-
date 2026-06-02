@@ -52,13 +52,13 @@ header .stat { margin-left:auto; font-size:13px; color:#cfd8e3; }
   font-size:12px; font-weight:600; color:#fff;
 }
 
-main { padding:18px 22px 40px; }
+main { padding:10px 22px 30px; }
 
 .panel { display:none; }
 .panel.active { display:block; }
 
 .info-card {
-  background:#fff; border-radius:10px; padding:14px 18px; margin-bottom:14px;
+  background:#fff; border-radius:10px; padding:8px 14px; margin-bottom:10px;
   box-shadow:0 1px 3px rgba(0,0,0,0.06); border-left:4px solid #1A2D50;
 }
 .info-card .lbl { font-size:12px; color:#7a8597; }
@@ -75,14 +75,14 @@ main { padding:18px 22px 40px; }
   display:flex; align-items:center; gap:10px;
 }
 .table-title .small { font-size:11px; color:#7a8597; font-weight:500; }
-.table-scroll { overflow-x:auto; max-height:calc(100vh - 220px); overflow-y:auto; }
+.table-scroll { overflow-x:auto; }
 
 table.data {
   width:100%; border-collapse:separate; border-spacing:0;
   font-size:12px; min-width:600px;
 }
 table.data th, table.data td {
-  padding:7px 10px; text-align:right; white-space:nowrap;
+  padding:4px 8px; text-align:right; white-space:nowrap;
   border-bottom:1px solid #eef1f6;
 }
 table.data th {
@@ -117,15 +117,10 @@ table.data td.total {
 }
 table.data tr.total-row td {
   font-weight:700; background:#eef2f8 !important;
-  border-bottom:2px solid #1A2D50;
-  position:sticky; z-index:2;
+  border-top:2px solid #1A2D50;
 }
-/* 평균 행은 헤더(2행, ~50px) 바로 아래에 sticky-top 고정 */
-table.data tbody tr.total-row:nth-of-type(1) td { top:50px; }
-table.data tbody tr.total-row:nth-of-type(2) td { top:80px; }
 table.data tr.total-row td:first-child {
   background:#eef2f8 !important; color:#1A2D50;
-  z-index:3;
 }
 
 .person-tag {
@@ -169,32 +164,32 @@ table.data tr:nth-child(even) td.gc-기타군   { background:#dde3e6; }
 
 /* 추이 분석 카드 */
 .analysis-wrap {
-  display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:14px;
+  display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:10px;
 }
 .analysis-wrap .ac {
-  background:#fff; border-radius:10px; padding:14px 16px;
+  background:#fff; border-radius:8px; padding:8px 12px;
   box-shadow:0 1px 3px rgba(0,0,0,0.06);
 }
 .analysis-wrap .ac h4 {
-  font-size:13px; font-weight:700; color:#1A2D50; margin-bottom:10px;
-  padding-bottom:7px; border-bottom:1px solid #eef1f6;
+  font-size:12px; font-weight:700; color:#1A2D50; margin-bottom:5px;
+  padding-bottom:4px; border-bottom:1px solid #eef1f6;
   display:flex; align-items:center; gap:6px;
 }
-.analysis-wrap .ac.summary { border-left:4px solid #1A2D50; }
-.analysis-wrap .ac.up      { border-left:4px solid #2e7d32; }
-.analysis-wrap .ac.down    { border-left:4px solid #c62828; }
+.analysis-wrap .ac.summary { border-left:3px solid #1A2D50; }
+.analysis-wrap .ac.up      { border-left:3px solid #2e7d32; }
+.analysis-wrap .ac.down    { border-left:3px solid #c62828; }
 .analysis-wrap .metric {
   display:flex; justify-content:space-between; align-items:baseline;
-  padding:4px 0; font-size:12px; color:#444;
+  padding:2px 0; font-size:11px; color:#444;
 }
-.analysis-wrap .metric b { font-size:14px; color:#1A2D50; }
+.analysis-wrap .metric b { font-size:12px; color:#1A2D50; }
 .analysis-wrap .delta-up { color:#2e7d32; font-weight:700; }
 .analysis-wrap .delta-down { color:#c62828; font-weight:700; }
 .analysis-wrap .delta-flat { color:#7a8597; }
 .analysis-wrap ul { list-style:none; }
 .analysis-wrap li {
   display:grid; grid-template-columns:1fr auto auto; gap:6px;
-  padding:6px 0; font-size:12px; border-bottom:1px dashed #eef1f6;
+  padding:3px 0; font-size:11px; border-bottom:1px dashed #eef1f6;
   align-items:baseline;
 }
 .analysis-wrap li:last-child { border-bottom:none; }
@@ -274,7 +269,7 @@ table.data tr:nth-child(even) td.gc-기타군   { background:#dde3e6; }
 
 <header>
   <h1>거래처처방현황 통합관리</h1>
-  <span class="meta">기준일: 2026-06-02 12:33 · 인천4팀 · 단위: 천원</span>
+  <span class="meta">기준일: 2026-06-02 12:44 · 인천4팀 · 단위: 천원</span>
   <span class="stat">5명 · 160곳 · 43품목 · 15개월</span>
 </header>
 
@@ -532,21 +527,6 @@ function renderPivot(){
   PRODUCTS.forEach(p => { h += `<th class="ph-${p.group}">${p.name}</th>`; });
   h += '</tr></thead><tbody>';
 
-  // 6개월 평균 / 12개월 평균 행 (헤더 바로 아래 sticky-top 고정용으로 상단에 먼저 렌더)
-  const avgRow = (label, monthList) => {
-    let row = `<tr class="total-row"><td>${label}</td>`;
-    const e = avgOver(acctData, monthList, 0);
-    row += `<td class="eval ${cls0(e)}">${fmt(e)}</td>`;
-    for (let i=0; i<PRODUCTS.length; i++){
-      const v = avgOver(acctData, monthList, i+1);
-      row += `<td class="gc-${PRODUCTS[i].group} ${cls0(v)}">${fmt(v)}</td>`;
-    }
-    row += '</tr>';
-    return row;
-  };
-  h += avgRow('12개월 평균', AVG12_MONTHS);
-  h += avgRow('6개월 평균', AVG6_MONTHS);
-
   // 월별 행
   DISPLAY_MONTHS.forEach(m => {
     const vals = acctData[m] || new Array(PRODUCTS.length + 1).fill(0);
@@ -559,6 +539,20 @@ function renderPivot(){
     h += '</tr>';
   });
 
+  // 6개월 평균 / 12개월 평균 행 (하단)
+  const avgRow = (label, monthList) => {
+    let row = `<tr class="total-row"><td>${label}</td>`;
+    const e = avgOver(acctData, monthList, 0);
+    row += `<td class="eval ${cls0(e)}">${fmt(e)}</td>`;
+    for (let i=0; i<PRODUCTS.length; i++){
+      const v = avgOver(acctData, monthList, i+1);
+      row += `<td class="gc-${PRODUCTS[i].group} ${cls0(v)}">${fmt(v)}</td>`;
+    }
+    row += '</tr>';
+    return row;
+  };
+  h += avgRow('6개월 평균', AVG6_MONTHS);
+  h += avgRow('12개월 평균', AVG12_MONTHS);
   h += '</tbody></table>';
   tbl.innerHTML = h;
 
