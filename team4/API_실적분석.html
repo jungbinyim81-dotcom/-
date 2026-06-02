@@ -8,7 +8,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <script>
-const VER = '20260602131936';
+const VER = '20260602132730';
 const prev = localStorage.getItem('api_ver');
 if (prev && prev !== VER) { localStorage.setItem('api_ver', VER); location.reload(true); }
 else { localStorage.setItem('api_ver', VER); }
@@ -147,6 +147,18 @@ table.dt tfoot td.name { background: #f0f3f5!important; }
 .analyze-tag.miss { background:#e74c3c; color:#fff; }
 .analyze-tag.low { background:#f39c12; color:#fff; }
 .analyze-empty { color:#95a5a6; font-style:italic; font-size:11.5px; padding:4px 8px; }
+.analyze-list li.pharm-item { cursor:pointer; transition:background 0.1s; }
+.analyze-list li.pharm-item:hover { background:#f9fafb; }
+.analyze-list li.pharm-item .caret { color:#7f8c8d; font-size:9px; margin-left:5px; transition:transform 0.15s; }
+.analyze-list li.pharm-item.open .caret { color:#0a3d62; }
+.pharm-detail { grid-column:1 / -1; margin-top:6px; padding:8px 10px; background:#f8fafb; border-radius:5px; border-left:3px solid #b0bec5; cursor:default; }
+.pharm-prod-tbl { width:100%; border-collapse:collapse; font-size:11px; }
+.pharm-prod-tbl th, .pharm-prod-tbl td { padding:3px 7px; border-bottom:1px solid #eef0f3; text-align:left; font-variant-numeric:tabular-nums; }
+.pharm-prod-tbl th { background:transparent; font-weight:700; color:#34495e; font-size:10.5px; border-bottom:1px solid #cfd8dc; }
+.pharm-prod-tbl td.num, .pharm-prod-tbl th.num { text-align:right; }
+.pharm-prod-tbl tr:last-child td { border-bottom:none; }
+.pharm-prod-tbl .delta-up { color:#27ae60; font-weight:700; }
+.pharm-prod-tbl .delta-down { color:#e74c3c; font-weight:700; }
 @media (max-width:640px) {
   #analyzeFab { right: 16px; top: 60px; }
   #searchFab { right: 16px; top: 16px; }
@@ -281,6 +293,16 @@ function openAnalyze() {
 function closeAnalyze() {
   document.getElementById('analyzeModal').classList.remove('open');
 }
+function toggleAnalyzeDetail(li, event) {
+  if (event && event.target.closest('.pharm-detail')) return;
+  const detail = li.querySelector('.pharm-detail');
+  if (!detail) return;
+  const isHidden = detail.style.display === 'none' || !detail.style.display;
+  detail.style.display = isHidden ? '' : 'none';
+  li.classList.toggle('open', isHidden);
+  const caret = li.querySelector('.caret');
+  if (caret) caret.textContent = isHidden ? '▴' : '▾';
+}
 
 function renderAnalyze() {
   const months = DATA.months;
@@ -296,11 +318,78 @@ function renderAnalyze() {
 
   const sec1 = DATA.sections.sec1;  // (member, dong, group, wholesaler)
   const sec3 = DATA.sections.sec3;  // (member, gugun, pharmacy, group, wholesaler)
+  const sec5 = DATA.sections.sec5;  // (member, gugun, dong, pharmacy, group, product)
   const memberOpts = sec1.options.member;
   const wsOpts = sec1.options.wholesaler;
   const groupOpts = sec1.options.group;
   const pharmacyOpts = sec3.options.pharmacy;
+  const productOpts = sec5.options.product;
   const MAJOR_SET = new Set(ANALYZE_CFG.majorGroups);
+
+  // sec5 records pre-index: (mi, phi) → records (약국별 품목 드릴다운용)
+  const sec5ByMiPhi = {};
+  sec5.records.forEach(r => {
+    const key = r[0] + '_' + r[3];
+    if (!sec5ByMiPhi[key]) sec5ByMiPhi[key] = [];
+    sec5ByMiPhi[key].push(r);
+  });
+
+  // 특정 (member, pharmacy)의 품목별 평균/당월/증감 리스트
+  function pharmProductList(mi, phi) {
+    const list = sec5ByMiPhi[mi + '_' + phi] || [];
+    const prodMap = {};
+    list.forEach(r => {
+      const pri = r[5], v = r[6];
+      if (!prodMap[pri]) prodMap[pri] = { current: 0, prevSum: 0 };
+      prodMap[pri].current += (v[lastIdx] || 0);
+      prevIndices.forEach(idx => { prodMap[pri].prevSum += (v[idx] || 0); });
+    });
+    return Object.keys(prodMap).map(priStr => {
+      const pri = +priStr;
+      const a = prodMap[pri];
+      const avg = a.prevSum / numPrev;
+      return { name: productOpts[pri], current: a.current, avg, delta: a.current - avg };
+    }).filter(o => o.current > 0 || o.avg > 0)
+      .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+  }
+
+  function pharmProductTableHTML(productList) {
+    if (productList.length === 0) return '<div class="analyze-empty">품목 데이터 없음</div>';
+    const rows = productList.map(p => {
+      const pct = p.avg > 0 ? (p.delta / p.avg) * 100 : (p.current > 0 ? null : 0);
+      const cls = p.delta > 1 ? 'delta-up' : (p.delta < -1 ? 'delta-down' : '');
+      const sign = p.delta > 0 ? '+' : '';
+      const pctStr = pct === null ? '신규' : (sign + pct.toFixed(0) + '%');
+      return `<tr>
+        <td>${esc(p.name)}</td>
+        <td class="num">${fmt(p.avg)}</td>
+        <td class="num"><b>${fmt(p.current)}</b></td>
+        <td class="num ${cls}">${sign}${fmt(Math.round(p.delta))}</td>
+        <td class="num ${cls}">${pctStr}</td>
+      </tr>`;
+    }).join('');
+    return `<table class="pharm-prod-tbl">
+      <thead><tr><th>품목</th><th class="num">평균</th><th class="num">당월</th><th class="num">증감액</th><th class="num">%</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  function pharmacyItemHTML(mi, p, isUp) {
+    const detailHTML = pharmProductTableHTML(pharmProductList(mi, p.phi));
+    const deltaCls = isUp ? 'delta-up' : 'delta-down';
+    const sign = isUp ? '+' : '';
+    return `<li class="pharm-item" onclick="toggleAnalyzeDetail(this, event)">
+      <div>
+        <div class="name">${esc(pharmacyOpts[p.phi])}<span class="caret">▾</span></div>
+        <div class="detail neutral">평균 ${fmt(p.avg)} → 당월 <b>${fmt(p.current)}</b></div>
+      </div>
+      <div class="nums">
+        <div class="${deltaCls}">${sign}${fmt(p.delta)}</div>
+        <div class="${deltaCls}">${sign}${p.pct.toFixed(1)}%</div>
+      </div>
+      <div class="pharm-detail" style="display:none">${detailHTML}</div>
+    </li>`;
+  }
 
   // 1. 도매상 집계: agg1[mi][wi] = { current, prevSum, prevLastMonthByGroup{gi: amt} }
   const agg1 = {};
@@ -421,41 +510,21 @@ function renderAnalyze() {
     }
     html += '</div>';
 
-    // 약국 변동 (상승)
-    html += `<div class="analyze-section up"><h5>▲ 의미있게 상승한 약국 ${pharms.up.length ? `(${pharms.up.length}개)` : ''}</h5>`;
+    // 약국 변동 (상승) — 약국명 클릭 시 품목별 드릴다운
+    html += `<div class="analyze-section up"><h5>▲ 의미있게 상승한 약국 ${pharms.up.length ? `(${pharms.up.length}개, 약국명 클릭 → 변동품목 보기)` : ''}</h5>`;
     if (pharms.up.length === 0) {
       html += '<div class="analyze-empty">해당 약국 없음</div>';
     } else {
-      html += '<ul class="analyze-list">' + pharms.up.map(p => `
-        <li>
-          <div>
-            <div class="name">${esc(pharmacyOpts[p.phi])}</div>
-            <div class="detail neutral">평균 ${fmt(p.avg)} → 당월 <b>${fmt(p.current)}</b></div>
-          </div>
-          <div class="nums">
-            <div class="delta-up">+${fmt(p.delta)}</div>
-            <div class="delta-up">+${p.pct.toFixed(1)}%</div>
-          </div>
-        </li>`).join('') + '</ul>';
+      html += '<ul class="analyze-list">' + pharms.up.map(p => pharmacyItemHTML(mi, p, true)).join('') + '</ul>';
     }
     html += '</div>';
 
     // 약국 변동 (하락)
-    html += `<div class="analyze-section down"><h5>▼ 의미있게 하락한 약국 ${pharms.down.length ? `(${pharms.down.length}개)` : ''}</h5>`;
+    html += `<div class="analyze-section down"><h5>▼ 의미있게 하락한 약국 ${pharms.down.length ? `(${pharms.down.length}개, 약국명 클릭 → 변동품목 보기)` : ''}</h5>`;
     if (pharms.down.length === 0) {
       html += '<div class="analyze-empty">해당 약국 없음</div>';
     } else {
-      html += '<ul class="analyze-list">' + pharms.down.map(p => `
-        <li>
-          <div>
-            <div class="name">${esc(pharmacyOpts[p.phi])}</div>
-            <div class="detail neutral">평균 ${fmt(p.avg)} → 당월 <b>${fmt(p.current)}</b></div>
-          </div>
-          <div class="nums">
-            <div class="delta-down">${fmt(p.delta)}</div>
-            <div class="delta-down">${p.pct.toFixed(1)}%</div>
-          </div>
-        </li>`).join('') + '</ul>';
+      html += '<ul class="analyze-list">' + pharms.down.map(p => pharmacyItemHTML(mi, p, false)).join('') + '</ul>';
     }
     html += '</div></div>';
   });
@@ -695,7 +764,7 @@ if (sectionEntries.length > 0) showSection(sectionEntries[0][0]);
 
 // ── Service Worker 등록 + 즉시 업데이트 ──
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js?v=20260602131936').then(reg => {
+  navigator.serviceWorker.register('./sw.js?v=20260602132730').then(reg => {
     reg.update();
     reg.addEventListener('updatefound', () => {
       const nw = reg.installing;
