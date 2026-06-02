@@ -117,11 +117,12 @@ table.data td.total {
 }
 table.data tr.total-row td {
   font-weight:700; background:#eef2f8 !important;
-  border-top:2px solid #1A2D50;
+  border-bottom:2px solid #1A2D50;
   position:sticky; z-index:2;
 }
-table.data tbody tr.total-row:last-child td { bottom:0; }
-table.data tbody tr.total-row:nth-last-child(2) td { bottom:30px; }
+/* 평균 행은 헤더(2행, ~50px) 바로 아래에 sticky-top 고정 */
+table.data tbody tr.total-row:nth-of-type(1) td { top:50px; }
+table.data tbody tr.total-row:nth-of-type(2) td { top:80px; }
 table.data tr.total-row td:first-child {
   background:#eef2f8 !important; color:#1A2D50;
   z-index:3;
@@ -273,7 +274,7 @@ table.data tr:nth-child(even) td.gc-기타군   { background:#dde3e6; }
 
 <header>
   <h1>거래처처방현황 통합관리</h1>
-  <span class="meta">기준일: 2026-06-02 10:54 · 인천4팀 · 단위: 천원</span>
+  <span class="meta">기준일: 2026-06-02 12:33 · 인천4팀 · 단위: 천원</span>
   <span class="stat">5명 · 160곳 · 43품목 · 15개월</span>
 </header>
 
@@ -531,6 +532,21 @@ function renderPivot(){
   PRODUCTS.forEach(p => { h += `<th class="ph-${p.group}">${p.name}</th>`; });
   h += '</tr></thead><tbody>';
 
+  // 6개월 평균 / 12개월 평균 행 (헤더 바로 아래 sticky-top 고정용으로 상단에 먼저 렌더)
+  const avgRow = (label, monthList) => {
+    let row = `<tr class="total-row"><td>${label}</td>`;
+    const e = avgOver(acctData, monthList, 0);
+    row += `<td class="eval ${cls0(e)}">${fmt(e)}</td>`;
+    for (let i=0; i<PRODUCTS.length; i++){
+      const v = avgOver(acctData, monthList, i+1);
+      row += `<td class="gc-${PRODUCTS[i].group} ${cls0(v)}">${fmt(v)}</td>`;
+    }
+    row += '</tr>';
+    return row;
+  };
+  h += avgRow('12개월 평균', AVG12_MONTHS);
+  h += avgRow('6개월 평균', AVG6_MONTHS);
+
   // 월별 행
   DISPLAY_MONTHS.forEach(m => {
     const vals = acctData[m] || new Array(PRODUCTS.length + 1).fill(0);
@@ -543,20 +559,6 @@ function renderPivot(){
     h += '</tr>';
   });
 
-  // 6개월 평균 / 12개월 평균 행
-  const avgRow = (label, monthList) => {
-    let row = `<tr class="total-row"><td>${label}</td>`;
-    const e = avgOver(acctData, monthList, 0);
-    row += `<td class="eval ${cls0(e)}">${fmt(e)}</td>`;
-    for (let i=0; i<PRODUCTS.length; i++){
-      const v = avgOver(acctData, monthList, i+1);
-      row += `<td class="gc-${PRODUCTS[i].group} ${cls0(v)}">${fmt(v)}</td>`;
-    }
-    row += '</tr>';
-    return row;
-  };
-  h += avgRow('6개월 평균', AVG6_MONTHS);
-  h += avgRow('12개월 평균', AVG12_MONTHS);
   h += '</tbody></table>';
   tbl.innerHTML = h;
 
