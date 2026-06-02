@@ -14,12 +14,11 @@ body {
   display:flex; flex-direction:column; height:100vh; overflow:hidden;
 }
 
-/* ───── 상단 헤더 (일병4팀 통합분석 톤) ───── */
+/* ───── 상단 헤더 ───── */
 header.topbar {
   background:linear-gradient(90deg,#1A2D50 0%,#243962 100%);
   color:#fff;
-  padding:0 22px;
-  height:56px;
+  padding:0 22px; height:56px;
   display:flex; align-items:center; gap:14px;
   box-shadow:0 2px 6px rgba(0,0,0,0.18);
   flex-shrink:0; z-index:200;
@@ -43,67 +42,72 @@ header.topbar {
 }
 .topbar .meta .item .l { color:#7e8da3; font-size:10px; display:block; }
 .topbar .meta .item .v { color:#fff; font-weight:600; font-size:12px; }
-.topbar .badge {
-  background:rgba(255,255,255,0.16);
-  padding:4px 12px; border-radius:12px;
-  font-size:11px; font-weight:700; color:#fff;
-}
 
-/* ───── 월 선택 탭 바 ───── */
-.month-bar {
+/* ───── 컨트롤 바 ───── */
+.ctrl-bar {
   background:#fff;
   border-bottom:1px solid #e5e9f0;
   padding:0 22px;
-  display:flex; align-items:center; gap:6px;
+  display:flex; align-items:center; gap:12px;
   flex-shrink:0;
   box-shadow:0 1px 2px rgba(0,0,0,0.03);
-  height:46px;
+  height:50px;
 }
-.month-bar .label {
+.ctrl-label {
   font-size:11px; font-weight:700;
   color:#7a8597; letter-spacing:1px;
   text-transform:uppercase;
-  margin-right:8px;
 }
-.month-tab {
-  padding:8px 18px;
-  cursor:pointer;
+.month-select {
+  font-family:inherit;
   font-size:13px; font-weight:600;
+  color:#1A2D50;
+  background:#fff;
+  border:1px solid #d4dae5;
+  border-radius:8px;
+  padding:7px 32px 7px 12px;
+  cursor:pointer;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%231A2D50' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  min-width:130px;
+  transition:all 0.15s;
+}
+.month-select:hover { border-color:#1A2D50; }
+.month-select:focus { outline:none; border-color:#1A2D50; box-shadow:0 0 0 3px rgba(26,45,80,0.12); }
+
+.btn {
+  font-family:inherit;
+  padding:7px 14px;
+  font-size:12px; font-weight:600;
+  background:#fff;
   color:#4a5568;
-  border-radius:8px 8px 0 0;
-  border-bottom:3px solid transparent;
+  border:1px solid #d4dae5;
+  border-radius:8px;
+  cursor:pointer;
   transition:all 0.15s;
   display:inline-flex; align-items:center; gap:6px;
 }
-.month-tab:hover { background:#f4f6fa; color:#1A2D50; }
-.month-tab.active {
-  color:#1A2D50;
-  border-bottom-color:#1A2D50;
-  background:#eef2f8;
-  font-weight:700;
+.btn:hover { border-color:#1A2D50; color:#1A2D50; background:#f8fafd; }
+.btn.active {
+  background:#1A2D50; color:#fff; border-color:#1A2D50;
 }
-.month-tab .dot {
-  width:6px; height:6px; border-radius:50%;
-  background:#cfd8e3;
-}
-.month-tab.active .dot { background:#1A2D50; }
+.btn.active:hover { background:#243962; }
 
-.month-bar .info {
+.ctrl-bar .info {
   margin-left:auto;
   font-size:11px; color:#7a8597;
-  display:flex; align-items:center; gap:14px;
+  display:flex; align-items:center; gap:10px;
 }
-.month-bar .info .tag {
+.ctrl-bar .tag {
   background:#eef2f8; color:#1A2D50;
   padding:3px 9px; border-radius:10px;
   font-size:10px; font-weight:700;
 }
 
-/* ───── 본문 (iframe) ───── */
-.content {
-  flex:1; position:relative; overflow:hidden;
-  background:#f4f6fa;
-}
+/* ───── 본문 ───── */
+.content { flex:1; position:relative; overflow:hidden; background:#f4f6fa; }
 .content iframe {
   width:100%; height:100%; border:none;
   background:#fff;
@@ -127,15 +131,159 @@ header.topbar {
 }
 @keyframes spin { to { transform:rotate(360deg); } }
 
+/* ───── 흐름 분석 뷰 ───── */
+.flow-view {
+  display:none;
+  width:100%; height:100%;
+  overflow-y:auto;
+  padding:22px 26px 40px;
+  background:#f4f6fa;
+}
+.flow-view.active { display:block; }
+.flow-inner { max-width:1280px; margin:0 auto; }
+
+.flow-hdr {
+  display:flex; align-items:baseline; gap:12px;
+  margin-bottom:14px;
+}
+.flow-hdr h2 {
+  font-size:20px; color:#1A2D50; font-weight:800;
+  letter-spacing:-.3px;
+}
+.flow-hdr .sub { font-size:12px; color:#7a8597; }
+
+.kpi-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+  gap:12px;
+  margin-bottom:18px;
+}
+.kpi {
+  background:#fff;
+  border-radius:10px;
+  padding:14px 16px;
+  border:1px solid #e5e9f0;
+  box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  position:relative; overflow:hidden;
+}
+.kpi::before {
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,#1A2D50,#4a90d9);
+}
+.kpi .k-label {
+  font-size:10px; font-weight:700;
+  color:#7a8597; letter-spacing:1px;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.kpi .k-row { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.kpi .k-prev { font-size:12px; color:#9aa5b8; }
+.kpi .k-arr { font-size:13px; color:#cfd8e3; }
+.kpi .k-cur { font-size:22px; font-weight:800; color:#1A2D50; }
+.kpi .k-delta {
+  font-size:11px; font-weight:700;
+  padding:2px 7px; border-radius:8px;
+  margin-left:auto;
+}
+.kpi .k-up { background:#e7f5ec; color:#1a6b3a; }
+.kpi .k-down { background:#fdecea; color:#c0392b; }
+.kpi .k-flat { background:#eef2f8; color:#5a6577; }
+
+.section {
+  background:#fff;
+  border-radius:10px;
+  border:1px solid #e5e9f0;
+  box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  margin-bottom:14px;
+  overflow:hidden;
+}
+.sec-hdr {
+  padding:11px 16px;
+  border-bottom:1px solid #eef2f8;
+  display:flex; align-items:center; gap:8px;
+  background:#fafbfd;
+}
+.sec-hdr h3 { font-size:13px; font-weight:700; color:#1A2D50; }
+.sec-hdr .note { font-size:11px; color:#7a8597; margin-left:auto; }
+.sec-body { padding:12px 14px; }
+
+table.trend { width:100%; border-collapse:collapse; font-size:12px; }
+table.trend th {
+  background:#f4f6fa;
+  border:1px solid #e5e9f0;
+  padding:8px 10px;
+  font-size:11px; font-weight:700;
+  color:#4a5568;
+  text-align:center;
+}
+table.trend th.mgr-col { background:#1A2D50; color:#fff; }
+table.trend td {
+  border:1px solid #e5e9f0;
+  padding:7px 10px;
+  text-align:center;
+  vertical-align:middle;
+}
+table.trend td.mgr {
+  text-align:left;
+  font-weight:700;
+  background:#fafbfd;
+  white-space:nowrap;
+}
+.mgr-dot {
+  display:inline-block;
+  width:8px; height:8px; border-radius:50%;
+  margin-right:6px; vertical-align:middle;
+}
+table.trend .num-prev { color:#9aa5b8; font-size:11px; }
+table.trend .num-cur { color:#1A2D50; font-weight:700; font-size:13px; }
+table.trend .arr { color:#cfd8e3; margin:0 4px; }
+.delta {
+  display:inline-block;
+  font-size:10px; font-weight:700;
+  padding:1px 6px; border-radius:8px;
+  margin-left:4px;
+}
+.d-up { background:#e7f5ec; color:#1a6b3a; }
+.d-down { background:#fdecea; color:#c0392b; }
+.d-flat { background:#eef2f8; color:#7a8597; }
+
+.insights {
+  background:#fff;
+  border-radius:10px;
+  border:1px solid #e5e9f0;
+  border-left:4px solid #1A2D50;
+  padding:14px 18px;
+  margin-bottom:14px;
+}
+.insights h3 {
+  font-size:13px; font-weight:700; color:#1A2D50;
+  margin-bottom:8px;
+  display:flex; align-items:center; gap:6px;
+}
+.insights ul { list-style:none; }
+.insights li {
+  padding:6px 0;
+  border-bottom:1px dashed #eef2f8;
+  font-size:12.5px; color:#4a5568;
+  line-height:1.5;
+}
+.insights li:last-child { border-bottom:none; }
+.insights li strong { color:#1A2D50; }
+.insights li .pos { color:#1a6b3a; font-weight:700; }
+.insights li .neg { color:#c0392b; font-weight:700; }
+
 /* ───── 반응형 ───── */
 @media (max-width:720px) {
   .topbar { padding:0 14px; }
   .topbar .meta { display:none; }
   .brand .sub { display:none; }
-  .month-bar { padding:0 14px; gap:4px; }
-  .month-bar .label { display:none; }
-  .month-bar .info { display:none; }
-  .month-tab { padding:8px 14px; font-size:12px; }
+  .ctrl-bar { padding:0 14px; gap:8px; }
+  .ctrl-bar .info { display:none; }
+  .ctrl-label { display:none; }
+  .flow-view { padding:14px 14px 30px; }
+  table.trend { font-size:11px; }
+  table.trend td, table.trend th { padding:6px 5px; }
 }
 </style>
 </head>
@@ -160,54 +308,233 @@ header.topbar {
       <span class="v">150개</span>
     </div>
   </div>
-  <div class="badge">★ 활동 기반</div>
 </header>
 
-<div class="month-bar">
-  <span class="label">월 선택</span>
-  <div class="month-tab" data-month="04"><span class="dot"></span>4월</div>
-  <div class="month-tab active" data-month="05"><span class="dot"></span>5월</div>
+<div class="ctrl-bar">
+  <span class="ctrl-label">월 선택</span>
+  <select class="month-select" id="monthSelect">
+    <!-- JS로 채움 -->
+  </select>
+  <button class="btn" id="btnFlow">📊 흐름 분석</button>
   <div class="info">
-    <span class="tag">담당자별 탭은 본문 상단에서 선택</span>
+    <span class="tag">담당자 탭은 본문 상단</span>
   </div>
 </div>
 
 <div class="content">
   <div class="loading" id="loading"><div class="spinner"></div></div>
+
+  <!-- iframe 컨테이너 (월별로 동적 추가) -->
   <iframe id="frame-04" src="4월_중점처활동분석.html" title="4월 중점처 활동분석" loading="lazy"></iframe>
   <iframe id="frame-05" src="5월_중점처활동분석.html" title="5월 중점처 활동분석" class="active"></iframe>
+
+  <!-- 흐름 분석 뷰 -->
+  <div class="flow-view" id="flowView">
+    <div class="flow-inner">
+
+      <div class="flow-hdr">
+        <h2>월별 흐름 분석</h2>
+        <span class="sub">4월 → 5월 활동 추이 · 임정빈팀</span>
+      </div>
+
+      <!-- 팀 전체 KPI -->
+      <div class="kpi-grid" id="kpiGrid"></div>
+
+      <!-- 핵심 인사이트 -->
+      <div class="insights">
+        <h3>🔍 핵심 인사이트</h3>
+        <ul>
+          <li><strong>송창훈 사원 5월 전무</strong> — 보고일 18→0일, 방문 139→0건. 퇴직 영향으로 팀 총 방문건수 <span class="neg">670→469건 (−30%)</span>. 활동가능 4명 기준은 531→469건(−12%).</li>
+          <li><strong>임대현 대리 증량약속 폭증</strong> — 0건 → <span class="pos">13건</span>. 5월 핵심 활동축, 후속 실적 반영 모니터링 필요.</li>
+          <li><strong>전은성 부장 마케팅 활동 확대</strong> — 23 → <span class="pos">13건</span> (감소했지만 여전히 팀 최다). 식사 1→0, 처방약속 0→<span class="pos">2건</span> 신규.</li>
+          <li><strong>황태영 대리 마케팅 가속</strong> — 8 → <span class="pos">12건</span>(+50%). 방문률은 89%→86%로 소폭 하락, 숙박심포 1→2건.</li>
+          <li><strong>김혜성 사원 안정적 유지</strong> — 보고일 11→13일, 방문률 93%→90%. 마케팅 1→6건 증가 추세.</li>
+          <li><strong>식사 활동 급감</strong> — 7 → <span class="neg">2건</span>. 처방·증량약속(3→16건)으로 활동 무게중심 이동.</li>
+          <li><strong>웹심포 활용도 하락</strong> — 39 → <span class="neg">28건</span>(−28%). 숙박심포(9→8)는 유지.</li>
+        </ul>
+      </div>
+
+      <!-- 담당자별 추이 표 -->
+      <div class="section">
+        <div class="sec-hdr">
+          <h3>담당자별 활동 추이 (4월 → 5월)</h3>
+          <span class="note">회색=전월 · 진하게=당월 · 배지=증감</span>
+        </div>
+        <div class="sec-body" style="overflow-x:auto">
+          <table class="trend" id="trendTable"></table>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
 <script>
-(function(){
-  const tabs = document.querySelectorAll('.month-tab');
-  const frames = {
-    '04': document.getElementById('frame-04'),
-    '05': document.getElementById('frame-05')
-  };
-  const loading = document.getElementById('loading');
-  let loaded = { '04': false, '05': true }; // 초기 활성 = 5월
+/* ───── 월 등록부 (새 월 추가 시 여기에 한 줄만 추가) ───── */
+const MONTHS = [
+  { key:'04', label:'2026년 4월', file:'4월_중점처활동분석.html' },
+  { key:'05', label:'2026년 5월', file:'5월_중점처활동분석.html' },
+];
+const DEFAULT_KEY = '05';
 
-  // iframe 첫 로드 후 로딩 표시 해제
-  frames['05'].addEventListener('load', ()=> { loaded['05'] = true; loading.classList.remove('show'); });
-  frames['04'].addEventListener('load', ()=> { loaded['04'] = true; loading.classList.remove('show'); });
+/* ───── 담당자 데이터 (월별) — 새 월 추가 시 여기에 한 블록만 추가 ───── */
+const MGR_COLORS = {
+  '전은성':'#0d4d64','임대현':'#1a5c2a','황태영':'#5c3a1a','김혜성':'#4a1a5c','송창훈':'#1a3a5c'
+};
+const ORDER = ['전은성','임대현','황태영','김혜성','송창훈'];
+const MONTH_DATA = {
+  '04': {
+    팀: { 보고: 87, 방문: 670, 중점처: 138, 중점목표: 150, 식사: 7, 마케팅: 36, 처방약속: 1, 증량약속: 2, 숙박: 9, 웹: 39 },
+    전은성: { 보고:20, 방문:166, 중점처:28, 목표:30, 식사:1, 마케팅:23, 처방:0, 증량:0, 숙박:1, 웹:9 },
+    임대현: { 보고:17, 방문:137, 중점처:30, 목표:30, 식사:0, 마케팅:2,  처방:0, 증량:0, 숙박:2, 웹:11 },
+    황태영: { 보고:21, 방문:143, 중점처:25, 목표:28, 식사:2, 마케팅:8,  처방:1, 증량:1, 숙박:1, 웹:9 },
+    김혜성: { 보고:11, 방문:85,  중점처:28, 목표:30, 식사:0, 마케팅:1,  처방:0, 증량:0, 숙박:4, 웹:3 },
+    송창훈: { 보고:18, 방문:139, 중점처:27, 목표:32, 식사:4, 마케팅:2,  처방:0, 증량:1, 숙박:1, 웹:7 },
+  },
+  '05': {
+    팀: { 보고: 58, 방문: 469, 중점처: 109, 중점목표: 150, 식사: 2, 마케팅: 33, 처방약속: 2, 증량약속: 14, 숙박: 8, 웹: 28 },
+    전은성: { 보고:15, 방문:125, 중점처:28, 목표:30, 식사:0, 마케팅:13, 처방:2, 증량:0,  숙박:1, 웹:6 },
+    임대현: { 보고:14, 방문:117, 중점처:30, 목표:30, 식사:1, 마케팅:2,  처방:0, 증량:13, 숙박:3, 웹:9 },
+    황태영: { 보고:16, 방문:119, 중점처:24, 목표:28, 식사:1, 마케팅:12, 처방:0, 증량:1,  숙박:2, 웹:8 },
+    김혜성: { 보고:13, 방문:108, 중점처:27, 목표:30, 식사:0, 마케팅:6,  처방:0, 증량:0,  숙박:1, 웹:3 },
+    송창훈: { 보고:0,  방문:0,   중점처:0,  목표:32, 식사:0, 마케팅:0,  처방:0, 증량:0,  숙박:1, 웹:2 },
+  },
+};
 
-  function activate(month){
-    tabs.forEach(t => t.classList.toggle('active', t.dataset.month === month));
-    Object.entries(frames).forEach(([m, f]) => f.classList.toggle('active', m === month));
-    if (!loaded[month]) {
-      loading.classList.add('show');
-      setTimeout(()=> loading.classList.remove('show'), 5000); // 안전장치
-    }
-    location.hash = month;
+/* ───── 월 셀렉트 채우기 + iframe 동적 보장 ───── */
+const select = document.getElementById('monthSelect');
+const content = document.querySelector('.content');
+const loading = document.getElementById('loading');
+const flowView = document.getElementById('flowView');
+const btnFlow = document.getElementById('btnFlow');
+const loaded = {};
+
+MONTHS.forEach(m => {
+  const o = document.createElement('option');
+  o.value = m.key; o.textContent = m.label;
+  if (m.key === DEFAULT_KEY) o.selected = true;
+  select.appendChild(o);
+
+  // iframe이 정적으로 없으면 동적으로 생성
+  let f = document.getElementById('frame-' + m.key);
+  if (!f) {
+    f = document.createElement('iframe');
+    f.id = 'frame-' + m.key;
+    f.title = m.label + ' 중점처 활동분석';
+    f.setAttribute('loading','lazy');
+    f.src = m.file;
+    content.insertBefore(f, flowView);
   }
+  f.addEventListener('load', ()=>{ loaded[m.key] = true; loading.classList.remove('show'); });
+});
+// 초기 활성 iframe은 이미 로드됨으로 표시
+loaded[DEFAULT_KEY] = true;
 
-  tabs.forEach(t => t.addEventListener('click', ()=> activate(t.dataset.month)));
+function showMonth(key){
+  btnFlow.classList.remove('active');
+  flowView.classList.remove('active');
+  MONTHS.forEach(m => {
+    const f = document.getElementById('frame-' + m.key);
+    if (f) f.classList.toggle('active', m.key === key);
+  });
+  if (!loaded[key]) {
+    loading.classList.add('show');
+    setTimeout(()=> loading.classList.remove('show'), 5000);
+  }
+  location.hash = key;
+}
 
-  // 해시로 진입 (예: #04)
-  const initial = (location.hash || '').replace('#','');
-  if (initial === '04' || initial === '05') activate(initial);
-})();
+function showFlow(){
+  MONTHS.forEach(m => {
+    const f = document.getElementById('frame-' + m.key);
+    if (f) f.classList.remove('active');
+  });
+  flowView.classList.add('active');
+  btnFlow.classList.add('active');
+  location.hash = 'flow';
+}
+
+select.addEventListener('change', e => showMonth(e.target.value));
+btnFlow.addEventListener('click', showFlow);
+
+/* ───── 흐름 분석 뷰 렌더 ───── */
+function deltaBadge(prev, cur, isPct=false){
+  const d = cur - prev;
+  if (d === 0) return `<span class="delta d-flat">±0</span>`;
+  const sign = d > 0 ? '+' : '';
+  const cls = d > 0 ? 'd-up' : 'd-down';
+  const val = isPct ? `${sign}${d}%p` : `${sign}${d}`;
+  return `<span class="delta ${cls}">${val}</span>`;
+}
+function arrowCell(prev, cur, isPct=false){
+  const cur2 = isPct ? cur + '%' : cur;
+  const prev2 = isPct ? prev + '%' : prev;
+  return `<span class="num-prev">${prev2}</span><span class="arr">→</span><span class="num-cur">${cur2}</span>${deltaBadge(prev, cur, isPct)}`;
+}
+
+// KPI 카드
+const T0 = MONTH_DATA['04'].팀, T1 = MONTH_DATA['05'].팀;
+const kpis = [
+  { l:'보고일수',     prev:T0.보고,    cur:T1.보고 },
+  { l:'총 방문건수',  prev:T0.방문,    cur:T1.방문 },
+  { l:'중점처 방문',  prev:T0.중점처,  cur:T1.중점처, suf:` / ${T1.중점목표}` },
+  { l:'식사 활동',    prev:T0.식사,    cur:T1.식사 },
+  { l:'마케팅 활동',  prev:T0.마케팅,  cur:T1.마케팅 },
+  { l:'처방·증량약속', prev:T0.처방약속+T0.증량약속, cur:T1.처방약속+T1.증량약속 },
+  { l:'숙박심포',     prev:T0.숙박,    cur:T1.숙박 },
+  { l:'웹심포',       prev:T0.웹,      cur:T1.웹 },
+];
+document.getElementById('kpiGrid').innerHTML = kpis.map(k => {
+  const d = k.cur - k.prev;
+  const cls = d > 0 ? 'k-up' : (d < 0 ? 'k-down' : 'k-flat');
+  const sign = d > 0 ? '+' : '';
+  return `<div class="kpi">
+    <div class="k-label">${k.l}</div>
+    <div class="k-row">
+      <span class="k-prev">${k.prev}</span>
+      <span class="k-arr">→</span>
+      <span class="k-cur">${k.cur}${k.suf||''}</span>
+      <span class="k-delta ${cls}">${sign}${d}</span>
+    </div>
+  </div>`;
+}).join('');
+
+// 담당자별 추이 표
+const cols = [
+  { k:'보고',  l:'보고일수' },
+  { k:'방문',  l:'총 방문' },
+  { k:'중점처', l:'중점처 방문', rate:true },
+  { k:'식사',  l:'식사' },
+  { k:'마케팅', l:'마케팅' },
+  { k:'처방',  l:'처방약속' },
+  { k:'증량',  l:'증량약속' },
+  { k:'숙박',  l:'숙박심포' },
+  { k:'웹',    l:'웹심포' },
+];
+let th = `<tr><th class="mgr-col">담당자</th>` + cols.map(c => `<th>${c.l}</th>`).join('') + `</tr>`;
+let tb = ORDER.map(mgr => {
+  const p = MONTH_DATA['04'][mgr], c = MONTH_DATA['05'][mgr];
+  let row = `<td class="mgr"><span class="mgr-dot" style="background:${MGR_COLORS[mgr]}"></span>${mgr}</td>`;
+  row += cols.map(col => {
+    const pv = p[col.k], cv = c[col.k];
+    if (col.rate) {
+      const pr = Math.round(pv / p.목표 * 100);
+      const cr = Math.round(cv / c.목표 * 100);
+      return `<td>
+        <div>${arrowCell(pv, cv)}</div>
+        <div style="margin-top:3px">${arrowCell(pr, cr, true)}</div>
+      </td>`;
+    }
+    return `<td>${arrowCell(pv, cv)}</td>`;
+  }).join('');
+  return `<tr>${row}</tr>`;
+}).join('');
+document.getElementById('trendTable').innerHTML = th + tb;
+
+/* ───── 해시 라우팅 ───── */
+const initial = (location.hash || '').replace('#','');
+if (initial === 'flow') { showFlow(); }
+else if (MONTHS.some(m => m.key === initial)) { select.value = initial; showMonth(initial); }
 </script>
 </body>
 </html>

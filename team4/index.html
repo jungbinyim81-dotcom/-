@@ -11,7 +11,10 @@ html, body { height:100%; }
 body {
   font-family:'Pretendard','맑은 고딕','Malgun Gothic',sans-serif;
   background:#f4f6fa; color:#222;
-  display:flex; flex-direction:column; height:100vh; overflow:hidden;
+  display:flex; flex-direction:column;
+  height:100vh;      /* 구형 브라우저 폴백 */
+  height:100dvh;     /* 모바일 주소창 반영하는 동적 viewport */
+  overflow:hidden;
 }
 
 /* ───────── 상단 헤더 ───────── */
@@ -19,7 +22,7 @@ header.topbar {
   background:linear-gradient(90deg,#1A2D50 0%,#243962 100%);
   color:#fff;
   padding:0 22px;
-  height:56px;
+  height:42px;
   display:flex; align-items:center; gap:14px;
   box-shadow:0 2px 6px rgba(0,0,0,0.18);
   flex-shrink:0;
