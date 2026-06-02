@@ -8,7 +8,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <script>
-const VER = '20260529171816';
+const VER = '20260602131936';
 const prev = localStorage.getItem('api_ver');
 if (prev && prev !== VER) { localStorage.setItem('api_ver', VER); location.reload(true); }
 else { localStorage.setItem('api_ver', VER); }
@@ -113,6 +113,44 @@ table.dt tfoot td.name { background: #f0f3f5!important; }
 .n-tag.n-other { background: #ecf0f1; color: #555; }                 /* 그 외 — 회색 */
 .n-tag.n-none  { background: #e74c3c; color: #fff; }                 /* 매칭없음 — 빨강 */
 .n-tag.n-pharm { background: #ecf0f1; color: #95a5a6; font-style: italic; }
+
+/* ── 분석 요약 floating 버튼 + 모달 ── */
+#analyzeFab { position: fixed; top: 16px; right: 170px; z-index: 1000; background: #fff; color: #0a3d62; border: 2px solid #fff; border-radius: 22px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 6px; }
+#analyzeFab:hover { background: #f0f7ff; }
+#analyzeFab::before { content: '📊'; font-size: 14px; }
+#analyzeModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 2000; align-items: flex-start; justify-content: center; padding: 60px 16px 16px; }
+#analyzeModal.open { display: flex; }
+#analyzeModal .panel { background: #fff; border-radius: 12px; width: 100%; max-width: 900px; max-height: calc(100dvh - 76px); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+#analyzeModal .head { padding: 14px 18px; border-bottom: 1px solid #eef0f3; display: flex; align-items: center; gap: 10px; background: #f8fafb; }
+#analyzeModal .head h3 { margin: 0; font-size: 15px; color: #0a3d62; flex: 1; }
+#analyzeModal .body { padding: 14px 18px; overflow-y: auto; }
+.analyze-intro { color:#636e72; font-size:12px; margin-bottom:12px; background:#f5f7f9; padding:10px 12px; border-radius:6px; line-height:1.6; }
+.analyze-intro b { color:#0a3d62; }
+.analyze-person { background:#fff; border:1px solid #e1e8ed; border-radius:8px; padding:12px 14px; margin-bottom:12px; }
+.analyze-person > h4 { margin:0 0 8px; color:#0a3d62; font-size:14px; display:flex; align-items:center; gap:8px; padding-bottom:6px; border-bottom:1px solid #eef0f3; }
+.analyze-person > h4 .meta { margin-left:auto; font-size:11px; color:#7f8c8d; font-weight:400; }
+.analyze-section { margin-top:10px; }
+.analyze-section h5 { margin:6px 0 6px; color:#34495e; font-size:12.5px; display:flex; align-items:center; gap:6px; border-left:3px solid #0a3d62; padding:2px 0 2px 8px; font-weight:700; }
+.analyze-section.up h5 { border-color:#27ae60; color:#27ae60; }
+.analyze-section.down h5 { border-color:#e74c3c; color:#e74c3c; }
+.analyze-list { list-style:none; padding:0; margin:0; font-size:12px; }
+.analyze-list li { padding:6px 8px; border-bottom:1px dashed #eef0f3; display:grid; grid-template-columns:1fr auto; gap:10px; }
+.analyze-list li:last-child { border-bottom:none; }
+.analyze-list .name { font-weight:700; color:#2d3436; font-size:12.5px; }
+.analyze-list .detail { font-size:10.5px; color:#636e72; margin-top:3px; line-height:1.5; }
+.analyze-list .nums { text-align:right; font-variant-numeric:tabular-nums; font-size:11.5px; min-width:130px; }
+.analyze-list .nums .delta-up { color:#27ae60; font-weight:700; }
+.analyze-list .nums .delta-down { color:#e74c3c; font-weight:700; }
+.analyze-list .nums .neutral { color:#7f8c8d; font-size:10.5px; }
+.analyze-list .nums b { color:#0a3d62; }
+.analyze-tag { display:inline-block; padding:1px 7px; border-radius:9px; font-size:10px; font-weight:700; margin-left:4px; vertical-align:1px; }
+.analyze-tag.miss { background:#e74c3c; color:#fff; }
+.analyze-tag.low { background:#f39c12; color:#fff; }
+.analyze-empty { color:#95a5a6; font-style:italic; font-size:11.5px; padding:4px 8px; }
+@media (max-width:640px) {
+  #analyzeFab { right: 16px; top: 60px; }
+  #searchFab { right: 16px; top: 16px; }
+}
 </style>
 </head>
 <body>
@@ -122,6 +160,17 @@ table.dt tfoot td.name { background: #f0f3f5!important; }
 </header>
 
 <button id="searchFab" onclick="openSearch()">병원/약국 찾기</button>
+<button id="analyzeFab" onclick="openAnalyze()">분석 요약</button>
+
+<div id="analyzeModal" onclick="if(event.target.id==='analyzeModal')closeAnalyze()">
+  <div class="panel">
+    <div class="head">
+      <h3>담당자별 분석 요약</h3>
+      <button class="close-btn" onclick="closeAnalyze()">×</button>
+    </div>
+    <div class="body" id="analyzeBody"></div>
+  </div>
+</div>
 
 <div id="searchModal" onclick="if(event.target.id==='searchModal')closeSearch()">
   <div class="panel">
@@ -208,9 +257,211 @@ function runSearch() {
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('searchInput').addEventListener('input', runSearch);
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeSearch();
+    if (e.key === 'Escape') { closeSearch(); closeAnalyze(); }
   });
 });
+
+// ── 담당자별 분석 요약 ──
+// 1) 도매상 취합 검증: 평균 100만원 이상인데 당월 0원(미수집) 또는 당월 < 평균*0.5(저조)
+// 2) 약국 의미있는 변동: |Δ|≥30만원 AND |Δ%|≥30%
+const ANALYZE_CFG = {
+  prevMonths: 3,           // 비교 평균: 직전 N개월
+  wsMinAvg: 1000000,       // 도매상 의미있는 평균 임계값 (100만원)
+  wsLowRatio: 0.5,         // 평균 대비 절반 미만이면 저조
+  pharmMinDelta: 300000,   // 약국 의미있는 변동액 (30만원)
+  pharmMinPct: 30,         // 약국 의미있는 변동률 (%)
+  pharmTopN: 10,           // 상승/하락 상위 N개
+  majorGroups: ['고지혈군','고혈압군','내분비군','호흡기군','소화기군'],
+};
+
+function openAnalyze() {
+  document.getElementById('analyzeModal').classList.add('open');
+  renderAnalyze();
+}
+function closeAnalyze() {
+  document.getElementById('analyzeModal').classList.remove('open');
+}
+
+function renderAnalyze() {
+  const months = DATA.months;
+  if (!months || months.length === 0) {
+    document.getElementById('analyzeBody').innerHTML = '<div class="empty">분석할 데이터 없음</div>';
+    return;
+  }
+  const lastIdx = months.length - 1;
+  const prevMonthIdx = lastIdx - 1;
+  const prevIndices = [];
+  for (let i = Math.max(0, lastIdx - ANALYZE_CFG.prevMonths); i < lastIdx; i++) prevIndices.push(i);
+  const numPrev = prevIndices.length || 1;
+
+  const sec1 = DATA.sections.sec1;  // (member, dong, group, wholesaler)
+  const sec3 = DATA.sections.sec3;  // (member, gugun, pharmacy, group, wholesaler)
+  const memberOpts = sec1.options.member;
+  const wsOpts = sec1.options.wholesaler;
+  const groupOpts = sec1.options.group;
+  const pharmacyOpts = sec3.options.pharmacy;
+  const MAJOR_SET = new Set(ANALYZE_CFG.majorGroups);
+
+  // 1. 도매상 집계: agg1[mi][wi] = { current, prevSum, prevLastMonthByGroup{gi: amt} }
+  const agg1 = {};
+  sec1.records.forEach(r => {
+    const mi = r[0], gi = r[2], wi = r[3], v = r[4];
+    if (!agg1[mi]) agg1[mi] = {};
+    if (!agg1[mi][wi]) agg1[mi][wi] = { current: 0, prevSum: 0, prevLastMonthByGroup: {} };
+    agg1[mi][wi].current += (v[lastIdx] || 0);
+    prevIndices.forEach(idx => { agg1[mi][wi].prevSum += (v[idx] || 0); });
+    if (prevMonthIdx >= 0) {
+      const amt = v[prevMonthIdx] || 0;
+      if (amt > 0) agg1[mi][wi].prevLastMonthByGroup[gi] = (agg1[mi][wi].prevLastMonthByGroup[gi] || 0) + amt;
+    }
+  });
+
+  // 도매상 필터: 평균이 임계값 이상이면서 미수집(=0) 또는 저조(<평균*ratio)
+  const wsFlagged = {};
+  Object.keys(agg1).forEach(miStr => {
+    const mi = +miStr;
+    Object.keys(agg1[mi]).forEach(wiStr => {
+      const wi = +wiStr;
+      const a = agg1[mi][wi];
+      const avg = a.prevSum / numPrev;
+      if (avg < ANALYZE_CFG.wsMinAvg) return;
+      let status = null;
+      if (a.current === 0) status = '미수집';
+      else if (a.current < avg * ANALYZE_CFG.wsLowRatio) status = '저조';
+      if (!status) return;
+      if (!wsFlagged[mi]) wsFlagged[mi] = [];
+      wsFlagged[mi].push({ wi, current: a.current, avg, status, prevLastMonthByGroup: a.prevLastMonthByGroup });
+    });
+  });
+  Object.keys(wsFlagged).forEach(mi => wsFlagged[mi].sort((a, b) => b.avg - a.avg));
+
+  // 2. 약국 집계: agg3[mi][phi] = { current, prevSum }
+  const agg3 = {};
+  sec3.records.forEach(r => {
+    const mi = r[0], phi = r[2], v = r[5];
+    if (!agg3[mi]) agg3[mi] = {};
+    if (!agg3[mi][phi]) agg3[mi][phi] = { current: 0, prevSum: 0 };
+    agg3[mi][phi].current += (v[lastIdx] || 0);
+    prevIndices.forEach(idx => { agg3[mi][phi].prevSum += (v[idx] || 0); });
+  });
+
+  // 약국 변동 필터: |Δ|≥30만원 AND |Δ%|≥30%
+  const pharmFlagged = {};
+  Object.keys(agg3).forEach(miStr => {
+    const mi = +miStr;
+    Object.keys(agg3[mi]).forEach(phiStr => {
+      const phi = +phiStr;
+      const a = agg3[mi][phi];
+      const avg = a.prevSum / numPrev;
+      const delta = a.current - avg;
+      if (Math.abs(delta) < ANALYZE_CFG.pharmMinDelta) return;
+      const pct = avg > 0 ? (delta / avg) * 100 : (a.current > 0 ? 999 : 0);
+      if (Math.abs(pct) < ANALYZE_CFG.pharmMinPct) return;
+      if (!pharmFlagged[mi]) pharmFlagged[mi] = { up: [], down: [] };
+      const bucket = delta > 0 ? pharmFlagged[mi].up : pharmFlagged[mi].down;
+      bucket.push({ phi, current: a.current, avg, delta, pct });
+    });
+  });
+  Object.keys(pharmFlagged).forEach(mi => {
+    pharmFlagged[mi].up.sort((a, b) => b.delta - a.delta);
+    pharmFlagged[mi].down.sort((a, b) => a.delta - b.delta);
+    pharmFlagged[mi].up = pharmFlagged[mi].up.slice(0, ANALYZE_CFG.pharmTopN);
+    pharmFlagged[mi].down = pharmFlagged[mi].down.slice(0, ANALYZE_CFG.pharmTopN);
+  });
+
+  // 3. 렌더
+  const lastLabel = fmtMonth(months[lastIdx]);
+  const prevLabels = prevIndices.map(i => fmtMonth(months[i])).join(', ') || '(이전월 없음)';
+  let html = `<div class="analyze-intro">
+    <b>분석 기준</b>: 최신월 <b>${lastLabel}</b> vs 최근 ${numPrev}개월 평균 (${prevLabels})<br>
+    <b>① 도매상 취합 점검</b>: 직전 평균이 ${(ANALYZE_CFG.wsMinAvg/10000).toLocaleString()}만원↑인데 당월 0원(<span class="analyze-tag miss">미수집</span>) 또는 평균의 ${ANALYZE_CFG.wsLowRatio*100}% 미만(<span class="analyze-tag low">저조</span>)인 도매상 추출 → 전월 주요품목군 표시<br>
+    <b>② 약국 변동</b>: 평균 대비 |Δ|≥${(ANALYZE_CFG.pharmMinDelta/10000).toLocaleString()}만원 AND |Δ%|≥${ANALYZE_CFG.pharmMinPct}%인 약국 상위 ${ANALYZE_CFG.pharmTopN}개씩
+  </div>`;
+
+  memberOpts.forEach((memberName, mi) => {
+    const wsList = wsFlagged[mi] || [];
+    const pharms = pharmFlagged[mi] || { up: [], down: [] };
+    const totalCurrent = (agg3[mi] ? Object.values(agg3[mi]).reduce((s, x) => s + x.current, 0) : 0);
+    const totalAvg = (agg3[mi] ? Object.values(agg3[mi]).reduce((s, x) => s + x.prevSum, 0) / numPrev : 0);
+    const teamDelta = totalCurrent - totalAvg;
+    const teamPct = totalAvg > 0 ? (teamDelta / totalAvg) * 100 : 0;
+    const teamCls = teamDelta >= 0 ? 'delta-up' : 'delta-down';
+    const teamArrow = teamDelta >= 0 ? '▲' : '▼';
+
+    html += `<div class="analyze-person">
+      <h4>👤 ${esc(memberName)}
+        <span class="meta">당월 <b>${fmt(totalCurrent)}</b> · 평균 ${fmt(totalAvg)} · <span class="${teamCls}">${teamArrow} ${fmt(Math.abs(teamDelta))} (${teamPct >= 0 ? '+' : ''}${teamPct.toFixed(1)}%)</span></span>
+      </h4>`;
+
+    // 도매상 취합 점검
+    html += `<div class="analyze-section"><h5>📦 도매상 취합 점검 ${wsList.length ? `<span style="color:#e74c3c">(${wsList.length}개 의심)</span>` : ''}</h5>`;
+    if (wsList.length === 0) {
+      html += '<div class="analyze-empty">미수집/저조 도매상 없음 ✓</div>';
+    } else {
+      html += '<ul class="analyze-list">' + wsList.map(w => {
+        const tagCls = w.status === '미수집' ? 'miss' : 'low';
+        const majorList = Object.entries(w.prevLastMonthByGroup)
+          .map(([gi, amt]) => ({ name: groupOpts[+gi], amt }))
+          .filter(o => MAJOR_SET.has(o.name) && o.amt > 0)
+          .sort((a, b) => b.amt - a.amt);
+        const detail = majorList.length === 0
+          ? '<span style="color:#95a5a6">전월 주요품목군 실적 없음</span>'
+          : '전월 주요품목: ' + majorList.map(o => `<b>${esc(o.name)}</b> ${fmt(o.amt)}`).join(' · ');
+        return `<li>
+          <div>
+            <div class="name">${esc(wsOpts[w.wi])} <span class="analyze-tag ${tagCls}">${w.status}</span></div>
+            <div class="detail">${detail}</div>
+          </div>
+          <div class="nums">
+            <div>평균 <b>${fmt(w.avg)}</b></div>
+            <div class="delta-down">당월 ${fmt(w.current)}</div>
+          </div>
+        </li>`;
+      }).join('') + '</ul>';
+    }
+    html += '</div>';
+
+    // 약국 변동 (상승)
+    html += `<div class="analyze-section up"><h5>▲ 의미있게 상승한 약국 ${pharms.up.length ? `(${pharms.up.length}개)` : ''}</h5>`;
+    if (pharms.up.length === 0) {
+      html += '<div class="analyze-empty">해당 약국 없음</div>';
+    } else {
+      html += '<ul class="analyze-list">' + pharms.up.map(p => `
+        <li>
+          <div>
+            <div class="name">${esc(pharmacyOpts[p.phi])}</div>
+            <div class="detail neutral">평균 ${fmt(p.avg)} → 당월 <b>${fmt(p.current)}</b></div>
+          </div>
+          <div class="nums">
+            <div class="delta-up">+${fmt(p.delta)}</div>
+            <div class="delta-up">+${p.pct.toFixed(1)}%</div>
+          </div>
+        </li>`).join('') + '</ul>';
+    }
+    html += '</div>';
+
+    // 약국 변동 (하락)
+    html += `<div class="analyze-section down"><h5>▼ 의미있게 하락한 약국 ${pharms.down.length ? `(${pharms.down.length}개)` : ''}</h5>`;
+    if (pharms.down.length === 0) {
+      html += '<div class="analyze-empty">해당 약국 없음</div>';
+    } else {
+      html += '<ul class="analyze-list">' + pharms.down.map(p => `
+        <li>
+          <div>
+            <div class="name">${esc(pharmacyOpts[p.phi])}</div>
+            <div class="detail neutral">평균 ${fmt(p.avg)} → 당월 <b>${fmt(p.current)}</b></div>
+          </div>
+          <div class="nums">
+            <div class="delta-down">${fmt(p.delta)}</div>
+            <div class="delta-down">${p.pct.toFixed(1)}%</div>
+          </div>
+        </li>`).join('') + '</ul>';
+    }
+    html += '</div></div>';
+  });
+
+  document.getElementById('analyzeBody').innerHTML = html;
+}
 
 const fmt = n => (!n || n===0) ? '-' : Math.round(n).toLocaleString('ko-KR');
 const fmtMonth = ym => ym.slice(0,4)+'.'+ym.slice(4,6);
@@ -444,7 +695,7 @@ if (sectionEntries.length > 0) showSection(sectionEntries[0][0]);
 
 // ── Service Worker 등록 + 즉시 업데이트 ──
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js?v=20260529171816').then(reg => {
+  navigator.serviceWorker.register('./sw.js?v=20260602131936').then(reg => {
     reg.update();
     reg.addEventListener('updatefound', () => {
       const nw = reg.installing;
