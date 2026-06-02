@@ -75,7 +75,7 @@ main { padding:18px 22px 40px; }
   display:flex; align-items:center; gap:10px;
 }
 .table-title .small { font-size:11px; color:#7a8597; font-weight:500; }
-.table-scroll { overflow-x:auto; max-height:70vh; overflow-y:auto; }
+.table-scroll { overflow-x:auto; max-height:calc(100vh - 220px); overflow-y:auto; }
 
 table.data {
   width:100%; border-collapse:separate; border-spacing:0;
@@ -118,9 +118,13 @@ table.data td.total {
 table.data tr.total-row td {
   font-weight:700; background:#eef2f8 !important;
   border-top:2px solid #1A2D50;
+  position:sticky; z-index:2;
 }
+table.data tbody tr.total-row:last-child td { bottom:0; }
+table.data tbody tr.total-row:nth-last-child(2) td { bottom:30px; }
 table.data tr.total-row td:first-child {
   background:#eef2f8 !important; color:#1A2D50;
+  z-index:3;
 }
 
 .person-tag {
@@ -269,7 +273,7 @@ table.data tr:nth-child(even) td.gc-기타군   { background:#dde3e6; }
 
 <header>
   <h1>거래처처방현황 통합관리</h1>
-  <span class="meta">기준일: 2026-06-02 07:55 · 인천4팀 · 단위: 천원</span>
+  <span class="meta">기준일: 2026-06-02 10:54 · 인천4팀 · 단위: 천원</span>
   <span class="stat">5명 · 160곳 · 43품목 · 15개월</span>
 </header>
 
