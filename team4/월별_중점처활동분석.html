@@ -334,30 +334,22 @@ table.trend .arr { color:#cfd8e3; margin:0 4px; }
 
       <div class="flow-hdr">
         <h2>월별 흐름 분석</h2>
-        <span class="sub">4월 → 5월 활동 추이 · 임정빈팀</span>
+        <span class="sub" id="flowSub">전월 → 최신월 활동 추이 · 임정빈팀</span>
       </div>
 
       <!-- 팀 전체 KPI -->
       <div class="kpi-grid" id="kpiGrid"></div>
 
-      <!-- 핵심 인사이트 -->
-      <div class="insights">
+      <!-- 핵심 인사이트 (자동 생성 + 수동 메모) -->
+      <div class="insights" id="insightsBox">
         <h3>🔍 핵심 인사이트</h3>
-        <ul>
-          <li><strong>송창훈 사원 5월 전무</strong> — 보고일 18→0일, 방문 139→0건. 퇴직 영향으로 팀 총 방문건수 <span class="neg">670→469건 (−30%)</span>. 활동가능 4명 기준은 531→469건(−12%).</li>
-          <li><strong>임대현 대리 증량약속 폭증</strong> — 0건 → <span class="pos">13건</span>. 5월 핵심 활동축, 후속 실적 반영 모니터링 필요.</li>
-          <li><strong>전은성 부장 마케팅 활동 확대</strong> — 23 → <span class="pos">13건</span> (감소했지만 여전히 팀 최다). 식사 1→0, 처방약속 0→<span class="pos">2건</span> 신규.</li>
-          <li><strong>황태영 대리 마케팅 가속</strong> — 8 → <span class="pos">12건</span>(+50%). 방문률은 89%→86%로 소폭 하락, 숙박심포 1→2건.</li>
-          <li><strong>김혜성 사원 안정적 유지</strong> — 보고일 11→13일, 방문률 93%→90%. 마케팅 1→6건 증가 추세.</li>
-          <li><strong>식사 활동 급감</strong> — 7 → <span class="neg">2건</span>. 처방·증량약속(3→16건)으로 활동 무게중심 이동.</li>
-          <li><strong>웹심포 활용도 하락</strong> — 39 → <span class="neg">28건</span>(−28%). 숙박심포(9→8)는 유지.</li>
-        </ul>
+        <ul id="insightsList"></ul>
       </div>
 
       <!-- 담당자별 추이 표 -->
       <div class="section">
         <div class="sec-hdr">
-          <h3>담당자별 활동 추이 (4월 → 5월)</h3>
+          <h3 id="trendTitle">담당자별 활동 추이</h3>
           <span class="note">회색=전월 · 진하게=당월 · 배지=증감</span>
         </div>
         <div class="sec-body" style="overflow-x:auto">
@@ -390,6 +382,7 @@ const MONTH_DATA = {
     황태영: { 보고:21, 방문:143, 중점처:25, 목표:28, 식사:2, 마케팅:8,  처방:1, 증량:1, 숙박:1, 웹:9 },
     김혜성: { 보고:11, 방문:85,  중점처:28, 목표:30, 식사:0, 마케팅:1,  처방:0, 증량:0, 숙박:4, 웹:3 },
     송창훈: { 보고:18, 방문:139, 중점처:27, 목표:32, 식사:4, 마케팅:2,  처방:0, 증량:1, 숙박:1, 웹:7 },
+    메모: [],  // 월별 수동 인사이트 (자동 생성 외에 추가하고 싶은 코멘트)
   },
   '05': {
     팀: { 보고: 58, 방문: 469, 중점처: 109, 중점목표: 150, 식사: 2, 마케팅: 33, 처방약속: 2, 증량약속: 14, 숙박: 8, 웹: 28 },
@@ -398,6 +391,9 @@ const MONTH_DATA = {
     황태영: { 보고:16, 방문:119, 중점처:24, 목표:28, 식사:1, 마케팅:12, 처방:0, 증량:1,  숙박:2, 웹:8 },
     김혜성: { 보고:13, 방문:108, 중점처:27, 목표:30, 식사:0, 마케팅:6,  처방:0, 증량:0,  숙박:1, 웹:3 },
     송창훈: { 보고:0,  방문:0,   중점처:0,  목표:32, 식사:0, 마케팅:0,  처방:0, 증량:0,  숙박:1, 웹:2 },
+    메모: [
+      '송창훈 사원 5월 활동 전무 — 퇴직 영향. 팀 잔여 4명 기준 활동성은 안정 유지.',
+    ],
   },
 };
 
@@ -472,64 +468,167 @@ function arrowCell(prev, cur, isPct=false){
   return `<span class="num-prev">${prev2}</span><span class="arr">→</span><span class="num-cur">${cur2}</span>${deltaBadge(prev, cur, isPct)}`;
 }
 
-// KPI 카드
-const T0 = MONTH_DATA['04'].팀, T1 = MONTH_DATA['05'].팀;
-const kpis = [
-  { l:'보고일수',     prev:T0.보고,    cur:T1.보고 },
-  { l:'총 방문건수',  prev:T0.방문,    cur:T1.방문 },
-  { l:'중점처 방문',  prev:T0.중점처,  cur:T1.중점처, suf:` / ${T1.중점목표}` },
-  { l:'식사 활동',    prev:T0.식사,    cur:T1.식사 },
-  { l:'마케팅 활동',  prev:T0.마케팅,  cur:T1.마케팅 },
-  { l:'처방·증량약속', prev:T0.처방약속+T0.증량약속, cur:T1.처방약속+T1.증량약속 },
-  { l:'숙박심포',     prev:T0.숙박,    cur:T1.숙박 },
-  { l:'웹심포',       prev:T0.웹,      cur:T1.웹 },
-];
-document.getElementById('kpiGrid').innerHTML = kpis.map(k => {
-  const d = k.cur - k.prev;
-  const cls = d > 0 ? 'k-up' : (d < 0 ? 'k-down' : 'k-flat');
-  const sign = d > 0 ? '+' : '';
-  return `<div class="kpi">
-    <div class="k-label">${k.l}</div>
-    <div class="k-row">
-      <span class="k-prev">${k.prev}</span>
-      <span class="k-arr">→</span>
-      <span class="k-cur">${k.cur}${k.suf||''}</span>
-      <span class="k-delta ${cls}">${sign}${d}</span>
-    </div>
-  </div>`;
-}).join('');
+/* ───── 흐름 분석: 최신월 vs 전월 자동 추출 ───── */
+// MONTHS 배열에서 데이터가 있는 마지막 2개 월을 자동 선택
+const availMonths = MONTHS.filter(m => MONTH_DATA[m.key]);
+const HAS_FLOW = availMonths.length >= 2;
+const CUR  = HAS_FLOW ? availMonths[availMonths.length - 1] : null;
+const PREV = HAS_FLOW ? availMonths[availMonths.length - 2] : null;
 
-// 담당자별 추이 표
-const cols = [
-  { k:'보고',  l:'보고일수' },
-  { k:'방문',  l:'총 방문' },
-  { k:'중점처', l:'중점처 방문', rate:true },
-  { k:'식사',  l:'식사' },
-  { k:'마케팅', l:'마케팅' },
-  { k:'처방',  l:'처방약속' },
-  { k:'증량',  l:'증량약속' },
-  { k:'숙박',  l:'숙박심포' },
-  { k:'웹',    l:'웹심포' },
-];
-let th = `<tr><th class="mgr-col">담당자</th>` + cols.map(c => `<th>${c.l}</th>`).join('') + `</tr>`;
-let tb = ORDER.map(mgr => {
-  const p = MONTH_DATA['04'][mgr], c = MONTH_DATA['05'][mgr];
-  let row = `<td class="mgr"><span class="mgr-dot" style="background:${MGR_COLORS[mgr]}"></span>${mgr}</td>`;
-  row += cols.map(col => {
-    const pv = p[col.k], cv = c[col.k];
-    if (col.rate) {
-      const pr = Math.round(pv / p.목표 * 100);
-      const cr = Math.round(cv / c.목표 * 100);
-      return `<td>
-        <div>${arrowCell(pv, cv)}</div>
-        <div style="margin-top:3px">${arrowCell(pr, cr, true)}</div>
-      </td>`;
-    }
-    return `<td>${arrowCell(pv, cv)}</td>`;
+if (!HAS_FLOW) {
+  document.getElementById('flowSub').textContent = '비교할 전월 데이터가 없습니다.';
+  document.getElementById('kpiGrid').innerHTML = '';
+  document.getElementById('insightsBox').style.display = 'none';
+  document.getElementById('trendTable').innerHTML = '';
+} else {
+  const T0 = MONTH_DATA[PREV.key].팀, T1 = MONTH_DATA[CUR.key].팀;
+  document.getElementById('flowSub').textContent = `${PREV.label} → ${CUR.label} 활동 추이 · 임정빈팀`;
+  document.getElementById('trendTitle').textContent = `담당자별 활동 추이 (${PREV.label.replace('2026년 ','')} → ${CUR.label.replace('2026년 ','')})`;
+
+  // ── KPI 카드 (자동)
+  const kpis = [
+    { l:'보고일수',      prev:T0.보고,    cur:T1.보고 },
+    { l:'총 방문건수',   prev:T0.방문,    cur:T1.방문 },
+    { l:'중점처 방문',   prev:T0.중점처,  cur:T1.중점처, suf:` / ${T1.중점목표}` },
+    { l:'식사 활동',     prev:T0.식사,    cur:T1.식사 },
+    { l:'마케팅 활동',   prev:T0.마케팅,  cur:T1.마케팅 },
+    { l:'처방·증량약속', prev:T0.처방약속+T0.증량약속, cur:T1.처방약속+T1.증량약속 },
+    { l:'숙박심포',      prev:T0.숙박,    cur:T1.숙박 },
+    { l:'웹심포',        prev:T0.웹,      cur:T1.웹 },
+  ];
+  document.getElementById('kpiGrid').innerHTML = kpis.map(k => {
+    const d = k.cur - k.prev;
+    const cls = d > 0 ? 'k-up' : (d < 0 ? 'k-down' : 'k-flat');
+    const sign = d > 0 ? '+' : '';
+    return `<div class="kpi">
+      <div class="k-label">${k.l}</div>
+      <div class="k-row">
+        <span class="k-prev">${k.prev}</span>
+        <span class="k-arr">→</span>
+        <span class="k-cur">${k.cur}${k.suf||''}</span>
+        <span class="k-delta ${cls}">${sign}${d}</span>
+      </div>
+    </div>`;
   }).join('');
-  return `<tr>${row}</tr>`;
-}).join('');
-document.getElementById('trendTable').innerHTML = th + tb;
+
+  // ── 담당자별 추이 표 (자동)
+  const cols = [
+    { k:'방문',   l:'총 방문<br><span style="font-size:9px;color:#9aa5b8;font-weight:600">(일평균)</span>', avg:true },
+    { k:'중점처', l:'중점처 방문', rate:true },
+    { k:'식사',   l:'식사' },
+    { k:'마케팅', l:'마케팅' },
+    { k:'처방',   l:'처방약속' },
+    { k:'증량',   l:'증량약속' },
+    { k:'웹',     l:'웹심포' },
+  ];
+  let th = `<tr><th class="mgr-col">담당자</th>` + cols.map(c => `<th>${c.l}</th>`).join('') + `</tr>`;
+  let tb = ORDER.map(mgr => {
+    const p = MONTH_DATA[PREV.key][mgr], c = MONTH_DATA[CUR.key][mgr];
+    if (!p || !c) return '';
+    let row = `<td class="mgr"><span class="mgr-dot" style="background:${MGR_COLORS[mgr]}"></span>${mgr}</td>`;
+    row += cols.map(col => {
+      const pv = p[col.k], cv = c[col.k];
+      if (col.avg) {
+        const pa = p.보고 > 0 ? (pv / p.보고).toFixed(1) : '0.0';
+        const ca = c.보고 > 0 ? (cv / c.보고).toFixed(1) : '0.0';
+        return `<td>
+          <div>${arrowCell(pv, cv)}</div>
+          <div style="margin-top:3px;font-size:10px;color:#7a8597">
+            일평균 <span style="color:#9aa5b8">${pa}</span><span class="arr">→</span><span style="color:#1A2D50;font-weight:700">${ca}</span>
+          </div>
+        </td>`;
+      }
+      if (col.rate) {
+        const pr = p.목표 ? Math.round(pv / p.목표 * 100) : 0;
+        const cr = c.목표 ? Math.round(cv / c.목표 * 100) : 0;
+        return `<td>
+          <div>${arrowCell(pv, cv)}</div>
+          <div style="margin-top:3px">${arrowCell(pr, cr, true)}</div>
+        </td>`;
+      }
+      return `<td>${arrowCell(pv, cv)}</td>`;
+    }).join('');
+    return `<tr>${row}</tr>`;
+  }).join('');
+  document.getElementById('trendTable').innerHTML = th + tb;
+
+  /* ───── 룰 기반 자동 인사이트 ───── */
+  const insights = [];
+  const labelCur = CUR.label.replace('2026년 ',''), labelPrev = PREV.label.replace('2026년 ','');
+  const pct = (a, b) => b === 0 ? (a === 0 ? 0 : 999) : Math.round((a - b) / b * 100);
+  const fmtPct = p => (p > 0 ? '+' : '') + p + '%';
+  const cls = d => d > 0 ? 'pos' : (d < 0 ? 'neg' : '');
+
+  // [팀 전체] 총 방문 변화
+  {
+    const d = T1.방문 - T0.방문, p = pct(T1.방문, T0.방문);
+    if (Math.abs(p) >= 10) {
+      insights.push(`<strong>팀 총 방문건수 ${d > 0 ? '증가' : '감소'}</strong> — ${T0.방문} → <span class="${cls(d)}">${T1.방문}건 (${fmtPct(p)})</span>.`);
+    }
+  }
+  // [팀 전체] 중점처 방문률
+  {
+    const r0 = Math.round(T0.중점처 / T0.중점목표 * 100);
+    const r1 = Math.round(T1.중점처 / T1.중점목표 * 100);
+    if (Math.abs(r1 - r0) >= 5) {
+      insights.push(`<strong>중점처 방문률 변화</strong> — ${r0}% → <span class="${cls(r1-r0)}">${r1}% (${(r1-r0>0?'+':'')}${r1-r0}%p)</span>, ${T0.중점처}/${T0.중점목표} → ${T1.중점처}/${T1.중점목표}.`);
+    }
+  }
+
+  // [담당자별] 활동 0건 감지
+  ORDER.forEach(mgr => {
+    const p = MONTH_DATA[PREV.key][mgr], c = MONTH_DATA[CUR.key][mgr];
+    if (!p || !c) return;
+    if (p.보고 > 0 && c.보고 === 0) {
+      insights.push(`<strong>${mgr} ${labelCur} 활동 전무</strong> — 보고일 ${p.보고}→0일, 방문 ${p.방문}→0건. 사유 확인 필요.`);
+    }
+  });
+  // [담당자별] 약속 폭증 (3건 이상 증가)
+  ORDER.forEach(mgr => {
+    const p = MONTH_DATA[PREV.key][mgr], c = MONTH_DATA[CUR.key][mgr];
+    if (!p || !c) return;
+    const promiseDelta = (c.처방 + c.증량) - (p.처방 + p.증량);
+    if (promiseDelta >= 3) {
+      const detail = [];
+      if (c.처방 - p.처방 !== 0) detail.push(`처방 ${p.처방}→${c.처방}`);
+      if (c.증량 - p.증량 !== 0) detail.push(`증량 ${p.증량}→${c.증량}`);
+      insights.push(`<strong>${mgr} 처방·증량약속 폭증</strong> — <span class="pos">+${promiseDelta}건</span> (${detail.join(', ')}). 후속 실적 모니터링 필요.`);
+    }
+  });
+  // [담당자별] 마케팅 큰 폭 증가/감소 (±5건 이상)
+  ORDER.forEach(mgr => {
+    const p = MONTH_DATA[PREV.key][mgr], c = MONTH_DATA[CUR.key][mgr];
+    if (!p || !c) return;
+    const d = c.마케팅 - p.마케팅;
+    if (Math.abs(d) >= 5) {
+      insights.push(`<strong>${mgr} 마케팅 활동 ${d>0?'확대':'축소'}</strong> — ${p.마케팅} → <span class="${cls(d)}">${c.마케팅}건 (${d>0?'+':''}${d})</span>.`);
+    }
+  });
+
+  // [팀 전체] 식사/약속/심포 큰 변동
+  [
+    { k:'식사',  l:'식사 활동',  th:3 },
+    { k:'마케팅', l:'마케팅 활동', th:8 },
+    { k:'숙박',  l:'숙박심포',   th:3 },
+    { k:'웹',    l:'웹심포',     th:8 },
+  ].forEach(({k,l,th:thr}) => {
+    const pv = T0[k===('숙박')?'숙박':(k==='웹'?'웹':k)], cv = T1[k===('숙박')?'숙박':(k==='웹'?'웹':k)];
+    const d = cv - pv;
+    if (Math.abs(d) >= thr) {
+      insights.push(`<strong>${l} ${d>0?'증가':'감소'}</strong> — ${pv} → <span class="${cls(d)}">${cv}건 (${d>0?'+':''}${d})</span>.`);
+    }
+  });
+
+  // 수동 메모 추가
+  (MONTH_DATA[CUR.key].메모 || []).forEach(m => insights.push(m));
+
+  // 인사이트가 0개면 안내
+  if (insights.length === 0) {
+    insights.push('<em style="color:#7a8597">전월 대비 의미있는 변동 없음 — 활동성 안정 유지.</em>');
+  }
+
+  document.getElementById('insightsList').innerHTML = insights.map(t => `<li>${t}</li>`).join('');
+}
 
 /* ───── 해시 라우팅 ───── */
 const initial = (location.hash || '').replace('#','');
