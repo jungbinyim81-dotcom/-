@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1A2D50">
+<title>월별 중점처 활동분석 — 일병4팀</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+html, body { height:100%; }
+body {
+  font-family:'Pretendard','맑은 고딕','Malgun Gothic',sans-serif;
+  background:#f4f6fa; color:#222;
+  display:flex; flex-direction:column; height:100vh; overflow:hidden;
+}
+
+/* ───── 상단 헤더 (일병4팀 통합분석 톤) ───── */
+header.topbar {
+  background:linear-gradient(90deg,#1A2D50 0%,#243962 100%);
+  color:#fff;
+  padding:0 22px;
+  height:56px;
+  display:flex; align-items:center; gap:14px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.18);
+  flex-shrink:0; z-index:200;
+}
+.brand { display:flex; align-items:center; gap:12px; }
+.brand .logo {
+  width:36px; height:36px;
+  background:linear-gradient(135deg,#4a90d9,#2c5f9e);
+  border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:800; color:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,0.25);
+  letter-spacing:-.5px;
+}
+.brand .tit { font-size:17px; font-weight:700; letter-spacing:-.3px; }
+.brand .sub { font-size:11px; color:#a8b8cf; margin-top:2px; }
+.topbar .spacer { flex:1; }
+.topbar .meta {
+  font-size:12px; color:#b8c4d6;
+  display:flex; align-items:center; gap:18px;
+}
+.topbar .meta .item .l { color:#7e8da3; font-size:10px; display:block; }
+.topbar .meta .item .v { color:#fff; font-weight:600; font-size:12px; }
+.topbar .badge {
+  background:rgba(255,255,255,0.16);
+  padding:4px 12px; border-radius:12px;
+  font-size:11px; font-weight:700; color:#fff;
+}
+
+/* ───── 월 선택 탭 바 ───── */
+.month-bar {
+  background:#fff;
+  border-bottom:1px solid #e5e9f0;
+  padding:0 22px;
+  display:flex; align-items:center; gap:6px;
+  flex-shrink:0;
+  box-shadow:0 1px 2px rgba(0,0,0,0.03);
+  height:46px;
+}
+.month-bar .label {
+  font-size:11px; font-weight:700;
+  color:#7a8597; letter-spacing:1px;
+  text-transform:uppercase;
+  margin-right:8px;
+}
+.month-tab {
+  padding:8px 18px;
+  cursor:pointer;
+  font-size:13px; font-weight:600;
+  color:#4a5568;
+  border-radius:8px 8px 0 0;
+  border-bottom:3px solid transparent;
+  transition:all 0.15s;
+  display:inline-flex; align-items:center; gap:6px;
+}
+.month-tab:hover { background:#f4f6fa; color:#1A2D50; }
+.month-tab.active {
+  color:#1A2D50;
+  border-bottom-color:#1A2D50;
+  background:#eef2f8;
+  font-weight:700;
+}
+.month-tab .dot {
+  width:6px; height:6px; border-radius:50%;
+  background:#cfd8e3;
+}
+.month-tab.active .dot { background:#1A2D50; }
+
+.month-bar .info {
+  margin-left:auto;
+  font-size:11px; color:#7a8597;
+  display:flex; align-items:center; gap:14px;
+}
+.month-bar .info .tag {
+  background:#eef2f8; color:#1A2D50;
+  padding:3px 9px; border-radius:10px;
+  font-size:10px; font-weight:700;
+}
+
+/* ───── 본문 (iframe) ───── */
+.content {
+  flex:1; position:relative; overflow:hidden;
+  background:#f4f6fa;
+}
+.content iframe {
+  width:100%; height:100%; border:none;
+  background:#fff;
+  display:none;
+}
+.content iframe.active { display:block; }
+
+.loading {
+  position:absolute; inset:0;
+  background:rgba(244,246,250,0.85);
+  display:none; align-items:center; justify-content:center;
+  z-index:50;
+}
+.loading.show { display:flex; }
+.spinner {
+  width:36px; height:36px;
+  border:3px solid #e5e9f0;
+  border-top-color:#1A2D50;
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ───── 반응형 ───── */
+@media (max-width:720px) {
+  .topbar { padding:0 14px; }
+  .topbar .meta { display:none; }
+  .brand .sub { display:none; }
+  .month-bar { padding:0 14px; gap:4px; }
+  .month-bar .label { display:none; }
+  .month-bar .info { display:none; }
+  .month-tab { padding:8px 14px; font-size:12px; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">월</div>
+    <div>
+      <div class="tit">월별 중점처 활동분석</div>
+      <div class="sub">임정빈팀 · 방문·마케팅 기반 팔로업</div>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <div class="meta">
+    <div class="item">
+      <span class="l">팀원</span>
+      <span class="v">전은성 · 임대현 · 황태영 · 김혜성</span>
+    </div>
+    <div class="item">
+      <span class="l">중점처</span>
+      <span class="v">150개</span>
+    </div>
+  </div>
+  <div class="badge">★ 활동 기반</div>
+</header>
+
+<div class="month-bar">
+  <span class="label">월 선택</span>
+  <div class="month-tab" data-month="04"><span class="dot"></span>4월</div>
+  <div class="month-tab active" data-month="05"><span class="dot"></span>5월</div>
+  <div class="info">
+    <span class="tag">담당자별 탭은 본문 상단에서 선택</span>
+  </div>
+</div>
+
+<div class="content">
+  <div class="loading" id="loading"><div class="spinner"></div></div>
+  <iframe id="frame-04" src="4월_중점처활동분석.html" title="4월 중점처 활동분석" loading="lazy"></iframe>
+  <iframe id="frame-05" src="5월_중점처활동분석.html" title="5월 중점처 활동분석" class="active"></iframe>
+</div>
+
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.month-tab');
+  const frames = {
+    '04': document.getElementById('frame-04'),
+    '05': document.getElementById('frame-05')
+  };
+  const loading = document.getElementById('loading');
+  let loaded = { '04': false, '05': true }; // 초기 활성 = 5월
+
+  // iframe 첫 로드 후 로딩 표시 해제
+  frames['05'].addEventListener('load', ()=> { loaded['05'] = true; loading.classList.remove('show'); });
+  frames['04'].addEventListener('load', ()=> { loaded['04'] = true; loading.classList.remove('show'); });
+
+  function activate(month){
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.month === month));
+    Object.entries(frames).forEach(([m, f]) => f.classList.toggle('active', m === month));
+    if (!loaded[month]) {
+      loading.classList.add('show');
+      setTimeout(()=> loading.classList.remove('show'), 5000); // 안전장치
+    }
+    location.hash = month;
+  }
+
+  tabs.forEach(t => t.addEventListener('click', ()=> activate(t.dataset.month)));
+
+  // 해시로 진입 (예: #04)
+  const initial = (location.hash || '').replace('#','');
+  if (initial === '04' || initial === '05') activate(initial);
+})();
+</script>
+</body>
+</html>
