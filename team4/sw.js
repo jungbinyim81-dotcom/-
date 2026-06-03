@@ -1,4 +1,4 @@
-const CACHE_NAME = "team4-20260602-1337";
+const CACHE_NAME = "team4-20260604-0841";
 const ASSETS = [
   "./",
   "./index.html",
@@ -7,6 +7,9 @@ const ASSETS = [
   "./거래처처방현황통합관리_4팀.html",
   "./API_실적분석.html",
   "./팀개원처현황.html",
+  "./월별_중점처활동분석.html",
+  "./4월_중점처활동분석.html",
+  "./5월_중점처활동분석.html",
   "./RnP규정.html",
   "./RnP결과.html"
 ];
