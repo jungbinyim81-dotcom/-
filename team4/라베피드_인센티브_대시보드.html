@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제104기 4~6월 라베피드정 인센티브 (일반병원사업부)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; color: #222; font-size: 13px; }
+.header { background: linear-gradient(135deg, #6c3483, #a569bd); color: white; padding: 18px 24px; }
+.header h1 { font-size: 20px; font-weight: 700; }
+.header p { font-size: 12px; margin-top: 5px; opacity: 0.88; }
+.info-box { display: flex; gap: 12px; padding: 14px 24px; background: #fff; border-bottom: 1px solid #dde; flex-wrap: wrap; }
+.info-card { background: #f7f9fc; border: 1px solid #d0d8e8; border-radius: 8px; padding: 10px 16px; flex: 1; min-width: 160px; }
+.info-card .label { font-size: 11px; color: #666; margin-bottom: 3px; }
+.info-card .value { font-size: 13px; font-weight: 600; color: #6c3483; }
+.tabs { display: flex; background: #fff; padding: 0 24px; border-bottom: 2px solid #dde; gap: 4px; }
+.tab { padding: 12px 24px; cursor: pointer; font-size: 14px; font-weight: 600; color: #666; border-bottom: 3px solid transparent; transition: all 0.2s; }
+.tab:hover { color: #6c3483; background: #f8f4fa; }
+.tab.active { color: #6c3483; border-bottom-color: #6c3483; background: #f4ecf7; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.award-box { display: flex; gap: 8px; padding: 10px 24px 12px; background: #fff; border-bottom: 2px solid #dde; flex-wrap: wrap; }
+.award-card { border-radius: 8px; padding: 8px 14px; flex: 1; min-width: 140px; }
+.award-card.t1 { background: linear-gradient(135deg, #fef9e7, #fdebd0); border: 2px solid #f9a825; }
+.award-card.t2 { background: linear-gradient(135deg, #eaf4fb, #d6eaf8); border: 2px solid #5dade2; }
+.award-card.t3 { background: linear-gradient(135deg, #e8f8f5, #d1f2eb); border: 2px solid #48c9b0; }
+.award-card.t4 { background: linear-gradient(135deg, #fdf2e9, #fae5d3); border: 2px solid #eb984e; }
+.award-rank { font-size: 14px; font-weight: 700; }
+.award-card.t1 .award-rank { color: #b7770d; }
+.award-card.t2 .award-rank { color: #1a6fa8; }
+.award-card.t3 .award-rank { color: #117864; }
+.award-card.t4 .award-rank { color: #af601a; }
+.award-amount { font-size: 14px; font-weight: 600; margin-top: 2px; }
+.award-cond { font-size: 10px; color: #555; margin-top: 3px; }
+.controls { padding: 10px 24px; background: #fff; border-bottom: 1px solid #dde; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.controls button { padding: 7px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: background 0.2s; }
+.btn-calc { background: #6c3483; color: white; }
+.btn-calc:hover { background: #4a235a; }
+.btn-reset { background: #e74c3c; color: white; }
+.btn-reset:hover { background: #c0392b; }
+.btn-filter { background: #16a085; color: white; }
+.btn-filter:hover { background: #117a65; }
+.status-bar { background: #f4ecf7; border-left: 4px solid #6c3483; padding: 8px 16px; margin: 10px 24px; border-radius: 4px; font-size: 12px; color: #4a235a; }
+.table-wrap { padding: 0 24px 30px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+thead tr.main-head { background: #6c3483; color: white; }
+thead tr.sub-head { background: #884ea0; color: white; }
+thead th { padding: 9px 8px; text-align: center; font-size: 12px; white-space: nowrap; border-right: 1px solid rgba(255,255,255,0.15); }
+thead th:last-child { border-right: none; }
+.th-input { background: #6c3483 !important; }
+.th-avg { background: #1a7a4a !important; }
+.th-total { background: #117864 !important; }
+.th-award { background: #922b21 !important; }
+.th-meta { background: #2874a6 !important; }
+tbody tr { border-bottom: 1px solid #e8ecf0; }
+tbody tr:hover { filter: brightness(0.96); }
+tbody tr.t1 { background: #fef9e7; }
+tbody tr.t2 { background: #eaf4fb; }
+tbody tr.t3 { background: #e8f8f5; }
+tbody tr.t4 { background: #fdf2e9; }
+tbody tr.no-award { background: #fafafa; }
+tbody tr.ours { background: #fff9c4 !important; border-left: 4px solid #f9a825; }
+tbody tr.our-jijeom { background: #fffaf0; border-left: 3px solid #eb984e; }
+td { padding: 7px 8px; text-align: center; font-size: 12px; vertical-align: middle; }
+td.name-col { text-align: left; font-weight: 600; padding-left: 12px; min-width: 65px; }
+td.rank-col { font-weight: 700; font-size: 14px; min-width: 48px; }
+td.rank-col.t1 { color: #b7770d; }
+td.rank-col.t2 { color: #1a6fa8; }
+td.rank-col.t3 { color: #117864; }
+td.rank-col.t4 { color: #af601a; }
+td.total-col { background: #f5eef8; font-weight: 700; color: #6c3483; }
+td.avg-col { background: #e8f8f5; font-weight: 600; color: #117864; }
+input[type=number] { width: 100px; padding: 5px 6px; border: 1px solid #b0c4de; border-radius: 4px; text-align: right; font-size: 12px; color: #222; background: #f8fbff; }
+input[type=number]:focus { outline: none; border-color: #6c3483; background: #fff; box-shadow: 0 0 0 2px rgba(108,52,131,0.2); }
+.award-badge { display: inline-block; padding: 4px 9px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+.badge-t1 { background: #f9a825; color: #fff; }
+.badge-t2 { background: #5dade2; color: #fff; }
+.badge-t3 { background: #48c9b0; color: #fff; }
+.badge-t4 { background: #eb984e; color: #fff; }
+.badge-100 { background: #5dade2; color: #fff; }
+.badge-none { background: #ddd; color: #888; }
+.badge-fail { background: #e74c3c; color: #fff; }
+.num { font-family: "Courier New", monospace; }
+.region-tag { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; margin-right: 4px; background: #ecf0f1; color: #2c3e50; }
+.region-tag.bu1 { background: #fadbd8; color: #922b21; }
+.region-tag.bu2 { background: #d4e6f1; color: #1a5276; }
+.region-tag.bu3 { background: #d1f2eb; color: #117864; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📊 제104기 4~6월 라베피드정 인센티브 대시보드 (일반병원사업부)</h1>
+  <p>평가기간: 2026년 4~6월 &nbsp;|&nbsp; 평가방법: <b>합산 판매액 순위</b> (성장액 아님, 절대 판매액!) &nbsp;|&nbsp; 데이터 출처: 평가실적RAW데이터 (자동임베드)</p>
+</div>
+
+<div class="info-box">
+  <div class="info-card"><div class="label">평가품목</div><div class="value">라베피드정</div></div>
+  <div class="info-card"><div class="label">평가기간</div><div class="value">2026년 4월 ~ 6월 (3개월)</div></div>
+  <div class="info-card"><div class="label">평가방법</div><div class="value">평가기간 합산 판매액 순위</div></div>
+  <div class="info-card"><div class="label">담당자 시상</div><div class="value">총 30명 (4단계: 200/150/100/50만)</div></div>
+  <div class="info-card"><div class="label">현재 상태</div><div class="value">4월 잠정 반영 (담당자 154명 / 부지점장 50팀 / 지점장 13지점 자동 임베드)</div></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" id="tab-dam" onclick="showTab('dam')">👤 담당자 (258명)</div>
+  <div class="tab" id="tab-buji" onclick="showTab('buji')">👔 부지점장 (56명)</div>
+  <div class="tab" id="tab-jum" onclick="showTab('jum')">👑 지점장 (13명)</div>
+</div>
+
+<!-- 담당자 탭 -->
+<div class="tab-content active" id="content-dam">
+  <div class="award-box">
+    <div class="award-card t1"><div class="award-rank">🥇 1~5위</div><div class="award-amount">200만원 물품</div><div class="award-cond">합산 판매액 200만원 이상</div></div>
+    <div class="award-card t2"><div class="award-rank">🥈 6~10위</div><div class="award-amount">150만원 물품</div><div class="award-cond">합산 판매액 150만원 이상</div></div>
+    <div class="award-card t3"><div class="award-rank">🥉 11~15위</div><div class="award-amount">100만원 물품</div><div class="award-cond">합산 판매액 100만원 이상</div></div>
+    <div class="award-card t4"><div class="award-rank">🏅 16~30위</div><div class="award-amount">50만원 물품</div><div class="award-cond">합산 판매액 50만원 이상</div></div>
+  </div>
+  <div class="controls">
+    <button class="btn-calc" onclick="calcDam()">📊 순위 계산</button>
+    <button class="btn-filter" onclick="toggleOursDam()" id="filterBtn">🌟 우리팀만 보기</button>
+    <button class="btn-reset" onclick="resetDam()">🔄 초기화</button>
+    <span style="font-size:12px;color:#666;">4~6월 판매액은 평가raw에서 자동 채움 / 0이면 입력값으로 시뮬레이션 가능</span>
+  </div>
+  <div class="status-bar" id="statusDam">💡 4월 실적 자동 임베드 완료. 5·6월 추가 시 [순위 계산]으로 4단계 시상 자동 판정.</div>
+  <div class="table-wrap">
+    <table id="tableDam">
+      <thead>
+        <tr class="main-head">
+          <th rowspan="2" style="width:50px;">순위</th>
+          <th rowspan="2" style="width:90px;">담당자</th>
+          <th colspan="3" class="th-input">월별 판매액 (원)</th>
+          <th rowspan="2" class="th-total" style="width:130px;">합산 판매액</th>
+          <th rowspan="2" class="th-award" style="width:140px;">시상</th>
+        </tr>
+        <tr class="sub-head">
+          <th class="th-input" style="width:115px;">4월</th>
+          <th class="th-input" style="width:115px;">5월</th>
+          <th class="th-input" style="width:115px;">6월</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyDam"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 부지점장 탭 -->
+<div class="tab-content" id="content-buji">
+  <div class="award-box">
+    <div class="award-card t2"><div class="award-rank">🎖️ 1~8위</div><div class="award-amount">100만원 물품</div><div class="award-cond">팀 1인당 분기 판매액 100만원 이상 (T.O 반영)</div></div>
+  </div>
+  <div class="controls">
+    <button class="btn-calc" onclick="calcBuji()">📊 순위 계산</button>
+    <button class="btn-filter" onclick="toggleOursBuji()" id="filterBtnBuji">🌟 우리팀(임정빈팀)만 보기</button>
+    <button class="btn-reset" onclick="resetBuji()">🔄 초기화</button>
+    <span style="font-size:12px;color:#666;">전국 56팀 명단·T.O 자동 / 4월 팀합산은 평가raw에서 자동 임베드</span>
+  </div>
+  <div class="status-bar" id="statusBuji">💡 56팀 4월 실적 자동 임베드. 5·6월 입력 후 [순위 계산]. ★ 임정빈팀=우리팀</div>
+  <div class="table-wrap">
+    <table id="tableBuji">
+      <thead>
+        <tr class="main-head">
+          <th rowspan="2" style="width:50px;">순위</th>
+          <th rowspan="2" style="width:80px;">부</th>
+          <th rowspan="2" style="width:110px;">지점</th>
+          <th rowspan="2" style="width:90px;">부지점장</th>
+          <th rowspan="2" class="th-meta" style="width:70px;">팀 T.O</th>
+          <th colspan="3" class="th-input">월별 팀 합산실적 (원)</th>
+          <th colspan="3" class="th-avg">월별 1인당 평균</th>
+          <th rowspan="2" class="th-total" style="width:130px;">분기누적 1인당</th>
+          <th rowspan="2" class="th-award" style="width:120px;">시상</th>
+        </tr>
+        <tr class="sub-head">
+          <th class="th-input" style="width:110px;">4월</th>
+          <th class="th-input" style="width:110px;">5월</th>
+          <th class="th-input" style="width:110px;">6월</th>
+          <th class="th-avg" style="width:100px;">4월</th>
+          <th class="th-avg" style="width:100px;">5월</th>
+          <th class="th-avg" style="width:100px;">6월</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyBuji"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 지점장 탭 -->
+<div class="tab-content" id="content-jum">
+  <div class="award-box">
+    <div class="award-card t1"><div class="award-rank">🥇 1~2위</div><div class="award-amount">100만원 물품</div><div class="award-cond">지점 1인당 분기 판매액 100만원 이상 (T.O 반영)</div></div>
+  </div>
+  <div class="controls">
+    <button class="btn-calc" onclick="calcJum()">📊 순위 계산</button>
+    <button class="btn-reset" onclick="resetJum()">🔄 초기화</button>
+    <span style="font-size:12px;color:#666;">전국 13지점 명단·T.O 자동 / 4월 지점합산은 평가raw에서 자동 임베드</span>
+  </div>
+  <div class="status-bar" id="statusJum">💡 13지점 4월 실적 자동 임베드. ★ 인천지점=우리 지점</div>
+  <div class="table-wrap">
+    <table id="tableJum">
+      <thead>
+        <tr class="main-head">
+          <th rowspan="2" style="width:50px;">순위</th>
+          <th rowspan="2" style="width:80px;">부</th>
+          <th rowspan="2" style="width:140px;">지점장</th>
+          <th rowspan="2" class="th-meta" style="width:70px;">지점 T.O</th>
+          <th colspan="3" class="th-input">월별 지점 합산실적 (원)</th>
+          <th colspan="3" class="th-avg">월별 1인당 평균</th>
+          <th rowspan="2" class="th-total" style="width:130px;">분기누적 1인당</th>
+          <th rowspan="2" class="th-award" style="width:120px;">시상</th>
+        </tr>
+        <tr class="sub-head">
+          <th class="th-input" style="width:110px;">4월</th>
+          <th class="th-input" style="width:110px;">5월</th>
+          <th class="th-input" style="width:110px;">6월</th>
+          <th class="th-avg" style="width:100px;">4월</th>
+          <th class="th-avg" style="width:100px;">5월</th>
+          <th class="th-avg" style="width:100px;">6월</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyJum"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const rawData = [{"name": "이진욱", "ours": false}, {"name": "박상은", "ours": false}, {"name": "김정민", "ours": false}, {"name": "한대성", "ours": false}, {"name": "임주영", "ours": false}, {"name": "이지황", "ours": false}, {"name": "이태희", "ours": false}, {"name": "김동엽", "ours": false}, {"name": "오승훈", "ours": false}, {"name": "박진운", "ours": false}, {"name": "이하림", "ours": false}, {"name": "정승욱", "ours": false}, {"name": "임태양", "ours": false}, {"name": "안호선", "ours": false}, {"name": "송봉건", "ours": false}, {"name": "박규태", "ours": false}, {"name": "최병호", "ours": false}, {"name": "김시우", "ours": false}, {"name": "정재학", "ours": false}, {"name": "김충만", "ours": false}, {"name": "견봉기", "ours": false}, {"name": "장원석", "ours": false}, {"name": "김상연", "ours": false}, {"name": "구동현", "ours": false}, {"name": "강태욱", "ours": false}, {"name": "김우진", "ours": false}, {"name": "김정현2", "ours": false}, {"name": "최태영", "ours": false}, {"name": "박경순", "ours": false}, {"name": "김상돈", "ours": false}, {"name": "노찬열", "ours": false}, {"name": "서민영", "ours": false}, {"name": "오현록", "ours": false}, {"name": "홍정우", "ours": false}, {"name": "최희성", "ours": false}, {"name": "홍인기", "ours": false}, {"name": "주영광", "ours": false}, {"name": "김동수", "ours": false}, {"name": "조세호", "ours": false, "m4": 121110}, {"name": "황태영", "ours": true}, {"name": "함성보", "ours": false}, {"name": "이현빈", "ours": false}, {"name": "김윤섭", "ours": false}, {"name": "이세현", "ours": false}, {"name": "박형호", "ours": false}, {"name": "김다영", "ours": false}, {"name": "박재민", "ours": false}, {"name": "이용준", "ours": false}, {"name": "이재균", "ours": false}, {"name": "임재열", "ours": false}, {"name": "조치호", "ours": false}, {"name": "김홍기", "ours": false}, {"name": "이상협", "ours": false}, {"name": "임대현", "ours": true}, {"name": "곽기호", "ours": false}, {"name": "김선욱", "ours": false}, {"name": "홍윤영", "ours": false}, {"name": "김정현1", "ours": false}, {"name": "강민기", "ours": false}, {"name": "남석진", "ours": false}, {"name": "이재성", "ours": false, "m4": 137200}, {"name": "이가야", "ours": false}, {"name": "정의진", "ours": false}, {"name": "박교준", "ours": false}, {"name": "이채혁", "ours": false}, {"name": "이지우", "ours": false}, {"name": "강언필", "ours": false}, {"name": "서민우", "ours": false}, {"name": "강대언", "ours": false}, {"name": "박수호", "ours": false}, {"name": "유다현", "ours": false}, {"name": "이강", "ours": false}, {"name": "소성진", "ours": false}, {"name": "안경호", "ours": false}, {"name": "강현도", "ours": false}, {"name": "김창현", "ours": false}, {"name": "이상준", "ours": false}, {"name": "강정모", "ours": false}, {"name": "김현식", "ours": false}, {"name": "최재혁2", "ours": false, "m4": 403700}, {"name": "최우영", "ours": false}, {"name": "문희민", "ours": false}, {"name": "김한주", "ours": false}, {"name": "심재완", "ours": false}, {"name": "채윤조", "ours": false}, {"name": "조우진", "ours": false}, {"name": "황유석", "ours": false}, {"name": "김희성", "ours": false}, {"name": "김경훈", "ours": false}, {"name": "김강희", "ours": false}, {"name": "이석우", "ours": false}, {"name": "이정범", "ours": false}, {"name": "최원진", "ours": false}, {"name": "이동민", "ours": false}, {"name": "부혁훈", "ours": false}, {"name": "김병국", "ours": false}, {"name": "박승호", "ours": false}, {"name": "신진범", "ours": false}, {"name": "안재환", "ours": false}, {"name": "이승언", "ours": false}, {"name": "이병훈", "ours": false}, {"name": "최문규", "ours": false}, {"name": "방희현", "ours": false}, {"name": "김희창", "ours": false}, {"name": "문지환", "ours": false}, {"name": "박옥호", "ours": false}, {"name": "최경원", "ours": false}, {"name": "양태환", "ours": false}, {"name": "정상균", "ours": false}, {"name": "정다운", "ours": false}, {"name": "이종훈", "ours": false}, {"name": "이승재", "ours": false}, {"name": "김우현", "ours": false, "m4": 79950}, {"name": "진영빈", "ours": false}, {"name": "고재백", "ours": false}, {"name": "김형일", "ours": false}, {"name": "김재성", "ours": false, "m4": 41160}, {"name": "곽승훈", "ours": false}, {"name": "김수민", "ours": false}, {"name": "장현승", "ours": false}, {"name": "오정현", "ours": false}, {"name": "이윤실", "ours": false}, {"name": "임태오", "ours": false}, {"name": "최유미", "ours": false}, {"name": "정의호", "ours": false}, {"name": "양영빈", "ours": false}, {"name": "박성호", "ours": false}, {"name": "이재선", "ours": false}, {"name": "구도윤", "ours": false}, {"name": "김철현", "ours": false}, {"name": "강성민", "ours": false, "m4": 40370}, {"name": "홍상식", "ours": false}, {"name": "김현정", "ours": false}, {"name": "이영진2", "ours": false}, {"name": "권원근", "ours": false}, {"name": "이광규", "ours": false}, {"name": "한수봉", "ours": false}, {"name": "김영우", "ours": false}, {"name": "김판섭", "ours": false}, {"name": "이솔", "ours": false}, {"name": "이정수", "ours": false}, {"name": "한진", "ours": false}, {"name": "임종환", "ours": false}, {"name": "안성용", "ours": false}, {"name": "이신영", "ours": false}, {"name": "민소희", "ours": false}, {"name": "임병수", "ours": false}, {"name": "김주호", "ours": false}, {"name": "이하늘", "ours": false}, {"name": "문병선", "ours": false}, {"name": "신상용", "ours": false}, {"name": "이은호", "ours": false}, {"name": "전민규", "ours": false}, {"name": "서윤", "ours": false}, {"name": "김국일", "ours": false}, {"name": "차동현", "ours": false}, {"name": "이종현", "ours": false}, {"name": "진형진", "ours": false}, {"name": "이태환", "ours": false}, {"name": "유종우", "ours": false}, {"name": "최한수", "ours": false}, {"name": "전은성", "ours": true}, {"name": "임광수", "ours": false}, {"name": "원창식", "ours": false}, {"name": "박성열", "ours": false}, {"name": "임현묵", "ours": false, "m4": 54880}, {"name": "신승환", "ours": false}, {"name": "박기홍", "ours": false}, {"name": "박성기", "ours": false}, {"name": "추승우", "ours": false}, {"name": "장효집", "ours": false}, {"name": "김종영", "ours": false}, {"name": "상윤철", "ours": false}, {"name": "권대업", "ours": false}, {"name": "유석만", "ours": false}, {"name": "강철진", "ours": false}, {"name": "조태익", "ours": false}, {"name": "유혁기", "ours": false}, {"name": "전상욱", "ours": false}, {"name": "정의형", "ours": false}, {"name": "이든솔", "ours": false}, {"name": "유승호", "ours": false}, {"name": "김진율", "ours": false}, {"name": "강예닮", "ours": false}, {"name": "염승철", "ours": false}, {"name": "최인호", "ours": false}, {"name": "이연호", "ours": false}, {"name": "정재련", "ours": false}, {"name": "이승현", "ours": false}, {"name": "조재우", "ours": false}, {"name": "김태한", "ours": false}, {"name": "금덕훈", "ours": false, "m4": 79950}, {"name": "이성우", "ours": false}, {"name": "임영식", "ours": false}, {"name": "황성묵", "ours": false}, {"name": "김태헌", "ours": false}, {"name": "홍창회", "ours": false}, {"name": "류현욱", "ours": false}, {"name": "길성진", "ours": false}, {"name": "원혁빈", "ours": false}, {"name": "김준현", "ours": false}, {"name": "기창완", "ours": false}, {"name": "이재익", "ours": false}, {"name": "왕경표", "ours": false}, {"name": "권종협", "ours": false}, {"name": "김승덕", "ours": false}, {"name": "배상아", "ours": false}, {"name": "서상철", "ours": false}, {"name": "오승호", "ours": false}, {"name": "최영준", "ours": false}, {"name": "손영진", "ours": false}, {"name": "남동희", "ours": false}, {"name": "장경환", "ours": false}, {"name": "이동익", "ours": false}, {"name": "박성훈", "ours": false}, {"name": "이운오", "ours": false}, {"name": "황지호", "ours": false}, {"name": "여종호", "ours": false}, {"name": "김경민", "ours": false}, {"name": "이용목", "ours": false}, {"name": "김혜성", "ours": true}, {"name": "이창희", "ours": false}, {"name": "권경욱", "ours": false}, {"name": "강재구", "ours": false}, {"name": "성동현", "ours": false}, {"name": "박은엽", "ours": false}, {"name": "이영진1", "ours": false}, {"name": "나홍주", "ours": false}, {"name": "최동현", "ours": false}, {"name": "하정식", "ours": false}, {"name": "주민규", "ours": false}, {"name": "김재욱", "ours": false}, {"name": "문명규", "ours": false}, {"name": "최성욱", "ours": false}, {"name": "김준영", "ours": false}, {"name": "오재용", "ours": false}, {"name": "김기찬", "ours": false}, {"name": "천성빈", "ours": false}, {"name": "정재인", "ours": false}, {"name": "최선아", "ours": false}, {"name": "소재호", "ours": false}, {"name": "전승윤", "ours": false}, {"name": "곽호룡", "ours": false}, {"name": "이상현", "ours": false}, {"name": "이호중", "ours": false}, {"name": "박재원", "ours": false}, {"name": "송창훈", "ours": true}, {"name": "최제현", "ours": false}, {"name": "박근우", "ours": false}, {"name": "이상명", "ours": false}, {"name": "염경민", "ours": false, "m4": 41160}, {"name": "이동훈", "ours": false}, {"name": "김윤욱", "ours": false}, {"name": "김성준", "ours": false}, {"name": "김의영", "ours": false}, {"name": "박민지", "ours": false}, {"name": "윤도현", "ours": false}, {"name": "김도연", "ours": false}];
+const bujiInit = [{"name": "권오훈", "to": 5.0, "지점": "서부지점", "부": "1부", "ours": false}, {"name": "양준영", "to": 5.9, "지점": "서부지점", "부": "1부", "ours": false}, {"name": "장형수", "to": 5.4, "지점": "서부지점", "부": "1부", "ours": false, "m4": 79950}, {"name": "윤현식", "to": 3.9, "지점": "서부지점", "부": "1부", "ours": false, "m4": 137200}, {"name": "홍상길", "to": 4.6, "지점": "부산지점", "부": "1부", "ours": false}, {"name": "이재열", "to": 3.9, "지점": "부산지점", "부": "1부", "ours": false}, {"name": "김현덕", "to": 5.2, "지점": "부산지점", "부": "1부", "ours": false}, {"name": "성우진", "to": 4.7, "지점": "부산지점", "부": "1부", "ours": false}, {"name": "정용주", "to": 5.4, "지점": "부산지점", "부": "1부", "ours": false}, {"name": "김중곤", "to": 5.7, "지점": "경남지점", "부": "1부", "ours": false}, {"name": "박환성", "to": 4.2, "지점": "경남지점", "부": "1부", "ours": false}, {"name": "구본치", "to": 4.6, "지점": "경남지점", "부": "1부", "ours": false}, {"name": "정석희", "to": 4.7, "지점": "경북지점", "부": "1부", "ours": false}, {"name": "김영포", "to": 6.1, "지점": "경북지점", "부": "1부", "ours": false, "m4": 403700}, {"name": "윤규식", "to": 5.1, "지점": "경북지점", "부": "1부", "ours": false}, {"name": "예명규", "to": 4.6, "지점": "경북지점", "부": "1부", "ours": false}, {"name": "최재덕", "to": 4.3, "지점": "경북지점", "부": "1부", "ours": false}, {"name": "문호재", "to": 3.1, "지점": "제주지점", "부": "1부", "ours": false}, {"name": "차환준", "to": 4.7, "지점": "강남·강원", "부": "2부", "ours": false, "m4": 95250}, {"name": "추재현", "to": 6.0, "지점": "강남·강원", "부": "2부", "ours": false}, {"name": "정민재", "to": 3.7, "지점": "강남·강원", "부": "2부", "ours": false}, {"name": "전효택", "to": 6.2, "지점": "강남·강원", "부": "2부", "ours": false}, {"name": "박철환", "to": 3.1, "지점": "강남·강원", "부": "2부", "ours": false}, {"name": "박성현", "to": 4.3, "지점": "북부지점", "부": "2부", "ours": false}, {"name": "이수현", "to": 4.0, "지점": "북부지점", "부": "2부", "ours": false}, {"name": "장현석", "to": 3.7, "지점": "북부지점", "부": "2부", "ours": false}, {"name": "이종찬", "to": 5.1, "지점": "북부지점", "부": "2부", "ours": false}, {"name": "김윤석", "to": 4.0, "지점": "북부지점", "부": "2부", "ours": false}, {"name": "오광선", "to": 5.7, "지점": "북부지점", "부": "2부", "ours": false}, {"name": "김준환", "to": 5.9, "지점": "인천지점", "부": "2부", "ours": false}, {"name": "정재헌", "to": 5.2, "지점": "인천지점", "부": "2부", "ours": false}, {"name": "임정빈", "to": 5.2, "지점": "인천지점", "부": "2부", "ours": true}, {"name": "장정호", "to": 5.6, "지점": "인천지점", "부": "2부", "ours": false, "m4": 121110}, {"name": "강민구", "to": 3.8, "지점": "전남지점", "부": "2부", "ours": false}, {"name": "조재윤", "to": 4.3, "지점": "전남지점", "부": "2부", "ours": false}, {"name": "최규삼", "to": 4.1, "지점": "전남지점", "부": "2부", "ours": false}, {"name": "심기운", "to": 4.3, "지점": "전남지점", "부": "2부", "ours": false}, {"name": "강희준", "to": 3.9, "지점": "남부지점", "부": "3부", "ours": false}, {"name": "박종성", "to": 4.1, "지점": "남부지점", "부": "3부", "ours": false}, {"name": "이봉열", "to": 4.6, "지점": "남부지점", "부": "3부", "ours": false}, {"name": "박중연", "to": 4.8, "지점": "남부지점", "부": "3부", "ours": false, "m4": 79950}, {"name": "김명선", "to": 4.8, "지점": "경기지점", "부": "3부", "ours": false, "m4": 41160}, {"name": "장진수", "to": 4.9, "지점": "경기지점", "부": "3부", "ours": false}, {"name": "조용성", "to": 4.2, "지점": "경기지점", "부": "3부", "ours": false}, {"name": "임찬규", "to": 4.2, "지점": "경기지점", "부": "3부", "ours": false}, {"name": "이영준", "to": 5.2, "지점": "경기지점", "부": "3부", "ours": false}, {"name": "박진우", "to": 4.1, "지점": "경기지점", "부": "3부", "ours": false}, {"name": "최진수", "to": 3.9, "지점": "충남·전북", "부": "3부", "ours": false}, {"name": "안형준", "to": 4.7, "지점": "충남·전북", "부": "3부", "ours": false}, {"name": "박희철", "to": 4.1, "지점": "충남·전북", "부": "3부", "ours": false}, {"name": "김종범", "to": 5.5, "지점": "충남·전북", "부": "3부", "ours": false, "m4": 41160}, {"name": "최병률", "to": 4.9, "지점": "충남·전북", "부": "3부", "ours": false}, {"name": "윤준기", "to": 4.6, "지점": "충남·충북", "부": "3부", "ours": false}, {"name": "이재홍", "to": 4.5, "지점": "충남·충북", "부": "3부", "ours": false}, {"name": "여정현", "to": 3.5, "지점": "충남·충북", "부": "3부", "ours": false}, {"name": "이홍주", "to": 4.1, "지점": "충남·충북", "부": "3부", "ours": false}];
+const jumInit = [{"name": "서부지점장", "to": 20.1, "부": "1부", "ours": false, "m4": 217150}, {"name": "부산지점장", "to": 23.8, "부": "1부", "ours": false}, {"name": "경남지점장", "to": 14.5, "부": "1부", "ours": false}, {"name": "경북지점장", "to": 25.0, "부": "1부", "ours": false, "m4": 403700}, {"name": "제주지점장", "to": 3.1, "부": "1부", "ours": false}, {"name": "강남.강원지점장", "to": 23.7, "부": "2부", "ours": false, "m4": 95250}, {"name": "북부지점장", "to": 26.8, "부": "2부", "ours": false}, {"name": "인천지점장", "to": 22.0, "부": "2부", "ours": true, "m4": 121110}, {"name": "전남지점장", "to": 16.5, "부": "2부", "ours": false}, {"name": "남부지점장", "to": 17.5, "부": "3부", "ours": false, "m4": 79950}, {"name": "경기지점장", "to": 27.3, "부": "3부", "ours": false, "m4": 41160}, {"name": "충남.전북지점장", "to": 23.1, "부": "3부", "ours": false, "m4": 41160}, {"name": "충남.충북지점장", "to": 16.6, "부": "3부", "ours": false}];
+
+let showOursOnly = false;
+let showOursOnlyBuji = false;
+let lastSortedDam = null, lastSortedBuji = null, lastSortedJum = null;
+let bujiData = JSON.parse(JSON.stringify(bujiInit));
+let jumData = JSON.parse(JSON.stringify(jumInit));
+
+function fmt(n) { if (n===null||n===undefined||isNaN(n)) return '-'; return Math.round(n).toLocaleString('ko-KR'); }
+function fmtBu(n) { return n==='1부'?'<span class="region-tag bu1">1부</span>':n==='2부'?'<span class="region-tag bu2">2부</span>':'<span class="region-tag bu3">3부</span>'; }
+
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('content-'+name).classList.add('active');
+}
+
+// ============ 담당자 ============
+function tierDam(rank, total) {
+  if (rank<=5 && total>=2000000) return {t:1, amt:2000000};
+  if (rank>=6 && rank<=10 && total>=1500000) return {t:2, amt:1500000};
+  if (rank>=11 && rank<=15 && total>=1000000) return {t:3, amt:1000000};
+  if (rank>=16 && rank<=30 && total>=500000) return {t:4, amt:500000};
+  return null;
+}
+function renderDam(data) {
+  const tbody = document.getElementById('tbodyDam');
+  tbody.innerHTML = '';
+  data.forEach(item => {
+    if (showOursOnly && !item.ours) return;
+    let rowClass='no-award', rankClass='', badge='<span class="award-badge badge-none">-</span>';
+    if (item.tier) {
+      rowClass='t'+item.tier.t; rankClass='t'+item.tier.t;
+      const medals=['','🥇','🥈','🥉','🏅'];
+      badge='<span class="award-badge badge-t'+item.tier.t+'">'+medals[item.tier.t]+' '+(item.tier.amt/10000)+'만원</span>';
+    } else if (item.rank!==null && item.totalSale!==null) {
+      badge = item.rank<=30 ? '<span class="award-badge badge-fail">조건미달</span>' : '<span class="award-badge badge-none">순위밖</span>';
+    }
+    if (item.ours) rowClass += ' ours';
+    const tr=document.createElement('tr');
+    tr.className=rowClass;
+    tr.innerHTML =
+      '<td class="rank-col '+rankClass+'">'+(item.rank!==null?item.rank+'위':'-')+'</td>'+
+      '<td class="name-col">'+item.name+(item.ours?' ★':'')+'</td>'+
+      '<td><input type="number" id="iD_'+item.name+'_4" value="'+(item.m4!=null?item.m4:'')+'" /></td>'+
+      '<td><input type="number" id="iD_'+item.name+'_5" placeholder="입력" value="'+(item.m5!=null?item.m5:'')+'" /></td>'+
+      '<td><input type="number" id="iD_'+item.name+'_6" placeholder="입력" value="'+(item.m6!=null?item.m6:'')+'" /></td>'+
+      '<td class="total-col num">'+(item.totalSale!==null?fmt(item.totalSale):'-')+'</td>'+
+      '<td>'+badge+'</td>';
+    tbody.appendChild(tr);
+  });
+}
+function calcDam() {
+  const enriched = rawData.map(item => {
+    const m4=parseFloat(document.getElementById('iD_'+item.name+'_4').value);
+    const m5=parseFloat(document.getElementById('iD_'+item.name+'_5').value);
+    const m6=parseFloat(document.getElementById('iD_'+item.name+'_6').value);
+    const has=!isNaN(m4)||!isNaN(m5)||!isNaN(m6);
+    const total=(isNaN(m4)?0:m4)+(isNaN(m5)?0:m5)+(isNaN(m6)?0:m6);
+    return {name:item.name, ours:item.ours, m4:isNaN(m4)?null:m4, m5:isNaN(m5)?null:m5, m6:isNaN(m6)?null:m6, totalSale:has?total:null};
+  });
+  const withData=enriched.filter(x=>x.totalSale!==null).sort((a,b)=>b.totalSale-a.totalSale);
+  const withoutData=enriched.filter(x=>x.totalSale===null);
+  withData.forEach((x,i)=>{ x.rank=i+1; x.tier=tierDam(i+1,x.totalSale); });
+  withoutData.forEach(x=>{ x.rank=null; x.tier=null; });
+  const sorted=withData.concat(withoutData);
+  lastSortedDam=sorted; renderDam(sorted);
+  let t1=0,t2=0,t3=0,t4=0,ourA=0;
+  withData.forEach(x=>{ if(x.tier){ ({1:()=>t1++,2:()=>t2++,3:()=>t3++,4:()=>t4++}[x.tier.t]||(()=>{}))(); if(x.ours)ourA++; }});
+  document.getElementById('statusDam').innerHTML='📊 담당자 | 입력자 '+withData.length+'명 | 🥇200만 '+t1+' | 🥈150만 '+t2+' | 🥉100만 '+t3+' | 🏅50만 '+t4+' | ★ 우리팀 시상 '+ourA+'명';
+}
+function toggleOursDam() {
+  showOursOnly=!showOursOnly;
+  document.getElementById('filterBtn').innerHTML=showOursOnly?'🌍 전체 보기':'🌟 우리팀만 보기';
+  if(lastSortedDam) renderDam(lastSortedDam); else initDam();
+}
+function resetDam() {
+  if(!confirm('담당자 입력값을 초기화하시겠습니까? (4월 자동임베드 값 포함)')) return;
+  rawData.forEach(item=>{[4,5,6].forEach(m=>{const el=document.getElementById('iD_'+item.name+'_'+m); if(el)el.value='';});});
+  initDam();
+}
+function initDam() {
+  const enriched=rawData.map(item=>({
+    name:item.name, ours:item.ours,
+    m4:item.m4!=null?item.m4:null,
+    m5:item.m5!=null?item.m5:null,
+    m6:item.m6!=null?item.m6:null,
+    totalSale:null, rank:null, tier:null
+  }));
+  // 4월만 자동 임베드된 상태에서 즉시 계산
+  const withData=enriched.filter(x=>x.m4!==null||x.m5!==null||x.m6!==null);
+  withData.forEach(x=>x.totalSale=(x.m4||0)+(x.m5||0)+(x.m6||0));
+  withData.sort((a,b)=>b.totalSale-a.totalSale);
+  withData.forEach((x,i)=>{x.rank=i+1; x.tier=tierDam(i+1,x.totalSale);});
+  const without=enriched.filter(x=>x.m4===null&&x.m5===null&&x.m6===null);
+  const ours=withData.filter(x=>x.ours).concat(without.filter(x=>x.ours));
+  const others=withData.filter(x=>!x.ours).concat(without.filter(x=>!x.ours));
+  lastSortedDam=withData.concat(without);
+  renderDam(lastSortedDam);
+}
+
+// ============ 부지점장 ============
+function renderBuji(data) {
+  const tbody=document.getElementById('tbodyBuji');
+  tbody.innerHTML='';
+  data.forEach((item,idx)=>{
+    if(showOursOnlyBuji && !item.ours) return;
+    let rowClass='no-award', rankClass='', badge='<span class="award-badge badge-none">-</span>';
+    if(item.rank!==null && item.rank<=8 && item.avgTotal>=1000000) {
+      rowClass='t2'; rankClass='t2';
+      badge='<span class="award-badge badge-100">🎖️ 100만원</span>';
+    } else if(item.rank!==null && item.rank<=8) {
+      badge='<span class="award-badge badge-fail">조건미달</span>';
+    } else if(item.rank!==null) {
+      badge='<span class="award-badge badge-none">순위밖</span>';
+    }
+    if(item.ours) rowClass += ' ours';
+    const tr=document.createElement('tr');
+    tr.className=rowClass;
+    tr.innerHTML =
+      '<td class="rank-col '+rankClass+'">'+(item.rank!==null?item.rank+'위':'-')+'</td>'+
+      '<td>'+fmtBu(item['부'])+'</td>'+
+      '<td style="text-align:left;padding-left:8px;">'+item['지점']+'</td>'+
+      '<td class="name-col">'+item.name+(item.ours?' ★':'')+'</td>'+
+      '<td class="num">'+item.to.toFixed(1)+'</td>'+
+      '<td><input type="number" id="iB_'+idx+'_4" value="'+(item.m4!=null?item.m4:'')+'" /></td>'+
+      '<td><input type="number" id="iB_'+idx+'_5" placeholder="팀합산" value="'+(item.m5!=null?item.m5:'')+'" /></td>'+
+      '<td><input type="number" id="iB_'+idx+'_6" placeholder="팀합산" value="'+(item.m6!=null?item.m6:'')+'" /></td>'+
+      '<td class="avg-col num">'+(item.avg4!==null?fmt(item.avg4):'-')+'</td>'+
+      '<td class="avg-col num">'+(item.avg5!==null?fmt(item.avg5):'-')+'</td>'+
+      '<td class="avg-col num">'+(item.avg6!==null?fmt(item.avg6):'-')+'</td>'+
+      '<td class="total-col num">'+(item.avgTotal!==null?fmt(item.avgTotal):'-')+'</td>'+
+      '<td>'+badge+'</td>';
+    tbody.appendChild(tr);
+  });
+}
+function calcBuji() {
+  const enriched=bujiData.map((item,idx)=>{
+    const m4=parseFloat(document.getElementById('iB_'+idx+'_4').value);
+    const m5=parseFloat(document.getElementById('iB_'+idx+'_5').value);
+    const m6=parseFloat(document.getElementById('iB_'+idx+'_6').value);
+    const has=!isNaN(m4)||!isNaN(m5)||!isNaN(m6);
+    const a4=isNaN(m4)?null:m4/item.to, a5=isNaN(m5)?null:m5/item.to, a6=isNaN(m6)?null:m6/item.to;
+    const sum=(a4||0)+(a5||0)+(a6||0);
+    return {...item, m4:isNaN(m4)?null:m4, m5:isNaN(m5)?null:m5, m6:isNaN(m6)?null:m6, avg4:a4, avg5:a5, avg6:a6, avgTotal:has?sum:null};
+  });
+  const withData=enriched.filter(x=>x.avgTotal!==null).sort((a,b)=>b.avgTotal-a.avgTotal);
+  const withoutData=enriched.filter(x=>x.avgTotal===null);
+  withData.forEach((x,i)=>x.rank=i+1);
+  withoutData.forEach(x=>x.rank=null);
+  const sorted=withData.concat(withoutData);
+  lastSortedBuji=sorted; bujiData=sorted; renderBuji(sorted);
+  const award=withData.filter(x=>x.rank<=8 && x.avgTotal>=1000000).length;
+  const ourRank=withData.find(x=>x.ours);
+  document.getElementById('statusBuji').innerHTML='📊 부지점장 | 입력자 '+withData.length+'팀 | 🎖️ 시상 '+award+'팀 | ★ 임정빈팀: '+(ourRank?ourRank.rank+'위 (1인당 '+fmt(ourRank.avgTotal)+'원)':'미입력');
+}
+function toggleOursBuji() {
+  showOursOnlyBuji=!showOursOnlyBuji;
+  document.getElementById('filterBtnBuji').innerHTML=showOursOnlyBuji?'🌍 전체 보기':'🌟 우리팀(임정빈팀)만 보기';
+  if(lastSortedBuji) renderBuji(lastSortedBuji); else initBuji();
+}
+function resetBuji() {
+  if(!confirm('부지점장 입력값을 초기화하시겠습니까? (4월 자동임베드 포함)')) return;
+  bujiData=JSON.parse(JSON.stringify(bujiInit)).map(x=>({...x, m4:null, m5:null, m6:null}));
+  initBuji();
+}
+function initBuji() {
+  const enriched=bujiData.map(item=>{
+    const a4=item.m4!=null?item.m4/item.to:null;
+    const a5=item.m5!=null?item.m5/item.to:null;
+    const a6=item.m6!=null?item.m6/item.to:null;
+    const has=item.m4!=null||item.m5!=null||item.m6!=null;
+    return {...item, avg4:a4, avg5:a5, avg6:a6, avgTotal:has?((a4||0)+(a5||0)+(a6||0)):null, rank:null};
+  });
+  const withData=enriched.filter(x=>x.avgTotal!==null).sort((a,b)=>b.avgTotal-a.avgTotal);
+  const without=enriched.filter(x=>x.avgTotal===null);
+  withData.forEach((x,i)=>x.rank=i+1);
+  bujiData=withData.concat(without);
+  renderBuji(bujiData);
+}
+
+// ============ 지점장 ============
+function renderJum(data) {
+  const tbody=document.getElementById('tbodyJum');
+  tbody.innerHTML='';
+  data.forEach((item,idx)=>{
+    let rowClass='no-award', rankClass='', badge='<span class="award-badge badge-none">-</span>';
+    if(item.rank!==null && item.rank<=2 && item.avgTotal>=1000000) {
+      rowClass='t1'; rankClass='t1';
+      badge='<span class="award-badge badge-t1">🥇 100만원</span>';
+    } else if(item.rank!==null && item.rank<=2) {
+      badge='<span class="award-badge badge-fail">조건미달</span>';
+    } else if(item.rank!==null) {
+      badge='<span class="award-badge badge-none">순위밖</span>';
+    }
+    if(item.ours) rowClass += ' our-jijeom';
+    const tr=document.createElement('tr');
+    tr.className=rowClass;
+    tr.innerHTML =
+      '<td class="rank-col '+rankClass+'">'+(item.rank!==null?item.rank+'위':'-')+'</td>'+
+      '<td>'+fmtBu(item['부'])+'</td>'+
+      '<td class="name-col">'+item.name+(item.ours?' ★':'')+'</td>'+
+      '<td class="num">'+item.to.toFixed(1)+'</td>'+
+      '<td><input type="number" id="iJ_'+idx+'_4" value="'+(item.m4!=null?item.m4:'')+'" /></td>'+
+      '<td><input type="number" id="iJ_'+idx+'_5" placeholder="지점합산" value="'+(item.m5!=null?item.m5:'')+'" /></td>'+
+      '<td><input type="number" id="iJ_'+idx+'_6" placeholder="지점합산" value="'+(item.m6!=null?item.m6:'')+'" /></td>'+
+      '<td class="avg-col num">'+(item.avg4!==null?fmt(item.avg4):'-')+'</td>'+
+      '<td class="avg-col num">'+(item.avg5!==null?fmt(item.avg5):'-')+'</td>'+
+      '<td class="avg-col num">'+(item.avg6!==null?fmt(item.avg6):'-')+'</td>'+
+      '<td class="total-col num">'+(item.avgTotal!==null?fmt(item.avgTotal):'-')+'</td>'+
+      '<td>'+badge+'</td>';
+    tbody.appendChild(tr);
+  });
+}
+function calcJum() {
+  const enriched=jumData.map((item,idx)=>{
+    const m4=parseFloat(document.getElementById('iJ_'+idx+'_4').value);
+    const m5=parseFloat(document.getElementById('iJ_'+idx+'_5').value);
+    const m6=parseFloat(document.getElementById('iJ_'+idx+'_6').value);
+    const has=!isNaN(m4)||!isNaN(m5)||!isNaN(m6);
+    const a4=isNaN(m4)?null:m4/item.to, a5=isNaN(m5)?null:m5/item.to, a6=isNaN(m6)?null:m6/item.to;
+    const sum=(a4||0)+(a5||0)+(a6||0);
+    return {...item, m4:isNaN(m4)?null:m4, m5:isNaN(m5)?null:m5, m6:isNaN(m6)?null:m6, avg4:a4, avg5:a5, avg6:a6, avgTotal:has?sum:null};
+  });
+  const withData=enriched.filter(x=>x.avgTotal!==null).sort((a,b)=>b.avgTotal-a.avgTotal);
+  const withoutData=enriched.filter(x=>x.avgTotal===null);
+  withData.forEach((x,i)=>x.rank=i+1);
+  withoutData.forEach(x=>x.rank=null);
+  const sorted=withData.concat(withoutData);
+  lastSortedJum=sorted; jumData=sorted; renderJum(sorted);
+  const award=withData.filter(x=>x.rank<=2 && x.avgTotal>=1000000).length;
+  const ourRank=withData.find(x=>x.ours);
+  document.getElementById('statusJum').innerHTML='📊 지점장 | 입력자 '+withData.length+'지점 | 🥇 시상 '+award+'지점 | ★ 인천지점: '+(ourRank?ourRank.rank+'위 (1인당 '+fmt(ourRank.avgTotal)+'원)':'미입력');
+}
+function resetJum() {
+  if(!confirm('지점장 입력값을 초기화하시겠습니까?')) return;
+  jumData=JSON.parse(JSON.stringify(jumInit)).map(x=>({...x, m4:null, m5:null, m6:null}));
+  initJum();
+}
+function initJum() {
+  const enriched=jumData.map(item=>{
+    const a4=item.m4!=null?item.m4/item.to:null;
+    const a5=item.m5!=null?item.m5/item.to:null;
+    const a6=item.m6!=null?item.m6/item.to:null;
+    const has=item.m4!=null||item.m5!=null||item.m6!=null;
+    return {...item, avg4:a4, avg5:a5, avg6:a6, avgTotal:has?((a4||0)+(a5||0)+(a6||0)):null, rank:null};
+  });
+  const withData=enriched.filter(x=>x.avgTotal!==null).sort((a,b)=>b.avgTotal-a.avgTotal);
+  const without=enriched.filter(x=>x.avgTotal===null);
+  withData.forEach((x,i)=>x.rank=i+1);
+  jumData=withData.concat(without);
+  renderJum(jumData);
+}
+
+initDam(); initBuji(); initJum();
+</script>
+</body>
+</html>

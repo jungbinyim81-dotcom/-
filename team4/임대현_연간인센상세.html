@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>임대현 연간 인센티브 상세 분석</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; color: #222; font-size: 13px; padding-bottom: 50px; }
+.header { background: linear-gradient(135deg, #1a2d50, #2874a6, #6c3483); color: white; padding: 24px 28px; }
+.header h1 { font-size: 22px; font-weight: 700; }
+.header .name { font-size: 28px; font-weight: 700; }
+.header .sub { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 18px 28px; }
+.sum-card { background: white; padding: 14px 16px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-top: 4px solid #2874a6; }
+.sum-card.hi { border-top-color: #16a085; }
+.sum-card .l { font-size: 11px; color: #666; }
+.sum-card .v { font-size: 20px; font-weight: 700; color: #1a2d50; font-family: "Courier New", monospace; margin-top: 4px; }
+.sum-card.hi .v { color: #117864; }
+.section { padding: 6px 28px 22px; }
+.section h2 { font-size: 16px; color: #1a2d50; margin-bottom: 12px; padding-left: 6px; border-left: 4px solid #2874a6; }
+.items { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 14px; }
+.item-card { background: white; border-radius: 10px; padding: 14px 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-top: 4px solid #6c3483; }
+.item-head { border-bottom: 1px dashed #eee; padding-bottom: 8px; margin-bottom: 10px; }
+.item-name { font-size: 16px; font-weight: 700; color: #1a2d50; }
+.item-meta { font-size: 10px; color: #888; margin-top: 2px; }
+.bars { display: flex; gap: 6px; align-items: flex-end; height: 110px; padding: 8px 4px; background: #fafbfc; border-radius: 6px; margin-bottom: 10px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+.bar-col.pending { opacity: 0.35; }
+.bar-val { font-size: 9px; color: #555; margin-bottom: 2px; font-weight: 600; }
+.bar { width: 100%; border-radius: 3px 3px 0 0; min-height: 2px; }
+.bar-q { font-size: 10px; color: #888; margin-top: 3px; font-weight: 600; }
+.prog-row { margin: 6px 0; }
+.prog-lbl { font-size: 10px; color: #666; margin-bottom: 3px; }
+.prog-bar { position: relative; height: 12px; background: #ecf0f1; border-radius: 6px; overflow: hidden; }
+.prog-fill { height: 100%; transition: width 0.4s; background: #95a5a6; }
+.prog-fill.ok { background: linear-gradient(90deg, #16a085, #1abc9c); }
+.prog-fill.near { background: linear-gradient(90deg, #f39c12, #f1c40f); }
+.prog-fill.low { background: #bdc3c7; }
+.prog-fill.cap { background: linear-gradient(90deg, #9b59b6, #c39bd3); }
+.prog-pct { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font-size: 9px; font-weight: 700; color: #1a2d50; }
+.incentive-box { background: #fefae0; padding: 8px 10px; border-radius: 6px; margin: 10px 0 8px; }
+.ib-row { display: flex; justify-content: space-between; font-size: 11px; padding: 2px 0; }
+.ib-row b { font-family: "Courier New", monospace; }
+.ib-row b.hi { color: #b9770e; }
+.sim { font-size: 11px; padding: 8px 10px; border-radius: 6px; }
+.sim-ok { background: #d4efdf; color: #117864; }
+.sim-hint { background: #ebf5fb; color: #1f618d; }
+.sim-miss { background: #fadbd8; color: #922b21; }
+.sale-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.sale-table th, .sale-table td { padding: 8px 10px; text-align: center; border-bottom: 1px solid #f0f0f0; font-size: 12px; }
+.sale-table th { background: #1a2d50; color: white; font-weight: 600; }
+.sale-note { font-size: 11px; color: #666; padding: 8px 4px 0; }
+.top-list { background: white; border-radius: 8px; padding: 14px 18px 14px 36px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.top-list li { padding: 6px 0; font-size: 12px; line-height: 1.5; }
+.back-link { display: inline-block; margin: 14px 28px 0; padding: 6px 14px; background: #2874a6; color: white; text-decoration: none; border-radius: 6px; font-size: 11px; }
+.back-link:hover { background: #1a5276; }
+</style></head>
+<body>
+
+<div class="header">
+  <div class="name">임대현</div>
+  <div class="sub">제104기 연간 인센티브 — 품목군별 페이스 상세 분석 | 2026-06-10 기준 · 1분기 누적</div>
+</div>
+
+<a class="back-link" href="인센티브_통합대시보드.html">← 통합 대시보드</a>
+
+<div class="summary">
+  <div class="sum-card"><div class="l">분기 확정 합계 (누적)</div><div class="v">2,300,000원</div></div>
+  <div class="sum-card"><div class="l">└ 성장 70% 누적</div><div class="v">0원</div></div>
+  <div class="sum-card"><div class="l">└ 판매 100% 누적</div><div class="v">2,300,000원</div></div>
+</div>
+
+<div class="section">
+  <h2>📦 7개 품목군 페이스 상세 — 30% 추가는 품목별로 독립 평가</h2>
+  <div class="items">
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-name">고지혈</div>
+            <div class="item-meta">시상 30% / 분기조건 +300만 / 연간 +1,200만</div>
+          </div>
+          <div class="bars"><div class="bar-col "><div class="bar-val">+716만</div><div class="bar" style="height:70.0px;background:#16a085"></div><div class="bar-q">1Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">2Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">3Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">4Q</div></div></div>
+          <div class="prog-row">
+            <div class="prog-lbl">누적 / 연간조건 +1,200만</div>
+            <div class="prog-bar"><div class="prog-fill low yearly" style="width:59.66613541666654%"></div><span class="prog-pct">60%</span></div>
+          </div>
+          <div class="incentive-box">
+            <div class="ib-row"><span>현재 70% 인센 누적</span><b>0원</b></div>
+            <div class="ib-row"><span>연말 30% 누적</span><b class="hi">+0원</b></div>
+          </div>
+          <div class="sim sim-hint">💡 남은 3분기 동안 <b>분기당 +161만</b>씩 성장 필요</div>
+        </div>
+        
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-name">당뇨상품</div>
+            <div class="item-meta">시상 15% / 분기조건 +300만 / 연간 +1,200만</div>
+          </div>
+          <div class="bars"><div class="bar-col "><div class="bar-val">-210만</div><div class="bar" style="height:70.0px;background:#e74c3c"></div><div class="bar-q">1Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">2Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">3Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">4Q</div></div></div>
+          <div class="prog-row">
+            <div class="prog-lbl">누적 / 연간조건 +1,200만</div>
+            <div class="prog-bar"><div class="prog-fill low yearly" style="width:0%"></div><span class="prog-pct">0%</span></div>
+          </div>
+          <div class="incentive-box">
+            <div class="ib-row"><span>현재 70% 인센 누적</span><b>0원</b></div>
+            <div class="ib-row"><span>연말 30% 누적</span><b class="hi">+0원</b></div>
+          </div>
+          <div class="sim sim-hint">💡 남은 3분기 동안 <b>분기당 +470만</b>씩 성장 필요</div>
+        </div>
+        
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-name">당뇨제품</div>
+            <div class="item-meta">시상 20% / 분기조건 +150만 / 연간 +600만</div>
+          </div>
+          <div class="bars"><div class="bar-col "><div class="bar-val">+158만</div><div class="bar" style="height:70.0px;background:#16a085"></div><div class="bar-q">1Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">2Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">3Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">4Q</div></div></div>
+          <div class="prog-row">
+            <div class="prog-lbl">누적 / 연간조건 +600만</div>
+            <div class="prog-bar"><div class="prog-fill low yearly" style="width:26.25522777777777%"></div><span class="prog-pct">26%</span></div>
+          </div>
+          <div class="incentive-box">
+            <div class="ib-row"><span>현재 70% 인센 누적</span><b>0원</b></div>
+            <div class="ib-row"><span>연말 30% 누적</span><b class="hi">+0원</b></div>
+          </div>
+          <div class="sim sim-hint">💡 남은 3분기 동안 <b>분기당 +147만</b>씩 성장 필요</div>
+        </div>
+        
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-name">순환기</div>
+            <div class="item-meta">시상 20% / 분기조건 +300만 / 연간 +1,200만</div>
+          </div>
+          <div class="bars"><div class="bar-col "><div class="bar-val">+469만</div><div class="bar" style="height:70.0px;background:#16a085"></div><div class="bar-q">1Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">2Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">3Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">4Q</div></div></div>
+          <div class="prog-row">
+            <div class="prog-lbl">누적 / 연간조건 +1,200만</div>
+            <div class="prog-bar"><div class="prog-fill low yearly" style="width:39.04597986111107%"></div><span class="prog-pct">39%</span></div>
+          </div>
+          <div class="incentive-box">
+            <div class="ib-row"><span>현재 70% 인센 누적</span><b>0원</b></div>
+            <div class="ib-row"><span>연말 30% 누적</span><b class="hi">+0원</b></div>
+          </div>
+          <div class="sim sim-hint">💡 남은 3분기 동안 <b>분기당 +243만</b>씩 성장 필요</div>
+        </div>
+        
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-name">주요1그룹</div>
+            <div class="item-meta">시상 20% / 분기조건 +150만 / 연간 +600만</div>
+          </div>
+          <div class="bars"><div class="bar-col "><div class="bar-val">-47만</div><div class="bar" style="height:70.0px;background:#e74c3c"></div><div class="bar-q">1Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">2Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">3Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">4Q</div></div></div>
+          <div class="prog-row">
+            <div class="prog-lbl">누적 / 연간조건 +600만</div>
+            <div class="prog-bar"><div class="prog-fill low yearly" style="width:0%"></div><span class="prog-pct">0%</span></div>
+          </div>
+          <div class="incentive-box">
+            <div class="ib-row"><span>현재 70% 인센 누적</span><b>0원</b></div>
+            <div class="ib-row"><span>연말 30% 누적</span><b class="hi">+0원</b></div>
+          </div>
+          <div class="sim sim-hint">💡 남은 3분기 동안 <b>분기당 +215만</b>씩 성장 필요</div>
+        </div>
+        
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-name">주요2그룹</div>
+            <div class="item-meta">시상 20% / 분기조건 +150만 / 연간 +600만</div>
+          </div>
+          <div class="bars"><div class="bar-col "><div class="bar-val">-38만</div><div class="bar" style="height:70.0px;background:#e74c3c"></div><div class="bar-q">1Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">2Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">3Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">4Q</div></div></div>
+          <div class="prog-row">
+            <div class="prog-lbl">누적 / 연간조건 +600만</div>
+            <div class="prog-bar"><div class="prog-fill low yearly" style="width:0%"></div><span class="prog-pct">0%</span></div>
+          </div>
+          <div class="incentive-box">
+            <div class="ib-row"><span>현재 70% 인센 누적</span><b>0원</b></div>
+            <div class="ib-row"><span>연말 30% 누적</span><b class="hi">+0원</b></div>
+          </div>
+          <div class="sim sim-hint">💡 남은 3분기 동안 <b>분기당 +212만</b>씩 성장 필요</div>
+        </div>
+        
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-name">길리어드</div>
+            <div class="item-meta">시상 10% / 분기조건 +300만 / 연간 +1,200만</div>
+          </div>
+          <div class="bars"><div class="bar-col "><div class="bar-val">+183만</div><div class="bar" style="height:70.0px;background:#16a085"></div><div class="bar-q">1Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">2Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">3Q</div></div><div class="bar-col pending"><div class="bar-val">-</div><div class="bar" style="height:0px;background:#ddd"></div><div class="bar-q">4Q</div></div></div>
+          <div class="prog-row">
+            <div class="prog-lbl">누적 / 연간조건 +1,200만</div>
+            <div class="prog-bar"><div class="prog-fill low yearly" style="width:15.224533333333333%"></div><span class="prog-pct">15%</span></div>
+          </div>
+          <div class="incentive-box">
+            <div class="ib-row"><span>현재 70% 인센 누적</span><b>0원</b></div>
+            <div class="ib-row"><span>연말 30% 누적</span><b class="hi">+0원</b></div>
+          </div>
+          <div class="sim sim-hint">💡 남은 3분기 동안 <b>분기당 +339만</b>씩 성장 필요</div>
+        </div>
+        </div>
+</div>
+
+</body></html>

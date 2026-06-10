@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제104기 인센티브 통합 대시보드 — 인천일병2팀(임정빈팀)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; color: #222; font-size: 13px; padding-bottom: 50px; }
+.header { background: linear-gradient(135deg, #1a2d50, #2874a6, #6c3483); color: white; padding: 22px 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.header h1 { font-size: 22px; font-weight: 700; }
+.header p { font-size: 12px; margin-top: 6px; opacity: 0.92; }
+.header .updated { float: right; font-size: 11px; opacity: 0.7; }
+.section { padding: 12px 28px 22px; }
+.section h2 { font-size: 16px; color: #1a2d50; margin-bottom: 12px; padding-left: 6px; border-left: 4px solid #2874a6; }
+.members { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.member-card { background: white; border-radius: 10px; padding: 14px 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-top: 4px solid #2874a6; }
+.member-card.highlight { border-top-color: #16a085; background: linear-gradient(180deg, #e8f8f5 0%, #fff 25%); }
+.member-card.warn { border-top-color: #e74c3c; background: linear-gradient(180deg, #fadbd8 0%, #fff 25%); }
+.member-name { font-size: 16px; font-weight: 700; color: #1a2d50; }
+.member-total { font-size: 22px; font-weight: 700; color: #16a085; margin-top: 6px; font-family: "Courier New", monospace; }
+.member-total .unit { font-size: 12px; color: #999; margin-left: 2px; }
+.member-sub { font-size: 10px; color: #666; }
+.member-detail { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ddd; }
+.member-detail .row { display: flex; justify-content: space-between; font-size: 11px; padding: 4px 0; border-bottom: 1px dotted #eee; }
+.member-detail .row:last-child { border-bottom: none; }
+.member-detail .row.sep { background: #fdf6e3; padding: 5px 4px; margin-top: 6px; border-radius: 4px; }
+.member-detail .row.sep .lbl { font-weight: 700; color: #b9770e; }
+.member-detail .row.sep .highlight-val { color: #b9770e; font-weight: 700; }
+.member-detail .row.total-row { background: #eaf2f8; padding: 5px 4px; margin-top: 4px; border-radius: 4px; border-bottom: none; }
+.member-detail .row.total-row .lbl { font-weight: 700; color: #1a5276; }
+.member-detail .row.total-row .val { font-weight: 700; color: #1a5276; font-size: 12px; }
+.member-detail .pending { color: #aaa; font-style: italic; font-weight: 400; }
+.detail-btn { display: block; margin-top: 10px; padding: 8px 10px; background: linear-gradient(90deg, #6c3483, #8e44ad); color: white; text-align: center; text-decoration: none; border-radius: 6px; font-size: 11px; font-weight: 700; transition: opacity 0.2s; }
+.detail-btn:hover { opacity: 0.85; }
+.member-detail .row.sub { padding: 2px 0 2px 8px; border-bottom: none; }
+.member-detail .row.sub .lbl { color: #999; font-size: 10px; }
+.member-detail .row.sub .val.sm { color: #777; font-size: 10px; font-weight: 500; }
+.pace-table { width: 100%; border-collapse: collapse; font-size: 11px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.pace-table th { background: #1a2d50; color: white; padding: 8px 4px; font-size: 11px; font-weight: 600; }
+.pace-table th small { display: block; font-weight: 400; opacity: 0.7; font-size: 9px; margin-top: 2px; }
+.pace-table td { padding: 7px 4px; text-align: center; border-bottom: 1px solid #f0f0f0; font-family: "Courier New", monospace; }
+.pace-table tr:last-child td { border-bottom: none; }
+.pace-name { font-weight: 700; color: #1a2d50; background: #f4f6f7; font-family: "Malgun Gothic" !important; }
+.pace-ok { color: #117864; background: #d4efdf; font-weight: 700; }
+.pace-near { color: #b9770e; background: #fef9e7; font-weight: 600; }
+.pace-low { color: #555; }
+.pace-miss { color: #aaa; background: #fafafa; }
+.pace-table .zero { color: #ccc; }
+.pace-note { font-size: 11px; color: #666; padding: 8px 4px 0; text-align: right; }
+.team-mini { width: 100%; border-collapse: collapse; font-size: 11px; }
+.team-mini th { background: #1a2d50; color: white; padding: 4px 6px; font-size: 10px; }
+.team-mini td { padding: 4px 6px; text-align: center; border-bottom: 1px dotted #eee; font-family: "Courier New", monospace; }
+.team-mini td:nth-child(2), .team-mini td:nth-child(3) { font-family: "Malgun Gothic", Arial; }
+.team-mini tr.team-top8 td { background: #fdf2e9; color: #6e2c00; }
+.team-mini tr.team-ours td { background: #d4efdf; color: #117864; font-weight: 700; }
+.member-detail .lbl { color: #666; flex-shrink: 0; padding-right: 6px; }
+.member-detail .val { font-weight: 600; color: #333; text-align: right; }
+.member-detail .val small { color: #999; font-weight: 400; display: block; font-size: 10px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 14px; }
+.card { background: white; border-radius: 12px; padding: 16px 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-top: 5px solid #2874a6; }
+.card.active { border-top-color: #16a085; }
+.card.upcoming { border-top-color: #f39c12; }
+.card.done { border-top-color: #95a5a6; opacity: 0.93; }
+.card-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+.card-title { font-size: 15px; font-weight: 700; color: #1a2d50; }
+.card-meta { display: flex; gap: 6px; align-items: center; }
+.status { font-size: 10px; padding: 3px 8px; border-radius: 10px; font-weight: 700; }
+.status.active { background: #d1f2eb; color: #117864; }
+.status.upcoming { background: #fdebd0; color: #b9770e; }
+.status.done { background: #ebedef; color: #566573; }
+.d-day { font-size: 11px; font-weight: 700; color: #2874a6; background: #ebf5fb; padding: 3px 8px; border-radius: 10px; }
+.d-day.urgent { background: #e74c3c; color: white; }
+.d-day.past { background: #d5dbdb; color: #555; }
+.card-info { padding: 10px 0; font-size: 12px; }
+.info-row { display: flex; padding: 3px 0; }
+.info-lbl { width: 70px; color: #666; flex-shrink: 0; }
+.team-memo { background: #fdf2e9; border-left: 3px solid #e67e22; padding: 6px 10px; margin: 6px 0; border-radius: 4px; font-size: 11px; color: #6e2c00; }
+.team-memo .memo-line { padding: 2px 0; }
+.card-ours { background: #fefae0; padding: 8px 10px; border-radius: 6px; margin-top: 8px; }
+.ours-title { font-size: 11px; font-weight: 700; color: #b9770e; margin-bottom: 5px; }
+.ours-table { width: 100%; font-size: 11px; border-collapse: collapse; }
+.ours-table th { background: #f7dc6f; color: #1a2d50; padding: 4px 6px; text-align: center; font-size: 10px; }
+.ours-table td { padding: 5px 6px; text-align: center; border-bottom: 1px dotted #f9d56e; }
+.ours-table tr:hover { background: rgba(247, 220, 111, 0.3); }
+.badge-good { color: #117864; font-weight: 700; }
+.badge-near { color: #b9770e; font-weight: 700; background: rgba(241, 196, 15, 0.15); }
+.badge-warn { color: #c0392b; }
+.badge-none { color: #999; }
+.no-data { font-size: 11px; color: #999; padding: 6px; text-align: center; }
+.card-actions { margin-top: 10px; display: flex; gap: 6px; }
+.btn-go { flex: 1; padding: 7px; text-align: center; border-radius: 6px; text-decoration: none; font-size: 11px; font-weight: 600; background: #2874a6; color: white; }
+.btn-go:hover { background: #1a5276; }
+.source { font-size: 11px; color: #888; padding: 10px 28px 0; }
+@media (max-width: 700px) {
+  .section { padding: 6px 12px 18px; }
+  .members, .cards { grid-template-columns: 1fr; }
+}
+</style></head>
+<body>
+
+<div class="header">
+  <span class="updated">갱신: 2026-06-10 (평가raw 기반)</span>
+  <h1>🏆 제104기 인센티브 통합 대시보드</h1>
+  <p>인천일병2팀 (임정빈팀) — 전은성 · 임대현 · 황태영 · 김혜성 <small>(송창훈 2026-05 퇴직)</small></p>
+</div>
+
+<div class="section">
+  <h2>👥 우리팀 4명 연간 인센티브 — 분기 확정 + 연말 30% 예상</h2>
+  <div class="members">
+    <div class="member-card highlight">
+      <div class="member-name">전은성</div>
+      <div class="member-total">6,090,000<span class="unit">원</span></div>
+      <div class="member-sub">분기 확정 수령액 (성장 70% + 판매 100%)</div>
+      <div class="member-detail">
+        <div class="row"><span class="lbl">1Q 확정</span><span class="val">6,090,000원</span></div><div class="row sub"><span class="lbl">└ 성장 70%</span><span class="val sm">2,340,000원</span></div><div class="row sub"><span class="lbl">└ 판매 100%</span><span class="val sm">3,750,000원</span></div><div class="row"><span class="lbl">2Q 확정</span><span class="val"><span class="pending">대기</span></span></div><div class="row"><span class="lbl">3Q 확정</span><span class="val"><span class="pending">대기</span></span></div><div class="row"><span class="lbl">4Q 확정</span><span class="val"><span class="pending">대기</span></span></div>
+        <div class="row sep"><span class="lbl">연말 30% 추가 (성장만)</span><span class="val highlight-val">+1,002,857원</span></div>
+        <div class="row total-row"><span class="lbl">연말 총 예상</span><span class="val">7,092,857원</span></div>
+      </div>
+      <a class="detail-btn" href="%EC%A0%84%EC%9D%80%EC%84%B1_연간인센상세.html" target="_blank">📊 품목군별 상세 분석 →</a>
+    </div>
+    
+    <div class="member-card ">
+      <div class="member-name">임대현</div>
+      <div class="member-total">2,300,000<span class="unit">원</span></div>
+      <div class="member-sub">분기 확정 수령액 (성장 70% + 판매 100%)</div>
+      <div class="member-detail">
+        <div class="row"><span class="lbl">1Q 확정</span><span class="val">2,300,000원</span></div><div class="row sub"><span class="lbl">└ 성장 70%</span><span class="val sm">0원</span></div><div class="row sub"><span class="lbl">└ 판매 100%</span><span class="val sm">2,300,000원</span></div><div class="row"><span class="lbl">2Q 확정</span><span class="val"><span class="pending">대기</span></span></div><div class="row"><span class="lbl">3Q 확정</span><span class="val"><span class="pending">대기</span></span></div><div class="row"><span class="lbl">4Q 확정</span><span class="val"><span class="pending">대기</span></span></div>
+        <div class="row sep"><span class="lbl">연말 30% 추가 (성장만)</span><span class="val highlight-val">+0원</span></div>
+        <div class="row total-row"><span class="lbl">연말 총 예상</span><span class="val">2,300,000원</span></div>
+      </div>
+      <a class="detail-btn" href="%EC%9E%84%EB%8C%80%ED%98%84_연간인센상세.html" target="_blank">📊 품목군별 상세 분석 →</a>
+    </div>
+    
+    <div class="member-card ">
+      <div class="member-name">황태영</div>
+      <div class="member-total">1,160,000<span class="unit">원</span></div>
+      <div class="member-sub">분기 확정 수령액 (성장 70% + 판매 100%)</div>
+      <div class="member-detail">
+        <div class="row"><span class="lbl">1Q 확정</span><span class="val">1,160,000원</span></div><div class="row sub"><span class="lbl">└ 성장 70%</span><span class="val sm">310,000원</span></div><div class="row sub"><span class="lbl">└ 판매 100%</span><span class="val sm">850,000원</span></div><div class="row"><span class="lbl">2Q 확정</span><span class="val"><span class="pending">대기</span></span></div><div class="row"><span class="lbl">3Q 확정</span><span class="val"><span class="pending">대기</span></span></div><div class="row"><span class="lbl">4Q 확정</span><span class="val"><span class="pending">대기</span></span></div>
+        <div class="row sep"><span class="lbl">연말 30% 추가 (성장만)</span><span class="val highlight-val">+132,857원</span></div>
+        <div class="row total-row"><span class="lbl">연말 총 예상</span><span class="val">1,292,857원</span></div>
+      </div>
+      <a class="detail-btn" href="%ED%99%A9%ED%83%9C%EC%98%81_연간인센상세.html" target="_blank">📊 품목군별 상세 분석 →</a>
+    </div>
+    
+    <div class="member-card highlight">
+      <div class="member-name">김혜성</div>
+      <div class="member-total">3,240,000<span class="unit">원</span></div>
+      <div class="member-sub">분기 확정 수령액 (성장 70% + 판매 100%)</div>
+      <div class="member-detail">
+        <div class="row"><span class="lbl">1Q 확정</span><span class="val">3,240,000원</span></div><div class="row sub"><span class="lbl">└ 성장 70%</span><span class="val sm">1,490,000원</span></div><div class="row sub"><span class="lbl">└ 판매 100%</span><span class="val sm">1,750,000원</span></div><div class="row"><span class="lbl">2Q 확정</span><span class="val"><span class="pending">대기</span></span></div><div class="row"><span class="lbl">3Q 확정</span><span class="val"><span class="pending">대기</span></span></div><div class="row"><span class="lbl">4Q 확정</span><span class="val"><span class="pending">대기</span></span></div>
+        <div class="row sep"><span class="lbl">연말 30% 추가 (성장만)</span><span class="val highlight-val">+638,571원</span></div>
+        <div class="row total-row"><span class="lbl">연말 총 예상</span><span class="val">3,878,571원</span></div>
+      </div>
+      <a class="detail-btn" href="%EA%B9%80%ED%98%9C%EC%84%B1_연간인센상세.html" target="_blank">📊 품목군별 상세 분석 →</a>
+    </div>
+    </div>
+</div>
+
+<div class="section">
+  <h2>📊 7개 품목군 누적 성장 페이스 (1분기 누적 — 조건 ×1 자동 적용)</h2>
+  
+<table class="pace-table">
+  <thead>
+    <tr><th>담당자</th><th>고지혈<br><small>+300만</small></th><th>당뇨상품<br><small>+300만</small></th><th>당뇨제품<br><small>+150만</small></th><th>순환기<br><small>+300만</small></th><th>주요1그룹<br><small>+150만</small></th><th>주요2그룹<br><small>+150만</small></th><th>길리어드<br><small>+300만</small></th></tr>
+  </thead>
+  <tbody><tr><td class="pace-name">전은성</td><td class="pace-miss">-547만</td><td class="pace-ok">+577만 ✅</td><td class="pace-miss">-106만</td><td class="pace-ok">+1,236만 ✅</td><td class="pace-low">+85만</td><td class="pace-miss">-4만</td><td class="pace-low">+196만</td></tr><tr><td class="pace-name">임대현</td><td class="pace-ok">+716만 ✅</td><td class="pace-miss">-210만</td><td class="pace-ok">+158만 ✅</td><td class="pace-ok">+469만 ✅</td><td class="pace-miss">-47만</td><td class="pace-miss">-38만</td><td class="pace-low">+183만</td></tr><tr><td class="pace-name">황태영</td><td class="pace-miss">-451만</td><td class="pace-miss">-576만</td><td class="pace-low">+61만</td><td class="pace-miss">-41만</td><td class="pace-miss">-43만</td><td class="pace-miss">-12만</td><td class="pace-ok">+437만 ✅</td></tr><tr><td class="pace-name">김혜성</td><td class="pace-miss">-407만</td><td class="pace-low">+123만</td><td class="pace-low">+80만</td><td class="pace-ok">+812만 ✅</td><td class="pace-low">+53만</td><td class="pace-miss">-33만</td><td class="pace-ok">+510만 ✅</td></tr></tbody>
+</table>
+<div class="pace-note">✅ 1분기 누적 시상조건 충족 (연간 조건 = 분기조건 ×4, 1,200만/600만 / 항목별 상한 500만/년)</div>
+
+</div>
+
+<div class="section"><h2>🟢 진행중 인센티브 5개 (평가종료 빠른 순)</h2><div class="cards">
+    <div class="card active">
+      <div class="card-head"><div class="card-title">🌿 리알트리스 3~5월</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day past">+10일</span></div></div>
+      <div class="card-info">
+        <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.03 ~ 2026.05</span></div>
+        <div class="info-row"><span class="info-lbl">평가방법</span><span>25년 1~12월 월평균 대비 합산 성장액 순위</span></div>
+        <div class="info-row"><span class="info-lbl">시상</span><span><b>1~10위 100만 (커트 +7,168) / 11~50위 50만 (커트 +4,149)</b></span></div>
+      </div>
+      
+      <div class="card-ours"><div class="ours-title">★ 우리팀 현황</div><table class="ours-table"><thead><tr><th>담당자</th><th>순위</th><th>상태 (커트라인 격차 포함)</th><th>예상시상</th></tr></thead><tbody><tr><td>전은성</td><td>125</td><td class="badge-none">125위 (3+4월 누적 +2,183)</td><td>-</td></tr><tr><td>임대현</td><td>82</td><td class="badge-none">82위 (3+4월 누적 +3,191)</td><td>-</td></tr><tr><td>황태영</td><td>213</td><td class="badge-none">213위 (3+4월 누적 +814)</td><td>-</td></tr><tr><td>김혜성</td><td>162</td><td class="badge-none">162위 (3+4월 누적 +1,694)</td><td>-</td></tr></tbody></table></div>
+      <div class="card-actions"><a class="btn-go" href="%EB%A6%AC%EC%95%8C%ED%8A%B8%EB%A6%AC%EC%8A%A4_%EC%9D%B8%EC%84%BC%ED%8B%B0%EB%B8%8C_%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C.html" target="_blank">📊 상세 대시보드</a></div>
+    </div>
+    
+    <div class="card active">
+      <div class="card-head"><div class="card-title">🩺 베믈리디 4~6월</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day">D-20</span></div></div>
+      <div class="card-info">
+        <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.04 ~ 2026.06</span></div>
+        <div class="info-row"><span class="info-lbl">평가방법</span><span>60%성장액 + 40%성장률 점수 / 조건① 베믈+비리어드 성장 / 조건② 베믈/HBV 점유비 상승</span></div>
+        <div class="info-row"><span class="info-lbl">시상</span><span><b>담당자 1~48위 50만원 (조건충족자 102명 중, 48위 커트 4월 평균 7,075)</b></span></div>
+      </div>
+      
+      <div class="card-ours"><div class="ours-title">★ 우리팀 현황</div><table class="ours-table"><thead><tr><th>담당자</th><th>순위</th><th>상태 (커트라인 격차 포함)</th><th>예상시상</th></tr></thead><tbody><tr><td>전은성</td><td>-</td><td class="badge-warn">4월 평균 7,563 (성장 -813, 조건미달)</td><td>-</td></tr><tr><td>임대현</td><td>54</td><td class="badge-near">4월 평균 9,352 (성장 +2,060, 54위 / 48위 격차 -1.0점)</td><td>⚡순위근접</td></tr><tr><td>황태영</td><td>40</td><td class="badge-good">4월 평균 8,864 (성장 +2,439, 40위)</td><td><b>500</b></td></tr><tr><td>김혜성</td><td>-</td><td class="badge-warn">4월 평균 3,659 (성장 -3,054, 조건미달)</td><td>-</td></tr></tbody></table></div>
+      <div class="card-actions"><a class="btn-go" href="%EB%B2%A0%EB%AF%88%EB%A6%AC%EB%94%94_%EC%9D%B8%EC%84%BC%ED%8B%B0%EB%B8%8C_%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C.html" target="_blank">📊 상세 대시보드</a></div>
+    </div>
+    
+    <div class="card active">
+      <div class="card-head"><div class="card-title">💊 라베피드정 4~6월</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day">D-20</span></div></div>
+      <div class="card-info">
+        <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.04 ~ 2026.06</span></div>
+        <div class="info-row"><span class="info-lbl">평가방법</span><span>평가기간 합산 판매액 순위 (절대값)</span></div>
+        <div class="info-row"><span class="info-lbl">시상</span><span><b>1~5위 200만 / 6~10위 150만 / 11~15위 100만 / 16~30위 50만 (30위 커트 4월 합 0)</b></span></div>
+      </div>
+      
+      <div class="card-ours"><div class="ours-title">★ 우리팀 현황</div><table class="ours-table"><thead><tr><th>담당자</th><th>순위</th><th>상태 (커트라인 격차 포함)</th><th>예상시상</th></tr></thead><tbody><tr><td>전은성</td><td>-</td><td class="badge-none">4월 합 0</td><td>-</td></tr><tr><td>임대현</td><td>-</td><td class="badge-none">4월 합 0</td><td>-</td></tr><tr><td>황태영</td><td>-</td><td class="badge-none">4월 합 0</td><td>-</td></tr><tr><td>김혜성</td><td>-</td><td class="badge-none">4월 합 0</td><td>-</td></tr></tbody></table></div>
+      <div class="card-actions"><a class="btn-go" href="%EB%9D%BC%EB%B2%A0%ED%94%BC%EB%93%9C_%EC%9D%B8%EC%84%BC%ED%8B%B0%EB%B8%8C_%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C.html" target="_blank">📊 상세 대시보드</a></div>
+    </div>
+    
+    <div class="card active">
+      <div class="card-head"><div class="card-title">💉 2Q 순환기 품목 (트루셋저용량·트윈로우)</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day">D-20</span></div></div>
+      <div class="card-info">
+        <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.04 ~ 2026.06 (트윈로우 2~3월 소급)</span></div>
+        <div class="info-row"><span class="info-lbl">평가방법</span><span>담당자: 절대 판매액 / 부지점장: 팀합산÷팀T.O</span></div>
+        <div class="info-row"><span class="info-lbl">시상</span><span><b>담당자 48위 / 부지점장 10위 / 지점장 2위 — 50만원 물품 (48위 커트 2,773)</b></span></div>
+      </div>
+      <div class="team-memo"><div class="memo-line">★ 임정빈 부지점장 19위 / 56명 (평균 2,062)</div></div>
+      <div class="card-ours"><div class="ours-title">★ 우리팀 현황</div><table class="ours-table"><thead><tr><th>담당자</th><th>순위</th><th>상태 (커트라인 격차 포함)</th><th>예상시상</th></tr></thead><tbody><tr><td>전은성</td><td>22</td><td class="badge-good">★ 22위 (합산 3,427)</td><td><b>500</b></td></tr><tr><td>임대현</td><td>111</td><td class="badge-none">111위 (합산 1,949, 48위 격차 +824)</td><td>-</td></tr><tr><td>황태영</td><td>135</td><td class="badge-none">135위 (합산 1,641, 48위 격차 +1,132)</td><td>-</td></tr><tr><td>김혜성</td><td>45</td><td class="badge-good">★ 45위 (합산 2,827)</td><td><b>500</b></td></tr></tbody></table></div>
+      <div class="card-actions"><a class="btn-go" href="104%EA%B8%B0_4-6%EC%9B%94_%EC%88%9C%ED%99%98%EA%B8%B0%ED%92%88%EB%AA%A9%EC%9D%B8%EC%84%BC%ED%8B%B0%EB%B8%8C.html" target="_blank">📊 상세 대시보드</a></div>
+    </div>
+    
+    <div class="card active">
+      <div class="card-head"><div class="card-title">✈️ 2Q 팀여행 (트윈스타F+트루셋F+트윈로우)</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day">D-20</span></div></div>
+      <div class="card-info">
+        <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.04 ~ 2026.06</span></div>
+        <div class="info-row"><span class="info-lbl">평가방법</span><span>3품목 분기 성장액 합계 ÷ 팀T.O</span></div>
+        <div class="info-row"><span class="info-lbl">시상</span><span><b>전국 1~8위 (팀당 부지점장 포함 1인 150만원+유급휴가 1일, 8위 커트 평균 +3,077,145원)</b></span></div>
+      </div>
+      <div class="team-memo"><div class="memo-line">★ 임정빈팀 <b>10위</b> / 56팀 (평균 +2,912, 8위 커트까지 +164)</div></div>
+      <div class="card-ours"><div class="ours-title">★ 우리팀 현황</div><table class="team-mini"><thead><tr><th>순위</th><th>팀장</th><th>지점</th><th>평균(÷TO)</th></tr></thead><tbody><tr class="team-top8"><td>1</td><td>안형준</td><td>충남.전북지점</td><td>+6,986</td></tr><tr class="team-top8"><td>2</td><td>박진우</td><td>경기지점</td><td>+5,180</td></tr><tr class="team-top8"><td>3</td><td>박철환</td><td>강남.강원지점</td><td>+3,675</td></tr><tr class="team-top8"><td>4</td><td>정석희</td><td>경북지점</td><td>+3,192</td></tr><tr class="team-top8"><td>5</td><td>강민구</td><td>전남지점</td><td>+3,164</td></tr><tr class="team-top8"><td>6</td><td>이영준</td><td>경기지점</td><td>+3,116</td></tr><tr class="team-top8"><td>7</td><td>이종찬</td><td>북부지점</td><td>+3,087</td></tr><tr class="team-top8"><td>8</td><td>이봉열</td><td>남부지점</td><td>+3,077</td></tr><tr class="team-ours"><td>10</td><td>임정빈 ★</td><td>인천지점</td><td>+2,913</td></tr></tbody></table></div>
+      <div class="card-actions"><a class="btn-go" href="104%EA%B8%B0_2Q_%ED%8C%80%EC%97%AC%ED%96%89%EC%9D%B8%EC%84%BC%ED%8B%B0%EB%B8%8C.html" target="_blank">📊 상세 대시보드</a></div>
+    </div>
+    </div></div>
+<div class="section"><h2>🟡 예정 인센티브 1개</h2><div class="cards">
+    <div class="card upcoming">
+      <div class="card-head"><div class="card-title">🌿 리알트리스 9~11월</div><div class="card-meta"><span class="status upcoming">예정</span> <span class="d-day">D-173</span></div></div>
+      <div class="card-info">
+        <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.09 ~ 2026.11</span></div>
+        <div class="info-row"><span class="info-lbl">평가방법</span><span>공문 확인 (2026-06-04 도착)</span></div>
+        <div class="info-row"><span class="info-lbl">시상</span><span><b>공문 참조</b></span></div>
+      </div>
+      
+      <div class="card-ours"><div class="ours-title">★ 우리팀 현황</div><div class="no-data">대시보드 참조</div></div>
+      <div class="card-actions"></div>
+    </div>
+    </div></div>
+<div class="section"><h2>⚪ 완료 인센티브 2개</h2><div class="cards">
+    <div class="card done">
+      <div class="card-head"><div class="card-title">✅ 1Q 인센티브 (1~3월)</div><div class="card-meta"><span class="status done">완료</span> </div></div>
+      <div class="card-info">
+        <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.01 ~ 2026.03</span></div>
+        <div class="info-row"><span class="info-lbl">평가방법</span><span>7개 품목군 성장 + 전체 판매액 구간시상</span></div>
+        <div class="info-row"><span class="info-lbl">시상</span><span><b>가확정 70% 분기결산</b></span></div>
+      </div>
+      
+      <div class="card-ours"><div class="ours-title">★ 우리팀 현황</div><table class="ours-table"><thead><tr><th>담당자</th><th>순위</th><th>상태 (커트라인 격차 포함)</th><th>예상시상</th></tr></thead><tbody><tr><td>전은성</td><td>-</td><td class="badge-good">시상 확정</td><td><b>6,090</b></td></tr><tr><td>임대현</td><td>-</td><td class="badge-good">시상 확정</td><td><b>2,300</b></td></tr><tr><td>황태영</td><td>-</td><td class="badge-good">시상 확정</td><td><b>1,160</b></td></tr><tr><td>김혜성</td><td>-</td><td class="badge-good">시상 확정</td><td><b>3,240</b></td></tr></tbody></table></div>
+      <div class="card-actions"></div>
+    </div>
+    
+    <div class="card done">
+      <div class="card-head"><div class="card-title">✅ 베믈리디 1Q (1~3월)</div><div class="card-meta"><span class="status done">완료</span> </div></div>
+      <div class="card-info">
+        <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.01 ~ 2026.03</span></div>
+        <div class="info-row"><span class="info-lbl">평가방법</span><span>베믈리디 성장 순위</span></div>
+        <div class="info-row"><span class="info-lbl">시상</span><span><b>시상 확정</b></span></div>
+      </div>
+      
+      <div class="card-ours"><div class="ours-title">★ 우리팀 현황</div><table class="ours-table"><thead><tr><th>담당자</th><th>순위</th><th>상태 (커트라인 격차 포함)</th><th>예상시상</th></tr></thead><tbody><tr><td>김혜성</td><td>11</td><td class="badge-good">★ 11위 시상 (50만원 추정)</td><td><b>500</b></td></tr></tbody></table></div>
+      <div class="card-actions"></div>
+    </div>
+    </div></div>
+
+<div class="source">데이터 출처: 평가실적RAW · 2Q팀여행 RAW · 1Q 인천지점요약 · 2026인센티브공문</div>
+
+</body></html>
