@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제104기 2Q 팀여행 인센티브 — 전국 팀 순위</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; color: #222; font-size: 13px; padding-bottom: 50px; }
+.header { background: linear-gradient(135deg, #1a2d50, #2874a6, #e67e22); color: white; padding: 24px 28px; }
+.header h1 { font-size: 22px; font-weight: 700; }
+.header .sub { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+.summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 18px 28px; }
+.sum-card { background: white; padding: 14px 16px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-top: 4px solid #2874a6; }
+.sum-card.hi { border-top-color: #e67e22; }
+.sum-card .l { font-size: 11px; color: #666; }
+.sum-card .v { font-size: 20px; font-weight: 700; color: #1a2d50; font-family: "Courier New", monospace; margin-top: 4px; }
+.section { padding: 6px 28px 22px; }
+.section h2 { font-size: 16px; color: #1a2d50; margin-bottom: 12px; padding-left: 6px; border-left: 4px solid #2874a6; }
+.tbl { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
+.tbl th { background: #1a2d50; color: white; padding: 8px 6px; font-size: 11px; font-weight: 600; }
+.tbl td { padding: 7px 6px; text-align: center; border-bottom: 1px solid #f0f0f0; font-size: 12px; font-family: "Courier New", monospace; }
+.tbl td:nth-child(2), .tbl td:nth-child(3) { font-family: "Malgun Gothic", Arial; }
+.tbl tr.top8 td { background: #fdf2e9; color: #6e2c00; font-weight: 600; }
+.tbl tr.ours td { background: #d4efdf; color: #117864; font-weight: 700; font-size: 13px; }
+.tbl tr.normal td { color: #555; }
+.pos { color: #117864; }
+.neg { color: #c0392b; }
+.back-link { display: inline-block; margin: 14px 28px 0; padding: 6px 14px; background: #2874a6; color: white; text-decoration: none; border-radius: 6px; font-size: 11px; }
+.back-link:hover { background: #1a5276; }
+.cut-note { background: #fef9e7; border-left: 4px solid #f1c40f; padding: 10px 14px; margin: 14px 28px; border-radius: 6px; font-size: 12px; color: #7d6608; }
+</style></head>
+<body>
+<div class="header">
+  <h1>✈️ 제104기 2Q 팀여행 인센티브 — 전국 팀 순위</h1>
+  <div class="sub">평가기간 2026.04~06 | 트윈스타F+트루셋F+트윈로우 3품목 분기 성장액 합계 ÷ 팀T.O | 2026-06-10 기준</div>
+</div>
+
+<a class="back-link" href="인센티브_통합대시보드.html">← 통합 대시보드</a>
+
+<div class="summary">
+  <div class="sum-card hi"><div class="l">임정빈팀 순위</div><div class="v">10위 / 56팀</div></div>
+  <div class="sum-card"><div class="l">우리팀 평균 (3품목 성장합÷TO)</div><div class="v">+2,913</div></div>
+  <div class="sum-card"><div class="l">8위 커트라인 평균</div><div class="v">+3,077</div></div>
+  <div class="sum-card"><div class="l">8위 커트 격차</div><div class="v">-164</div></div>
+</div>
+
+<div class="cut-note">
+  💡 전국 1~8위 팀 시상: <b>팀당 부지점장 포함 1인 150만원 + 유급휴가 1일</b><br>
+  ※ 5/6월 데이터는 RAW에 입력된 분만 누적됨. 미입력 분기는 0으로 표시.
+</div>
+
+<div class="section">
+  <h2>🏆 전국 56팀 순위 (트윈스타F+트루셋F+트윈로우 3품목 성장합 ÷ 팀T.O)</h2>
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>순위</th><th>팀장</th><th>지점</th><th>T.O</th>
+        <th>4월 성장합</th><th>5월 성장합</th><th>6월 성장합</th><th>평균(÷TO)</th>
+      </tr>
+    </thead>
+    <tbody><tr class="top8">
+            <td>1</td>
+            <td>안형준🏆</td>
+            <td>충남.전북지점</td>
+            <td>4.7</td>
+            <td>+32,495</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+6,986</b></td>
+        </tr><tr class="top8">
+            <td>2</td>
+            <td>박진우🏆</td>
+            <td>경기지점</td>
+            <td>4.1</td>
+            <td>+21,089</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+5,180</b></td>
+        </tr><tr class="top8">
+            <td>3</td>
+            <td>박철환🏆</td>
+            <td>강남.강원지점</td>
+            <td>3.1</td>
+            <td>+11,456</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+3,675</b></td>
+        </tr><tr class="top8">
+            <td>4</td>
+            <td>정석희🏆</td>
+            <td>경북지점</td>
+            <td>4.7</td>
+            <td>+15,079</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+3,192</b></td>
+        </tr><tr class="top8">
+            <td>5</td>
+            <td>강민구🏆</td>
+            <td>전남지점</td>
+            <td>3.8</td>
+            <td>+12,128</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+3,164</b></td>
+        </tr><tr class="top8">
+            <td>6</td>
+            <td>이영준🏆</td>
+            <td>경기지점</td>
+            <td>5.2</td>
+            <td>+16,131</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+3,116</b></td>
+        </tr><tr class="top8">
+            <td>7</td>
+            <td>이종찬🏆</td>
+            <td>북부지점</td>
+            <td>5.1</td>
+            <td>+15,741</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+3,087</b></td>
+        </tr><tr class="top8">
+            <td>8</td>
+            <td>이봉열🏆</td>
+            <td>남부지점</td>
+            <td>4.6</td>
+            <td>+14,061</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+3,077</b></td>
+        </tr><tr class="normal">
+            <td>9</td>
+            <td>박희철</td>
+            <td>충남.전북지점</td>
+            <td>4.1</td>
+            <td>+11,932</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+2,934</b></td>
+        </tr><tr class="ours">
+            <td>10</td>
+            <td>임정빈 ★우리팀</td>
+            <td>인천지점</td>
+            <td>5.2</td>
+            <td>+15,119</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+2,913</b></td>
+        </tr><tr class="normal">
+            <td>11</td>
+            <td>이재홍</td>
+            <td>충남.충북지점</td>
+            <td>4.5</td>
+            <td>+11,250</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+2,515</b></td>
+        </tr><tr class="normal">
+            <td>12</td>
+            <td>차환준</td>
+            <td>강남.강원지점</td>
+            <td>4.7</td>
+            <td>+11,629</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+2,499</b></td>
+        </tr><tr class="normal">
+            <td>13</td>
+            <td>이홍주</td>
+            <td>충남.충북지점</td>
+            <td>4.1</td>
+            <td>+9,892</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+2,429</b></td>
+        </tr><tr class="normal">
+            <td>14</td>
+            <td>임찬규</td>
+            <td>경기지점</td>
+            <td>4.2</td>
+            <td>+10,163</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+2,423</b></td>
+        </tr><tr class="normal">
+            <td>15</td>
+            <td>조용성</td>
+            <td>경기지점</td>
+            <td>4.2</td>
+            <td>+10,076</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+2,385</b></td>
+        </tr><tr class="normal">
+            <td>16</td>
+            <td>강희준</td>
+            <td>남부지점</td>
+            <td>3.9</td>
+            <td>+8,968</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+2,287</b></td>
+        </tr><tr class="normal">
+            <td>17</td>
+            <td>김명선</td>
+            <td>경기지점</td>
+            <td>4.8</td>
+            <td>+10,563</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+2,203</b></td>
+        </tr><tr class="normal">
+            <td>18</td>
+            <td>박종성</td>
+            <td>남부지점</td>
+            <td>4.1</td>
+            <td>+8,960</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+2,161</b></td>
+        </tr><tr class="normal">
+            <td>19</td>
+            <td>최병률</td>
+            <td>충남.전북지점</td>
+            <td>4.9</td>
+            <td>+10,128</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+2,060</b></td>
+        </tr><tr class="normal">
+            <td>20</td>
+            <td>김중곤</td>
+            <td>경남지점</td>
+            <td>4.9</td>
+            <td>+10,066</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+2,038</b></td>
+        </tr><tr class="normal">
+            <td>21</td>
+            <td>양준영</td>
+            <td>서부지점</td>
+            <td>5.9</td>
+            <td>+11,431</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,943</b></td>
+        </tr><tr class="normal">
+            <td>22</td>
+            <td>이재열</td>
+            <td>부산지점</td>
+            <td>3.9</td>
+            <td>+7,122</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,841</b></td>
+        </tr><tr class="normal">
+            <td>23</td>
+            <td>홍상길</td>
+            <td>부산지점</td>
+            <td>4.6</td>
+            <td>+8,168</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,763</b></td>
+        </tr><tr class="normal">
+            <td>24</td>
+            <td>박중연</td>
+            <td>남부지점</td>
+            <td>4.8</td>
+            <td>+8,254</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,708</b></td>
+        </tr><tr class="normal">
+            <td>25</td>
+            <td>성우진</td>
+            <td>부산지점</td>
+            <td>4.7</td>
+            <td>+7,961</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,704</b></td>
+        </tr><tr class="normal">
+            <td>26</td>
+            <td>이수현</td>
+            <td>북부지점</td>
+            <td>4.0</td>
+            <td>+6,316</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,577</b></td>
+        </tr><tr class="normal">
+            <td>27</td>
+            <td>전효택</td>
+            <td>강남.강원지점</td>
+            <td>6.2</td>
+            <td>+9,647</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,564</b></td>
+        </tr><tr class="normal">
+            <td>28</td>
+            <td>장진수</td>
+            <td>경기지점</td>
+            <td>4.9</td>
+            <td>+6,502</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,339</b></td>
+        </tr><tr class="normal">
+            <td>29</td>
+            <td>정민재</td>
+            <td>강남.강원지점</td>
+            <td>3.7</td>
+            <td>+4,961</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,327</b></td>
+        </tr><tr class="normal">
+            <td>30</td>
+            <td>문호재</td>
+            <td>제주지점</td>
+            <td>3.1</td>
+            <td>+3,833</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,236</b></td>
+        </tr><tr class="normal">
+            <td>31</td>
+            <td>윤현식</td>
+            <td>서부지점</td>
+            <td>3.9</td>
+            <td>+4,672</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,213</b></td>
+        </tr><tr class="normal">
+            <td>32</td>
+            <td>정재헌</td>
+            <td>인천지점</td>
+            <td>5.2</td>
+            <td>+6,310</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,210</b></td>
+        </tr><tr class="normal">
+            <td>33</td>
+            <td>구본치</td>
+            <td>경남지점</td>
+            <td>4.6</td>
+            <td>+5,413</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,180</b></td>
+        </tr><tr class="normal">
+            <td>34</td>
+            <td>예명규</td>
+            <td>경북지점</td>
+            <td>4.6</td>
+            <td>+5,277</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,138</b></td>
+        </tr><tr class="normal">
+            <td>35</td>
+            <td>김윤석</td>
+            <td>북부지점</td>
+            <td>4.0</td>
+            <td>+4,370</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,089</b></td>
+        </tr><tr class="normal">
+            <td>36</td>
+            <td>김영포</td>
+            <td>경북지점</td>
+            <td>6.1</td>
+            <td>+6,574</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,070</b></td>
+        </tr><tr class="normal">
+            <td>37</td>
+            <td>장형수</td>
+            <td>서부지점</td>
+            <td>5.4</td>
+            <td>+5,649</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,044</b></td>
+        </tr><tr class="normal">
+            <td>38</td>
+            <td>추재현</td>
+            <td>강남.강원지점</td>
+            <td>6.0</td>
+            <td>+6,140</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+1,023</b></td>
+        </tr><tr class="normal">
+            <td>39</td>
+            <td>장현석</td>
+            <td>북부지점</td>
+            <td>3.7</td>
+            <td>+3,423</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+932</b></td>
+        </tr><tr class="normal">
+            <td>40</td>
+            <td>여정현</td>
+            <td>충남.충북지점</td>
+            <td>3.5</td>
+            <td>+3,159</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+900</b></td>
+        </tr><tr class="normal">
+            <td>41</td>
+            <td>장정호</td>
+            <td>인천지점</td>
+            <td>5.6</td>
+            <td>+5,001</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+892</b></td>
+        </tr><tr class="normal">
+            <td>42</td>
+            <td>심기운</td>
+            <td>전남지점</td>
+            <td>4.3</td>
+            <td>+3,507</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+814</b></td>
+        </tr><tr class="normal">
+            <td>43</td>
+            <td>최규삼</td>
+            <td>전남지점</td>
+            <td>4.1</td>
+            <td>+3,116</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+757</b></td>
+        </tr><tr class="normal">
+            <td>44</td>
+            <td>김종범</td>
+            <td>충남.전북지점</td>
+            <td>5.5</td>
+            <td>+4,035</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+730</b></td>
+        </tr><tr class="normal">
+            <td>45</td>
+            <td>조재윤</td>
+            <td>전남지점</td>
+            <td>4.3</td>
+            <td>+2,864</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+674</b></td>
+        </tr><tr class="normal">
+            <td>46</td>
+            <td>윤준기</td>
+            <td>충남.충북지점</td>
+            <td>4.6</td>
+            <td>+2,802</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+610</b></td>
+        </tr><tr class="normal">
+            <td>47</td>
+            <td>정용주</td>
+            <td>부산지점</td>
+            <td>5.4</td>
+            <td>+1,573</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+289</b></td>
+        </tr><tr class="normal">
+            <td>48</td>
+            <td>권오훈</td>
+            <td>서부지점</td>
+            <td>5.0</td>
+            <td>+1,004</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+202</b></td>
+        </tr><tr class="normal">
+            <td>49</td>
+            <td>김현덕</td>
+            <td>부산지점</td>
+            <td>5.2</td>
+            <td>+809</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+155</b></td>
+        </tr><tr class="normal">
+            <td>50</td>
+            <td>김준환</td>
+            <td>인천지점</td>
+            <td>5.9</td>
+            <td>+906</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+152</b></td>
+        </tr><tr class="normal">
+            <td>51</td>
+            <td>오광선</td>
+            <td>북부지점</td>
+            <td>5.7</td>
+            <td>+756</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+132</b></td>
+        </tr><tr class="normal">
+            <td>52</td>
+            <td>박환성</td>
+            <td>경남지점</td>
+            <td>5.0</td>
+            <td>+367</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+74</b></td>
+        </tr><tr class="normal">
+            <td>53</td>
+            <td>박성현</td>
+            <td>북부지점</td>
+            <td>4.3</td>
+            <td>+241</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>+56</b></td>
+        </tr><tr class="normal">
+            <td>54</td>
+            <td>윤규식</td>
+            <td>경북지점</td>
+            <td>5.1</td>
+            <td>-158</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>-31</b></td>
+        </tr><tr class="normal">
+            <td>55</td>
+            <td>최재덕</td>
+            <td>경북지점</td>
+            <td>4.3</td>
+            <td>-1,710</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>-393</b></td>
+        </tr><tr class="normal">
+            <td>56</td>
+            <td>최진수</td>
+            <td>충남.전북지점</td>
+            <td>3.9</td>
+            <td>-7,807</td>
+            <td>+0</td>
+            <td>+0</td>
+            <td><b>-2,001</b></td>
+        </tr></tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>👥 우리팀 5명 4월 순환기 3품목 성장</h2>
+  <table class="tbl">
+    <thead><tr><th>담당자</th><th>기준실적</th><th>4월 실적</th><th>성장</th></tr></thead>
+    <tbody><tr><td>김혜성</td><td>19,341</td><td>22,119</td><td><b class="pos">+2,778</b></td></tr><tr><td>송창훈</td><td>17,695</td><td>22,163</td><td><b class="pos">+4,468</b></td></tr><tr><td>임대현</td><td>29,855</td><td>32,668</td><td><b class="pos">+2,813</b></td></tr><tr><td>전은성</td><td>38,972</td><td>43,487</td><td><b class="pos">+4,515</b></td></tr><tr><td>황태영</td><td>25,247</td><td>25,792</td><td><b class="pos">+545</b></td></tr></tbody>
+  </table>
+</div>
+
+</body></html>
