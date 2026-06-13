@@ -44,7 +44,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add stock/data.json
+          git add stock/data.json stock/journal.json
           if ! git diff --staged --quiet; then
             git commit -m "auto: SOXL data update $(date -u +'%Y-%m-%d %H:%M UTC')"
             git push
