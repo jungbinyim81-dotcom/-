@@ -1,6 +1,6 @@
 {
-  "updated": "2026-06-13 19:31",
-  "updated_iso": "2026-06-13T19:31:55.607921",
+  "updated": "2026-06-13 19:37",
+  "updated_iso": "2026-06-13T19:37:50.173013",
   "포지션": {
     "포지션": [
       {
@@ -724,5 +724,180 @@
       "일자": "2026-07-15",
       "남은일": 32
     }
+  },
+  "분석": {
+    "점수": {
+      "점수": 76,
+      "신호": "green",
+      "결정": "진입 유리",
+      "설명": "매크로 환경 우호. 분할 진입 고려 가능",
+      "근거": [
+        "10년물 4.49% (보통)",
+        "DXY 99.8 (약달러, SOXL 우호)",
+        "반도체 5일 +3.6% (상승 추세)"
+      ],
+      "감점": [
+        "FOMC D-4일 (변동성 증가 예상)"
+      ]
+    },
+    "상관베타": {
+      "상관": {
+        "SOXX": 1.0,
+        "NVDA": 0.58,
+        "SOX": 1.0,
+        "TNX": -0.55,
+        "VIX": -0.63,
+        "DXY": -0.52,
+        "KRW": 0.2,
+        "하이닉스": 0.31
+      },
+      "베타": {
+        "SOXX": 2.955,
+        "NVDA": 2.343,
+        "SOX": 3.039,
+        "TNX": -5.042,
+        "VIX": -0.745,
+        "DXY": -15.146,
+        "KRW": 2.439,
+        "하이닉스": 0.526
+      },
+      "가장민감": {
+        "지표": "DXY",
+        "베타": -15.146
+      },
+      "기간일수": 60
+    },
+    "시나리오": [
+      {
+        "이름": "FOMC 매파 (금리 +25bp or 매파 발언)",
+        "조건": "10년물 +15bp, DXY +0.8%, VIX +3",
+        "SOXL예상": -3.1,
+        "위험": "high"
+      },
+      {
+        "이름": "FOMC 비둘기 (금리 동결 + 인하 시사)",
+        "조건": "10년물 -15bp, DXY -0.5%, VIX -3",
+        "SOXL예상": 3.1,
+        "위험": "low"
+      },
+      {
+        "이름": "CPI 예상 상회 (인플레 재가속)",
+        "조건": "10년물 +12bp, DXY +0.6%, VIX +2",
+        "SOXL예상": -2.2,
+        "위험": "high"
+      },
+      {
+        "이름": "CPI 예상 하회 (디스인플레)",
+        "조건": "10년물 -12bp, DXY -0.4%, VIX -2",
+        "SOXL예상": 2.2,
+        "위험": "low"
+      },
+      {
+        "이름": "엔비디아 실적 어닝 서프라이즈 (가이던스 +)",
+        "조건": "NVDA +8%, SOX +5%",
+        "SOXL예상": 15.2,
+        "위험": "low"
+      },
+      {
+        "이름": "엔비디아 실적 미스 (가이던스 -)",
+        "조건": "NVDA -8%, SOX -5%",
+        "SOXL예상": -15.2,
+        "위험": "high"
+      }
+    ],
+    "섹터": [
+      {
+        "티커": "NVDA",
+        "이름": "엔비디아",
+        "현재가": 205.19,
+        "등락률": 0.16
+      },
+      {
+        "티커": "AMD",
+        "이름": "AMD",
+        "현재가": 511.57,
+        "등락률": 4.73
+      },
+      {
+        "티커": "AVGO",
+        "이름": "브로드컴",
+        "현재가": 382.07,
+        "등락률": -0.91
+      },
+      {
+        "티커": "ASML",
+        "이름": "ASML",
+        "현재가": 1863.55,
+        "등락률": -1.89
+      },
+      {
+        "티커": "TSM",
+        "이름": "TSMC",
+        "현재가": 423.93,
+        "등락률": 0.68
+      },
+      {
+        "티커": "INTC",
+        "이름": "인텔",
+        "현재가": 124.57,
+        "등락률": 6.51
+      },
+      {
+        "티커": "MU",
+        "이름": "마이크론",
+        "현재가": 981.61,
+        "등락률": -1.43
+      },
+      {
+        "티커": "QCOM",
+        "이름": "퀄컴",
+        "현재가": 211.72,
+        "등락률": 4.32
+      }
+    ],
+    "뉴스": [
+      {
+        "title": "Semiconductor ETFs 101: DRAM, EUV, SMH, SOXX, SOXL — The Complete Guide for 2026",
+        "publisher": "etf.com",
+        "time": "2026-06-12 18:38",
+        "link": "http://www.etf.com/sections/equity/semiconductor-etfs-101-dram-euv-smh-soxx-soxl-complete-guide-2026?utm_source=yahoo-finance&utm_medium=rss&utm_campaign=yahoo-finance-rss",
+        "source": "SOXL"
+      },
+      {
+        "title": "Daily ETF Flows: SOXL Pulls In $1.1B",
+        "publisher": "etf.com",
+        "time": "2026-06-11 21:00",
+        "link": "http://www.etf.com/sections/daily-etf-flows/daily-etf-flows-soxl-pulls-11b?utm_source=yahoo-finance&utm_medium=rss&utm_campaign=yahoo-finance-rss",
+        "source": "SOXL"
+      },
+      {
+        "title": "ETF Investors Shrug Off Friday's Selloff, Pour In $41 Billion",
+        "publisher": "etf.com",
+        "time": "2026-06-08 21:00",
+        "link": "http://www.etf.com/sections/weekly-etf-flows/etf-investors-shrug-fridays-selloff-pour-41-billion?utm_source=yahoo-finance&utm_medium=rss&utm_campaign=yahoo-finance-rss",
+        "source": "SOXL"
+      },
+      {
+        "title": "Here's Why the Direxion Daily Semiconductor Bull 3X ETF Soared Today (Hint: It's Alphabet and Intel Related)",
+        "publisher": "Motley Fool",
+        "time": "2026-06-08 17:08",
+        "link": "https://www.fool.com/investing/2026/06/08/heres-why-the-direxion-daily-semiconductor-bull-3x/",
+        "source": "SOXL"
+      },
+      {
+        "title": "$10,000 in SOXL Became $131,000 in 13 Months, but Almost Nobody Held It",
+        "publisher": "24/7 Wall St.",
+        "time": "2026-06-02 12:55",
+        "link": "https://247wallst.com/investing/2026/06/02/10000-in-soxl-became-131000-in-13-months-but-almost-nobody-held-it/",
+        "source": "SOXL"
+      },
+      {
+        "title": "Leveraged ETFs for Investors Seeking Bold Tactical Opportunities",
+        "publisher": "Zacks",
+        "time": "2026-05-29 14:02",
+        "link": "https://finance.yahoo.com/markets/options/articles/leveraged-etfs-investors-seeking-bold-140200305.html",
+        "source": "SOXL"
+      }
+    ]
   }
 }
