@@ -661,6 +661,9 @@ async function loadData() {
           ${d.포지션.포지션.map(renderPosition).join('')}
         </div>
         <div id="tab-macro">
+          ${renderSentiment(d.분석 && d.분석.시장심리)}
+          ${renderLiquidity(d.분석 && d.분석.유동성)}
+          ${renderFundamental(d.분석 && d.분석.펀더멘털)}
           ${renderRiskAppetite(d.분석 && d.분석.위험선호)}
           ${renderTechnical(d.분석 && d.분석.기술적)}
           ${renderSensitivity(d.분석 && d.분석.상관베타)}
@@ -730,6 +733,175 @@ function renderDecision(점수) {
         <h4>위험 / 회피 근거</h4>
         <ul>${consHTML}</ul>
       </div>
+    </div>
+  </div>`;
+}
+
+function fngColor(v) {
+  if (v < 25) return '#ff4757';
+  if (v < 45) return '#ffa726';
+  if (v < 55) return '#94a3b8';
+  if (v < 75) return '#76b900';
+  return '#4cd964';
+}
+
+function renderSentiment(s) {
+  if (!s || (!s.CNN && !s.Crypto)) return '';
+  const cnn = s.CNN;
+  const crypto = s.Crypto;
+  const 점수 = s.점수 ?? 0;
+  const tagCls = 점수 >= 7 ? 'normal' : (점수 >= 4 ? 'warn' : 'danger');
+
+  let cnnHTML = '';
+  if (cnn) {
+    const ang = cnn.현재 * 1.8 - 90;  // -90~90도
+    const c = fngColor(cnn.현재);
+    cnnHTML = `
+      <div style="background:var(--card2);padding:14px;border-radius:12px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-size:11px;color:var(--sub)">CNN Fear &amp; Greed</span>
+          <span style="font-size:11px;color:${c};font-weight:700">${cnn.분류.toUpperCase()}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:14px">
+          <svg viewBox="0 0 120 70" width="100" height="60">
+            <defs>
+              <linearGradient id="fngGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#ff4757"/>
+                <stop offset="25%" stop-color="#ffa726"/>
+                <stop offset="50%" stop-color="#94a3b8"/>
+                <stop offset="75%" stop-color="#76b900"/>
+                <stop offset="100%" stop-color="#4cd964"/>
+              </linearGradient>
+            </defs>
+            <path d="M 10 60 A 50 50 0 0 1 110 60" stroke="url(#fngGrad)" stroke-width="10" fill="none" stroke-linecap="round"/>
+            <line x1="60" y1="60" x2="${60 + Math.sin(ang*Math.PI/180)*40}" y2="${60 - Math.cos(ang*Math.PI/180)*40}" stroke="#fff" stroke-width="2"/>
+            <circle cx="60" cy="60" r="4" fill="#fff"/>
+          </svg>
+          <div>
+            <div style="font-size:32px;font-weight:800;color:${c};line-height:1">${cnn.현재.toFixed(0)}</div>
+            <div style="font-size:9px;color:var(--sub);margin-top:4px">/ 100</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;font-size:10px;text-align:center">
+          <div><div style="color:var(--sub)">전일</div><div style="font-weight:700">${cnn.전일.toFixed(0)}</div></div>
+          <div><div style="color:var(--sub)">1주전</div><div style="font-weight:700">${cnn['1주전'].toFixed(0)}</div></div>
+          <div><div style="color:var(--sub)">1달전</div><div style="font-weight:700">${cnn['1달전'].toFixed(0)}</div></div>
+        </div>
+      </div>`;
+  }
+
+  let cryptoHTML = '';
+  if (crypto && crypto.현재 !== null) {
+    const c2 = fngColor(crypto.현재);
+    cryptoHTML = `
+      <div style="background:var(--card2);padding:14px;border-radius:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:var(--sub)">Crypto Fear &amp; Greed</span>
+          <span style="font-size:11px;color:${c2};font-weight:700">${crypto.분류.toUpperCase()}</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px">
+          <div style="font-size:28px;font-weight:800;color:${c2}">${crypto.현재}</div>
+          <div style="font-size:11px;color:var(--sub)">1주전 ${crypto['1주전']}</div>
+        </div>
+      </div>`;
+  }
+
+  return `<div class="sensitivity-card">
+    <div class="sens-title">
+      <span style="display:flex;justify-content:space-between;align-items:center">
+        <span>시장 심리 (Fear &amp; Greed)</span>
+        <span class="rate-status ${tagCls}">${점수}/10</span>
+      </span>
+    </div>
+    ${cnnHTML}
+    ${cryptoHTML}
+    <div style="font-size:10px;color:var(--sub);margin-top:10px;line-height:1.5">
+      극공포(0~25) = 역설적 매수 기회 / 극탐욕(75+) = 과열 경고<br>
+      CNN F&G는 7개 지표 종합 (S&P, 정크본드, 변동성, Put/Call 등)
+    </div>
+  </div>`;
+}
+
+function renderLiquidity(l) {
+  if (!l) return '';
+  const 점수 = l.점수 ?? 0;
+  const tagCls = 점수 >= 7 ? 'normal' : (점수 >= 4 ? 'warn' : 'danger');
+  const tltHTML = l.TLT ? `
+    <div class="pos-cell">
+      <div class="label">TLT (장기채권)</div>
+      <div class="value">$${fmt(l.TLT.현재, 2)}</div>
+      <div class="change ${cls(l.TLT['5일'])}" style="font-size:10px;margin-top:2px">5일 ${sign(l.TLT['5일'])}${fmt(l.TLT['5일'])}%</div>
+    </div>` : '';
+  const moveHTML = l.MOVE ? `
+    <div class="pos-cell">
+      <div class="label">MOVE (채권변동성)</div>
+      <div class="value">${fmt(l.MOVE.현재, 1)}</div>
+      <div class="change ${cls(-l.MOVE.등락률)}" style="font-size:10px;margin-top:2px">${sign(l.MOVE.등락률)}${fmt(l.MOVE.등락률)}%</div>
+    </div>` : '';
+
+  return `<div class="sensitivity-card">
+    <div class="sens-title">
+      <span style="display:flex;justify-content:space-between;align-items:center">
+        <span>유동성 / 채권시장</span>
+        <span class="rate-status ${tagCls}">${점수}/10</span>
+      </span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      ${tltHTML}
+      ${moveHTML}
+    </div>
+    <div style="font-size:10px;color:var(--sub);margin-top:10px;line-height:1.5">
+      • TLT 상승 = 장기금리 하락 = 성장주(SOXL) 우호<br>
+      • MOVE는 채권 VIX. 80 미만 안정, 100+ 불안<br>
+      • Fed Balance Sheet 직접 데이터는 빛날빈님 네트워크 차단 (FRED API key 필요)
+    </div>
+  </div>`;
+}
+
+function renderFundamental(f) {
+  if (!f) return '';
+  const 점수 = f.점수 ?? 0;
+  const tagCls = 점수 >= 7 ? 'normal' : (점수 >= 4 ? 'warn' : 'danger');
+
+  let cells = '';
+  for (const tk of ['MU', 'TSM']) {
+    if (f[tk]) {
+      const x = f[tk];
+      cells += `
+        <div class="pos-cell">
+          <div class="label">${x.라벨} (${tk})</div>
+          <div class="value">$${fmt(x.현재, 2)}</div>
+          <div style="display:flex;gap:6px;font-size:10px;margin-top:4px">
+            <span class="${cls(x['5일'])}">5일 ${sign(x['5일'])}${fmt(x['5일'])}%</span>
+            <span class="${cls(x['30일'])}">30일 ${sign(x['30일'])}${fmt(x['30일'])}%</span>
+          </div>
+        </div>`;
+    }
+  }
+
+  let tsmcEvent = '';
+  if (f.TSMC매출_다음) {
+    const 클래스 = f.TSMC매출_다음.남은일 <= 3 ? 'imminent' : (f.TSMC매출_다음.남은일 <= 7 ? 'upcoming' : '');
+    tsmcEvent = `<div class="event-card ${클래스}" style="margin-top:8px">
+      <div class="name">TSMC 월간 매출 발표</div>
+      <div class="date">${f.TSMC매출_다음.일자} (매월 10일)</div>
+      <div class="dday">D-${f.TSMC매출_다음.남은일}일</div>
+    </div>`;
+  }
+
+  return `<div class="sensitivity-card">
+    <div class="sens-title">
+      <span style="display:flex;justify-content:space-between;align-items:center">
+        <span>반도체 펀더멘털</span>
+        <span class="rate-status ${tagCls}">${점수}/10</span>
+      </span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${cells}</div>
+    ${tsmcEvent}
+    <div style="font-size:10px;color:var(--sub);margin-top:10px;line-height:1.5">
+      • MU(마이크론) = DRAM 가격 가장 빠른 반영체. 메모리 사이클<br>
+      • TSM(TSMC) = 파운드리. 매월 10일 매출 발표 = 빅테크 AI 수요 시그널<br>
+      • 둘 다 강세 = SOXL 펀더멘털 우호 (NVDA보다 앞단 시그널)
     </div>
   </div>`;
 }
