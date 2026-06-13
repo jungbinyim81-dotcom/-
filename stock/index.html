@@ -618,6 +618,13 @@ async function loadData() {
     document.getElementById('updated').textContent = '업데이트: ' + d.updated;
     __이벤트캐시 = d.이벤트;
 
+    // 검증 일지 (없을 수 있음 — 누적 전)
+    let journal = null;
+    try {
+      const jr = await fetch('journal.json?t=' + Date.now());
+      if (jr.ok) journal = await jr.json();
+    } catch (e) {}
+
     const 총평가 = d.포지션.총평가손익_KRW;
     const 총퍼센트 = d.포지션.총손익률;
 
@@ -650,6 +657,7 @@ async function loadData() {
       <div class="tab-bar">
         <button class="tab-btn active" data-tab="overview">개요</button>
         <button class="tab-btn" data-tab="macro">매크로</button>
+        <button class="tab-btn" data-tab="journal">검증</button>
         <button class="tab-btn" data-tab="scenario">시나리오</button>
         <button class="tab-btn" data-tab="sector">섹터/뉴스</button>
         <button class="tab-btn" data-tab="guide">키움 가이드</button>
@@ -671,6 +679,9 @@ async function loadData() {
           ${renderRiskAppetite(d.분석 && d.분석.위험선호)}
           ${renderTechnical(d.분석 && d.분석.기술적)}
           ${renderSensitivity(d.분석 && d.분석.상관베타)}
+        </div>
+        <div id="tab-journal">
+          ${renderJournal(journal)}
         </div>
         <div id="tab-scenario">
           ${renderScenarios(d.분석 && d.분석.시나리오)}
@@ -1288,6 +1299,109 @@ function renderNews(뉴스) {
   return `<div class="sensitivity-card">
     <div class="sens-title">뉴스 (반도체/금리)</div>
     <div class="news-list">${items}</div>
+  </div>`;
+}
+
+function renderJournal(j) {
+  if (!j || !j.엔트리 || !j.엔트리.length) {
+    return `<div class="sensitivity-card">
+      <div class="sens-title">매크로 점수 검증 일지</div>
+      <div style="color:var(--sub);font-size:13px;line-height:1.7">
+        아직 기록이 없습니다.<br>
+        매일 미국장 마감 후 그날의 <b>매크로 점수·신호</b>와 <b>다음 거래일 SOXL 결과</b>가 자동으로 쌓입니다.<br>
+        표본이 모이면 신호별 적중률과 평균 익일수익률이 여기에 표시됩니다.
+      </div>
+    </div>`;
+  }
+  const E = j.엔트리.slice().sort((a, b) => (a.거래일 < b.거래일 ? 1 : -1)); // 최신 먼저
+  const judged = E.filter(e => e.익일등락 !== null && e.익일등락 !== undefined);
+  const bucket = sig => judged.filter(e => e.신호 === sig);
+  const hitN = arr => arr.filter(e => e.적중 === '적중').length;
+  const avg = arr => arr.length ? arr.reduce((s, e) => s + e.익일등락, 0) / arr.length : 0;
+  const g = bucket('green'), y = bucket('yellow'), r = bucket('red');
+  const gHit = g.length ? Math.round(hitN(g) / g.length * 100) : null;
+  const rHit = r.length ? Math.round(hitN(r) / r.length * 100) : null;
+  const 판정n = g.length + r.length;
+  const 전체률 = 판정n ? Math.round((hitN(g) + hitN(r)) / 판정n * 100) : null;
+
+  const hitCard = (label, pct, n, color) => `
+    <div style="flex:1;background:var(--card2);padding:12px 8px;border-radius:12px;text-align:center">
+      <div style="font-size:10px;color:var(--sub)">${label}</div>
+      <div style="font-size:22px;font-weight:800;color:${pct === null ? 'var(--sub)' : color}">${pct === null ? '—' : pct + '%'}</div>
+      <div style="font-size:10px;color:var(--sub)">표본 ${n}일</div>
+    </div>`;
+
+  const maxAbs = Math.max(0.8, Math.abs(avg(g)), Math.abs(avg(y)), Math.abs(avg(r)));
+  const bar = (label, arr, color) => {
+    const v = avg(arr);
+    const w = arr.length ? Math.max(4, Math.abs(v) / maxAbs * 100) : 0;
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+        <span style="color:${color};font-weight:700">${label}</span>
+        <span style="color:var(--sub)">${arr.length}일 · 평균 익일 <b class="${v >= 0 ? 'profit' : 'loss'}">${v >= 0 ? '+' : ''}${v.toFixed(2)}%</b></span>
+      </div>
+      <div style="height:8px;background:var(--card2);border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${w}%;background:${v >= 0 ? 'var(--profit)' : 'var(--loss)'}"></div>
+      </div>
+    </div>`;
+  };
+
+  const rows = E.slice(0, 20).map(e => {
+    const sigColor = e.신호 === 'green' ? '#4cd964' : (e.신호 === 'yellow' ? 'var(--warn)' : 'var(--profit)');
+    const sigTxt = e.신호 === 'green' ? '녹' : (e.신호 === 'yellow' ? '황' : '적');
+    const pend = (e.익일등락 === null || e.익일등락 === undefined);
+    const 결과 = pend ? '<span style="color:var(--sub)">대기</span>'
+      : `<span class="${e.익일등락 >= 0 ? 'profit' : 'loss'}">${e.익일등락 >= 0 ? '+' : ''}${e.익일등락.toFixed(2)}%</span>`;
+    const mark = e.적중 === '적중' ? '<span style="color:#4cd964;font-weight:800">✓</span>'
+      : e.적중 === '빗나감' ? '<span style="color:var(--profit);font-weight:800">✗</span>'
+      : '<span style="color:var(--sub)">–</span>';
+    let tr = `<tr>
+      <td style="text-align:left">${(e.거래일 || '').slice(5)}</td>
+      <td style="text-align:center"><b style="color:${sigColor}">${e.점수}</b></td>
+      <td style="text-align:center;color:${sigColor};font-weight:700">${sigTxt}</td>
+      <td style="text-align:right">${결과}</td>
+      <td style="text-align:center">${mark}</td>
+    </tr>`;
+    if (e.메모) {
+      tr += `<tr><td colspan="5" style="text-align:left;color:var(--sub);font-size:10px;padding:0 4px 6px">↳ ${e.메모}</td></tr>`;
+    }
+    return tr;
+  }).join('');
+
+  return `<div class="sensitivity-card">
+    <div class="sens-title">매크로 점수 검증 — 신호 적중률</div>
+    <div style="display:flex;gap:8px;margin-bottom:6px">
+      ${hitCard('녹색(상승예측)', gHit, g.length, '#4cd964')}
+      ${hitCard('적색(하락예측)', rHit, r.length, 'var(--profit)')}
+      ${hitCard('전체', 전체률, 판정n, 'var(--text)')}
+    </div>
+    <div style="font-size:10px;color:var(--sub);margin-bottom:4px;line-height:1.5">
+      마감 점수의 신호가 <b>다음 거래일</b> SOXL 방향을 맞췄는지로 채점 (황색=관망, 판정 제외)
+    </div>
+  </div>
+  <div class="sensitivity-card">
+    <div class="sens-title">신호별 평균 익일 SOXL 수익률</div>
+    ${bar('녹색 신호일', g, '#4cd964')}
+    ${bar('황색 신호일', y, 'var(--warn)')}
+    ${bar('적색 신호일', r, 'var(--profit)')}
+    <div style="font-size:10px;color:var(--sub);margin-top:6px;line-height:1.5">
+      이상적 패턴: <b style="color:#4cd964">녹색일 평균 &gt; 0 &gt; 적색일 평균</b>. 벌어질수록 점수 신뢰도 높음
+    </div>
+  </div>
+  <div class="sensitivity-card">
+    <div class="sens-title">최근 일지 (${E.length}일 기록)</div>
+    <table class="beta-table">
+      <thead><tr>
+        <th style="text-align:left">거래일</th><th style="text-align:center">점수</th>
+        <th style="text-align:center">신호</th><th style="text-align:right">익일 SOXL</th>
+        <th style="text-align:center">적중</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="font-size:10px;color:var(--sub);margin-top:10px;line-height:1.5">
+      채점된 표본 ${judged.length}일. 통계적으로 의미있으려면 최소 20~30거래일 누적 필요.<br>
+      메모 추가: 새록에게 "오늘 일지에 ~ 적어줘"
+    </div>
   </div>`;
 }
 

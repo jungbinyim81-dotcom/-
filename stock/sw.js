@@ -1,4 +1,4 @@
-const CACHE_NAME = "soxl-20260613-2225";
+const CACHE_NAME = "soxl-20260614-0520";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./icon.svg"];
 
 self.addEventListener("install", e => {
@@ -18,7 +18,7 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
   const url = new URL(e.request.url);
-  if (url.pathname.endsWith('data.json')) {
+  if (url.pathname.endsWith('data.json') || url.pathname.endsWith('journal.json')) {
     e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
   } else {
     e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
