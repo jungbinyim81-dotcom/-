@@ -661,6 +661,8 @@ async function loadData() {
           ${d.포지션.포지션.map(renderPosition).join('')}
         </div>
         <div id="tab-macro">
+          ${renderRiskAppetite(d.분석 && d.분석.위험선호)}
+          ${renderTechnical(d.분석 && d.분석.기술적)}
           ${renderSensitivity(d.분석 && d.분석.상관베타)}
         </div>
         <div id="tab-scenario">
@@ -728,6 +730,91 @@ function renderDecision(점수) {
         <h4>위험 / 회피 근거</h4>
         <ul>${consHTML}</ul>
       </div>
+    </div>
+  </div>`;
+}
+
+function renderRiskAppetite(rh) {
+  if (!rh) return '';
+  const 점수 = rh.점수 ?? 0;
+  const tagCls = 점수 >= 8 ? 'green' : (점수 >= 5 ? 'yellow' : 'red');
+  const HYG_cls = rh.HYG_5일 >= 0 ? 'profit' : 'loss';
+  const BTC_cls = rh.BTC_5일 >= 0 ? 'profit' : 'loss';
+  return `<div class="sensitivity-card">
+    <div class="sens-title">
+      <span style="display:flex;justify-content:space-between;align-items:center">
+        <span>위험선호 (HYG · BTC)</span>
+        <span class="rate-status ${tagCls === 'green' ? 'normal' : (tagCls === 'yellow' ? 'warn' : 'danger')}">${점수}/10</span>
+      </span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="pos-cell">
+        <div class="label">HYG (하이일드)</div>
+        <div class="value">$${fmt(rh.HYG_현재, 2)}</div>
+        <div class="change ${HYG_cls}" style="font-size:11px;margin-top:4px">5일 ${sign(rh.HYG_5일)}${fmt(rh.HYG_5일)}%</div>
+      </div>
+      <div class="pos-cell">
+        <div class="label">BTC (위험심리)</div>
+        <div class="value">$${fmtKRW(rh.BTC_현재)}</div>
+        <div class="change ${BTC_cls}" style="font-size:11px;margin-top:4px">5일 ${sign(rh.BTC_5일)}${fmt(rh.BTC_5일)}%</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--sub);margin-top:10px;line-height:1.5">
+      • HYG 상승 = 신용스프레드 축소 = 위험자산 우호<br>
+      • BTC는 SOXL의 빠른 위험심리 프록시 (상관 0.5+)<br>
+      • 둘 다 강세 = SOXL 진입 우호적 환경
+    </div>
+  </div>`;
+}
+
+function renderTechnical(t) {
+  if (!t) return '';
+  const 점수 = t.점수 ?? 0;
+  const tagCls = 점수 >= 8 ? 'normal' : (점수 >= 5 ? 'warn' : 'danger');
+  const ma200cls = t.MA200_편차 >= 0 ? 'profit' : 'loss';
+  const ma50cls = t.MA50_편차 >= 0 ? 'profit' : 'loss';
+  let rsiCls = 'profit', rsiText = '정상';
+  if (t.RSI >= 70) { rsiCls = 'loss'; rsiText = '과매수'; }
+  else if (t.RSI <= 30) { rsiCls = 'profit'; rsiText = '과매도'; }
+
+  return `<div class="sensitivity-card">
+    <div class="sens-title">
+      <span style="display:flex;justify-content:space-between;align-items:center">
+        <span>SOXL 기술적 분석</span>
+        <span class="rate-status ${tagCls}">${점수}/10</span>
+      </span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+      <div class="pos-cell">
+        <div class="label">현재가</div>
+        <div class="value">$${fmt(t.현재가, 2)}</div>
+      </div>
+      <div class="pos-cell">
+        <div class="label">200MA</div>
+        <div class="value">$${fmt(t.MA200, 2)}</div>
+        <div class="change ${ma200cls}" style="font-size:10px;margin-top:2px">${sign(t.MA200_편차)}${fmt(t.MA200_편차, 1)}%</div>
+      </div>
+      <div class="pos-cell">
+        <div class="label">50MA</div>
+        <div class="value">$${fmt(t.MA50, 2)}</div>
+        <div class="change ${ma50cls}" style="font-size:10px;margin-top:2px">${sign(t.MA50_편차)}${fmt(t.MA50_편차, 1)}%</div>
+      </div>
+    </div>
+    <div class="pos-cell" style="margin-top:8px">
+      <div class="label">RSI(14)</div>
+      <div class="value ${rsiCls}">${fmt(t.RSI, 1)} <span style="font-size:11px;color:var(--sub)">(${rsiText})</span></div>
+      <div style="margin-top:6px;height:6px;background:var(--card2);border-radius:3px;position:relative;overflow:hidden">
+        <div style="position:absolute;left:30%;width:40%;height:100%;background:rgba(76,217,100,0.3)"></div>
+        <div style="position:absolute;left:${Math.min(t.RSI, 100)}%;top:-2px;width:3px;height:10px;background:#fff;transform:translateX(-1px)"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--sub);margin-top:2px">
+        <span>0 과매도</span><span>30</span><span>70</span><span>100 과매수</span>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--sub);margin-top:10px;line-height:1.5">
+      • 200MA 위 = 장기 상승추세 / 아래 = 약세<br>
+      • 200MA 대비 +100% 초과 = 평균회귀 위험 (조정 가능)<br>
+      • RSI 70+ = 과매수 (단기 조정), 30- = 과매도 (반등 가능)
     </div>
   </div>`;
 }
