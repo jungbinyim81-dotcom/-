@@ -658,6 +658,7 @@ async function loadData() {
         <button class="tab-btn active" data-tab="overview">개요</button>
         <button class="tab-btn" data-tab="macro">매크로</button>
         <button class="tab-btn" data-tab="journal">검증</button>
+        <button class="tab-btn" data-tab="accum">축적</button>
         <button class="tab-btn" data-tab="scenario">시나리오</button>
         <button class="tab-btn" data-tab="sector">섹터/뉴스</button>
         <button class="tab-btn" data-tab="guide">키움 가이드</button>
@@ -682,6 +683,9 @@ async function loadData() {
         </div>
         <div id="tab-journal">
           ${renderJournal(journal)}
+        </div>
+        <div id="tab-accum">
+          ${renderAccumulation(d.분석 && d.분석.반도체축적)}
         </div>
         <div id="tab-scenario">
           ${renderScenarios(d.분석 && d.분석.시나리오)}
@@ -1300,6 +1304,72 @@ function renderNews(뉴스) {
     <div class="sens-title">뉴스 (반도체/금리)</div>
     <div class="news-list">${items}</div>
   </div>`;
+}
+
+function renderAccumulation(a) {
+  if (!a || !a.종목 || !a.종목.length) {
+    return `<div class="sensitivity-card"><div class="sens-title">반도체 장기 축적</div>
+      <div style="color:var(--sub);font-size:13px">데이터 수집 중...</div></div>`;
+  }
+  const sigColor = s => s === 'green' ? '#4cd964' : (s === 'yellow' ? 'var(--warn)' : 'var(--profit)');
+  const sigBg = s => s === 'green' ? 'rgba(76,217,100,0.12)' : (s === 'yellow' ? 'rgba(255,167,38,0.12)' : 'rgba(255,71,87,0.12)');
+  const money = (v, 통화, 기호) => 통화 === 'KRW' ? 기호 + fmtKRW(v) : 기호 + fmt(v, 2);
+
+  const cards = a.종목.map(t => {
+    const 통 = t.통화, 기 = t.기호;
+    const 축Color = sigColor(t.축적신호), 단Color = sigColor(t.단기신호);
+    const cnt = Math.round(t.축적점수);
+    const 별 = '●'.repeat(cnt) + '○'.repeat(Math.max(0, 5 - cnt));
+    const 근거 = [...(t.축적근거 || []), ...(t.단기근거 || [])].slice(0, 4).map(r => `<li>▸ ${r}</li>`).join('');
+    const 밴드 = (t.밴드 || []).map(b => `
+      <div class="pos-cell" style="text-align:center;padding:8px 4px">
+        <div class="label">${b.단계}</div>
+        <div class="value" style="font-size:13px">${money(b.가격, 통, 기)}</div>
+        <div style="font-size:9px;color:var(--sub);margin-top:2px">${b.설명}</div>
+      </div>`).join('');
+    return `<div class="sensitivity-card">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
+        <span style="font-size:18px;font-weight:800">${t.종목}</span>
+        <span style="font-size:16px;font-weight:700">${money(t.현재가, 통, 기)}</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div style="flex:1;background:${sigBg(t.축적신호)};border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--sub)">장기 축적</div>
+          <div style="font-size:20px;font-weight:800;color:${축Color}">${t.축적점수}<span style="font-size:12px;color:var(--sub)">/5</span></div>
+          <div style="font-size:11px;color:${축Color};font-weight:700">${t.축적결정}</div>
+          <div style="font-size:11px;color:${축Color};letter-spacing:2px;margin-top:2px">${별}</div>
+        </div>
+        <div style="flex:1;background:${sigBg(t.단기신호)};border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:10px;color:var(--sub)">단기 매매</div>
+          <div style="font-size:20px;font-weight:800;color:${단Color}">${t.단기점수}<span style="font-size:12px;color:var(--sub)">/100</span></div>
+          <div style="font-size:11px;color:${단Color};font-weight:700">${t.단기결정}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">
+        <div class="pos-cell" style="text-align:center"><div class="label">200일선</div><div class="value ${t.이격200 >= 0 ? 'profit' : 'loss'}" style="font-size:13px">${t.이격200 >= 0 ? '+' : ''}${fmt(t.이격200, 1)}%</div></div>
+        <div class="pos-cell" style="text-align:center"><div class="label">RSI</div><div class="value" style="font-size:13px">${fmt(t.RSI, 0)}</div></div>
+        <div class="pos-cell" style="text-align:center"><div class="label">52주 위치</div><div class="value" style="font-size:13px">${fmt(t.위치52주, 0)}%</div></div>
+        <div class="pos-cell" style="text-align:center"><div class="label">5일</div><div class="value ${t.mom5 >= 0 ? 'profit' : 'loss'}" style="font-size:13px">${t.mom5 >= 0 ? '+' : ''}${fmt(t.mom5, 1)}%</div></div>
+      </div>
+      <div style="font-size:10px;color:var(--sub);margin-bottom:6px">분할매수 밴드 (현재가 기준 눌림 단계)</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px">${밴드}</div>
+      <div class="target stop" style="margin-bottom:10px">
+        <div class="label">손절 참고선 (현재가 -15%)</div>
+        <div class="value">${money(t.손절참고, 통, 기)}</div>
+        <div class="dist">장기 보유라도 추세 이탈 시 점검</div>
+      </div>
+      <ul style="list-style:none;font-size:11px;color:var(--sub);line-height:1.6">${근거}</ul>
+    </div>`;
+  }).join('');
+
+  return `<div class="sensitivity-card" style="background:linear-gradient(135deg,rgba(118,185,0,0.12),var(--card))">
+    <div class="sens-title">반도체 장기 축적 — SOXL 수익을 1~2년 굴리는 대상</div>
+    <div style="font-size:11px;color:var(--sub);line-height:1.6">
+      <b style="color:#4cd964">장기 축적(5점)</b> = "지금 모으기 좋은 구간인가" (역발상: 눌렸을 때 매수 우호)<br>
+      <b>단기 매매(100점)</b> = "오늘 단기 타이밍" · 외국인 수급(환율 5일 ${a.환율5일 >= 0 ? '+' : ''}${fmt(a.환율5일, 1)}%) / 메모리 MU 30일 ${a.MU30일 >= 0 ? '+' : ''}${fmt(a.MU30일, 1)}%
+    </div>
+  </div>
+  ${cards}`;
 }
 
 function renderJournal(j) {
