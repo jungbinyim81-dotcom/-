@@ -30,6 +30,7 @@ os.makedirs(APP_DIR, exist_ok=True)
 BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '')
 CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '')
 POSITION_JSON_STR = os.environ.get('POSITION_JSON', '')
+FORCE_BRIEFING = os.environ.get('FORCE_BRIEFING', '').lower() in ('true', '1', 'yes')
 
 # 포지션 로드 (Secret에서 JSON 문자열로)
 if POSITION_JSON_STR:
@@ -365,19 +366,37 @@ def 알림체크(data, 점수, 포지션):
                 f"룰: 신규 진입 금지, 보유 포지션 점검"
             )
 
-    # 5. 점수 정기 브리핑 (07:00에만)
-    hour = datetime.now().hour
-    if hour < 9 and 포지션["총투자금"] > 0:
+    # 5. 정기 브리핑 (UTC 22시=한국 07시 또는 수동 실행 시)
+    # GitHub Actions는 UTC 시간으로 작동
+    utc_hour = datetime.utcnow().hour
+    아침브리핑타이밍 = utc_hour in (21, 22, 23) or FORCE_BRIEFING
+    if 아침브리핑타이밍 and 포지션["총투자금"] > 0:
         총손익 = 포지션["총평가손익_KRW"]
         총퍼센트 = 포지션["총손익률"]
         손익부호 = "+" if 총손익 >= 0 else ""
+
+        # 종목별 손익 라인
+        포지션라인 = []
+        for p in 포지션["포지션"]:
+            if not p.get("활성") or "손익률" not in p:
+                continue
+            부호 = "+" if p["평가손익_KRW"] >= 0 else ""
+            이모지 = "🟢" if p["손익률"] >= 0 else "🔴"
+            포지션라인.append(
+                f"{이모지} {p['종목']}: {p['손익률']:+.2f}% ({부호}{p['평가손익_KRW']:,.0f}원)"
+            )
+
+        프리픽스 = "🔧 [수동 실행] " if FORCE_BRIEFING else "📊 "
         브리핑 = (
-            f"📊 <b>오늘 아침 SOXL 브리핑</b>\n"
+            f"{프리픽스}<b>SOXL 브리핑</b>\n"
             f"{오늘}\n\n"
-            f"매크로 점수: <b>{점수['점수']}/100</b> ({점수['결정']})\n"
-            f"총 평가손익: <b>{손익부호}{총손익:,.0f}원</b> ({총퍼센트:+.2f}%)\n\n"
-            f"호재: {' / '.join(점수['근거']) if 점수['근거'] else '없음'}\n"
-            f"위험: {' / '.join(점수['감점']) if 점수['감점'] else '없음'}"
+            f"<b>매크로 점수: {점수['점수']}/100</b> ({점수['결정']})\n\n"
+            f"<b>총 평가손익: {손익부호}{총손익:,.0f}원</b> ({총퍼센트:+.2f}%)\n"
+            + "\n".join(포지션라인) + "\n\n"
+            f"<b>호재</b>\n• " + "\n• ".join(점수['근거']) if 점수['근거'] else "호재: 없음"
+        )
+        브리핑 += (
+            f"\n\n<b>위험</b>\n• " + "\n• ".join(점수['감점']) if 점수['감점'] else "\n\n위험: 없음"
         )
         알림목록.insert(0, 브리핑)
 
