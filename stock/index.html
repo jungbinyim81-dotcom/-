@@ -662,6 +662,9 @@ async function loadData() {
           ${d.포지션.포지션.map(renderPosition).join('')}
         </div>
         <div id="tab-macro">
+          ${renderSKEW(d.분석 && d.분석.SKEW)}
+          ${renderAITech(d.분석 && d.분석.AI빅테크)}
+          ${renderCalendar(d.분석 && d.분석.캘린더)}
           ${renderSentiment(d.분석 && d.분석.시장심리)}
           ${renderLiquidity(d.분석 && d.분석.유동성)}
           ${renderFundamental(d.분석 && d.분석.펀더멘털)}
@@ -821,6 +824,105 @@ function renderDecision(점수) {
         <ul>${consHTML}</ul>
       </div>
     </div>
+  </div>`;
+}
+
+function renderSKEW(s) {
+  if (!s) return '';
+  let 색 = 'var(--profit)';
+  let 배지 = 'danger';
+  if (s.위험도 === '낮음') { 색 = '#4cd964'; 배지 = 'normal'; }
+  else if (s.위험도 === '보통') { 색 = 'var(--loss)'; 배지 = 'normal'; }
+  else if (s.위험도 === '주의') { 색 = 'var(--warn)'; 배지 = 'warn'; }
+  else if (s.위험도 === '높음') { 색 = 'var(--warn)'; 배지 = 'warn'; }
+
+  const VIX분기 = (s.VIX !== null && s.VIX < 18 && s.SKEW >= 135);
+  return `<div class="sensitivity-card">
+    <div class="sens-title">
+      <span style="display:flex;justify-content:space-between;align-items:center">
+        <span>SKEW 꼬리위험 (블랙스완 경고)</span>
+        <span class="rate-status ${배지}">${s.위험도}</span>
+      </span>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:14px;background:var(--card2);padding:14px;border-radius:12px;margin-bottom:8px">
+      <div>
+        <div style="font-size:11px;color:var(--sub)">CBOE SKEW</div>
+        <div style="font-size:32px;font-weight:800;color:${색};line-height:1">${s.SKEW.toFixed(1)}</div>
+        <div style="font-size:11px;color:var(--sub);margin-top:4px">${sign(s.SKEW_변화)}${fmt(s.SKEW_변화)}%</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:11px;color:var(--sub)">VIX 대비</div>
+        <div style="font-size:14px;font-weight:700">VIX ${s.VIX !== null ? s.VIX.toFixed(1) : '-'} ${VIX분기 ? '<span style=\"color:var(--profit)\">⚠ 분기</span>' : ''}</div>
+        <div style="font-size:11px;color:var(--sub);margin-top:6px;line-height:1.4">${s.설명}</div>
+      </div>
+    </div>
+    <div style="font-size:10px;color:var(--sub);line-height:1.5">
+      • SKEW < 115: 안정 / 115~125: 보통 / 125~135: 주의 / 135+: 높음 / 145+: 극단<br>
+      • <strong>VIX 낮은데 SKEW 높음 = 위기 직전 패턴</strong> (2008/2020 직전)<br>
+      • SKEW는 옵션 시장의 "꼬리위험" 가격. 진짜 위기 신호는 여기서 먼저 나옴
+    </div>
+  </div>`;
+}
+
+function renderAITech(a) {
+  if (!a || !a.종목 || !a.종목.length) return '';
+  const 점수 = a.점수 ?? 0;
+  const tagCls = 점수 >= 7 ? 'normal' : (점수 >= 4 ? 'warn' : 'danger');
+  const tiles = a.종목.map(t => {
+    const cls5 = t['5일'] >= 0 ? 'profit' : 'loss';
+    const cls30 = t['30일'] >= 0 ? 'profit' : 'loss';
+    return `<div class="pos-cell" style="padding:10px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <span style="font-size:13px;font-weight:800">${t.티커}</span>
+        <span style="font-size:10px;color:var(--sub)">${t.이름}</span>
+      </div>
+      <div style="font-size:13px;font-weight:700;margin-top:4px">$${fmt(t.현재, 2)}</div>
+      <div style="display:flex;gap:8px;font-size:10px;margin-top:4px">
+        <span class="${cls5}">5일 ${sign(t['5일'])}${fmt(t['5일'])}%</span>
+        <span class="${cls30}">30일 ${sign(t['30일'])}${fmt(t['30일'])}%</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="sensitivity-card">
+    <div class="sens-title">
+      <span style="display:flex;justify-content:space-between;align-items:center">
+        <span>AI 빅테크 (NVDA 주요 고객)</span>
+        <span class="rate-status ${tagCls}">${점수}/10</span>
+      </span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${tiles}</div>
+    <div style="font-size:10px;color:var(--sub);margin-top:10px;line-height:1.5">
+      • NVDA 매출의 약 70%가 이 4사의 AI CapEx에서 발생<br>
+      • 빅테크 강세 = NVDA 호재 = SOXL 호재 (선행지표)<br>
+      • 빅테크 어닝/CapEx 가이던스 하향 = SOXL 즉시 타격
+    </div>
+  </div>`;
+}
+
+function renderCalendar(cal) {
+  if (!cal) return '';
+  const items = [];
+  const map = {
+    "신규실업수당": { 이름: "신규실업수당", 설명: "매주 목 22:30 (서머타임 21:30) — 경기 선행" },
+    "ISM_PMI": { 이름: "ISM PMI", 설명: "매월 1영업일 — 반도체 수요 선행" },
+    "NFP": { 이름: "비농업고용", 설명: "첫째 금 21:30 — 임금/소비 신호" },
+  };
+  for (const [k, info] of Object.entries(map)) {
+    const ev = cal[k];
+    if (!ev) continue;
+    const 클래스 = ev.남은일 <= 1 ? 'imminent' : (ev.남은일 <= 3 ? 'upcoming' : '');
+    items.push(`<div class="event-card ${클래스}">
+      <div class="name">${info.이름}</div>
+      <div class="date">${ev.일자}</div>
+      <div class="dday">D-${ev.남은일}일</div>
+      <div style="font-size:9px;color:var(--sub);margin-top:4px">${info.설명}</div>
+    </div>`);
+  }
+  if (!items.length) return '';
+  return `<div class="sensitivity-card">
+    <div class="sens-title">이코노믹 캘린더 (추가 이벤트)</div>
+    <div class="event-row" style="grid-template-columns:1fr 1fr 1fr">${items.join('')}</div>
   </div>`;
 }
 
