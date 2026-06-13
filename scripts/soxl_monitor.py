@@ -181,7 +181,7 @@ def 포지션손익(가격):
 
 def 텔레그램(text):
     if not BOT_TOKEN or not CHAT_ID:
-        print("[텔레그램 미설정 - 스킵]")
+        print("  [텔레그램 미설정 - 스킵]")
         return False
     try:
         url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -189,13 +189,23 @@ def 텔레그램(text):
             'chat_id': CHAT_ID, 'text': text,
             'parse_mode': 'HTML', 'disable_web_page_preview': 'true',
         }).encode()
-        urllib.request.urlopen(
+        resp = urllib.request.urlopen(
             urllib.request.Request(url, data=data, method='POST'),
-            timeout=10
+            timeout=15
         )
-        return True
+        body = resp.read().decode('utf-8')
+        if '"ok":true' in body:
+            print(f"  [텔레그램 OK] {text[:40]}...")
+            return True
+        else:
+            print(f"  [텔레그램 응답 비정상] {body[:200]}")
+            return False
+    except urllib.error.HTTPError as e:
+        body = e.read().decode('utf-8') if hasattr(e, 'read') else ''
+        print(f"  [텔레그램 HTTP {e.code}] {body[:300]}")
+        return False
     except Exception as e:
-        print(f"[텔레그램 실패] {e}")
+        print(f"  [텔레그램 실패] {type(e).__name__}: {e}")
         return False
 
 
@@ -453,19 +463,38 @@ def build_data_json(가격, 포지션, 점수):
 
 
 def main():
-    오늘 = datetime.now().strftime("%Y-%m-%d %H:%M")
+    오늘 = datetime.now().strftime("%Y-%m-%d %H:%M UTC")
+    한국시간 = (datetime.utcnow() + timedelta(hours=9)).strftime("%Y-%m-%d %H:%M KST")
     print("=" * 60)
     print(f"  SOXL Monitor (Cloud) - {오늘}")
+    print(f"  한국시간: {한국시간}")
     print("=" * 60)
 
-    print("\n[1/4] 가격 수집")
+    # 환경변수 진단
+    print("\n[0/5] 환경변수 진단")
+    print(f"  TELEGRAM_BOT_TOKEN: {'설정됨 (' + str(len(BOT_TOKEN)) + '자)' if BOT_TOKEN else '*** 비어있음 ***'}")
+    print(f"  TELEGRAM_CHAT_ID: {'설정됨 (' + CHAT_ID + ')' if CHAT_ID else '*** 비어있음 ***'}")
+    print(f"  POSITION_JSON 길이: {len(POSITION_JSON_STR)}자")
+    print(f"  포지션 종목 수: {len(POSITION.get('포지션', {}))}")
+    for 종목, info in POSITION.get('포지션', {}).items():
+        활성표시 = "활성" if info.get('활성') else "비활성"
+        print(f"    - {종목}: {활성표시}, 수량 {info.get('수량', 0)}")
+    print(f"  FORCE_BRIEFING: {FORCE_BRIEFING}")
+
+    if not BOT_TOKEN or not CHAT_ID:
+        print("\n*** 텔레그램 토큰 또는 채팅ID 누락. GitHub Secrets 확인 필요 ***")
+        print("    Settings → Secrets and variables → Actions 에서 등록")
+        # 종료하지 않고 계속 (data.json은 생성)
+
+    print("\n[1/5] 가격 수집")
     가격 = 가격수집()
 
-    print("\n[2/4] 포지션 손익 계산")
+    print("\n[2/5] 포지션 손익 계산")
     포지션 = 포지션손익(가격)
+    print(f"  총 투자금: {포지션['총투자금']:,}원")
     print(f"  총 평가손익: {포지션['총평가손익_KRW']:+,.0f}원 ({포지션['총손익률']:+.2f}%)")
 
-    print("\n[3/4] 매크로 분석")
+    print("\n[3/5] 매크로 분석")
     이벤트 = {
         "다음FOMC": 다음이벤트(FOMC_2026, "FOMC"),
         "다음CPI": 다음이벤트(CPI_2026, "CPI"),
@@ -473,8 +502,27 @@ def main():
     점수 = 분석실행(가격, 이벤트)
     print(f"  점수: {점수['점수']}/100 ({점수['신호']}, {점수['결정']})")
 
-    print("\n[4/4] 데이터 생성 + 알림")
+    print("\n[4/5] 데이터 생성")
     data = build_data_json(가격, 포지션, 점수)
+
+    print("\n[5/5] 알림 발송")
+    # 수동 실행 시 무조건 진단 메시지 + 브리핑
+    if FORCE_BRIEFING:
+        print("  수동 실행 → 강제 진단 메시지 발송")
+        진단 = (
+            f"✅ <b>GitHub Actions 연결 진단</b>\n"
+            f"{한국시간}\n\n"
+            f"환경변수 상태:\n"
+            f"• 봇토큰: {'OK' if BOT_TOKEN else '누락'}\n"
+            f"• 채팅ID: {'OK' if CHAT_ID else '누락'}\n"
+            f"• 포지션: {len(POSITION.get('포지션', {}))}개 종목\n"
+            f"• 총투자금: {포지션['총투자금']:,}원\n\n"
+            f"이 메시지가 보이면 텔레그램 연결은 정상.\n"
+            f"매일 한국 07:00에 정기 브리핑 자동 발송됩니다."
+        )
+        텔레그램(진단)
+        time.sleep(1)
+
     알림체크(data, 점수, 포지션)
     print("  완료")
 
