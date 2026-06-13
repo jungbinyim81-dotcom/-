@@ -1,4 +1,4 @@
-const CACHE_NAME = "soxl-20260614-0538";
+const CACHE_NAME = "soxl-20260614-0542";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./icon.svg"];
 
 self.addEventListener("install", e => {
