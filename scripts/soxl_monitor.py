@@ -409,6 +409,19 @@ def 알림체크(data, 점수, 포지션):
         브리핑 += (
             f"\n\n<b>위험</b>\n• " + "\n• ".join(점수['감점']) if 점수['감점'] else "\n\n위험: 없음"
         )
+
+        # 반도체 장기축적 / 단기매매 신호 (SOXX·하이닉스·삼성전자)
+        축적 = (data.get("분석") or {}).get("반도체축적") or {}
+        축적라인 = []
+        _이모지 = lambda s: "🟢" if s == "green" else ("🟡" if s == "yellow" else "🔴")
+        for s in 축적.get("종목", []):
+            축적라인.append(
+                f"{s['종목']}: 축적 {_이모지(s['축적신호'])}{s['축적점수']}/5({s['축적결정']}) · "
+                f"단기 {_이모지(s['단기신호'])}{s['단기점수']}/100({s['단기결정']})"
+            )
+        if 축적라인:
+            브리핑 += "\n\n<b>반도체 축적(장기)/매매(단기)</b>\n" + "\n".join(축적라인)
+
         알림목록.insert(0, 브리핑)
 
     # 발송
@@ -418,6 +431,109 @@ def 알림체크(data, 점수, 포지션):
             발송수 += 1
             time.sleep(0.5)  # 텔레그램 rate limit 방지
     print(f"  텔레그램 {발송수}건 발송")
+
+
+def 반도체축적분석():
+    """SOXX·하이닉스·삼성전자 장기축적(5)+단기매매(100). 클라우드용 자체 1y fetch.
+    철학: SOXL 중단기 수익을 반도체 1~2년 장기로 굴림 → '지금 모으기 좋은가' + '단기 타이밍'."""
+    def _close(tkr, period):
+        try:
+            return yf.Ticker(tkr).history(period=period)['Close'].dropna()
+        except Exception:
+            return None
+    mu = _close("MU", "3mo")
+    mu30 = (float(mu.iloc[-1]) - float(mu.iloc[-21])) / float(mu.iloc[-21]) * 100 if mu is not None and len(mu) >= 21 else 0
+    fx = _close("KRW=X", "1mo")
+    환율5 = (float(fx.iloc[-1]) - float(fx.iloc[-6])) / float(fx.iloc[-6]) * 100 if fx is not None and len(fx) >= 6 else 0
+    sox = _close("^SOX", "1mo")
+    필반5 = (float(sox.iloc[-1]) - float(sox.iloc[-6])) / float(sox.iloc[-6]) * 100 if sox is not None and len(sox) >= 6 else 0
+    vx = _close("^VIX", "5d")
+    vix = float(vx.iloc[-1]) if vx is not None and len(vx) else None
+
+    종목맵 = [("SOXX", "SOXX", "USD", "$"), ("하이닉스", "000660.KS", "KRW", "₩"), ("삼성전자", "005930.KS", "KRW", "₩")]
+    결과 = []
+    for 이름, 티커, 통화, 기호 in 종목맵:
+        h = _close(티커, "1y")
+        if h is None or len(h) < 60:
+            continue
+        현재 = float(h.iloc[-1])
+        ma200 = float(h.rolling(200).mean().iloc[-1]) if len(h) >= 200 else float(h.mean())
+        이격200 = (현재 - ma200) / ma200 * 100
+        delta = h.diff()
+        gain = delta.where(delta > 0, 0).rolling(14).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
+        rs = gain / loss.replace(0, 1e-9)
+        rsi = float((100 - (100 / (1 + rs))).iloc[-1])
+        고 = float(h.max()); 저 = float(h.min())
+        위치 = (현재 - 저) / (고 - 저) * 100 if 고 > 저 else 50
+        mom5 = (현재 - float(h.iloc[-6])) / float(h.iloc[-6]) * 100 if len(h) >= 6 else 0
+
+        축적 = 0.0
+        if 이격200 < -5: 축적 += 1.5
+        elif 이격200 < 10: 축적 += 1.0
+        elif 이격200 < 30: 축적 += 0.5
+        if rsi < 35: 축적 += 1.0
+        elif rsi < 55: 축적 += 0.7
+        elif rsi < 70: 축적 += 0.3
+        if 위치 < 35: 축적 += 1.0
+        elif 위치 < 65: 축적 += 0.6
+        elif 위치 < 85: 축적 += 0.3
+        if 현재 > ma200 and 이격200 < 30: 축적 += 1.0
+        elif 현재 <= ma200: 축적 += 0.5
+        if mu30 >= 5: 축적 += 0.3
+        if 통화 == "KRW":
+            if 환율5 <= 0: 축적 += 0.2
+        else:
+            축적 += 0.2
+        축적 = round(min(5.0, 축적), 1)
+        if 축적 >= 4.0: 축적신호 = "green"; 축적결정 = "적극 매수"
+        elif 축적 >= 2.5: 축적신호 = "yellow"; 축적결정 = "분할 매수"
+        else: 축적신호 = "red"; 축적결정 = "관망/비중축소"
+
+        단기 = 0
+        if mom5 >= 2: 단기 += 25
+        elif mom5 >= 0: 단기 += 18
+        elif mom5 >= -2: 단기 += 10
+        else: 단기 += 3
+        if rsi < 30: 단기 += 18
+        elif rsi < 45: 단기 += 20
+        elif rsi < 60: 단기 += 15
+        elif rsi < 70: 단기 += 8
+        else: 단기 += 2
+        if 필반5 >= 2: 단기 += 20
+        elif 필반5 >= 0: 단기 += 14
+        elif 필반5 >= -2: 단기 += 7
+        if 통화 == "KRW":
+            if 환율5 <= -0.5: 단기 += 20
+            elif 환율5 <= 0.5: 단기 += 13
+            else: 단기 += 5
+        else:
+            단기 += 13
+        if vix is not None:
+            if vix < 18: 단기 += 15
+            elif vix < 25: 단기 += 8
+            else: 단기 += 2
+        else:
+            단기 += 8
+        단기 = max(0, min(100, int(round(단기))))
+        if 단기 >= 65: 단기신호 = "green"; 단기결정 = "단기 매수"
+        elif 단기 >= 45: 단기신호 = "yellow"; 단기결정 = "중립"
+        else: 단기신호 = "red"; 단기결정 = "단기 매도/관망"
+
+        결과.append({
+            "종목": 이름, "통화": 통화, "기호": 기호, "현재가": round(현재, 2),
+            "이격200": round(이격200, 1), "RSI": round(rsi, 1),
+            "위치52주": round(위치, 0), "mom5": round(mom5, 1),
+            "축적점수": 축적, "축적신호": 축적신호, "축적결정": 축적결정,
+            "단기점수": 단기, "단기신호": 단기신호, "단기결정": 단기결정,
+            "밴드": [
+                {"단계": "1차", "가격": round(현재 * 0.97, 2), "설명": "-3% 눌림"},
+                {"단계": "2차", "가격": round(현재 * 0.93, 2), "설명": "-7% 조정"},
+                {"단계": "3차", "가격": round(현재 * 0.88, 2), "설명": "-12% 조정"},
+            ],
+            "손절참고": round(현재 * 0.85, 2),
+        })
+    return {"종목": 결과, "MU30일": round(mu30, 1), "환율5일": round(환율5, 2)}
 
 
 def 적중판정(신호, 익일등락):
@@ -510,6 +626,7 @@ def build_data_json(가격, 포지션, 점수):
         "분석": {
             "점수": 점수,
             "SKEW": 가격.get("SKEW"),
+            "반도체축적": 반도체축적분석(),
         },
     }
     if 가격.get("10년물") and 가격.get("단기금리"):
