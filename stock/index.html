@@ -652,6 +652,7 @@ async function loadData() {
         <button class="tab-btn" data-tab="macro">매크로</button>
         <button class="tab-btn" data-tab="scenario">시나리오</button>
         <button class="tab-btn" data-tab="sector">섹터/뉴스</button>
+        <button class="tab-btn" data-tab="guide">키움 가이드</button>
         <button class="tab-btn" data-tab="rules">룰</button>
       </div>
 
@@ -675,6 +676,92 @@ async function loadData() {
           ${renderSector(d.분석 && d.분석.섹터)}
           ${renderNews(d.분석 && d.분석.뉴스)}
         </div>
+        <div id="tab-guide">
+          <div class="sensitivity-card">
+            <div class="sens-title">키움 SOXL 예약주문 셋업 가이드</div>
+            <div style="font-size:13px;line-height:1.7;color:var(--text)">
+              <p style="background:rgba(76,217,100,0.1);padding:10px;border-radius:8px;border-left:3px solid #4cd964;margin-bottom:12px">
+                <strong>핵심:</strong> SOXL 매수 직후 <b>손절 + 익절 예약주문 2개</b>를 동시에 걸어두면, 영업 중에도 자동 청산됩니다.
+              </p>
+
+              <h3 style="color:var(--warn);margin:14px 0 8px;font-size:14px">매수 전 준비</h3>
+              <ol style="padding-left:20px;color:var(--sub)">
+                <li>키움 영웅문Global 앱 설치 (해외주식 전용)</li>
+                <li>해외주식 계좌 개설 + <b>환율우대 95%</b> 신청 (앱에서 신청 가능, 안 하면 1.5% 손해)</li>
+                <li>달러 환전 미리 완료 (장 시작 전)</li>
+              </ol>
+
+              <h3 style="color:var(--warn);margin:14px 0 8px;font-size:14px">1단계: SOXL 매수</h3>
+              <ol style="padding-left:20px;color:var(--sub)">
+                <li>영웅문Global → 해외주식 → 매수</li>
+                <li>종목 검색: <b>SOXL</b> (Direxion Daily Semiconductor Bull 3X)</li>
+                <li>주문 유형: <b>지정가</b> (시장가 X — 변동성 큰 종목)</li>
+                <li>500만원 예산 ÷ 환율 ≈ $3,300 / 주당가 = 수량 계산</li>
+                <li>매수 체결 확인</li>
+              </ol>
+
+              <h3 style="color:var(--profit);margin:14px 0 8px;font-size:14px">2단계: 손절 예약주문 (-40%)</h3>
+              <ol style="padding-left:20px;color:var(--sub)">
+                <li>매수 완료 후 → 해외주식 → <b>예약/자동주문</b> 메뉴</li>
+                <li>주문 유형: <b>스톱로스 (Stop Loss)</b> 또는 <b>STOP 지정가</b></li>
+                <li>발동가: 매수가 × 0.60 (예: $234 매수 → 발동가 $140.4)</li>
+                <li>주문가: 발동가에서 5% 낮게 (시장가 슬리피지 방지)</li>
+                <li>유효기간: <b>취소 시까지</b> (GTC, Good Till Cancelled)</li>
+                <li>수량: 보유 전량</li>
+              </ol>
+
+              <h3 style="color:#4cd964;margin:14px 0 8px;font-size:14px">3단계: 익절 예약주문 (+100%)</h3>
+              <ol style="padding-left:20px;color:var(--sub)">
+                <li>같은 예약/자동주문 메뉴</li>
+                <li>주문 유형: <b>지정가 매도</b></li>
+                <li>주문가: 매수가 × 2.0 (예: $234 매수 → 주문가 $468)</li>
+                <li>유효기간: <b>취소 시까지</b> (GTC)</li>
+                <li>수량: 보유 전량</li>
+              </ol>
+
+              <h3 style="color:var(--profit);margin:14px 0 8px;font-size:14px">⚠ 중요: OCO 가능 여부 확인</h3>
+              <div style="background:rgba(255,71,87,0.08);padding:10px;border-radius:8px;color:var(--sub);font-size:12px">
+                키움 해외주식이 <b>OCO (One Cancels Other)</b> 지원 안 하면, 손절 주문과 익절 주문이 <u>서로 독립적</u>으로 존재합니다.<br><br>
+                <b>이게 무슨 의미?</b><br>
+                손절 발동되어 매도 체결되면 → 익절 주문도 수동으로 취소해야 함.<br>
+                안 그러면 익절 주문이 "공매도" 형태로 미체결 대기 상태로 남음.<br><br>
+                <b>해결:</b> 손절/익절 중 하나 체결되면 즉시 다른 주문 취소. 또는 키움 OCO 기능 있는지 고객센터(1544-9000) 확인.
+              </div>
+
+              <h3 style="margin:14px 0 8px;font-size:14px">4단계: 안전 자금 (하이닉스/SOXX)</h3>
+              <ul style="padding-left:20px;color:var(--sub)">
+                <li>하이닉스: <b>3회 분할매수</b> 권장 (1주 간격)</li>
+                <li>SOXX: 3회 분할매수</li>
+                <li>손절/익절 예약은 안전 자금에도 동일 방식 (-20% / +40%)</li>
+              </ul>
+
+              <h3 style="color:var(--warn);margin:14px 0 8px;font-size:14px">시간대 주의사항</h3>
+              <ul style="padding-left:20px;color:var(--sub)">
+                <li>미국장 정규시간: <b>22:30~05:00 (한국 서머타임)</b> / <b>23:30~06:00 (일반)</b></li>
+                <li>키움은 <b>주간거래(프리마켓)</b> 지원하는 종목 있음 — SOXL 가능 (낮 17:00~22:30)</li>
+                <li>예약주문은 <b>정규시간만 적용</b>이 디폴트. 프리마켓 포함 옵션 체크</li>
+                <li>FOMC 발표 = 새벽 03:00 (한국시간) — 자고 있어도 예약주문이 처리</li>
+              </ul>
+
+              <h3 style="margin:14px 0 8px;font-size:14px">매수 후 즉시 할 일 (체크리스트)</h3>
+              <div style="background:var(--card2);padding:12px;border-radius:8px;font-size:12px">
+                ☐ 손절 예약주문 등록 ($매수가×0.6)<br>
+                ☐ 익절 예약주문 등록 ($매수가×2.0)<br>
+                ☐ 예약주문 내역 확인 (정상 등록됐는지)<br>
+                ☐ 포지션.json 업데이트 (진입가/수량/환율_매수시/최초매수일)<br>
+                ☐ <code>py make_SOXL앱_배포.py</code> 실행 → PWA에 손익 반영<br>
+                ☐ 폰 PWA에서 손익 정상 표시 확인
+              </div>
+
+              <h3 style="margin:14px 0 8px;font-size:14px">키움 고객센터</h3>
+              <div style="font-size:12px;color:var(--sub)">
+                해외주식 문의: 1544-9000 (평일 8:30~22:00)<br>
+                OCO 지원 여부, 환율우대 95%, 예약주문 유효기간 등 직접 확인
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div id="tab-rules">
           <div class="rules-card">
             <div class="rules-title">매매 룰 — 위반 금지</div>
