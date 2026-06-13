@@ -111,6 +111,7 @@ def 가격수집():
             결과[이름] = {
                 "현재가": round(현재가, 4), "전일가": round(전일가, 4),
                 "등락률": round(등락, 2), "스파크라인": spark, "티커": 티커,
+                "일자": str(hist.index[-1].date()),  # 마지막 거래일 (검증 일지용)
             }
             print(f"  [{이름:8}] {현재가:>12,.2f}  ({등락:+.2f}%)")
         except Exception as e:
@@ -419,6 +420,64 @@ def 알림체크(data, 점수, 포지션):
     print(f"  텔레그램 {발송수}건 발송")
 
 
+def 적중판정(신호, 익일등락):
+    """마감 신호가 다음 거래일 SOXL 방향을 맞췄는지 채점.
+    green=상승 예측, red=하락 예측, yellow=관망(판정 제외)."""
+    if 익일등락 is None:
+        return None
+    if 신호 == "green":
+        return "적중" if 익일등락 > 0 else "빗나감"
+    if 신호 == "red":
+        return "적중" if 익일등락 < 0 else "빗나감"
+    return "중립"
+
+
+def 일지기록(journal_path, 거래일, soxl종가, soxl등락, 점수, now):
+    """거래일별 매크로 점수 일지 upsert + 익일결과 자동 채점.
+    - 같은 거래일은 1건만 유지(덮어쓰기), 메모는 보존
+    - 각 엔트리의 '익일등락'은 바로 다음 거래일 SOXL 등락으로 채워 채점 (다음날 검증)
+    """
+    try:
+        with open(journal_path, encoding='utf-8') as f:
+            data = json.load(f)
+    except Exception:
+        data = {"엔트리": []}
+    엔트리 = data.get("엔트리", [])
+
+    공통 = {
+        "점수": 점수.get("점수"), "신호": 점수.get("신호"), "결정": 점수.get("결정"),
+        "SOXL종가": round(soxl종가, 2), "SOXL등락": round(soxl등락, 2),
+        "근거": (점수.get("근거") or [])[:3], "감점": (점수.get("감점") or [])[:3],
+        "기록시각": now,
+    }
+    기존 = next((e for e in 엔트리 if e.get("거래일") == 거래일), None)
+    if 기존:
+        기존.update(공통)
+    else:
+        새 = {"거래일": 거래일, "익일등락": None, "익일종가": None,
+              "적중": None, "메모": ""}
+        새.update(공통)
+        엔트리.append(새)
+
+    # 날짜순 정렬 후 '다음 거래일' 등락으로 익일결과/적중 재계산
+    엔트리.sort(key=lambda e: e.get("거래일", ""))
+    for i in range(len(엔트리) - 1):
+        cur, nxt = 엔트리[i], 엔트리[i + 1]
+        cur["익일등락"] = nxt.get("SOXL등락")
+        cur["익일종가"] = nxt.get("SOXL종가")
+        cur["적중"] = 적중판정(cur.get("신호"), cur.get("익일등락"))
+    if 엔트리:  # 최신 거래일은 아직 익일 결과 없음
+        엔트리[-1]["익일등락"] = None
+        엔트리[-1]["익일종가"] = None
+        엔트리[-1]["적중"] = None
+
+    data["엔트리"] = 엔트리
+    data["갱신"] = now
+    with open(journal_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    return 엔트리
+
+
 def build_data_json(가격, 포지션, 점수):
     이벤트 = {
         "다음FOMC": 다음이벤트(FOMC_2026, "FOMC"),
@@ -504,6 +563,16 @@ def main():
 
     print("\n[4/5] 데이터 생성")
     data = build_data_json(가격, 포지션, 점수)
+
+    # 매크로 점수 검증 일지 — 마감 후 브리핑 시점만 기록 (장중 부분봉 오염 방지)
+    utc_hour = datetime.utcnow().hour
+    soxl = 가격.get("SOXL")
+    if (utc_hour in (20, 21) or FORCE_BRIEFING) and soxl:
+        거래일 = soxl.get("일자") or datetime.now().strftime("%Y-%m-%d")
+        kst = (datetime.utcnow() + timedelta(hours=9)).strftime("%Y-%m-%d %H:%M")
+        엔트리 = 일지기록(os.path.join(APP_DIR, 'journal.json'),
+                       거래일, soxl["현재가"], soxl["등락률"], 점수, kst)
+        print(f"  일지 기록: {거래일} 점수 {점수['점수']}({점수['신호']}), 누적 {len(엔트리)}일")
 
     print("\n[5/5] 알림 발송")
     # 수동 실행 시 무조건 진단 메시지 + 브리핑
