@@ -376,10 +376,10 @@ def 알림체크(data, 점수, 포지션):
                 f"룰: 신규 진입 금지, 보유 포지션 점검"
             )
 
-    # 5. 정기 브리핑 (UTC 22시=한국 07시 또는 수동 실행 시)
-    # GitHub Actions는 UTC 시간으로 작동
+    # 5. 정기 브리핑 (UTC 20:50 = 한국 05:50 또는 수동 실행 시)
+    # GitHub Actions cron은 5~15분 지연 흔하므로 UTC 20~21시 범위로 잡음
     utc_hour = datetime.utcnow().hour
-    아침브리핑타이밍 = utc_hour in (21, 22, 23) or FORCE_BRIEFING
+    아침브리핑타이밍 = utc_hour in (20, 21) or FORCE_BRIEFING
     if 아침브리핑타이밍 and 포지션["총투자금"] > 0:
         총손익 = 포지션["총평가손익_KRW"]
         총퍼센트 = 포지션["총손익률"]
