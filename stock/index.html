@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>SOXL</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f1419">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SOXL">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #0f1419;
+  --card: #1a2027;
+  --card2: #232a33;
+  --text: #e8eef5;
+  --sub: #8a96a4;
+  --profit: #ff4757;
+  --loss: #2196f3;
+  --warn: #ffa726;
+  --line: #2c3540;
+}
+html { font-size: 16px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'Malgun Gothic', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 600px; margin: 0 auto; padding: 16px 14px 80px; }
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+.title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.updated { font-size: 12px; color: var(--sub); }
+.refresh-btn {
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.refresh-btn:active { background: var(--card2); }
+
+.hero {
+  background: linear-gradient(135deg, #1a2027 0%, #2c3540 100%);
+  border-radius: 18px;
+  padding: 22px 20px;
+  margin-bottom: 14px;
+  text-align: center;
+  border: 1px solid var(--line);
+}
+.hero-label { font-size: 12px; color: var(--sub); margin-bottom: 6px; }
+.hero-value { font-size: 38px; font-weight: 800; letter-spacing: -1px; }
+.hero-pct { font-size: 15px; margin-top: 4px; color: var(--sub); }
+.hero-value.profit, .hero-pct.profit { color: var(--profit); }
+.hero-value.loss, .hero-pct.loss { color: var(--loss); }
+
+.market-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.market-chip {
+  background: var(--card);
+  padding: 10px 6px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid var(--line);
+}
+.market-chip .label { font-size: 10px; color: var(--sub); }
+.market-chip .value { font-size: 14px; font-weight: 700; margin-top: 2px; }
+.market-chip .change { font-size: 10px; margin-top: 2px; }
+
+.position-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 12px;
+  border: 1px solid var(--line);
+  position: relative;
+}
+.position-card.inactive { opacity: 0.55; }
+.pos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 14px;
+}
+.pos-ticker { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+.pos-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.pos-tag.bet { background: rgba(255,71,87,0.15); color: var(--profit); }
+.pos-tag.safe { background: rgba(33,150,243,0.15); color: var(--loss); }
+.pos-pct {
+  font-size: 24px;
+  font-weight: 800;
+  text-align: right;
+}
+.pos-pct.profit { color: var(--profit); }
+.pos-pct.loss { color: var(--loss); }
+.pos-pct .sub { font-size: 13px; color: var(--sub); font-weight: 500; display: block; margin-top: 2px; }
+
+.sparkline { height: 50px; margin: 12px -4px; }
+
+.pos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.pos-cell {
+  background: var(--card2);
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+.pos-cell .label { font-size: 10px; color: var(--sub); }
+.pos-cell .value { font-size: 14px; font-weight: 700; margin-top: 2px; }
+
+.targets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.target {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+.target.stop { background: rgba(255,71,87,0.1); border-left: 3px solid var(--profit); }
+.target.take { background: rgba(76,217,100,0.1); border-left: 3px solid #4cd964; }
+.target .label { color: var(--sub); font-size: 10px; }
+.target .value { font-size: 14px; font-weight: 700; margin-top: 2px; }
+.target .dist { font-size: 11px; color: var(--sub); margin-top: 2px; }
+
+.inactive-msg {
+  text-align: center;
+  padding: 16px;
+  color: var(--sub);
+  font-size: 13px;
+}
+.memo { font-size: 11px; color: var(--sub); margin-top: 10px; }
+
+.warning {
+  background: rgba(255,167,38,0.12);
+  border-left: 3px solid var(--warn);
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  color: var(--warn);
+}
+
+.rules-card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  margin-top: 14px;
+}
+.rules-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--warn);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.rules-list { list-style: none; }
+.rules-list li {
+  font-size: 13px;
+  padding: 6px 0;
+  color: var(--text);
+  line-height: 1.5;
+  border-bottom: 1px solid var(--line);
+}
+.rules-list li:last-child { border-bottom: none; }
+.rules-list li::before { content: "•"; color: var(--warn); margin-right: 8px; }
+
+.loading { text-align: center; padding: 40px; color: var(--sub); }
+.error { text-align: center; padding: 40px; color: var(--profit); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <div class="title">SOXL Monitor</div>
+      <div class="updated" id="updated">로딩 중...</div>
+    </div>
+    <button class="refresh-btn" onclick="loadData()">새로고침</button>
+  </header>
+  <div id="content" class="loading">데이터 로딩 중...</div>
+</div>
+
+<script>
+const fmt = (n, d=2) => n.toLocaleString('ko-KR', {minimumFractionDigits: d, maximumFractionDigits: d});
+const fmtKRW = n => Math.round(n).toLocaleString('ko-KR');
+const cls = n => n >= 0 ? 'profit' : 'loss';
+const sign = n => n >= 0 ? '+' : '';
+
+function sparkline(data, color) {
+  if (!data || data.length < 2) return '';
+  const w = 320, h = 50;
+  const min = Math.min(...data), max = Math.max(...data);
+  const range = max - min || 1;
+  const step = w / (data.length - 1);
+  const points = data.map((v, i) => `${(i*step).toFixed(1)},${(h - ((v-min)/range)*h).toFixed(1)}`).join(' ');
+  return `<svg class="sparkline" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" width="100%" height="50">
+    <polyline points="${points}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+function renderMarket(시장) {
+  const items = [
+    { label: 'VIX', value: fmt(시장.VIX.현재가), change: 시장.VIX.등락률 },
+    { label: '필반', value: fmt(시장.필반.현재가, 0), change: 시장.필반.등락률 },
+    { label: 'NVDA', value: '$'+fmt(시장.NVDA.현재가), change: 시장.NVDA.등락률 },
+    { label: '환율', value: fmt(시장.환율.현재가, 1), change: 시장.환율.등락률 },
+  ];
+  return items.map(i => `
+    <div class="market-chip">
+      <div class="label">${i.label}</div>
+      <div class="value">${i.value}</div>
+      <div class="change ${cls(i.change)}">${sign(i.change)}${fmt(i.change)}%</div>
+    </div>
+  `).join('');
+}
+
+function renderPosition(p) {
+  const tag = p.종목 === 'SOXL' ? '<span class="pos-tag bet">BET</span>' : '<span class="pos-tag safe">SAFE</span>';
+
+  if (!p.활성) {
+    return `<div class="position-card inactive">
+      <div class="pos-header">
+        <div><span class="pos-ticker">${p.종목}</span>${tag}</div>
+      </div>
+      <div class="inactive-msg">매수 전 — 포지션.json 업데이트 필요</div>
+      <div class="memo">${p.메모 || ''} / 투자 예정 ${fmtKRW(p.투자금)}원</div>
+    </div>`;
+  }
+  if (p.에러) {
+    return `<div class="position-card inactive">
+      <div class="pos-header"><div class="pos-ticker">${p.종목}</div></div>
+      <div class="inactive-msg">${p.에러}</div>
+    </div>`;
+  }
+
+  const color = p.손익률 >= 0 ? '#ff4757' : '#2196f3';
+  return `<div class="position-card">
+    <div class="pos-header">
+      <div><span class="pos-ticker">${p.종목}</span>${tag}</div>
+      <div class="pos-pct ${cls(p.손익률)}">
+        ${sign(p.손익률)}${fmt(p.손익률)}%
+        <span class="sub">${sign(p.평가손익_KRW)}${fmtKRW(p.평가손익_KRW)}원</span>
+      </div>
+    </div>
+    ${sparkline(p.스파크라인, color)}
+    <div class="pos-grid">
+      <div class="pos-cell">
+        <div class="label">진입가</div>
+        <div class="value">${p.통화기호}${fmt(p.진입가)}</div>
+      </div>
+      <div class="pos-cell">
+        <div class="label">현재가</div>
+        <div class="value">${p.통화기호}${fmt(p.현재가)}</div>
+      </div>
+      <div class="pos-cell">
+        <div class="label">수량</div>
+        <div class="value">${p.수량.toLocaleString()}주</div>
+      </div>
+      <div class="pos-cell">
+        <div class="label">평가손익</div>
+        <div class="value ${cls(p.평가손익)}">${p.통화기호}${sign(p.평가손익)}${fmt(p.평가손익)}</div>
+      </div>
+    </div>
+    <div class="targets">
+      <div class="target stop">
+        <div class="label">손절 (${p.손절_퍼센트}%)</div>
+        <div class="value">${p.통화기호}${fmt(p.손절선)}</div>
+        <div class="dist">${sign(p.손절까지_퍼센트)}${fmt(p.손절까지_퍼센트, 1)}% 남음</div>
+      </div>
+      <div class="target take">
+        <div class="label">익절 (+${p.익절_퍼센트}%)</div>
+        <div class="value">${p.통화기호}${fmt(p.익절선)}</div>
+        <div class="dist">${fmt(p.익절까지_퍼센트, 1)}% 남음</div>
+      </div>
+    </div>
+    <div class="memo">${p.메모 || ''}</div>
+  </div>`;
+}
+
+async function loadData() {
+  try {
+    const res = await fetch('data.json?t=' + Date.now());
+    const d = await res.json();
+    document.getElementById('updated').textContent = '업데이트: ' + d.updated;
+
+    const 총평가 = d.포지션.총평가손익_KRW;
+    const 총퍼센트 = d.포지션.총손익률;
+
+    let warningHTML = '';
+    if (d.시장.VIX.현재가 >= 25) {
+      warningHTML = `<div class="warning">VIX ${d.시장.VIX.현재가.toFixed(1)} — 변동성 큼. 신규 진입 신중</div>`;
+    }
+
+    const html = `
+      ${warningHTML}
+      <div class="hero">
+        <div class="hero-label">총 평가손익</div>
+        <div class="hero-value ${cls(총평가)}">${sign(총평가)}${fmtKRW(총평가)}원</div>
+        <div class="hero-pct ${cls(총평가)}">${sign(총퍼센트)}${fmt(총퍼센트)}% · 투자 ${fmtKRW(d.포지션.총투자금)}원</div>
+      </div>
+      <div class="market-bar">${renderMarket(d.시장)}</div>
+      ${d.포지션.포지션.map(renderPosition).join('')}
+      <div class="rules-card">
+        <div class="rules-title">매매 룰</div>
+        <ul class="rules-list">
+          <li>SOXL +100% 도달 → 즉시 전량 매도</li>
+          <li>SOXL -40% 도달 → 즉시 손절, 추가 매수 X</li>
+          <li>베팅 500 잃어도 안전 1,500 절대 안 건들기</li>
+          <li>장중 매매 X. 예약 주문만</li>
+          <li>SOXL 시한 6개월. 음의복리 주의</li>
+        </ul>
+      </div>
+    `;
+    document.getElementById('content').className = '';
+    document.getElementById('content').innerHTML = html;
+  } catch (e) {
+    document.getElementById('content').className = 'error';
+    document.getElementById('content').innerHTML = '데이터 로드 실패: ' + e.message;
+  }
+}
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+
+loadData();
+// 5분마다 자동 갱신
+setInterval(loadData, 5 * 60 * 1000);
+</script>
+</body>
+</html>
