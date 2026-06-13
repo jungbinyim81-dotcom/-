@@ -169,6 +169,79 @@ header {
   margin-bottom: 12px;
   color: var(--warn);
 }
+.warning.danger {
+  background: rgba(255,71,87,0.12);
+  border-left-color: var(--profit);
+  color: var(--profit);
+}
+
+.rate-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--line);
+}
+.rate-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sub);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.rate-status {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0;
+}
+.rate-status.normal { background: rgba(33,150,243,0.15); color: var(--loss); }
+.rate-status.warn { background: rgba(255,167,38,0.15); color: var(--warn); }
+.rate-status.danger { background: rgba(255,71,87,0.15); color: var(--profit); }
+
+.rate-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.rate-item {
+  background: var(--card2);
+  padding: 10px 6px;
+  border-radius: 10px;
+  text-align: center;
+}
+.rate-item .label { font-size: 10px; color: var(--sub); }
+.rate-item .value { font-size: 14px; font-weight: 700; margin-top: 2px; }
+.rate-item .change { font-size: 10px; margin-top: 2px; }
+
+.event-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.event-card {
+  background: var(--card2);
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+.event-card.imminent {
+  background: rgba(255,71,87,0.12);
+  border-left: 3px solid var(--profit);
+}
+.event-card.upcoming {
+  background: rgba(255,167,38,0.12);
+  border-left: 3px solid var(--warn);
+}
+.event-card .name { font-size: 11px; color: var(--sub); }
+.event-card .date { font-size: 13px; font-weight: 700; margin-top: 2px; }
+.event-card .dday { font-size: 12px; margin-top: 2px; font-weight: 600; }
+.event-card.imminent .dday { color: var(--profit); }
+.event-card.upcoming .dday { color: var(--warn); }
 
 .rules-card {
   background: var(--card);
@@ -309,28 +382,109 @@ function renderPosition(p) {
   </div>`;
 }
 
+function renderRates(금리) {
+  if (!금리 || !금리['10년물']) return '';
+  const t10 = 금리['10년물'];
+  const irx = 금리['단기금리'];
+  const dxy = 금리['DXY'];
+  const 차 = 금리['장단기차'];
+
+  // bp 변화 (수익률 % 차이 * 100)
+  const t10_bp = (t10.현재가 - t10.전일가) * 100;
+  const irx_bp = irx ? (irx.현재가 - irx.전일가) * 100 : 0;
+
+  let 상태 = 'normal', 상태문 = '정상';
+  if (t10.현재가 >= 4.5 || Math.abs(t10_bp) >= 5) { 상태 = 'warn'; 상태문 = '주의'; }
+  if (t10.현재가 >= 4.8 || t10_bp >= 10) { 상태 = 'danger'; 상태문 = '위험'; }
+
+  const 역전배지 = 금리.역전 ? ' <span style="color:#ff4757">⚠ 역전</span>' : '';
+
+  return `<div class="rate-card">
+    <div class="rate-title">
+      <span>금리 / 달러 (반도체 매크로)</span>
+      <span class="rate-status ${상태}">${상태문}</span>
+    </div>
+    <div class="rate-grid">
+      <div class="rate-item">
+        <div class="label">10년물</div>
+        <div class="value">${fmt(t10.현재가, 2)}%</div>
+        <div class="change ${cls(-t10_bp)}">${t10_bp >= 0 ? '+' : ''}${fmt(t10_bp, 1)}bp</div>
+      </div>
+      <div class="rate-item">
+        <div class="label">단기 (13W)</div>
+        <div class="value">${irx ? fmt(irx.현재가, 2) : '-'}%</div>
+        <div class="change ${cls(-irx_bp)}">${irx_bp >= 0 ? '+' : ''}${fmt(irx_bp, 1)}bp</div>
+      </div>
+      <div class="rate-item">
+        <div class="label">장-단기${역전배지}</div>
+        <div class="value">${차 !== null ? (차 >= 0 ? '+' : '') + fmt(차, 2) + '%' : '-'}</div>
+        <div class="change" style="color:var(--sub)">10Y-13W</div>
+      </div>
+      <div class="rate-item">
+        <div class="label">DXY</div>
+        <div class="value">${dxy ? fmt(dxy.현재가, 1) : '-'}</div>
+        <div class="change ${cls(-dxy.등락률)}">${sign(dxy.등락률)}${fmt(dxy.등락률)}%</div>
+      </div>
+    </div>
+    ${renderEvents()}
+  </div>`;
+}
+
+let __이벤트캐시 = null;
+function renderEvents() {
+  if (!__이벤트캐시) return '';
+  const fomc = __이벤트캐시.다음FOMC;
+  const cpi = __이벤트캐시.다음CPI;
+  if (!fomc && !cpi) return '';
+
+  const card = (ev, label) => {
+    if (!ev) return '';
+    const 클래스 = ev.남은일 <= 3 ? 'imminent' : (ev.남은일 <= 7 ? 'upcoming' : '');
+    return `<div class="event-card ${클래스}">
+      <div class="name">다음 ${label}</div>
+      <div class="date">${ev.일자}</div>
+      <div class="dday">D-${ev.남은일}일</div>
+    </div>`;
+  };
+
+  return `<div class="event-row">${card(fomc, 'FOMC')}${card(cpi, 'CPI')}</div>`;
+}
+
 async function loadData() {
   try {
     const res = await fetch('data.json?t=' + Date.now());
     const d = await res.json();
     document.getElementById('updated').textContent = '업데이트: ' + d.updated;
+    __이벤트캐시 = d.이벤트;
 
     const 총평가 = d.포지션.총평가손익_KRW;
     const 총퍼센트 = d.포지션.총손익률;
 
-    let warningHTML = '';
+    let warnings = [];
     if (d.시장.VIX.현재가 >= 25) {
-      warningHTML = `<div class="warning">VIX ${d.시장.VIX.현재가.toFixed(1)} — 변동성 큼. 신규 진입 신중</div>`;
+      warnings.push(`<div class="warning">VIX ${d.시장.VIX.현재가.toFixed(1)} — 변동성 큼. 신규 진입 신중</div>`);
+    }
+    if (d.금리 && d.금리.경고) {
+      d.금리.경고.forEach(w => {
+        const 위험 = w.includes('급등') || w.includes('압박');
+        warnings.push(`<div class="warning ${위험 ? 'danger' : ''}">${w}</div>`);
+      });
+    }
+    if (d.이벤트.다음FOMC && d.이벤트.다음FOMC.남은일 <= 3) {
+      warnings.push(`<div class="warning danger">FOMC D-${d.이벤트.다음FOMC.남은일}일 (${d.이벤트.다음FOMC.일자}) — 변동성 극대, 신규 진입 금지 권장</div>`);
+    } else if (d.이벤트.다음CPI && d.이벤트.다음CPI.남은일 <= 1) {
+      warnings.push(`<div class="warning">CPI 발표 D-${d.이벤트.다음CPI.남은일}일 — 발표 당일 ±2~3% 변동 흔함</div>`);
     }
 
     const html = `
-      ${warningHTML}
+      ${warnings.join('')}
       <div class="hero">
         <div class="hero-label">총 평가손익</div>
         <div class="hero-value ${cls(총평가)}">${sign(총평가)}${fmtKRW(총평가)}원</div>
         <div class="hero-pct ${cls(총평가)}">${sign(총퍼센트)}${fmt(총퍼센트)}% · 투자 ${fmtKRW(d.포지션.총투자금)}원</div>
       </div>
       <div class="market-bar">${renderMarket(d.시장)}</div>
+      ${renderRates(d.금리)}
       ${d.포지션.포지션.map(renderPosition).join('')}
       <div class="rules-card">
         <div class="rules-title">매매 룰</div>
@@ -338,6 +492,8 @@ async function loadData() {
           <li>SOXL +100% 도달 → 즉시 전량 매도</li>
           <li>SOXL -40% 도달 → 즉시 손절, 추가 매수 X</li>
           <li>베팅 500 잃어도 안전 1,500 절대 안 건들기</li>
+          <li>10년물 +10bp 이상 급등일 = 신규 진입 보류</li>
+          <li>FOMC/CPI D-3 이내 = 신규 진입 금지</li>
           <li>장중 매매 X. 예약 주문만</li>
           <li>SOXL 시한 6개월. 음의복리 주의</li>
         </ul>
