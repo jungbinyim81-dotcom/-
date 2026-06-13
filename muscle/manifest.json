@@ -1,0 +1,20 @@
+{
+  "name": "머슬플랜 - 근육 키우기 코치",
+  "short_name": "머슬플랜",
+  "description": "나에게 맞는 운동 계획 + 자세 가이드 + 성장 분석",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1b33",
+  "theme_color": "#0f1b33",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0f1b33"/>
+  <g stroke="#3ad6c4" stroke-width="30" stroke-linecap="round" fill="#3ad6c4">
+    <line x1="150" y1="256" x2="362" y2="256"/>
+    <rect x="96"  y="196" width="44" height="120" rx="18" stroke="none"/>
+    <rect x="372" y="196" width="44" height="120" rx="18" stroke="none"/>
+    <rect x="140" y="168" width="40" height="176" rx="18" stroke="none"/>
+    <rect x="332" y="168" width="40" height="176" rx="18" stroke="none"/>
+  </g>
+  <text x="256" y="430" font-family="'Pretendard',Arial,sans-serif" font-size="78"
+        font-weight="900" fill="#e8eef9" text-anchor="middle" letter-spacing="-3">머슬플랜</text>
+</svg>
