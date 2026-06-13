@@ -1,0 +1,52 @@
+name: SOXL Monitor
+
+# 매일 자동 실행 (UTC 기준 → 한국시간 변환)
+# UTC 22:00 = 한국 07:00 (다음날) - 아침 브리핑
+# UTC 03:30 = 한국 12:30 - 점심 점검
+# UTC 13:30 = 한국 22:30 - 미국장 시작 전
+on:
+  schedule:
+    - cron: '0 22 * * *'    # 한국 07:00
+    - cron: '30 3 * * *'    # 한국 12:30
+    - cron: '30 13 * * *'   # 한국 22:30
+  workflow_dispatch:        # 수동 실행 버튼
+
+permissions:
+  contents: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install yfinance pandas numpy
+
+      - name: Run SOXL monitor
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          POSITION_JSON: ${{ secrets.POSITION_JSON }}
+        run: |
+          python scripts/soxl_monitor.py
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add stock/data.json
+          if ! git diff --staged --quiet; then
+            git commit -m "auto: SOXL data update $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
+          else
+            echo "변경 없음"
+          fi
