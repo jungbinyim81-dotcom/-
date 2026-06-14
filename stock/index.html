@@ -844,7 +844,7 @@ function renderDecision(점수) {
 }
 
 function renderSKEW(s) {
-  if (!s) return '';
+  if (!s || typeof s.SKEW !== 'number') return '';  // 데이터 모양 불일치(raw 가격객체 등) 시 카드만 스킵 — 전체 렌더 크래시 방지
   let 색 = 'var(--profit)';
   let 배지 = 'danger';
   if (s.위험도 === '낮음') { 색 = '#4cd964'; 배지 = 'normal'; }
