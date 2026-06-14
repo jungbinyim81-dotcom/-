@@ -260,10 +260,11 @@
     <div class="card tight">
       <label class="label">어디서 운동해?</label>
       <div class="seg" id="segEquip">
-        <button data-v="gym" class="on">헬스장</button>
-        <button data-v="dumbbell">집(덤벨)</button>
+        <button data-v="gym">헬스장</button>
+        <button data-v="home" class="on">집·기구</button>
         <button data-v="body">맨몸</button>
       </div>
+      <p class="hint" style="margin-top:9px"><b style="color:var(--accent)">집·기구</b> = 케틀벨 12kg·덤벨 6kg·턱걸이·맨몸으로 할 수 있는 운동만 골라 20~30분짜리 짧은 전신으로 짜줄게. 무게도 자동으로 채워져요.</p>
     </div>
 
     <div class="card tight">
@@ -518,11 +519,55 @@ const EX=[
   easy:'누워 팔다리 교차로 뻗기',sum:'허리에 안전한 코어 운동',region:'앞',
   steps:['누워서 팔과 무릎을 90도로 들어요','반대쪽 팔·다리를 천천히 뻗어요','돌아와 반대로 반복'],
   tips:['허리를 바닥에 붙인 채'],avoid:['허리가 뜨지 않게'],yt:'데드버그 자세'}},
+/* ── 집 소도구 (케틀벨·덤벨·맨몸) ── */
+{id:'kbswing',name:'케틀벨 스윙',m:'둔근',equip:'kettlebell',comp:1,kneeSafe:1,g:{
+  easy:'케틀벨 다리 사이로 스윙',sum:'엉덩이·허벅지 뒤를 한 번에, 심박수도 올라가는 전신 운동',region:'뒤',
+  steps:['발을 어깨너비보다 약간 넓게 서요','케틀벨을 두 손으로 잡고 무릎은 살짝만 굽혀요','엉덩이를 뒤로 빼며 케틀벨을 다리 사이로 보내요','엉덩이를 힘차게 펴 케틀벨을 가슴 높이까지 띄워요(팔 힘 아님)'],
+  tips:['팔이 아니라 엉덩이 힘으로 던지듯','맨 위에서 엉덩이·배에 꽉 힘주기','등은 항상 곧게'],
+  knee:'무릎을 거의 굽히지 않는 엉덩이 운동이라 무릎 부담이 적어요. 쪼그려 앉지 말고 엉덩이만 뒤로 빼세요.',
+  avoid:['쪼그려 앉듯(스쿼트처럼) 하지 않기','허리를 둥글게 말지 않기','팔로 들어올리지 않기'],yt:'케틀벨 스윙 초보 엉덩이 자세'}},
+{id:'kbrdl',name:'케틀벨 RDL',m:'햄스트링',equip:'kettlebell',comp:1,kneeSafe:1,g:{
+  easy:'케틀벨 들고 엉덩이 빼며 숙이기',sum:'허벅지 뒤·엉덩이를 무릎 부담 없이',region:'뒤',
+  steps:['케틀벨을 두 손으로 허벅지 앞에 들어요','무릎은 살짝만 굽힌 채 고정','엉덩이를 뒤로 빼며 상체를 천천히 숙여요','허벅지 뒤가 당기면 엉덩이로 일어나요'],
+  tips:['등은 항상 곧게','케틀벨을 다리에 붙여 내리기'],
+  knee:'무릎을 거의 굽히지 않아 무릎이 편한 하체 운동이에요.',
+  avoid:['허리 말지 않기','무릎을 깊게 굽히지 않기'],yt:'케틀벨 루마니안 데드리프트 자세'}},
+{id:'kbrow',name:'케틀벨 로우(원암)',m:'등',equip:'kettlebell',comp:1,kneeSafe:1,g:{
+  easy:'숙여서 한손 케틀벨 당기기',sum:'등 가운데를 두껍게',region:'뒤',
+  steps:['엉덩이를 빼고 상체를 45도 숙여요','케틀벨을 한 손으로 잡아요(반대 손은 무릎/의자 지지)','옆구리 쪽으로 당겨 올려요','천천히 내려요'],
+  tips:['등은 일자로','팔꿈치를 뒤로 보내기'],
+  avoid:['몸통을 비틀어 반동 쓰지 않기','허리 말지 않기'],yt:'케틀벨 원암 로우 자세'}},
+{id:'kbpress',name:'케틀벨 숄더프레스',m:'어깨',equip:'kettlebell',comp:1,kneeSafe:1,g:{
+  easy:'케틀벨 머리 위로 밀기(한 손씩)',sum:'어깨를 안전하게 키워요',region:'앞',
+  steps:['케틀벨을 어깨 앞에 들어요(케틀벨 몸통이 팔뚝 바깥에 걸치게)','배에 힘주고 곧게 서요','머리 위로 밀어 올려요','천천히 내려요'],
+  tips:['손목이 꺾이지 않게','반대 손은 허리에'],
+  avoid:['허리를 뒤로 젖히지 않기','반동으로 올리지 않기'],yt:'케틀벨 숄더프레스 자세'}},
+{id:'kbhipthr',name:'케틀벨 힙 쓰러스트',m:'둔근',equip:'kettlebell',comp:1,kneeSafe:1,g:{
+  easy:'케틀벨 올리고 엉덩이 들기',sum:'엉덩이를 집중해서 키워요',region:'뒤',
+  steps:['소파/침대에 등 윗부분을 기대고 무릎 세워 앉아요','케틀벨을 골반 위에 올려 두 손으로 잡아요','엉덩이를 천천히 내려요','엉덩이 힘으로 위로 들어 1초 꽉 조여요'],
+  tips:['맨 위에서 엉덩이 꽉 조이기','턱은 살짝 당기기'],
+  knee:'엉덩이로 하는 운동이라 무릎 부담이 거의 없어요.',
+  avoid:['허리로 젖혀 올리지 않기'],yt:'케틀벨 힙쓰러스트 자세'}},
+{id:'floorpress',name:'바닥 덤벨 프레스',m:'가슴',equip:'dumbbell',comp:1,kneeSafe:1,g:{
+  easy:'바닥에 누워 덤벨 밀기',sum:'벤치 없이 집에서 가슴·팔 운동',region:'앞',
+  steps:['바닥에 누워 무릎을 세워요','덤벨을 양손에 들고 팔꿈치가 바닥에 닿을 때까지 천천히 내려요','가슴 힘으로 위로 밀어 모아요'],
+  tips:['팔꿈치는 몸과 45도','팔꿈치가 바닥에 닿으면 1초 멈췄다 밀기'],
+  avoid:['반동으로 튕기지 않기'],yt:'바닥 덤벨 플로어 프레스 자세'}},
+{id:'diapush',name:'다이아몬드 푸쉬업',m:'삼두',equip:'body',comp:1,kneeSafe:1,g:{
+  easy:'손 모아 팔굽혀펴기',sum:'팔 뒤쪽을 장비 없이 키워요',region:'뒤',
+  steps:['두 손의 엄지·검지를 모아 삼각형을 만들어 가슴 아래 바닥에','몸은 머리부터 발끝까지 일자로','가슴이 손에 닿을 듯 천천히 내려요','밀어 올려요'],
+  tips:['힘들면 무릎을 바닥에 대고','팔꿈치는 몸쪽으로'],
+  avoid:['엉덩이가 솟거나 처지지 않게'],yt:'다이아몬드 푸쉬업 자세'}},
 ];
 const exById=id=>EX.find(e=>e.id===id);
 
+/* 집·기구 = 케틀벨12kg + 덤벨6kg2개 + 턱걸이 + 맨몸 으로 할 수 있는 운동 (벤치/머신/케이블 제외) */
+const HOME_OK=new Set(['pushup','floorpress','diapush','pullup','dbrow','kbrow','dbshld','latrz','reardel','kbpress',
+  'bicurl','hammer','ohext','wallsit','stepup','goblet','dbrdl','kbrdl','glbridge','kbhipthr','kbswing',
+  'scalf','plank','legraise','deadbug']);
 function equipOK(e,equip){
   if(equip==='gym')return true;
+  if(equip==='home')return HOME_OK.has(e.id);
   if(equip==='dumbbell')return(e.equip==='dumbbell'||e.equip==='body'||e.equip==='barbell');
   if(equip==='body')return e.equip==='body';
   return true;
@@ -549,6 +594,21 @@ function splitTemplate(days){
     {name:'상체 전체',slots:[['가슴',1],['등',1],['어깨',1],['이두',1],['삼두',1]]},
     {name:'하체 B·코어',slots:[['대퇴사두',1],['햄스트링',1],['둔근',1],['코어',2]]}];
 }
+/* 집·기구 전용 짧은 전신 분할 (20~30분, 5종목 내외) */
+function homeSplit(days){
+  if(days==2)return[
+    {name:'전신 A',slots:[['등',1],['둔근',1],['가슴',1],['어깨',1],['코어',1]]},
+    {name:'전신 B',slots:[['가슴',1],['등',1],['햄스트링',1],['삼두',1],['이두',1]]}];
+  if(days==4)return[
+    {name:'당기기·엉덩이',slots:[['등',2],['둔근',1],['이두',1],['코어',1]]},
+    {name:'밀기·코어',slots:[['가슴',2],['어깨',1],['삼두',1],['코어',1]]},
+    {name:'하체 뒤·엉덩이',slots:[['햄스트링',1],['둔근',1],['대퇴사두',1],['종아리',1],['코어',1]]},
+    {name:'전신 마무리',slots:[['등',1],['가슴',1],['어깨',1],['둔근',1],['이두',1]]}];
+  return[ /* 주 3번 — 기본 */
+    {name:'당기기·엉덩이',slots:[['등',1],['둔근',1],['어깨',1],['가슴',1],['코어',1]]},
+    {name:'밀기·뒤허벅지',slots:[['가슴',1],['등',1],['햄스트링',1],['삼두',1],['코어',1]]},
+    {name:'전신·팔',slots:[['등',1],['둔근',1],['대퇴사두',1],['이두',1],['어깨',1]]}];
+}
 function prescribe(e,exp){
   const beg=exp==='초보';
   if(e.comp)return{sets:beg?3:4,repMin:6,repMax:10};
@@ -556,7 +616,7 @@ function prescribe(e,exp){
   return{sets:3,repMin:10,repMax:15};
 }
 function buildProgram(p){
-  const tmpl=splitTemplate(+p.days);const used={};
+  const tmpl=(p.equip==='home'?homeSplit(+p.days):splitTemplate(+p.days));const used={};
   const pool=m=>{let a=EX.filter(e=>e.m===m&&equipOK(e,p.equip));if(p.knee==='on')a=a.filter(e=>e.kneeSafe);a.sort((x,y)=>y.comp-x.comp);return a;};
   const days=tmpl.map(d=>{const exercises=[];
     d.slots.forEach(([m,n])=>{const pl=pool(m);if(!pl.length)return;used[m]=used[m]||0;
@@ -564,13 +624,13 @@ function buildProgram(p){
         if(!exercises.find(x=>x.id===e.id))exercises.push({id:e.id,name:e.name,m:e.m,comp:e.comp,kneeSafe:e.kneeSafe,...rx});}
       used[m]+=n;});
     return{name:d.name,exercises};});
-  return{generatedAt:Date.now(),split:`주 ${p.days}번 (${p.days}분할)`,days};
+  return{generatedAt:Date.now(),split:(p.equip==='home'?`집 전신 · 주 ${p.days}번`:`주 ${p.days}번 (${p.days}분할)`),days};
 }
 
 /* ============================================================
    설정 모달
    ============================================================ */
-let setupState={age:45,weight:75,exp:'초보',days:'3',equip:'gym',knee:'on'};
+let setupState={age:45,weight:75,exp:'초보',days:'3',equip:'home',knee:'on'};
 function openSetup(){
   if(DB.profile)setupState={...setupState,...DB.profile};
   document.getElementById('inAge').value=setupState.age;
@@ -616,15 +676,17 @@ function lastEntryFor(id){for(let i=DB.logs.length-1;i>=0;i--){
 
 /* 다음 세션 추천 — 쉬운 말 */
 function progressionFor(ex){
+  const fixed=DB.profile&&(DB.profile.equip==='home'||DB.profile.equip==='body');
   const last=lastEntryFor(ex.id);
-  if(!last)return{text:`가벼운 무게로 <b>${ex.repMax}회</b>까지 폼 익히기`,type:'start'};
+  if(!last)return{text:fixed?`<b>${ex.repMax}회</b>까지 바른 자세로 익히기`:`가벼운 무게로 <b>${ex.repMax}회</b>까지 폼 익히기`,type:'start'};
   const done=last.sets.filter(s=>s.weight&&s.reps);
-  if(!done.length)return{text:`가벼운 무게로 폼부터`,type:'start'};
+  if(!done.length)return{text:`바른 자세부터`,type:'start'};
   const topW=Math.max(...done.map(s=>s.weight));
   const atTop=done.filter(s=>s.weight===topW);
   const inc=(ex.m==='대퇴사두'||ex.m==='햄스트링'||ex.m==='둔근')?5:2.5;
-  if(atTop.every(s=>s.reps>=ex.repMax)&&done.length>=ex.sets)
-    return{text:`지난번 다 성공! 이번엔 <b>${topW+inc}kg</b>로 올려보자`,type:'up',w:topW+inc};
+  if(atTop.every(s=>s.reps>=ex.repMax)&&done.length>=ex.sets){
+    if(fixed)return{text:`지난번 다 성공! 무게가 고정이니 이번엔 <b>더 천천히(내릴 때 3초)</b> 또는 <b>한쪽씩</b> 해서 난이도를 올려보자`,type:'up'};
+    return{text:`지난번 다 성공! 이번엔 <b>${topW+inc}kg</b>로 올려보자`,type:'up',w:topW+inc};}
   if(done.every(s=>s.reps>=ex.repMin))
     return{text:`<b>${topW}kg</b> 그대로, ${ex.repMax}회까지 늘리기 (지난번 ${done.map(s=>s.reps).join('·')}회)`,type:'reps',w:topW};
   return{text:`<b>${topW}kg</b>에서 ${ex.repMin}회 안정적으로, 폼 우선`,type:'hold',w:topW};
@@ -696,12 +758,21 @@ function renderToday(){
          <button class="btn ghost" style="margin-top:8px" onclick="cancelDraft()">처음부터</button>`;
   body.innerHTML=html;
 }
+/* 집·기구/맨몸이면 무게를 자동으로: 케틀벨 12kg · 덤벨 6kg · 맨몸은 내 몸무게 */
+function defWeight(id){
+  if(!(DB.profile&&(DB.profile.equip==='home'||DB.profile.equip==='body')))return '';
+  const e=exById(id);if(!e)return '';
+  if(e.equip==='kettlebell')return 12;
+  if(e.equip==='dumbbell')return 6;
+  if(e.equip==='body')return DB.profile.weight||'';
+  return '';
+}
 function makeDraft(i){
   const day=DB.program.days[i];
   return{date:new Date().toISOString().slice(0,10),dayName:day.name,dayIdx:i,
-    entries:day.exercises.map(ex=>({exerciseId:ex.id,name:ex.name,muscle:ex.m,
+    entries:day.exercises.map(ex=>{const dw=defWeight(ex.id);return{exerciseId:ex.id,name:ex.name,muscle:ex.m,
       prescribe:{sets:ex.sets,repMin:ex.repMin,repMax:ex.repMax,comp:ex.comp,kneeSafe:ex.kneeSafe},
-      sets:Array.from({length:ex.sets},()=>({weight:'',reps:'',done:false}))}))};
+      sets:Array.from({length:ex.sets},()=>({weight:dw,reps:'',done:false}))};})};
 }
 function switchDay(i){draft=makeDraft(i);renderToday();}
 function setVal(ei,si,k,v){draft.entries[ei].sets[si][k]=v===''?'':+v;}
@@ -793,8 +864,9 @@ function renderProgram(){
   const p=DB.profile;
   info.innerHTML=`<div class="card tight"><div class="row wrap" style="gap:8px">
     <span class="pill">${DB.program.split}</span><span class="pill">${p.exp}</span>
-    <span class="pill">${({gym:'헬스장',dumbbell:'집(덤벨)',body:'맨몸'})[p.equip]}</span>
-    ${p.knee==='on'?'<span class="pill" style="color:var(--good)">무릎 보호 ON</span>':''}</div></div>`;
+    <span class="pill">${({gym:'헬스장',home:'집·기구',dumbbell:'집(덤벨)',body:'맨몸'})[p.equip]}</span>
+    ${p.knee==='on'?'<span class="pill" style="color:var(--good)">무릎 보호 ON</span>':''}</div>
+    ${p.equip==='home'?'<p class="hint" style="margin-top:10px">새벽 20~30분용 짧은 전신이에요. 시간이 빠듯하면 <b>두 운동을 번갈아(슈퍼세트)</b> 하고 휴식을 30~45초로 줄이면 딱 맞아요. 케틀벨 12kg·덤벨 6kg·맨몸 무게는 자동으로 채워져 있으니 <b>횟수만</b> 적으면 돼요.</p>':''}</div>`;
   let html='';
   DB.program.days.forEach((d,i)=>{
     let rows='';
@@ -932,7 +1004,7 @@ function renderSettings(){
   const el=document.getElementById('profileSummary');
   if(!DB.profile){el.innerHTML='아직 정보가 없어요. 아래 버튼으로 시작하세요.';return;}
   const p=DB.profile;
-  el.innerHTML=`나이 ${p.age} · ${p.weight}kg · ${p.exp} · 주 ${p.days}번 · ${({gym:'헬스장',dumbbell:'집(덤벨)',body:'맨몸'})[p.equip]} · 무릎보호 ${p.knee==='on'?'ON':'OFF'}`;
+  el.innerHTML=`나이 ${p.age} · ${p.weight}kg · ${p.exp} · 주 ${p.days}번 · ${({gym:'헬스장',home:'집·기구',dumbbell:'집(덤벨)',body:'맨몸'})[p.equip]} · 무릎보호 ${p.knee==='on'?'ON':'OFF'}`;
 }
 function exportData(){const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`머슬플랜_백업_${new Date().toISOString().slice(0,10)}.json`;a.click();}
