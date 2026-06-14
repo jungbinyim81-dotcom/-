@@ -614,6 +614,7 @@ function renderEvents() {
 async function loadData() {
   try {
     const res = await fetch('data.json?t=' + Date.now());
+    if (!res || !res.ok) throw new Error('네트워크 응답 없음 (' + (res ? res.status : 'offline') + ')');
     const d = await res.json();
     document.getElementById('updated').textContent = '업데이트: ' + d.updated;
     __이벤트캐시 = d.이벤트;
