@@ -594,6 +594,43 @@ def 일지기록(journal_path, 거래일, soxl종가, soxl등락, 점수, now):
     return 엔트리
 
 
+def SKEW분석(가격):
+    """CBOE SKEW + VIX 결합으로 꼬리위험 판정 (데스크탑 _soxl_analytics.SKEW분석과 동일 출력 모양).
+    PWA renderSKEW가 SKEW/SKEW_변화/위험도/VIX 필드를 기대하므로 raw 가격객체를 그대로 넣으면 안 됨."""
+    skew = 가격.get("SKEW")
+    vix = 가격.get("VIX")
+    if not skew:
+        return None
+    s = skew["현재가"]
+    v = vix["현재가"] if vix else None
+    s_변화 = skew.get("등락률", 0)
+    if s >= 145:
+        위험도, 설명, 경고 = "매우 높음", "꼬리위험 극단 — 블랙스완 가능성 증대", True
+    elif s >= 135:
+        위험도, 설명, 경고 = "높음", "꼬리위험 누적 — 표면은 평온하지만 주의", True
+    elif s >= 125:
+        위험도, 설명, 경고 = "주의", "꼬리위험 약간 상승", False
+    elif s >= 115:
+        위험도, 설명, 경고 = "보통", "정상 범위", False
+    else:
+        위험도, 설명, 경고 = "낮음", "꼬리위험 안정", False
+    if v is not None:
+        if v < 18 and s >= 135:
+            설명 += " · VIX 낮은데 SKEW 높음 = 위기 직전 시그널 (2008/2020 직전 패턴)"; 경고 = True
+        elif v < 18 and s < 125:
+            설명 += " · VIX/SKEW 모두 안정 (이상적)"
+        elif v >= 25 and s >= 130:
+            설명 += " · 양 지표 모두 위험 (조정 가능)"
+    return {
+        "SKEW": round(s, 1),
+        "SKEW_변화": round(s_변화, 2),
+        "VIX": round(v, 2) if v else None,
+        "위험도": 위험도,
+        "설명": 설명,
+        "경고": 경고,
+    }
+
+
 def build_data_json(가격, 포지션, 점수):
     이벤트 = {
         "다음FOMC": 다음이벤트(FOMC_2026, "FOMC"),
@@ -619,7 +656,7 @@ def build_data_json(가격, 포지션, 점수):
     분석 = dict(기존분석)
     분석.update({
         "점수": 점수,
-        "SKEW": 가격.get("SKEW"),
+        "SKEW": SKEW분석(가격),
         "반도체축적": 반도체축적분석(),
     })
 
