@@ -608,6 +608,21 @@ def build_data_json(가격, 포지션, 점수):
         "다음TSMC": TSMC매출_다음(),
     }
 
+    # 기존 data.json의 풍부한 분석 필드 보존 (데스크탑 배포가 만든 캘린더/시나리오/섹터/뉴스 등)
+    # 클라우드는 점수/SKEW/반도체축적만 계산 → 통째로 덮어쓰면 PWA의 매크로/시나리오/섹터 탭이 비어버림
+    기존분석 = {}
+    try:
+        with open(os.path.join(APP_DIR, 'data.json'), encoding='utf-8') as f:
+            기존분석 = (json.load(f).get('분석') or {})
+    except Exception:
+        기존분석 = {}
+    분석 = dict(기존분석)
+    분석.update({
+        "점수": 점수,
+        "SKEW": 가격.get("SKEW"),
+        "반도체축적": 반도체축적분석(),
+    })
+
     data = {
         "updated": datetime.now().strftime("%Y-%m-%d %H:%M") + " UTC",
         "updated_iso": datetime.now().isoformat(),
@@ -623,11 +638,7 @@ def build_data_json(가격, 포지션, 점수):
             "역전": False, "경고": [],
         },
         "이벤트": 이벤트,
-        "분석": {
-            "점수": 점수,
-            "SKEW": 가격.get("SKEW"),
-            "반도체축적": 반도체축적분석(),
-        },
+        "분석": 분석,
     }
     if 가격.get("10년물") and 가격.get("단기금리"):
         data["금리"]["장단기차"] = round(가격["10년물"]["현재가"] - 가격["단기금리"]["현재가"], 3)
