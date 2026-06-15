@@ -825,7 +825,7 @@ function renderDecision(점수) {
   const consHTML = (점수.감점 || []).map(r => `<li>${r}</li>`).join('') || '<li>주요 위험 없음</li>';
   return `<div class="decision-card ${신호}">
     <div class="decision-head">
-      <span class="decision-light">매크로 신호</span>
+      <span class="decision-light">트레이딩 신호 (수일~수주)</span>
       <span class="decision-score">${점수.점수}</span>
     </div>
     <div class="decision-title">${점수.결정}</div>
