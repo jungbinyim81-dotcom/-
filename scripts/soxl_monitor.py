@@ -424,12 +424,41 @@ def 알림체크(data, 점수, 포지션):
 
         알림목록.insert(0, 브리핑)
 
-    # 발송
+    # 발송 (장중 30분마다 돌아도 같은 조건부 알림이 반복되지 않도록 쿨다운)
+    # - 정기 브리핑: 항상 발송(아침 1회 타이밍에만 만들어짐)
+    # - 조건부 알림(손절/익절/금리/DXY/이벤트): 동일 알림은 4시간에 1번만
+    상태경로 = os.path.join(APP_DIR, 'alert_state.json')
+    쿨다운초 = 4 * 3600
+    try:
+        with open(상태경로, encoding='utf-8') as f:
+            상태 = json.load(f)
+    except Exception:
+        상태 = {}
+    지금 = datetime.utcnow()
+
     발송수 = 0
     for msg in 알림목록:
+        정기 = ("SOXL 브리핑" in msg)
+        if not 정기:
+            키 = msg.split("\n", 1)[0].strip()  # 알림 헤더로 동일 알림 식별
+            마지막 = 상태.get(키)
+            if 마지막:
+                try:
+                    if (지금 - datetime.fromisoformat(마지막)).total_seconds() < 쿨다운초:
+                        print(f"  스킵(쿨다운): {키}")
+                        continue
+                except Exception:
+                    pass
         if 텔레그램(msg):
             발송수 += 1
+            if not 정기:
+                상태[키] = 지금.isoformat()
             time.sleep(0.5)  # 텔레그램 rate limit 방지
+    try:
+        with open(상태경로, 'w', encoding='utf-8') as f:
+            json.dump(상태, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"  alert_state 저장 실패: {e}")
     print(f"  텔레그램 {발송수}건 발송")
 
 
