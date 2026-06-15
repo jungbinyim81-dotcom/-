@@ -211,112 +211,89 @@ def 텔레그램(text):
 
 
 def 분석실행(가격, 이벤트):
-    """간소화된 매크로 점수 계산"""
-    점수 = 0
-    근거 = []
-    감점 = []
+    """SOXL 트레이딩 신호 (수일~수주 스윙, 모멘텀 추종). 0~100.
 
-    # 금리
-    t10 = 가격.get("10년물")
-    if t10:
-        수준 = t10["현재가"]
-        bp = (t10["현재가"] - t10["전일가"]) * 100
-        if 수준 < 4.0: 점수 += 15; 근거.append(f"10년물 {수준:.2f}% (낮음)")
-        elif 수준 < 4.5: 점수 += 11; 근거.append(f"10년물 {수준:.2f}% (보통)")
-        elif 수준 < 4.8: 점수 += 5; 감점.append(f"10년물 {수준:.2f}% (높음)")
-        if bp >= 10: 점수 -= 5; 감점.append(f"10년물 +{bp:.0f}bp 급등")
-        elif bp <= -10: 점수 += 5; 근거.append(f"10년물 {bp:.0f}bp 급락")
+    원칙(빛날빈님 기준): SOXL은 3배 레버리지+음의복리 트레이딩 종목.
+    신호는 '단기 가격행동·모멘텀·당일 매크로 충격·근접 촉매'만으로 채점한다.
+    장기 관점(금리/달러 절대레벨, 200일선 회귀, MU/TSM 펀더멘털, TLT/MOVE 유동성,
+    SKEW 꼬리위험)은 매매 신호에서 제외 → '참고' 탭으로만. 추세를 거스르는
+    mean-reversion 감점은 두지 않는다(상승추세 = 가점).
+    배점: 모멘텀30 + 달러20 + VIX15 + 금리충격15 + 촉매회피12 + 위험선호8 = 100
+    """
+    점수 = 0; 근거 = []; 감점 = []
 
-    # VIX
+    # 1. 반도체 단기 모멘텀 (30) — 핵심 추세추종 (필반 5일)
+    sox = 가격.get("필반")
+    sp = sox.get("스파크라인", []) if sox else []
+    if len(sp) >= 5:
+        m = (sp[-1] - sp[-5]) / sp[-5] * 100
+        if m >= 5: 점수 += 30; 근거.append(f"반도체 5일 +{m:.1f}% (강한 상승추세)")
+        elif m >= 2: 점수 += 24; 근거.append(f"반도체 5일 +{m:.1f}% (상승)")
+        elif m >= 0: 점수 += 16
+        elif m >= -2: 점수 += 8; 감점.append(f"반도체 5일 {m:.1f}% (약세)")
+        else: 감점.append(f"반도체 5일 {m:.1f}% (하락추세, 진입 회피)")
+
+    # 2. DXY 당일 방향 (20) — SOXL 최대 적, 레벨 아닌 '오늘 움직임'
+    dxy = 가격.get("DXY")
+    if dxy:
+        c = dxy["등락률"]
+        if c <= -0.4: 점수 += 20; 근거.append(f"DXY {c:+.2f}% (약달러, 강호재)")
+        elif c <= 0: 점수 += 15; 근거.append(f"DXY {c:+.2f}% (약세)")
+        elif c <= 0.4: 점수 += 8
+        elif c <= 0.8: 점수 += 3; 감점.append(f"DXY +{c:.2f}% (강달러 압박)")
+        else: 감점.append(f"DXY +{c:.2f}% (급등, 진입 회피)")
+
+    # 3. VIX 변동성 (15) — 3배 레버리지 리스크
     vix = 가격.get("VIX")
     if vix:
         v = vix["현재가"]
-        if v < 15: 점수 += 10; 근거.append(f"VIX {v:.1f} (안정)")
-        elif v < 20: 점수 += 7
-        elif v < 25: 점수 += 3; 감점.append(f"VIX {v:.1f} (주의)")
+        if v < 16: 점수 += 15; 근거.append(f"VIX {v:.1f} (안정)")
+        elif v < 20: 점수 += 11
+        elif v < 26: 점수 += 5; 감점.append(f"VIX {v:.1f} (변동성 주의)")
+        else: 감점.append(f"VIX {v:.1f} (공포, 레버리지 위험)")
 
-    # DXY
-    dxy = 가격.get("DXY")
-    if dxy:
-        d = dxy["현재가"]
-        if d < 100: 점수 += 15; 근거.append(f"DXY {d:.1f} (약달러)")
-        elif d < 103: 점수 += 10
-        elif d < 105: 점수 += 5; 감점.append(f"DXY {d:.1f} (강달러)")
-        if dxy["등락률"] >= 0.5:
-            점수 -= 3; 감점.append(f"DXY +{dxy['등락률']:.2f}% 급등")
+    # 4. 금리 10년물 당일 충격 (15) — 레벨 아닌 bp 변화
+    t10 = 가격.get("10년물")
+    if t10:
+        bp = (t10["현재가"] - t10["전일가"]) * 100
+        if bp <= -5: 점수 += 15; 근거.append(f"10년물 {bp:.0f}bp (급락 호재)")
+        elif bp < 5: 점수 += 11
+        elif bp <= 12: 점수 += 5; 감점.append(f"10년물 +{bp:.0f}bp (상승 압박)")
+        else: 감점.append(f"10년물 +{bp:.0f}bp (급등, 진입 회피)")
 
-    # 모멘텀
-    sox = 가격.get("필반")
-    if sox:
-        sp = sox.get("스파크라인", [])
-        if len(sp) >= 5:
-            m = (sp[-1] - sp[-5]) / sp[-5] * 100
-            if m >= 3: 점수 += 10; 근거.append(f"반도체 5일 +{m:.1f}%")
-            elif m >= 0: 점수 += 7
-            elif m >= -3: 점수 += 3
-            else: 감점.append(f"반도체 5일 {m:.1f}%")
-
-    # 이벤트
-    fomc = 이벤트.get("다음FOMC")
-    cpi = 이벤트.get("다음CPI")
+    # 5. 근접 촉매 회피 (12) — FOMC/CPI 임박 시 신규진입 자제
+    fomc = 이벤트.get("다음FOMC"); cpi = 이벤트.get("다음CPI")
     가까움 = None
-    if fomc and cpi:
-        가까움 = fomc if fomc["남은일"] <= cpi["남은일"] else cpi
+    if fomc and cpi: 가까움 = fomc if fomc["남은일"] <= cpi["남은일"] else cpi
     elif fomc: 가까움 = fomc
     elif cpi: 가까움 = cpi
     if 가까움:
-        남 = 가까움["남은일"]
-        if 남 > 7: 점수 += 10
-        elif 남 > 3: 점수 += 5; 감점.append(f"{가까움['이름']} D-{남}일")
-        else: 감점.append(f"{가까움['이름']} D-{남}일 (임박)")
+        남 = 가까움["남은일"]; nm = 가까움.get("이름", "이벤트")
+        if 남 > 7: 점수 += 12
+        elif 남 > 3: 점수 += 7; 감점.append(f"{nm} D-{남}일")
+        else: 감점.append(f"{nm} D-{남}일 (임박, 신규진입 회피)")
 
-    # HYG + BTC (위험선호)
-    hyg = 가격.get("HYG")
-    btc = 가격.get("BTC")
+    # 6. 위험선호 (8) — HYG/BTC 5일 동반
+    hyg = 가격.get("HYG"); btc = 가격.get("BTC")
+    def _r5(x):
+        s = x.get("스파크라인", []) if x else []
+        return (s[-1] - s[-5]) / s[-5] * 100 if len(s) >= 5 else 0
     if hyg and btc:
-        h5 = (hyg["스파크라인"][-1] - hyg["스파크라인"][-5]) / hyg["스파크라인"][-5] * 100 if len(hyg.get("스파크라인",[])) >= 5 else 0
-        b5 = (btc["스파크라인"][-1] - btc["스파크라인"][-5]) / btc["스파크라인"][-5] * 100 if len(btc.get("스파크라인",[])) >= 5 else 0
-        if h5 >= 0.5 and b5 >= 3:
-            점수 += 10; 근거.append(f"HYG/BTC 동반 강세")
-        elif h5 >= 0 and b5 >= 0:
-            점수 += 6
-        else:
-            점수 += 2
-
-    # TLT + MOVE (유동성)
-    tlt = 가격.get("TLT")
-    move = 가격.get("MOVE")
-    if tlt:
-        sp = tlt.get("스파크라인", [])
-        t5 = (sp[-1] - sp[-5]) / sp[-5] * 100 if len(sp) >= 5 else 0
-        if t5 >= 1: 점수 += 5; 근거.append(f"TLT 5일 +{t5:.1f}%")
-        elif t5 >= -1: 점수 += 3
-    if move:
-        m = move["현재가"]
-        if m < 80: 점수 += 5; 근거.append(f"MOVE {m:.0f} (안정)")
-        elif m < 100: 점수 += 3
-        elif m < 120: 점수 += 1
-        else: 감점.append(f"MOVE {m:.0f} (불안)")
-
-    # SKEW
-    skew = 가격.get("SKEW")
-    if skew:
-        s = skew["현재가"]
-        v = vix["현재가"] if vix else 999
-        if s >= 145:
-            점수 -= 10; 감점.append(f"SKEW {s:.0f} 극단 (블랙스완 경고)")
-        elif s >= 135:
-            점수 -= 5; 감점.append(f"SKEW {s:.0f} 높음 (꼬리위험)")
-        if v < 18 and s >= 135:
-            점수 -= 3; 감점.append("VIX 낮고 SKEW 높음 = 위기 직전 패턴")
+        h5, b5 = _r5(hyg), _r5(btc)
+        if h5 >= 0.3 and b5 >= 2: 점수 += 8; 근거.append("HYG/BTC 동반 강세 (위험선호)")
+        elif h5 >= 0 and b5 >= 0: 점수 += 4
+        else: 감점.append("HYG/BTC 약세 (위험회피)")
 
     점수 = max(0, min(100, int(round(점수))))
-    if 점수 >= 70: 신호 = "green"; 결정 = "진입 유리"
-    elif 점수 >= 45: 신호 = "yellow"; 결정 = "관망 권고"
-    else: 신호 = "red"; 결정 = "신규 진입 회피"
+    if 점수 >= 65:
+        신호 = "green"; 결정 = "진입/홀드 우위"; 설명 = "단기 추세·매크로 우호. 트레이딩 진입/홀드 구간"
+    elif 점수 >= 45:
+        신호 = "yellow"; 결정 = "관망"; 설명 = "신호 혼재. 추세 확실해질 때까지 대기"
+    else:
+        신호 = "red"; 결정 = "신규진입 회피·정리"; 설명 = "단기 역풍. 신규진입 회피, 보유분 리스크 관리"
 
     return {
-        "점수": 점수, "신호": 신호, "결정": 결정,
+        "점수": 점수, "신호": 신호, "결정": 결정, "설명": 설명,
         "근거": 근거[:3], "감점": 감점[:3],
     }
 
@@ -401,7 +378,7 @@ def 알림체크(data, 점수, 포지션):
         브리핑 = (
             f"{프리픽스}<b>SOXL 브리핑</b>\n"
             f"{오늘}\n\n"
-            f"<b>매크로 점수: {점수['점수']}/100</b> ({점수['결정']})\n\n"
+            f"<b>트레이딩 신호: {점수['점수']}/100</b> ({점수['결정']})\n\n"
             f"<b>총 평가손익: {손익부호}{총손익:,.0f}원</b> ({총퍼센트:+.2f}%)\n"
             + "\n".join(포지션라인) + "\n\n"
             f"<b>호재</b>\n• " + "\n• ".join(점수['근거']) if 점수['근거'] else "호재: 없음"
