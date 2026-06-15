@@ -1,4 +1,4 @@
-const CACHE = "muscle-20260614-1832";
+const CACHE = "muscle-20260616-0537";
 const ASSETS = ["./","./index.html","./manifest.json","./icon.svg"];
 self.addEventListener("install", e => {
   self.skipWaiting();
