@@ -101,9 +101,26 @@ def TSMC매출_다음():
 def 가격수집():
     결과 = {}
     for 이름, 티커 in TICKERS.items():
+        # 야후가 GitHub Actions(데이터센터 IP)를 가끔 차단/레이트리밋 → 빈 데이터로 옴.
+        # 재시도로 완화하고, 그래도 실패하면 None(이후 직전값폴백에서 마지막 정상값으로 대체).
+        hist = None
+        마지막에러 = None
+        for 시도 in range(3):
+            try:
+                t = yf.Ticker(티커)
+                h = t.history(period="3mo")
+                if h is not None and len(h) >= 1:
+                    hist = h
+                    break
+                마지막에러 = "빈 데이터(야후 차단/레이트리밋 추정)"
+            except Exception as e:
+                마지막에러 = f"{type(e).__name__}: {e}"
+            time.sleep(1.5 * (시도 + 1))
+        if hist is None:
+            결과[이름] = None
+            print(f"  [{이름}] 실패: {마지막에러}")
+            continue
         try:
-            t = yf.Ticker(티커)
-            hist = t.history(period="3mo")
             현재가 = float(hist['Close'].iloc[-1])
             전일가 = float(hist['Close'].iloc[-2]) if len(hist) >= 2 else 현재가
             등락 = ((현재가 - 전일가) / 전일가) * 100
@@ -116,8 +133,34 @@ def 가격수집():
             print(f"  [{이름:8}] {현재가:>12,.2f}  ({등락:+.2f}%)")
         except Exception as e:
             결과[이름] = None
-            print(f"  [{이름}] 실패: {e}")
+            print(f"  [{이름}] 파싱 실패: {e}")
     return 결과
+
+
+def 직전값폴백(가격):
+    """이번 회차에서 yfinance가 실패(None)한 종목은 직전 data.json의 마지막 정상값으로 대체.
+    야후가 GitHub IP를 가끔 차단 → null 박힌 채 커밋되면 PWA가 통째로 깨지므로, 직전 정상값을 유지한다.
+    (이게 '정기적으로 데이터 오류' 재발의 근본 차단. 대체된 종목은 stale=True로 표시.)"""
+    try:
+        with open(os.path.join(APP_DIR, 'data.json'), encoding='utf-8') as f:
+            기존 = json.load(f)
+    except Exception:
+        기존 = {}
+    직전 = {}
+    for 구역 in ('시장', '금리'):
+        for k, v in (기존.get(구역) or {}).items():
+            if isinstance(v, dict) and '현재가' in v:
+                직전[k] = v
+    대체 = []
+    for 이름 in list(가격.keys()):
+        if 가격.get(이름) is None and 직전.get(이름):
+            복사 = dict(직전[이름])
+            복사['stale'] = True       # 직전 정상값(현 회차 수집 실패)
+            가격[이름] = 복사
+            대체.append(이름)
+    if 대체:
+        print(f"  [폴백] 수집 실패 종목 직전 정상값 사용: {', '.join(대체)}")
+    return 가격
 
 
 def 포지션손익(가격):
@@ -718,6 +761,7 @@ def main():
 
     print("\n[1/5] 가격 수집")
     가격 = 가격수집()
+    가격 = 직전값폴백(가격)  # 수집 실패 종목은 직전 정상값 유지 (null 커밋 → 앱 크래시 방지)
 
     print("\n[2/5] 포지션 손익 계산")
     포지션 = 포지션손익(가격)
