@@ -242,6 +242,26 @@ main.content {
 }
 .welcome-foot strong { color:#1A2D50; }
 
+/* ───────── 2Q 팀여행 요약 배너 ───────── */
+.tt-banner {
+  background:#fff; border:1px solid #e5e9f0; border-radius:12px;
+  padding:16px 20px; margin-bottom:20px; cursor:pointer;
+  box-shadow:0 1px 3px rgba(0,0,0,0.05);
+  border-left:4px solid #e67e22; transition:all 0.18s ease;
+}
+.tt-banner:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(26,45,80,0.12); border-color:#e67e22; }
+.tt-head { font-size:14px; font-weight:700; color:#1A2D50; margin-bottom:12px; }
+.tt-head span { font-size:11px; font-weight:400; color:#7a8597; margin-left:6px; }
+.tt-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.tt-kpi { background:#f8fafd; border-radius:9px; padding:12px 14px; border-top:3px solid #2874a6; }
+.tt-kpi.hi { border-top-color:#16a085; background:linear-gradient(180deg,#e8f8f5,#f8fafd 60%); }
+.tt-kpi.miss { border-top-color:#e67e22; background:linear-gradient(180deg,#fdf2e9,#f8fafd 60%); }
+.tt-kpi .l { font-size:10.5px; color:#7a8597; }
+.tt-kpi .v { font-size:21px; font-weight:800; color:#1A2D50; font-family:'Courier New',monospace; margin-top:3px; }
+.tt-kpi .v small { font-size:11px; color:#9aa7ba; font-weight:400; }
+.tt-kpi .s { font-size:10px; color:#8a97aa; margin-top:5px; line-height:1.4; }
+@media (max-width:780px){ .tt-kpis { grid-template-columns:repeat(2,1fr); } }
+
 /* ───────── 로딩 인디케이터 ───────── */
 .loading {
   position:absolute; inset:0;
@@ -407,6 +427,18 @@ main.content {
           <h2>원팀4팀 통합분석 플랫폼</h2>
           <p class="lead">처방실적과 평가실적을 한곳에서 분석하는 팀 전용 대시보드입니다.<br>왼쪽 메뉴에서 보고 싶은 자료를 선택하거나, 아래 카드를 클릭하세요.</p>
 
+          <!--TT_SUMMARY_START-->
+          <div class="tt-banner" data-target="104기_2Q_팀여행인센티브.html" data-title="2Q 팀여행 인센티브" data-cat="인센티브">
+            <div class="tt-head">✈️ 2Q 팀여행 인센티브 현황 <span>전국 56팀 · 트윈스타F+트루셋F+트윈로우 4~6월 성장합÷팀T.O</span></div>
+            <div class="tt-kpis">
+              <div class="tt-kpi miss"><div class="l">임정빈팀 순위</div><div class="v">9위 <small>/ 56팀</small></div><div class="s">시상권(8위) 밖 — 86 부족</div></div>
+              <div class="tt-kpi"><div class="l">우리팀 평균 (성장합÷T.O)</div><div class="v">+3,525</div><div class="s">4월 +15,119 · 5월 +3,176 · 6월 +0</div></div>
+              <div class="tt-kpi"><div class="l">8위 커트라인 평균</div><div class="v">+3,611</div><div class="s">시상: 부지점장 포함 1인 150만원 + 유급휴가 1일</div></div>
+              <div class="tt-kpi miss"><div class="l">8위 커트 격차</div><div class="v">-86</div><div class="s">클릭 → 전국 56팀 상세 대시보드</div></div>
+            </div>
+          </div>
+          <!--TT_SUMMARY_END-->
+
           <div class="card-grid">
             <div class="card" data-target="거래처처방현황통합관리_4팀.html" data-title="처방실적 분석" data-cat="실적">
               <div class="cat">실적</div>
@@ -510,7 +542,7 @@ main.content {
 <script>
 (function(){
   const navItems = document.querySelectorAll('.nav-item[data-src]');
-  const cards = document.querySelectorAll('.card[data-target]');
+  const cards = document.querySelectorAll('.card[data-target], .tt-banner[data-target]');
   const frame = document.getElementById('mainFrame');
   const welcome = document.getElementById('welcome');
   const loading = document.getElementById('loading');
