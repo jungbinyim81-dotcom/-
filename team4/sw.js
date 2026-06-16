@@ -1,4 +1,4 @@
-const CACHE_NAME = "team4-20260616-1449";
+const CACHE_NAME = "team4-20260616-1458";
 const ASSETS = [
   "./",
   "./index.html",
@@ -28,6 +28,11 @@ const ASSETS = [
 self.addEventListener("install", e => {
   self.skipWaiting();
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS).catch(()=>{})));
+});
+
+// 페이지에서 SKIP_WAITING 요청 시 즉시 활성화
+self.addEventListener("message", e => {
+  if (e.data && e.data.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 // 활성화: 옛 캐시 삭제 (자료 갱신 즉시 반영)
