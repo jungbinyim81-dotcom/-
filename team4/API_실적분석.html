@@ -8,7 +8,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <script>
-const VER = '20260616083048';
+const VER = '20260616094920';
 const prev = localStorage.getItem('api_ver');
 if (prev && prev !== VER) { localStorage.setItem('api_ver', VER); location.reload(true); }
 else { localStorage.setItem('api_ver', VER); }
@@ -126,6 +126,10 @@ table.dt tfoot td.name { background: #f0f3f5!important; }
 #analyzeModal .body { padding: 14px 18px; overflow-y: auto; }
 .analyze-intro { color:#636e72; font-size:12px; margin-bottom:12px; background:#f5f7f9; padding:10px 12px; border-radius:6px; line-height:1.6; }
 .analyze-intro b { color:#0a3d62; }
+.analyze-tabs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; position:sticky; top:-14px; background:#fff; padding:6px 0 8px; z-index:5; }
+.analyze-tab { padding:7px 15px; border:1px solid #d6dee5; background:#f5f7f9; color:#34495e; border-radius:18px; font-size:13px; font-weight:700; cursor:pointer; transition:0.12s; }
+.analyze-tab:hover { background:#e9eef2; }
+.analyze-tab.active { background:#0a3d62; color:#fff; border-color:#0a3d62; }
 .analyze-person { background:#fff; border:1px solid #e1e8ed; border-radius:8px; padding:12px 14px; margin-bottom:12px; }
 .analyze-person > h4 { margin:0 0 8px; color:#0a3d62; font-size:14px; display:flex; align-items:center; gap:8px; padding-bottom:6px; border-bottom:1px solid #eef0f3; }
 .analyze-person > h4 .meta { margin-left:auto; font-size:11px; color:#7f8c8d; font-weight:400; }
@@ -511,13 +515,15 @@ function renderAnalyze() {
   // 3. 렌더
   const lastLabel = fmtMonth(months[lastIdx]);
   const prevLabels = prevIndices.map(i => fmtMonth(months[i])).join(', ') || '(이전월 없음)';
-  let html = `<div class="analyze-intro">
+  const introHtml = `<div class="analyze-intro">
     <b>분석 기준</b>: 최신월 <b>${lastLabel}</b> vs 최근 ${numPrev}개월 평균 (${prevLabels})<br>
     <b>① 도매상 취합 점검</b>: 직전 평균이 ${(ANALYZE_CFG.wsMinAvg/10000).toLocaleString()}만원↑인데 당월 0원(<span class="analyze-tag miss">미수집</span>) 또는 평균의 ${ANALYZE_CFG.wsLowRatio*100}% 미만(<span class="analyze-tag low">저조</span>)인 도매상 추출 → 전월 주요품목군 표시<br>
     <b>② 약국 변동</b>: 평균 대비 |Δ|≥${(ANALYZE_CFG.pharmMinDelta/10000).toLocaleString()}만원 AND |Δ%|≥${ANALYZE_CFG.pharmMinPct}%인 약국 상위 ${ANALYZE_CFG.pharmTopN}개씩
   </div>`;
 
-  memberOpts.forEach((memberName, mi) => {
+  // 담당자 한 명의 분석 HTML (탭 클릭 시 이것만 표시)
+  function memberAnalyzeHTML(mi) {
+    const memberName = memberOpts[mi];
     const wsList = wsFlagged[mi] || [];
     const pharms = pharmFlagged[mi] || { up: [], down: [] };
     const totalCurrent = (agg3[mi] ? Object.values(agg3[mi]).reduce((s, x) => s + x.current, 0) : 0);
@@ -527,40 +533,50 @@ function renderAnalyze() {
     const teamCls = teamDelta >= 0 ? 'delta-up' : 'delta-down';
     const teamArrow = teamDelta >= 0 ? '▲' : '▼';
 
-    html += `<div class="analyze-person">
+    let h = `<div class="analyze-person">
       <h4>👤 ${esc(memberName)}
         <span class="meta">당월 <b>${fmt(totalCurrent)}</b> · 평균 ${fmt(totalAvg)} · <span class="${teamCls}">${teamArrow} ${fmt(Math.abs(teamDelta))} (${teamPct >= 0 ? '+' : ''}${teamPct.toFixed(1)}%)</span></span>
       </h4>`;
 
     // 도매상 취합 점검 — 도매상명 클릭 시 품목 추이 드릴다운
-    html += `<div class="analyze-section"><h5>📦 도매상 취합 점검 ${wsList.length ? `<span style="color:#e74c3c">(${wsList.length}개 의심, 도매상명 클릭 → 품목 추이 보기)</span>` : ''}</h5>`;
-    if (wsList.length === 0) {
-      html += '<div class="analyze-empty">미수집/저조 도매상 없음 ✓</div>';
-    } else {
-      html += '<ul class="analyze-list">' + wsList.map(w => wholesalerItemHTML(mi, w)).join('') + '</ul>';
-    }
-    html += '</div>';
+    h += `<div class="analyze-section"><h5>📦 도매상 취합 점검 ${wsList.length ? `<span style="color:#e74c3c">(${wsList.length}개 의심, 도매상명 클릭 → 품목 추이 보기)</span>` : ''}</h5>`;
+    h += wsList.length === 0
+      ? '<div class="analyze-empty">미수집/저조 도매상 없음 ✓</div>'
+      : '<ul class="analyze-list">' + wsList.map(w => wholesalerItemHTML(mi, w)).join('') + '</ul>';
+    h += '</div>';
 
     // 약국 변동 (상승) — 약국명 클릭 시 품목별 드릴다운
-    html += `<div class="analyze-section up"><h5>▲ 의미있게 상승한 약국 ${pharms.up.length ? `(${pharms.up.length}개, 약국명 클릭 → 변동품목 보기)` : ''}</h5>`;
-    if (pharms.up.length === 0) {
-      html += '<div class="analyze-empty">해당 약국 없음</div>';
-    } else {
-      html += '<ul class="analyze-list">' + pharms.up.map(p => pharmacyItemHTML(mi, p, true)).join('') + '</ul>';
-    }
-    html += '</div>';
+    h += `<div class="analyze-section up"><h5>▲ 의미있게 상승한 약국 ${pharms.up.length ? `(${pharms.up.length}개, 약국명 클릭 → 변동품목 보기)` : ''}</h5>`;
+    h += pharms.up.length === 0
+      ? '<div class="analyze-empty">해당 약국 없음</div>'
+      : '<ul class="analyze-list">' + pharms.up.map(p => pharmacyItemHTML(mi, p, true)).join('') + '</ul>';
+    h += '</div>';
 
     // 약국 변동 (하락)
-    html += `<div class="analyze-section down"><h5>▼ 의미있게 하락한 약국 ${pharms.down.length ? `(${pharms.down.length}개, 약국명 클릭 → 변동품목 보기)` : ''}</h5>`;
-    if (pharms.down.length === 0) {
-      html += '<div class="analyze-empty">해당 약국 없음</div>';
-    } else {
-      html += '<ul class="analyze-list">' + pharms.down.map(p => pharmacyItemHTML(mi, p, false)).join('') + '</ul>';
-    }
-    html += '</div></div>';
-  });
+    h += `<div class="analyze-section down"><h5>▼ 의미있게 하락한 약국 ${pharms.down.length ? `(${pharms.down.length}개, 약국명 클릭 → 변동품목 보기)` : ''}</h5>`;
+    h += pharms.down.length === 0
+      ? '<div class="analyze-empty">해당 약국 없음</div>'
+      : '<ul class="analyze-list">' + pharms.down.map(p => pharmacyItemHTML(mi, p, false)).join('') + '</ul>';
+    h += '</div></div>';
+    return h;
+  }
 
-  document.getElementById('analyzeBody').innerHTML = html;
+  // 담당자 탭 (클릭 → 해당 담당자만 표시)
+  const tabsHtml = '<div class="analyze-tabs">'
+    + memberOpts.map((m, mi) => `<button class="analyze-tab" data-mi="${mi}">${esc(m)}</button>`).join('')
+    + '</div>';
+
+  const bodyEl = document.getElementById('analyzeBody');
+  bodyEl.innerHTML = introHtml + tabsHtml + '<div id="analyzeMemberBox"></div>';
+
+  const memberBox = document.getElementById('analyzeMemberBox');
+  const tabBtns = bodyEl.querySelectorAll('.analyze-tab');
+  function selectMember(mi) {
+    memberBox.innerHTML = memberAnalyzeHTML(mi);
+    tabBtns.forEach(b => b.classList.toggle('active', +b.dataset.mi === mi));
+  }
+  tabBtns.forEach(b => b.addEventListener('click', () => selectMember(+b.dataset.mi)));
+  selectMember(0);  // 기본: 첫 담당자
 }
 
 const fmt = n => (!n || n===0) ? '-' : Math.round(n).toLocaleString('ko-KR');
@@ -795,7 +811,7 @@ if (sectionEntries.length > 0) showSection(sectionEntries[0][0]);
 
 // ── Service Worker 등록 + 즉시 업데이트 ──
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js?v=20260616083048').then(reg => {
+  navigator.serviceWorker.register('./sw.js?v=20260616094920').then(reg => {
     reg.update();
     reg.addEventListener('updatefound', () => {
       const nw = reg.installing;
