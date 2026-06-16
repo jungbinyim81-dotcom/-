@@ -465,11 +465,13 @@ function sparkline(data, color) {
 }
 
 function renderMarket(시장) {
+  시장 = 시장 || {};
+  const v = (k) => 시장[k] || {};  // 수집 실패 시 null 가드 (앱 전체 크래시 방지)
   const items = [
-    { label: 'VIX', value: fmt(시장.VIX.현재가), change: 시장.VIX.등락률 },
-    { label: '필반', value: fmt(시장.필반.현재가, 0), change: 시장.필반.등락률 },
-    { label: 'NVDA', value: '$'+fmt(시장.NVDA.현재가), change: 시장.NVDA.등락률 },
-    { label: '환율', value: fmt(시장.환율.현재가, 1), change: 시장.환율.등락률 },
+    { label: 'VIX', value: fmt(v('VIX').현재가), change: v('VIX').등락률 },
+    { label: '필반', value: fmt(v('필반').현재가, 0), change: v('필반').등락률 },
+    { label: 'NVDA', value: '$'+fmt(v('NVDA').현재가), change: v('NVDA').등락률 },
+    { label: '환율', value: fmt(v('환율').현재가, 1), change: v('환율').등락률 },
   ];
   return items.map(i => `
     <div class="market-chip">
@@ -630,7 +632,7 @@ async function loadData() {
     const 총퍼센트 = d.포지션.총손익률;
 
     let warnings = [];
-    if (d.시장.VIX.현재가 >= 25) {
+    if (d.시장 && d.시장.VIX && d.시장.VIX.현재가 >= 25) {
       warnings.push(`<div class="warning">VIX ${d.시장.VIX.현재가.toFixed(1)} — 변동성 큼. 신규 진입 신중</div>`);
     }
     if (d.금리 && d.금리.경고) {
