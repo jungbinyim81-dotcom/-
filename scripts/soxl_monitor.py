@@ -121,10 +121,17 @@ def 가격수집():
             print(f"  [{이름}] 실패: {마지막에러}")
             continue
         try:
-            현재가 = float(hist['Close'].iloc[-1])
-            전일가 = float(hist['Close'].iloc[-2]) if len(hist) >= 2 else 현재가
+            # 야후가 최근 1~2 거래일을 NaN 행으로 주는 경우가 잦음 → dropna로 제거 후 마지막 정상 종가 사용.
+            # (NaN을 그대로 쓰면 현재가=nan으로 저장돼 폴백도 못 잡고 점수/표시가 깨짐)
+            종가 = hist['Close'].dropna()
+            if len(종가) < 1:
+                결과[이름] = None
+                print(f"  [{이름}] 실패: 전부 NaN(야후 결측)")
+                continue
+            현재가 = float(종가.iloc[-1])
+            전일가 = float(종가.iloc[-2]) if len(종가) >= 2 else 현재가
             등락 = ((현재가 - 전일가) / 전일가) * 100
-            spark = [round(float(x), 4) for x in hist['Close'].tail(60).tolist()]
+            spark = [round(float(x), 4) for x in 종가.tail(60).tolist()]
             결과[이름] = {
                 "현재가": round(현재가, 4), "전일가": round(전일가, 4),
                 "등락률": round(등락, 2), "스파크라인": spark, "티커": 티커,
@@ -151,9 +158,14 @@ def 직전값폴백(가격):
         for k, v in (기존.get(구역) or {}).items():
             if isinstance(v, dict) and '현재가' in v:
                 직전[k] = v
+    def _불량(o):  # None 또는 현재가가 NaN/None인 경우 모두 '실패'로 간주
+        if not o:
+            return True
+        cur = o.get('현재가')
+        return cur is None or (isinstance(cur, float) and cur != cur)
     대체 = []
     for 이름 in list(가격.keys()):
-        if 가격.get(이름) is None and 직전.get(이름):
+        if _불량(가격.get(이름)) and 직전.get(이름):
             복사 = dict(직전[이름])
             복사['stale'] = True       # 직전 정상값(현 회차 수집 실패)
             가격[이름] = 복사
