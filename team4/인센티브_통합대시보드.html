@@ -89,9 +89,20 @@ body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; col
 .btn-go { flex: 1; padding: 7px; text-align: center; border-radius: 6px; text-decoration: none; font-size: 11px; font-weight: 600; background: #2874a6; color: white; }
 .btn-go:hover { background: #1a5276; }
 .source { font-size: 11px; color: #888; padding: 10px 28px 0; }
+.travel-summary h2 small { font-size: 11px; font-weight: 400; color: #888; }
+.ts-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.ts-card { background: white; padding: 14px 16px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-top: 4px solid #2874a6; }
+.ts-card.hi { border-top-color: #16a085; background: linear-gradient(180deg, #e8f8f5 0%, #fff 30%); }
+.ts-card.miss { border-top-color: #e67e22; background: linear-gradient(180deg, #fdf2e9 0%, #fff 30%); }
+.ts-card .l { font-size: 11px; color: #666; }
+.ts-card .v { font-size: 22px; font-weight: 700; color: #1a2d50; font-family: "Courier New", monospace; margin-top: 4px; }
+.ts-card .v small { font-size: 12px; color: #999; font-weight: 400; }
+.ts-card .s { font-size: 10px; color: #888; margin-top: 5px; line-height: 1.4; }
+.ts-card .s a { color: #2874a6; text-decoration: none; font-weight: 700; }
 @media (max-width: 700px) {
   .section { padding: 6px 12px 18px; }
   .members, .cards { grid-template-columns: 1fr; }
+  .ts-cards { grid-template-columns: repeat(2, 1fr); }
 }
 </style></head>
 <body>
@@ -102,6 +113,31 @@ body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; col
   <p>인천일병2팀 (임정빈팀) — 전은성 · 임대현 · 황태영 · 김혜성 <small>(송창훈 2026-05 퇴직)</small></p>
 </div>
 
+<div class="section travel-summary">
+  <h2>✈️ 2Q 팀여행 인센티브 현황 <small>(전국 56팀 / 트윈스타F+트루셋F+트윈로우 4~6월 성장합÷팀T.O)</small></h2>
+  <div class="ts-cards">
+    <div class="ts-card miss">
+      <div class="l">임정빈팀 순위</div>
+      <div class="v">9위 <small>/ 56팀</small></div>
+      <div class="s">시상권(8위) 밖 — 86 부족</div>
+    </div>
+    <div class="ts-card">
+      <div class="l">우리팀 평균 (성장합÷T.O)</div>
+      <div class="v">+3,525</div>
+      <div class="s">4월 +15,119 · 5월 +3,176 · 6월 +0</div>
+    </div>
+    <div class="ts-card">
+      <div class="l">8위 커트라인 평균</div>
+      <div class="v">+3,611</div>
+      <div class="s">시상: 부지점장 포함 1인 150만원 + 유급휴가 1일</div>
+    </div>
+    <div class="ts-card miss">
+      <div class="l">8위 커트 격차</div>
+      <div class="v">-86</div>
+      <div class="s"><a href="104%EA%B8%B0_2Q_%ED%8C%80%EC%97%AC%ED%96%89%EC%9D%B8%EC%84%BC%ED%8B%B0%EB%B8%8C.html" target="_blank">📊 상세 대시보드 →</a></div>
+    </div>
+  </div>
+</div>
 <div class="section">
   <h2>👥 우리팀 4명 연간 인센티브 — 분기 확정 + 연말 30% 예상</h2>
   <div class="members">
