@@ -8,10 +8,13 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <script>
-const VER = '20260617083508';
-const prev = localStorage.getItem('api_ver');
-if (prev && prev !== VER) { localStorage.setItem('api_ver', VER); location.reload(true); }
-else { localStorage.setItem('api_ver', VER); }
+// 통합 포털 iframe(self!==top) 안에서는 자동 리로드 비활성화 (무한 깜박임 방지)
+const VER = '20260617143724';
+if (window.self === window.top) {
+  const prev = localStorage.getItem('api_ver');
+  if (prev && prev !== VER) { localStorage.setItem('api_ver', VER); location.reload(true); }
+  else { localStorage.setItem('api_ver', VER); }
+}
 </script>
 <style>
 * { box-sizing: border-box; }
@@ -809,9 +812,9 @@ tabBar.addEventListener('click', e => {
 // 초기: 첫 섹션만 표시
 if (sectionEntries.length > 0) showSection(sectionEntries[0][0]);
 
-// ── Service Worker 등록 + 즉시 업데이트 ──
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js?v=20260617083508').then(reg => {
+// ── Service Worker 등록 + 즉시 업데이트 (단독 앱일 때만, iframe 포털에선 스킵) ──
+if ('serviceWorker' in navigator && window.self === window.top) {
+  navigator.serviceWorker.register('./sw.js?v=20260617143724').then(reg => {
     reg.update();
     reg.addEventListener('updatefound', () => {
       const nw = reg.installing;
