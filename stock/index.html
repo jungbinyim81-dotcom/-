@@ -649,6 +649,7 @@ async function loadData() {
 
     const html = `
       ${warnings.join('')}
+      ${renderSwitch(d.분석 && d.분석.스위칭)}
       ${renderDecision(d.분석 && d.분석.점수)}
       <div class="hero">
         <div class="hero-label">총 평가손익</div>
@@ -818,6 +819,36 @@ function setupTabs() {
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
     });
   });
+}
+
+function renderSwitch(sw) {
+  if (!sw || typeof sw.점수 !== 'number') return '';  // 모양 불일치/null 시 카드만 스킵 (전체 렌더 크래시 방지)
+  const act = sw.액션 || '';
+  const 라벨맵 = {ENTER_SOXL:'SOXL 진입', ENTER_SOXS:'SOXS 진입', HOLD:'홀드', EXIT:'청산', STAY_FLAT:'관망'};
+  const 라벨 = 라벨맵[act] || act;
+  let 신호 = 'yellow';
+  if (act === 'ENTER_SOXL' || act === 'ENTER_SOXS' || act === 'HOLD') 신호 = 'green';
+  else if (act === 'EXIT') 신호 = 'red';
+  const 근거 = (sw.근거 || []).map(r => `<li>${r}</li>`).join('') || '<li>-</li>';
+  let 상세 = '';
+  if ((act === 'ENTER_SOXL' || act === 'ENTER_SOXS') && sw.손절가 != null) {
+    상세 = `<div class="decision-desc">현재 $${sw.현재가} · 손절 $${sw.손절가} · 익절 $${sw.익절가} · 시간손절 D+${sw.시간손절}${sw.베팅 ? (' · ' + sw.베팅 + '베팅') : ''}${sw.수량 ? (' · ' + sw.수량 + '주') : ''}</div>`;
+  } else if ((act === 'HOLD' || act === 'EXIT') && sw.손익 != null) {
+    상세 = `<div class="decision-desc">${sw.종목 || ''} 손익 ${sw.손익 >= 0 ? '+' : ''}${sw.손익}% (D+${sw.보유일 || 0})</div>`;
+  }
+  const 레짐 = sw.레짐가능 ? `추세장 (ADX ${sw.ADX})` : `쉴 날 — ${(sw.레짐사유 || []).join(', ')}`;
+  return `<div class="decision-card ${신호}">
+    <div class="decision-head">
+      <span class="decision-light">스위칭 액션 (SOXL/SOXS · 1~2일)</span>
+      <span class="decision-score">${sw.점수 > 0 ? '+' : ''}${sw.점수}</span>
+    </div>
+    <div class="decision-title">${라벨}</div>
+    ${상세}
+    <div class="decision-desc" style="opacity:.85">${레짐}</div>
+    <div class="factor-list">
+      <div class="factor-col pros"><h4>근거 (방향 -100 SOXS ~ +100 SOXL)</h4><ul>${근거}</ul></div>
+    </div>
+  </div>`;
 }
 
 function renderDecision(점수) {
