@@ -36,6 +36,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           POSITION_JSON: ${{ secrets.POSITION_JSON }}
+          SWITCH_POSITION_JSON: ${{ secrets.SWITCH_POSITION_JSON }}
           FORCE_BRIEFING: ${{ github.event_name == 'workflow_dispatch' && 'true' || 'false' }}
         run: |
           python scripts/soxl_monitor.py

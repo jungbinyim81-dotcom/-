@@ -21,6 +21,13 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 
+# SOXL<->SOXS 스위칭 액션 엔진 (같은 scripts/ 폴더, 데스크탑 정본 복사본)
+try:
+    import _soxl_액션엔진 as 스위치
+except Exception as _e:
+    스위치 = None
+    print(f"[경고] 스위칭 엔진 import 실패: {_e}")
+
 # ====== 경로 ======
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APP_DIR = os.path.join(REPO_ROOT, 'stock')
@@ -399,6 +406,24 @@ def 알림체크(data, 점수, 포지션):
             f"SOXL 최대 적 (베타 -15). 매수 보류"
         )
 
+    # 3.5 스위칭 액션 — 결정적 신호(진입/청산)만 즉시 알림 (HOLD/관망은 스팸이라 제외, 4h 쿨다운)
+    sw = (data.get("분석") or {}).get("스위칭")
+    if sw and sw.get("액션") in ("ENTER_SOXL", "ENTER_SOXS", "EXIT"):
+        if sw["액션"] == "EXIT":
+            알림목록.append(
+                f"🔴 <b>[스위칭 청산] {sw.get('종목','')}</b>\n"
+                f"{sw.get('한줄','')}\n"
+                f"룰: 즉시 정리, '조금만 더' 금지"
+            )
+        else:
+            종 = sw.get("종목", "")
+            알림목록.append(
+                f"{'🟢' if 종 == 'SOXL' else '🔵'} <b>[스위칭 진입] {종}</b>\n"
+                f"방향점수 {sw['점수']:+d} ({sw.get('베팅','')}베팅) · ADX {sw['ADX']}\n"
+                f"현재 ${sw.get('현재가','-')} · 손절 ${sw.get('손절가','-')} · 익절 ${sw.get('익절가','-')}\n"
+                f"시간손절 D+{sw.get('시간손절',2)}"
+            )
+
     # 4. 이벤트 D-1
     for k, info in [("다음FOMC", "FOMC"), ("다음CPI", "CPI")]:
         ev = 이벤트.get(k)
@@ -453,6 +478,20 @@ def 알림체크(data, 점수, 포지션):
             )
         if 축적라인:
             브리핑 += "\n\n<b>반도체 축적(장기)/매매(단기)</b>\n" + "\n".join(축적라인)
+
+        # SOXL<->SOXS 스위칭 액션 (오늘 뭘 할지 — 진입/홀드/청산/관망)
+        sw = (data.get("분석") or {}).get("스위칭")
+        if sw:
+            _라벨 = {"ENTER_SOXL": "🟢 SOXL 진입", "ENTER_SOXS": "🔵 SOXS 진입",
+                    "HOLD": "⏸ 홀드", "EXIT": "🔴 청산", "STAY_FLAT": "⚪ 관망"}
+            라인 = [f"<b>스위칭 액션: {_라벨.get(sw['액션'], sw['액션'])}</b> "
+                    f"(방향 {sw['점수']:+d} / ADX {sw['ADX']})",
+                    sw.get("한줄", "")]
+            if sw["액션"].startswith("ENTER") and sw.get("손절가"):
+                라인.append(f"손절 ${sw['손절가']} · 익절 ${sw['익절가']} · 시간손절 D+{sw['시간손절']} · {sw.get('베팅','')}베팅")
+            elif sw["액션"] in ("HOLD", "EXIT") and sw.get("손익") is not None:
+                라인.append(f"{sw.get('종목','')} 손익 {sw['손익']:+.1f}% (D+{sw.get('보유일',0)})")
+            브리핑 += "\n\n<b>스위칭(SOXL/SOXS)</b>\n" + "\n".join([r for r in 라인 if r])
 
         알림목록.insert(0, 브리핑)
 
@@ -692,7 +731,24 @@ def SKEW분석(가격):
     }
 
 
-def build_data_json(가격, 포지션, 점수):
+def 스위칭계산():
+    """SOXL<->SOXS 스위칭 액션 요약. 엔진이 자체 fetch(SMH/NQ/VIX/SOXL/SOXS).
+    포지션은 env(SWITCH_POSITION_JSON) 있으면 반영, 없으면 무포지션 기준 진입/관망."""
+    if 스위치 is None:
+        return None
+    try:
+        s = 스위치.요약()
+        if s:
+            print(f"  방향점수 {s['점수']:+d} | {s['액션']} | {s['한줄']}")
+        else:
+            print("  스위칭 지표 수집 실패(yfinance) - 스킵")
+        return s
+    except Exception as e:
+        print(f"  스위칭 계산 실패: {type(e).__name__}: {e}")
+        return None
+
+
+def build_data_json(가격, 포지션, 점수, 스위칭=None):
     이벤트 = {
         "다음FOMC": 다음이벤트(FOMC_2026, "FOMC"),
         "다음CPI": 다음이벤트(CPI_2026, "CPI"),
@@ -720,6 +776,9 @@ def build_data_json(가격, 포지션, 점수):
         "SKEW": SKEW분석(가격),
         "반도체축적": 반도체축적분석(),
     })
+    # 스위칭 액션 — 이번 회차 실패(None)면 직전값 보존 (null로 덮어쓰지 않음)
+    if 스위칭:
+        분석["스위칭"] = 스위칭
 
     data = {
         "updated": datetime.now().strftime("%Y-%m-%d %H:%M") + " UTC",
@@ -788,8 +847,11 @@ def main():
     점수 = 분석실행(가격, 이벤트)
     print(f"  점수: {점수['점수']}/100 ({점수['신호']}, {점수['결정']})")
 
+    print("\n[3.5/5] 스위칭 액션 (SOXL<->SOXS)")
+    스위칭 = 스위칭계산()
+
     print("\n[4/5] 데이터 생성")
-    data = build_data_json(가격, 포지션, 점수)
+    data = build_data_json(가격, 포지션, 점수, 스위칭)
 
     # 매크로 점수 검증 일지 — 마감 후 브리핑 시점만 기록 (장중 부분봉 오염 방지)
     utc_hour = datetime.utcnow().hour
