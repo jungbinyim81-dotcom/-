@@ -99,44 +99,32 @@ body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; col
 .ts-card .v small { font-size: 12px; color: #999; font-weight: 400; }
 .ts-card .s { font-size: 10px; color: #888; margin-top: 5px; line-height: 1.4; }
 .ts-card .s a { color: #2874a6; text-decoration: none; font-weight: 700; }
+.annual-embed h2 small { font-size: 11px; font-weight: 400; color: #888; }
+.annual-embed h2 .annual-open { float: right; font-size: 12px; font-weight: 700; color: #2874a6; text-decoration: none; }
+.annual-embed h2 .annual-open:hover { text-decoration: underline; }
+.annual-frame { width: 100%; height: 880px; border: 1px solid #e3e8ed; border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+.annual-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
 @media (max-width: 700px) {
   .section { padding: 6px 12px 18px; }
   .members, .cards { grid-template-columns: 1fr; }
   .ts-cards { grid-template-columns: repeat(2, 1fr); }
+  .annual-frame { height: 620px; }
 }
 </style></head>
 <body>
 
 <div class="header">
-  <span class="updated">갱신: 2026-06-18 (평가raw 기반)</span>
+  <span class="updated">갱신: 2026-06-19 (평가raw 기반)</span>
   <h1>🏆 제104기 인센티브 통합 대시보드</h1>
   <p>인천일병2팀 (임정빈팀) — 전은성 · 임대현 · 황태영 · 김혜성 <small>(송창훈 2026-05 퇴직)</small></p>
 </div>
 
-<div class="section travel-summary">
-  <h2>✈️ 2Q 팀여행 인센티브 현황 <small>(전국 56팀 / 트윈스타F+트루셋F+트윈로우 4~6월 성장합÷팀T.O)</small></h2>
-  <div class="ts-cards">
-    <div class="ts-card hi">
-      <div class="l">임정빈팀 순위</div>
-      <div class="v">6위 <small>/ 56팀</small></div>
-      <div class="s">🏆 시상권 진입</div>
-    </div>
-    <div class="ts-card">
-      <div class="l">우리팀 평균 (성장합÷T.O)</div>
-      <div class="v">+3,954</div>
-      <div class="s">4월 +15,119 · 5월 +5,406 · 6월 +0</div>
-    </div>
-    <div class="ts-card">
-      <div class="l">8위 커트라인 평균</div>
-      <div class="v">+3,789</div>
-      <div class="s">시상: 부지점장 포함 1인 150만원 + 유급휴가 1일</div>
-    </div>
-    <div class="ts-card hi">
-      <div class="l">8위 커트 격차</div>
-      <div class="v">+165</div>
-      <div class="s"><a href="104%EA%B8%B0_2Q_%ED%8C%80%EC%97%AC%ED%96%89%EC%9D%B8%EC%84%BC%ED%8B%B0%EB%B8%8C.html" target="_blank">📊 상세 대시보드 →</a></div>
-    </div>
-  </div>
+<div class="section annual-embed">
+  <h2>📅 제104기 연간 인센티브 현황
+    <small>자체계산 엔진(공식 1분기 검증) · 분기 선택 → 팀요약 / 담당자 상세</small>
+    <a class="annual-open" href="%EC%97%B0%EA%B0%84%EC%9D%B8%EC%84%BC%ED%8B%B0%EB%B8%8C%ED%98%84%ED%99%A9.html" target="_blank">새 창에서 크게 보기 ↗</a>
+  </h2>
+  <div class="annual-frame"><iframe src="%EC%97%B0%EA%B0%84%EC%9D%B8%EC%84%BC%ED%8B%B0%EB%B8%8C%ED%98%84%ED%99%A9.html" loading="lazy" title="연간 인센티브 현황"></iframe></div>
 </div>
 <div class="section">
   <h2>👥 우리팀 4명 연간 인센티브 — 분기 확정 + 연말 30% 예상</h2>
@@ -206,7 +194,7 @@ body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; col
 
 <div class="section"><h2>🟢 진행중 인센티브 5개 (평가종료 빠른 순)</h2><div class="cards">
     <div class="card active">
-      <div class="card-head"><div class="card-title">🌿 리알트리스 3~5월</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day past">+18일</span></div></div>
+      <div class="card-head"><div class="card-title">🌿 리알트리스 3~5월</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day past">+19일</span></div></div>
       <div class="card-info">
         <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.03 ~ 2026.05</span></div>
         <div class="info-row"><span class="info-lbl">평가방법</span><span>25년 1~12월 월평균 대비 합산 성장액 순위</span></div>
@@ -218,7 +206,7 @@ body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; col
     </div>
     
     <div class="card active">
-      <div class="card-head"><div class="card-title">🩺 베믈리디 4~6월</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day">D-12</span></div></div>
+      <div class="card-head"><div class="card-title">🩺 베믈리디 4~6월</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day">D-11</span></div></div>
       <div class="card-info">
         <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.04 ~ 2026.06</span></div>
         <div class="info-row"><span class="info-lbl">평가방법</span><span>60%성장액 + 40%성장률 점수 / 조건① 베믈+비리어드 성장 / 조건② 베믈/HBV 점유비 상승</span></div>
@@ -230,7 +218,7 @@ body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; col
     </div>
     
     <div class="card active">
-      <div class="card-head"><div class="card-title">💊 라베피드정 4~6월</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day">D-12</span></div></div>
+      <div class="card-head"><div class="card-title">💊 라베피드정 4~6월</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day">D-11</span></div></div>
       <div class="card-info">
         <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.04 ~ 2026.06</span></div>
         <div class="info-row"><span class="info-lbl">평가방법</span><span>평가기간 합산 판매액 순위 (절대값)</span></div>
@@ -242,7 +230,7 @@ body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; col
     </div>
     
     <div class="card active">
-      <div class="card-head"><div class="card-title">💉 2Q 순환기 품목 (트루셋저용량·트윈로우)</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day">D-12</span></div></div>
+      <div class="card-head"><div class="card-title">💉 2Q 순환기 품목 (트루셋저용량·트윈로우)</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day">D-11</span></div></div>
       <div class="card-info">
         <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.04 ~ 2026.06 (트윈로우 2~3월 소급)</span></div>
         <div class="info-row"><span class="info-lbl">평가방법</span><span>담당자: 절대 판매액 / 부지점장: 팀합산÷팀T.O</span></div>
@@ -254,7 +242,7 @@ body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; col
     </div>
     
     <div class="card active">
-      <div class="card-head"><div class="card-title">✈️ 2Q 팀여행 (트윈스타F+트루셋F+트윈로우)</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day">D-12</span></div></div>
+      <div class="card-head"><div class="card-title">✈️ 2Q 팀여행 (트윈스타F+트루셋F+트윈로우)</div><div class="card-meta"><span class="status active">진행중</span> <span class="d-day">D-11</span></div></div>
       <div class="card-info">
         <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.04 ~ 2026.06</span></div>
         <div class="info-row"><span class="info-lbl">평가방법</span><span>3품목 분기 성장액 합계 ÷ 팀T.O</span></div>
@@ -267,7 +255,7 @@ body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; col
     </div></div>
 <div class="section"><h2>🟡 예정 인센티브 1개</h2><div class="cards">
     <div class="card upcoming">
-      <div class="card-head"><div class="card-title">🌿 리알트리스 9~11월</div><div class="card-meta"><span class="status upcoming">예정</span> <span class="d-day">D-165</span></div></div>
+      <div class="card-head"><div class="card-title">🌿 리알트리스 9~11월</div><div class="card-meta"><span class="status upcoming">예정</span> <span class="d-day">D-164</span></div></div>
       <div class="card-info">
         <div class="info-row"><span class="info-lbl">평가기간</span><span>2026.09 ~ 2026.11</span></div>
         <div class="info-row"><span class="info-lbl">평가방법</span><span>공문 확인 (2026-06-04 도착)</span></div>
