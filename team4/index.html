@@ -210,6 +210,14 @@ main.content {
   top:0; left:0; right:0; height:4px;
   background:linear-gradient(90deg,#1A2D50,#4a90d9);
 }
+.card .card-ic {
+  width:46px; height:46px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px; line-height:1; margin-bottom:12px;
+  background:linear-gradient(135deg,#eef3fb,#dbe7f7);
+  box-shadow:inset 0 0 0 1px #e5e9f0;
+}
+.card:hover .card-ic { background:linear-gradient(135deg,#e3edfb,#cfe0f5); }
 .card .cat {
   font-size:10px; color:#7a8597; font-weight:700;
   letter-spacing:1.2px; text-transform:uppercase;
@@ -427,20 +435,9 @@ main.content {
           <h2>원팀4팀 통합분석 플랫폼</h2>
           <p class="lead">처방실적과 평가실적을 한곳에서 분석하는 팀 전용 대시보드입니다.<br>왼쪽 메뉴에서 보고 싶은 자료를 선택하거나, 아래 카드를 클릭하세요.</p>
 
-          <!--TT_SUMMARY_START-->
-          <div class="tt-banner" data-target="104기_2Q_팀여행인센티브.html" data-title="2Q 팀여행 인센티브" data-cat="인센티브">
-            <div class="tt-head">✈️ 2Q 팀여행 인센티브 현황 <span>전국 56팀 · 트윈스타F+트루셋F+트윈로우 4~6월 성장합÷팀T.O</span></div>
-            <div class="tt-kpis">
-              <div class="tt-kpi hi"><div class="l">임정빈팀 순위</div><div class="v">6위 <small>/ 56팀</small></div><div class="s">🏆 시상권 진입</div></div>
-              <div class="tt-kpi"><div class="l">우리팀 평균 (성장합÷T.O)</div><div class="v">+3,954</div><div class="s">4월 +15,119 · 5월 +5,406 · 6월 +0</div></div>
-              <div class="tt-kpi"><div class="l">8위 커트라인 평균</div><div class="v">+3,789</div><div class="s">시상: 부지점장 포함 1인 150만원 + 유급휴가 1일</div></div>
-              <div class="tt-kpi hi"><div class="l">8위 커트 격차</div><div class="v">+165</div><div class="s">클릭 → 전국 56팀 상세 대시보드</div></div>
-            </div>
-          </div>
-          <!--TT_SUMMARY_END-->
-
           <div class="card-grid">
             <div class="card" data-target="거래처처방현황통합관리_4팀.html" data-title="처방실적 분석" data-cat="실적">
+              <div class="card-ic">📊</div>
               <div class="cat">실적</div>
               <div class="ttl">처방실적 분석</div>
               <div class="desc">거래처 검색 피벗, 담당자별 품목별, 전체 품목별 3개 탭으로 처방 추이와 의미있는 변화를 분석합니다. 약효군 6분류 + 평가실적 통합 뷰.</div>
@@ -453,6 +450,7 @@ main.content {
             </div>
 
             <div class="card" data-target="API_실적분석.html" data-title="API 실적분석" data-cat="실적">
+              <div class="card-ic">📈</div>
               <div class="cat">실적</div>
               <div class="ttl">API 실적분석</div>
               <div class="desc">도매 API 실적 기반 평가실적 사전 분석. 담당자별·약국별·품목별 실적 추이와 229개 약국 마스킹 해제 통합 뷰를 제공합니다.</div>
@@ -465,6 +463,7 @@ main.content {
             </div>
 
             <div class="card" data-target="월별_중점처활동분석.html" data-title="월별 중점처 활동분석" data-cat="활동">
+              <div class="card-ic">📅</div>
               <div class="cat">활동</div>
               <div class="ttl">월별 중점처 활동</div>
               <div class="desc">4월·5월 중점처 활동을 한곳에 통합. 월 탭 → 담당자 탭으로 방문률·식사·마케팅·처방약속·증량약속·심포지움까지 팔로업합니다.</div>
@@ -477,6 +476,7 @@ main.content {
             </div>
 
             <div class="card" data-target="2026_숙박심포지움현황.html" data-title="숙박심포지움 현황" data-cat="활동">
+              <div class="card-ic">🏨</div>
               <div class="cat">활동</div>
               <div class="ttl">숙박심포지움 현황</div>
               <div class="desc">2026년 숙박심포지움 이용현황을 담당자별로 한눈에. 수도권 분배 시각화와 거래처별 누적 횟수, 미배정/섭외전 일정까지 확인합니다.</div>
@@ -489,6 +489,7 @@ main.content {
             </div>
 
             <div class="card" data-target="팀개원처현황.html" data-title="팀 개원처 현황" data-cat="개원처">
+              <div class="card-ic">🏥</div>
               <div class="cat">개원처</div>
               <div class="ttl">팀 개원처 현황</div>
               <div class="desc">병원정보서비스 최신본 기반 1,341개 병원 드릴다운. 지역·담당자·종별로 전개되며 팀 종합분석 뷰를 함께 제공합니다.</div>
@@ -500,7 +501,21 @@ main.content {
               </div>
             </div>
 
+            <div class="card" data-target="인센티브_통합대시보드.html" data-title="인센티브 통합" data-cat="인센티브">
+              <div class="card-ic">🏆</div>
+              <div class="cat">인센티브</div>
+              <div class="ttl">인센티브 통합</div>
+              <div class="desc">제104기 인센티브를 한 화면에 — 2Q 팀여행·순환기품목·베믈리디·리알트리스·라베피드·연간 인센티브까지 순위와 진행률을 통합 집계합니다.</div>
+              <div class="tags">
+                <span class="tag">2Q 팀여행</span>
+                <span class="tag">품목별 인센</span>
+                <span class="tag">연간 인센</span>
+                <span class="tag">순위·진행률</span>
+              </div>
+            </div>
+
             <div class="card" data-target="RnP규정.html" data-title="R&amp;P 규정" data-cat="R&amp;P">
+              <div class="card-ic">📋</div>
               <div class="cat">R&amp;P</div>
               <div class="ttl">R&amp;P 규정</div>
               <div class="desc">제104기 R&amp;P 규정 — 시상 그룹, 지점장/부지점장/담당자 시상기준, 일반병원 평가항목·점수 적용, KPI 중점품목 현황 등 한눈에 정리.</div>
@@ -513,6 +528,7 @@ main.content {
             </div>
 
             <div class="card" data-target="RnP결과.html" data-title="R&amp;P 결과" data-cat="R&amp;P">
+              <div class="card-ic">🏅</div>
               <div class="cat">R&amp;P</div>
               <div class="ttl">R&amp;P 결과</div>
               <div class="desc">연도 → 반기 → 그룹(지점장/부지점장/담당자) 순으로 드릴다운하여 직원별 R&amp;P 순위를 확인합니다. 4팀 표시·검색·정렬 지원.</div>
