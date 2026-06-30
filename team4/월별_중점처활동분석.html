@@ -326,7 +326,8 @@ table.trend .arr { color:#cfd8e3; margin:0 4px; }
 
   <!-- iframe 컨테이너 (월별로 동적 추가) -->
   <iframe id="frame-04" src="4월_중점처활동분석.html" title="4월 중점처 활동분석" loading="lazy"></iframe>
-  <iframe id="frame-05" src="5월_중점처활동분석.html" title="5월 중점처 활동분석" class="active"></iframe>
+  <iframe id="frame-05" src="5월_중점처활동분석.html" title="5월 중점처 활동분석" loading="lazy"></iframe>
+  <iframe id="frame-06" src="6월_중점처활동분석.html" title="6월 중점처 활동분석" class="active"></iframe>
 
   <!-- 흐름 분석 뷰 -->
   <div class="flow-view" id="flowView">
@@ -366,8 +367,9 @@ table.trend .arr { color:#cfd8e3; margin:0 4px; }
 const MONTHS = [
   { key:'04', label:'2026년 4월', file:'4월_중점처활동분석.html' },
   { key:'05', label:'2026년 5월', file:'5월_중점처활동분석.html' },
+  { key:'06', label:'2026년 6월', file:'6월_중점처활동분석.html' },
 ];
-const DEFAULT_KEY = '05';
+const DEFAULT_KEY = '06';
 
 /* ───── 담당자 데이터 (월별) — 새 월 추가 시 여기에 한 블록만 추가 ───── */
 const MGR_COLORS = {
@@ -394,6 +396,14 @@ const MONTH_DATA = {
     메모: [
       '송창훈 사원 5월 활동 전무 — 퇴직 영향. 팀 잔여 4명 기준 활동성은 안정 유지.',
     ],
+  },
+  '06': {
+    팀: { 보고: 63, 방문: 494, 중점처: 107, 중점목표: 118, 식사: 7, 마케팅: 21, 처방약속: 1, 증량약속: 8, 숙박: 5, 웹: 34 },
+    전은성: { 보고:18, 방문:148, 중점처:26, 목표:30, 식사:0, 마케팅:4, 처방:1, 증량:0, 숙박:1, 웹:9 },
+    임대현: { 보고:13, 방문:99,  중점처:30, 목표:30, 식사:3, 마케팅:6, 처방:0, 증량:8, 숙박:2, 웹:9 },
+    황태영: { 보고:17, 방문:126, 중점처:23, 목표:28, 식사:4, 마케팅:2, 처방:0, 증량:0, 숙박:1, 웹:10 },
+    김혜성: { 보고:15, 방문:121, 중점처:28, 목표:30, 식사:0, 마케팅:9, 처방:0, 증량:0, 숙박:1, 웹:6 },
+    메모: [],  // 송창훈 퇴직 후 4인 체제 첫 분기말 — 자동 인사이트로 5→6월 추이 표시
   },
 };
 

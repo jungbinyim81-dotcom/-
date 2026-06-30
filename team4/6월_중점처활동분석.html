@@ -1,0 +1,2488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6월 중점처 활동 팔로업 분석 - 임정빈팀</title>
+<style>
+:root{--pri:#0d4d64;--ok:#27ae60;--warn:#e67e22;--err:#c0392b;--g1:#f8f9fa;--g2:#e9ecef;--g3:#dee2e6;--g5:#adb5bd;--g7:#495057;--r:8px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Malgun Gothic',sans-serif;font-size:13px;background:#f0f4f7;color:#212529;}
+.hdr{background:var(--pri);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.hdr-title{font-size:18px;font-weight:800;}
+.hdr-sub{font-size:11px;opacity:.75;margin-top:2px;}
+.hdr-badge{background:rgba(255,255,255,.2);padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;}
+.tab-bar{background:#fff;border-bottom:2px solid var(--g2);display:flex;overflow-x:auto;position:sticky;top:56px;z-index:100;}
+.tab{padding:10px 20px;cursor:pointer;border-bottom:3px solid transparent;font-size:13px;font-weight:600;color:var(--g7);white-space:nowrap;}
+.tab.active{border-bottom-color:var(--pri);color:var(--pri);}
+.tab:hover{background:var(--g1);}
+.page{display:none;padding:20px 24px;max-width:1400px;margin:0 auto;}
+.page.active{display:block;}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:20px;}
+.sum-card{background:#fff;border-radius:var(--r);box-shadow:0 2px 8px rgba(0,0,0,.06);padding:16px;border-top:4px solid var(--pri);}
+.sum-label{font-size:11px;font-weight:700;color:var(--g5);text-transform:uppercase;margin-bottom:6px;}
+.sum-value{font-size:28px;font-weight:800;color:var(--pri);}
+.sum-sub{font-size:11px;color:var(--g5);margin-top:4px;}
+.section{background:#fff;border-radius:var(--r);box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px;}
+.sec-hdr{padding:12px 16px;border-bottom:1px solid var(--g2);display:flex;align-items:center;gap:8px;}
+.sec-hdr h3{font-size:13px;font-weight:700;}
+.sec-body{padding:14px 16px;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{background:var(--g1);padding:7px 10px;text-align:center;border:1px solid var(--g2);font-size:11px;font-weight:700;color:var(--g7);}
+td{padding:6px 10px;border:1px solid var(--g2);text-align:center;vertical-align:middle;}
+tr:nth-child(even) td{background:#fafafa;}
+.td-name{text-align:left;font-weight:600;}
+.td-detail{text-align:left;font-size:11px;color:#495057;line-height:1.6;}
+.cnt-0{color:var(--g5);}
+.cnt-hi{color:var(--ok);font-weight:700;}
+.cnt-warn{color:var(--warn);font-weight:700;}
+.bar-wrap{background:var(--g2);border-radius:4px;height:8px;overflow:hidden;min-width:60px;}
+.bar-fill{height:100%;border-radius:4px;background:var(--ok);}
+.badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;}
+.badge-b{background:#e8f4f8;color:var(--pri);}
+.badge-g{background:#e8f5e9;color:var(--ok);}
+.badge-o{background:#fff3e0;color:var(--warn);}
+.badge-r{background:#fdecea;color:var(--err);}
+.mem-hdr{padding:12px 16px;border-radius:var(--r) var(--r) 0 0;color:#fff;font-size:15px;font-weight:800;margin-bottom:0;}
+.team-table td,.team-table th{font-size:12px;}
+.meal-chip{display:inline-block;background:#e8f5e9;color:#1a6b3a;border-radius:4px;padding:1px 6px;font-size:10px;margin:1px;}
+.mktg-chip{display:inline-block;background:#e3f2fd;color:#0d4d64;border-radius:4px;padding:1px 6px;font-size:10px;margin:1px;}
+.promise-chip{display:inline-block;background:#f3e5f5;color:#6a1a8a;border-radius:4px;padding:1px 6px;font-size:10px;margin:1px;}
+.increase-chip{display:inline-block;background:#fff3e0;color:#b55a00;border-radius:4px;padding:1px 6px;font-size:10px;margin:1px;}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div>
+    <div class="hdr-title">6월 중점처 활동 팔로업 분석</div>
+    <div class="hdr-sub">임정빈팀 | 2026년 6월 | 1차 활동분석 (방문·마케팅 기준)</div>
+  </div>
+  <div class="hdr-badge">★ 실적 미반영 — 활동 기반 분석</div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="showTab('overview')">팀 전체 현황</div>
+  <div class="tab" onclick="showTab('전은성')">전은성</div>
+  <div class="tab" onclick="showTab('임대현')">임대현</div>
+  <div class="tab" onclick="showTab('황태영')">황태영</div>
+  <div class="tab" onclick="showTab('김혜성')">김혜성</div>
+</div>
+
+<div id="overview" class="page active">
+
+<div class="summary-grid">
+  <div class="sum-card">
+    <div class="sum-label">중점처 방문률</div>
+    <div class="sum-value">107<span style="font-size:16px;color:#adb5bd"> / 118</span></div>
+    <div class="sum-sub">6월 1개월 이상 방문 확인 거래처</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#27ae60">
+    <div class="sum-label">마케팅 및 식사 활동</div>
+    <div class="sum-value" style="color:#27ae60">28</div>
+    <div class="sum-sub">식사 7건 / 마케팅 21건</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#9b59b6">
+    <div class="sum-label">처방 약속</div>
+    <div class="sum-value" style="color:#9b59b6">1</div>
+    <div class="sum-sub">처방약속 키워드 카운트</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#e67e22">
+    <div class="sum-label">증량 약속</div>
+    <div class="sum-value" style="color:#e67e22">8</div>
+    <div class="sum-sub">증량약속 키워드 카운트</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#c0392b">
+    <div class="sum-label">숙박심포지움 (6월)</div>
+    <div class="sum-value" style="color:#c0392b">5</div>
+    <div class="sum-sub">6월 숙박심포 활용건</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#1565c0">
+    <div class="sum-label">웹심포지움 (6월)</div>
+    <div class="sum-value" style="color:#1565c0">34</div>
+    <div class="sum-sub">경비 raw 기준 6월 웹심포 건수</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>담당자별 활동 비교</h3></div>
+  <div class="sec-body">
+    <table class="team-table">
+      <tr>
+        <th>담당자</th>
+        <th>보고일수</th>
+        <th>총 방문처</th>
+        <th>중점처 방문</th>
+        <th>방문률</th>
+        <th>식사 활동</th>
+        <th>마케팅활동</th>
+        <th>처방약속</th>
+        <th>증량약속</th>
+        <th>숙박심포</th>
+        <th>웹심포</th>
+      </tr>
+
+      <tr>
+        <td style="font-weight:700;color:#0d4d64;text-align:left">전은성</td>
+        <td>18일</td>
+        <td>148건<br><span style="font-size:10px;color:#adb5bd">일평균 8.2건</span></td>
+        <td class="cnt-hi">26 / 30</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="bar-wrap" style="flex:1"><div class="bar-fill" style="width:87%;background:#0d4d64"></div></div>
+            <span style="font-size:11px;font-weight:700">87%</span>
+          </div>
+        </td>
+        <td>0</td>
+        <td style="color:#1a6b3a;font-weight:700">4</td>
+        <td class="cnt-hi">1</td>
+        <td class="cnt-warn">0</td>
+        <td class="cnt-hi">1</td>
+        <td style="color:#1565c0;font-weight:700">9</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:#1a5c2a;text-align:left">임대현</td>
+        <td>13일</td>
+        <td>99건<br><span style="font-size:10px;color:#adb5bd">일평균 7.6건</span></td>
+        <td class="cnt-hi">30 / 30</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="bar-wrap" style="flex:1"><div class="bar-fill" style="width:100%;background:#1a5c2a"></div></div>
+            <span style="font-size:11px;font-weight:700">100%</span>
+          </div>
+        </td>
+        <td>3</td>
+        <td style="color:#1a6b3a;font-weight:700">6</td>
+        <td class="cnt-hi">0</td>
+        <td class="cnt-warn">8</td>
+        <td class="cnt-hi">2</td>
+        <td style="color:#1565c0;font-weight:700">9</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:#5c3a1a;text-align:left">황태영</td>
+        <td>17일</td>
+        <td>126건<br><span style="font-size:10px;color:#adb5bd">일평균 7.4건</span></td>
+        <td class="cnt-hi">23 / 28</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="bar-wrap" style="flex:1"><div class="bar-fill" style="width:82%;background:#5c3a1a"></div></div>
+            <span style="font-size:11px;font-weight:700">82%</span>
+          </div>
+        </td>
+        <td>4</td>
+        <td style="color:#1a6b3a;font-weight:700">2</td>
+        <td class="cnt-hi">0</td>
+        <td class="cnt-warn">0</td>
+        <td class="cnt-hi">1</td>
+        <td style="color:#1565c0;font-weight:700">10</td>
+      </tr>
+      <tr>
+        <td style="font-weight:700;color:#4a1a5c;text-align:left">김혜성</td>
+        <td>15일</td>
+        <td>121건<br><span style="font-size:10px;color:#adb5bd">일평균 8.1건</span></td>
+        <td class="cnt-hi">28 / 30</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="bar-wrap" style="flex:1"><div class="bar-fill" style="width:93%;background:#4a1a5c"></div></div>
+            <span style="font-size:11px;font-weight:700">93%</span>
+          </div>
+        </td>
+        <td>0</td>
+        <td style="color:#1a6b3a;font-weight:700">9</td>
+        <td class="cnt-hi">0</td>
+        <td class="cnt-warn">0</td>
+        <td class="cnt-hi">1</td>
+        <td style="color:#1565c0;font-weight:700">6</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>중점처 방문 현황 — 담당자별</h3><span style="font-size:11px;color:#adb5bd;margin-left:8px">● 방문O &nbsp; ○ 미방문 &nbsp;|&nbsp; 실적 단위: 천원</span></div>
+  <div class="sec-body">
+    <table>
+      <tr>
+        <th>담당자</th>
+        <th>거래처</th>
+        <th>목표품목1</th>
+        <th>목표품목2</th>
+        <th>품목1<br>2Q목표</th>
+        <th>품목2<br>2Q목표</th>
+        <th>6월<br>품목1실적</th>
+        <th>6월<br>품목2실적</th>
+        <th>6월<br>방문횟수</th>
+        <th>상태</th>
+      </tr>
+
+      <tr>
+        <td rowspan="30" style="background:#e8f4f8;font-weight:800;color:#0d4d64;vertical-align:middle;white-space:nowrap">전은성</td>
+        <td class="td-name">우리들내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">아토바미브정</span></td>
+        <td style="text-align:right">5,000</td>
+        <td style="text-align:right">2,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">10</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">부평봄내과</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">11,000</td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">박가정의학과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">아토바미브정</span></td>
+        <td style="text-align:right">2,000</td>
+        <td style="text-align:right">4,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">7</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">전성희내과</td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td><span class="badge badge-b">아토바미브정</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">4,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">인천평화의료복지사회적협동조합</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">레코미드서방정</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">6</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">박은철내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">1,500</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">갈산내과의원</td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">1,500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">행복플러스의원</td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">600</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">6</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">삼성베스트내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">아토바미브정</span></td>
+        <td style="text-align:right">5,000</td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">7</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">전두수내과의원</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td style="text-align:right">2,000</td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">허정일의원</td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">서울퍼스트내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">9</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">부개성누가의원</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">듀오웰</span></td>
+        <td style="text-align:right">1,500</td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">9</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">서울중앙의원</td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#adb5bd;text-align:center">-</td>
+        <td style="color:#adb5bd;font-size:15px;font-weight:800;text-align:center">○</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">정준가정의학과</td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td><span class="badge badge-b">안플라그서방정</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">동수녹십자의원</td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td><span class="badge badge-b">자디앙듀오</span></td>
+        <td style="text-align:right">1,500</td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#adb5bd;text-align:center">-</td>
+        <td style="color:#adb5bd;font-size:15px;font-weight:800;text-align:center">○</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">소망내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">우리내과의원</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">1</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">호내과의원</td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">100</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">성모가정의원</td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">100</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">좋은내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">코푸시럽스틱</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">삼성의원</td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td><span class="badge badge-b">자디앙듀오</span></td>
+        <td style="text-align:right">1,500</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#adb5bd;text-align:center">-</td>
+        <td style="color:#adb5bd;font-size:15px;font-weight:800;text-align:center">○</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">사랑의가정의학과의원</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">중앙성모의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#adb5bd;text-align:center">-</td>
+        <td style="color:#adb5bd;font-size:15px;font-weight:800;text-align:center">○</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">다인이비인후과병원</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">700</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">1</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">고니이비인후과</td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td><span class="badge badge-b">코푸시럽스틱</span></td>
+        <td style="text-align:right">1,500</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">갈산중앙의원</td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td><span class="badge badge-b">듀오웰</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">7</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">우리가정의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">아토바미브정</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">장이편한내과의원</td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">100</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">1</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">성모수내과</td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td><span class="badge badge-b">트라젠타</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">100</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        <td rowspan="30" style="background:#e8f5e9;font-weight:800;color:#1a5c2a;vertical-align:middle;white-space:nowrap">임대현</td>
+        <td class="td-name">윤종길내과의원</td>
+        <td><span class="badge badge-b">아토바미브정</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">2,500</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">연세우리내과의원</td>
+        <td><span class="badge badge-b">아토바미브정</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">3,000</td>
+        <td style="text-align:right">2,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">1</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">은계하나내과의원</td>
+        <td><span class="badge badge-b">아토바미브정</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">성모베스트내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">5,000</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">동인천내과</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td style="text-align:right">2,500</td>
+        <td style="text-align:right">3,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">굿모닝내과의원</td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">1,300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">박재성내과의원</td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">2,500</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">이배진내과의원</td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td style="text-align:right">1,500</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">365장곡편한내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">1,200</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">매화의원</td>
+        <td><span class="badge badge-b">자디앙듀오</span></td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td style="text-align:right">3,000</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">삼성바른내과의원</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">연세성모의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">1,500</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">연세드림내과의원</td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">800</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">365서울가정의학과의원</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td style="text-align:right">800</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">1</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">인천광역시동구보건소</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">1,500</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">연세제일의원</td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">코코이비인후과의원</td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td><span class="badge badge-b">코푸시럽스틱</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">제일내과의원</td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">400</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">현대의원</td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td style="text-align:right">100</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">화수성심의원</td>
+        <td><span class="badge badge-b">자디앙듀오</span></td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td style="text-align:right">600</td>
+        <td style="text-align:right">400</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">1</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">서울열린내과</td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">서울안녕내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td style="text-align:right">1,500</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">이영우내과</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">자디앙듀오</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">600</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">장현가정의학과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">100</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">박애의원</td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td><span class="badge badge-b">코푸시럽스틱</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">이현우메디칼의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">비타민내과의원</td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">배곧누리의원</td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td style="text-align:right">800</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">서울삼성내과</td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">1</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">성모퍼스트내과</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        <td rowspan="28" style="background:#fff3e0;font-weight:800;color:#5c3a1a;vertical-align:middle;white-space:nowrap">황태영</td>
+        <td class="td-name">마음속내과</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td style="text-align:right">1,500</td>
+        <td style="text-align:right">3,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">7</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">한종완신경외과의원</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">김철수내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td style="text-align:right">3,500</td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">6</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">목감마음속내과의원</td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">800</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">365제이에스JS소아청소년과의원</td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td><span class="badge badge-b"></span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">400</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">8</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">시화윤내과의원</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td style="text-align:right">700</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">김희승내과</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">700</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">흥케이병원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td style="text-align:right">2,000</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">6</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">삼성연합의원금성한의원</td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">1,300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">참조은의원</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td style="text-align:right">700</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">속사랑내과</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">800</td>
+        <td style="text-align:right">700</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">드림내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">700</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">동서외과</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">하나가정의학과</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">150</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">목감연세내과</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">9</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">세종내과</td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">조은내과의원</td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#adb5bd;text-align:center">-</td>
+        <td style="color:#adb5bd;font-size:15px;font-weight:800;text-align:center">○</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">누가의원</td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">두리이비인후과의원</td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td><span class="badge badge-b"></span></td>
+        <td style="text-align:right">800</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">정가정의학과의원</td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">150</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">능곡하나내과의원</td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td><span class="badge badge-b"></span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#adb5bd;text-align:center">-</td>
+        <td style="color:#adb5bd;font-size:15px;font-weight:800;text-align:center">○</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">365이지힐링의원</td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td><span class="badge badge-b"></span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">가까운의원</td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">150</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">베스트내과의원</td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td><span class="badge badge-b"></span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#adb5bd;text-align:center">-</td>
+        <td style="color:#adb5bd;font-size:15px;font-weight:800;text-align:center">○</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">심편한내과의원</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">1</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">서울성모의원</td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td><span class="badge badge-b"></span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#adb5bd;text-align:center">-</td>
+        <td style="color:#adb5bd;font-size:15px;font-weight:800;text-align:center">○</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">바로성모내과</td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">더이비인후과의원</td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td><span class="badge badge-b"></span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#adb5bd;text-align:center">-</td>
+        <td style="color:#adb5bd;font-size:15px;font-weight:800;text-align:center">○</td>
+      </tr>
+      <tr>
+        <td rowspan="30" style="background:#f3e5f5;font-weight:800;color:#4a1a5c;vertical-align:middle;white-space:nowrap">김혜성</td>
+        <td class="td-name">부평내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">아토바미브정</span></td>
+        <td style="text-align:right">5,300</td>
+        <td style="text-align:right">3,700</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">서울든든내과</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">2,000</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">박상현내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">2,200</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">부평바른내과의원</td>
+        <td><span class="badge badge-b">아토바미브정</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">2,000</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">최태열내과의원</td>
+        <td><span class="badge badge-b">아토바미브정</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">2,000</td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">(의)상원의료재단부평힘찬병원</td>
+        <td><span class="badge badge-b">자디앙듀오</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">350</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">성모내과의원</td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">700</td>
+        <td style="text-align:right">400</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">6</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">노내과의원</td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">1,200</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">로로와 내과</td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">자애내과의원</td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">700</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">에이스가정의원</td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">2,300</td>
+        <td style="text-align:right">100</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">정속편안내과</td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#adb5bd;text-align:center">-</td>
+        <td style="color:#adb5bd;font-size:15px;font-weight:800;text-align:center">○</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">김방수내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td style="text-align:right">700</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">5</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">이수금내과의원</td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">우리가정의학과의원</td>
+        <td><span class="badge badge-b">자디앙듀오</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">900</td>
+        <td style="text-align:right">250</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">인천성모내과</td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">100</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#adb5bd;text-align:center">-</td>
+        <td style="color:#adb5bd;font-size:15px;font-weight:800;text-align:center">○</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">미소진의원</td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td><span class="badge badge-b">트루셋정</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">서울드림내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">700</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">김인호내과</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">350</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">부평정진의원</td>
+        <td><span class="badge badge-b">메트포르민</span></td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">1</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">연세코아내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">아토바미브정</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">9</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">함춘내과</td>
+        <td><span class="badge badge-b">자디앙</span></td>
+        <td><span class="badge badge-b">에스글리토</span></td>
+        <td style="text-align:right">150</td>
+        <td style="text-align:right">100</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">김성철내과의원</td>
+        <td><span class="badge badge-b">트라젠타</span></td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right">150</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">1</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">새롬이비인후과</td>
+        <td><span class="badge badge-b">나자케어</span></td>
+        <td><span class="badge badge-b">코푸시럽스틱</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">박이비인후과</td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td><span class="badge badge-b">코푸시럽스틱</span></td>
+        <td style="text-align:right">500</td>
+        <td style="text-align:right">1,200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">연세내과의원</td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td style="text-align:right">150</td>
+        <td style="text-align:right">300</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">부평탑내과의원</td>
+        <td><span class="badge badge-b">베믈리디</span></td>
+        <td><span class="badge badge-b">트윈스타</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">2</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">88하내과의원</td>
+        <td><span class="badge badge-b">로수바미브</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">1,000</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">예스가정의학과의원</td>
+        <td><span class="badge badge-b">리알트리스</span></td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td style="text-align:right">150</td>
+        <td style="text-align:right">100</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="color:#27ae60;text-align:center">3</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+      <tr>
+        
+        <td class="td-name">중앙신경외과</td>
+        <td><span class="badge badge-b">트루셋저용량</span></td>
+        <td><span class="badge badge-b">트윈로우</span></td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right">200</td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="text-align:right"><span style="color:#adb5bd">-</span></td>
+        <td style="font-weight:800;color:#c0392b;text-align:center">4</td>
+        <td style="color:#27ae60;font-size:15px;font-weight:800;text-align:center">●</td>
+      </tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div id="전은성" class="page">
+<div class="mem-hdr" style="background:#0d4d64;border-radius:8px;margin-bottom:16px;padding:14px 18px">전은성 — 6월 활동 분석</div>
+
+<div class="summary-grid">
+  <div class="sum-card" style="border-top-color:#0d4d64">
+    <div class="sum-label">보고일수</div>
+    <div class="sum-value" style="color:#0d4d64">18</div>
+    <div class="sum-sub">6월 방문보고 작성일</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#0d4d64">
+    <div class="sum-label">총 방문건수</div>
+    <div class="sum-value" style="color:#0d4d64">148건</div>
+    <div class="sum-sub">18일 (일평균 8.2건)</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#27ae60">
+    <div class="sum-label">중점처 방문</div>
+    <div class="sum-value" style="color:#27ae60">26 / 30</div>
+    <div class="sum-sub">방문율 87%</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#e67e22">
+    <div class="sum-label">식사 활동</div>
+    <div class="sum-value" style="color:#e67e22">0</div>
+    <div class="sum-sub">점심·저녁 합계</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#1a6b3a">
+    <div class="sum-label">마케팅활동</div>
+    <div class="sum-value" style="color:#1a6b3a">4</div>
+    <div class="sum-sub">업무지원·마케팅 키워드</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#9b59b6">
+    <div class="sum-label">처방약속</div>
+    <div class="sum-value" style="color:#9b59b6">1</div>
+    <div class="sum-sub">처방약속 키워드 카운트</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#c0392b">
+    <div class="sum-label">증량약속</div>
+    <div class="sum-value" style="color:#c0392b">0</div>
+    <div class="sum-sub">증량약속 키워드 카운트</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>중점처 방문 현황</h3><span style="font-size:11px;color:#adb5bd;margin-left:8px">실적 단위: 천원</span></div>
+  <div class="sec-body">
+    <table>
+      <tr><th>거래처</th><th>목표품목1</th><th>목표품목2</th><th>품목1<br>2Q목표</th><th>품목2<br>2Q목표</th><th>6월<br>품목1실적</th><th>6월<br>품목2실적</th><th>6월<br>방문횟수</th><th>상태</th></tr>
+<tr><td class="td-name">우리들내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">아토바미브정</span></td><td style="text-align:right">5,000</td><td style="text-align:right">2,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">10</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">부평봄내과</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">11,000</td><td style="text-align:right">1,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">박가정의학과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">아토바미브정</span></td><td style="text-align:right">2,000</td><td style="text-align:right">4,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">7</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">전성희내과</td><td><span class="badge badge-b">트윈로우</span></td><td><span class="badge badge-b">아토바미브정</span></td><td style="text-align:right">500</td><td style="text-align:right">4,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">인천평화의료복지사회적협동조합</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">레코미드서방정</span></td><td style="text-align:right">1,000</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">6</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">박은철내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">1,500</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">갈산내과의원</td><td><span class="badge badge-b">트윈로우</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">1,000</td><td style="text-align:right">1,500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">행복플러스의원</td><td><span class="badge badge-b">트윈로우</span></td><td><span class="badge badge-b">에스글리토</span></td><td style="text-align:right">300</td><td style="text-align:right">600</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">6</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">삼성베스트내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">아토바미브정</span></td><td style="text-align:right">5,000</td><td style="text-align:right">1,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">7</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">전두수내과의원</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">에스글리토</span></td><td style="text-align:right">2,000</td><td style="text-align:right">1,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">허정일의원</td><td><span class="badge badge-b">트윈로우</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">500</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">서울퍼스트내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트루셋정</span></td><td style="text-align:right">1,000</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">9</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">부개성누가의원</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">듀오웰</span></td><td style="text-align:right">1,500</td><td style="text-align:right">1,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">9</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">서울중앙의원</td><td><span class="badge badge-b">에스글리토</span></td><td><span class="badge badge-b">자디앙</span></td><td style="text-align:right">300</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#adb5bd">-</td><td style="color:#adb5bd;font-weight:700">○ 미방문</td></tr>
+<tr><td class="td-name">정준가정의학과</td><td><span class="badge badge-b">리알트리스</span></td><td><span class="badge badge-b">안플라그서방정</span></td><td style="text-align:right">200</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">동수녹십자의원</td><td><span class="badge badge-b">자디앙</span></td><td><span class="badge badge-b">자디앙듀오</span></td><td style="text-align:right">1,500</td><td style="text-align:right">1,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#adb5bd">-</td><td style="color:#adb5bd;font-weight:700">○ 미방문</td></tr>
+<tr><td class="td-name">소망내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트루셋정</span></td><td style="text-align:right">1,000</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">우리내과의원</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">에스글리토</span></td><td style="text-align:right">200</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">1</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">호내과의원</td><td><span class="badge badge-b">베믈리디</span></td><td><span class="badge badge-b">리알트리스</span></td><td style="text-align:right">1,000</td><td style="text-align:right">100</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">성모가정의원</td><td><span class="badge badge-b">에스글리토</span></td><td><span class="badge badge-b">리알트리스</span></td><td style="text-align:right">200</td><td style="text-align:right">100</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">좋은내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">코푸시럽스틱</span></td><td style="text-align:right">1,000</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">삼성의원</td><td><span class="badge badge-b">자디앙</span></td><td><span class="badge badge-b">자디앙듀오</span></td><td style="text-align:right">1,500</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#adb5bd">-</td><td style="color:#adb5bd;font-weight:700">○ 미방문</td></tr>
+<tr><td class="td-name">사랑의가정의학과의원</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">리알트리스</span></td><td style="text-align:right">300</td><td style="text-align:right">1,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">중앙성모의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">자디앙</span></td><td style="text-align:right">500</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#adb5bd">-</td><td style="color:#adb5bd;font-weight:700">○ 미방문</td></tr>
+<tr><td class="td-name">다인이비인후과병원</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">리알트리스</span></td><td style="text-align:right">500</td><td style="text-align:right">700</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">1</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">고니이비인후과</td><td><span class="badge badge-b">리알트리스</span></td><td><span class="badge badge-b">코푸시럽스틱</span></td><td style="text-align:right">1,500</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">갈산중앙의원</td><td><span class="badge badge-b">자디앙</span></td><td><span class="badge badge-b">듀오웰</span></td><td style="text-align:right">1,000</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">7</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">우리가정의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">아토바미브정</span></td><td style="text-align:right">200</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">장이편한내과의원</td><td><span class="badge badge-b">베믈리디</span></td><td><span class="badge badge-b">자디앙</span></td><td style="text-align:right">500</td><td style="text-align:right">100</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">1</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">성모수내과</td><td><span class="badge badge-b">베믈리디</span></td><td><span class="badge badge-b">트라젠타</span></td><td style="text-align:right">500</td><td style="text-align:right">100</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>숙박심포지움 활용 (6월)</h3></div>
+  <div class="sec-body">
+    <table>
+      <tr><th>날짜</th><th>장소</th><th>거래처</th><th>원장</th><th>비고</th></tr>
+<tr><td>06/27</td><td>서울콘래드</td><td class="td-name">삼성베스트내과</td><td>이경무</td><td></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>일별 활동 내역</h3></div>
+  <div class="sec-body">
+    <table>
+      <tr><th>일자</th><th>방문처 수</th><th>식사활동 내역</th><th>마케팅활동 내역</th><th>처방약속 내역</th><th>증량약속 내역</th></tr>
+<tr>
+  <td style="font-weight:700;white-space:nowrap">6/1</td>
+  <td>5</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">보건소업무지원</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/2</td>
+  <td>9</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="promise-chip">갈산중앙의원 신규처방약속(저용량,트윈로우)</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/4</td>
+  <td>9</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/5</td>
+  <td>6</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/8</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/9</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">보건소 업무지원</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/10</td>
+  <td>9</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/11</td>
+  <td>9</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/12</td>
+  <td>9</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/15</td>
+  <td>10</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/16</td>
+  <td>9</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/17</td>
+  <td>11</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">보건소 업무지원</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/18</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/22</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/23</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/24</td>
+  <td>10</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/25</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/29</td>
+  <td>6</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">보건소 업무지원</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr>    </table>
+  </div>
+</div>
+</div>
+
+<div id="임대현" class="page">
+<div class="mem-hdr" style="background:#1a5c2a;border-radius:8px;margin-bottom:16px;padding:14px 18px">임대현 — 6월 활동 분석</div>
+
+<div class="summary-grid">
+  <div class="sum-card" style="border-top-color:#1a5c2a">
+    <div class="sum-label">보고일수</div>
+    <div class="sum-value" style="color:#1a5c2a">13</div>
+    <div class="sum-sub">6월 방문보고 작성일</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#1a5c2a">
+    <div class="sum-label">총 방문건수</div>
+    <div class="sum-value" style="color:#1a5c2a">99건</div>
+    <div class="sum-sub">13일 (일평균 7.6건)</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#27ae60">
+    <div class="sum-label">중점처 방문</div>
+    <div class="sum-value" style="color:#27ae60">30 / 30</div>
+    <div class="sum-sub">방문율 100%</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#e67e22">
+    <div class="sum-label">식사 활동</div>
+    <div class="sum-value" style="color:#e67e22">3</div>
+    <div class="sum-sub">점심·저녁 합계</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#1a6b3a">
+    <div class="sum-label">마케팅활동</div>
+    <div class="sum-value" style="color:#1a6b3a">6</div>
+    <div class="sum-sub">업무지원·마케팅 키워드</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#9b59b6">
+    <div class="sum-label">처방약속</div>
+    <div class="sum-value" style="color:#9b59b6">0</div>
+    <div class="sum-sub">처방약속 키워드 카운트</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#c0392b">
+    <div class="sum-label">증량약속</div>
+    <div class="sum-value" style="color:#c0392b">8</div>
+    <div class="sum-sub">증량약속 키워드 카운트</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>중점처 방문 현황</h3><span style="font-size:11px;color:#adb5bd;margin-left:8px">실적 단위: 천원</span></div>
+  <div class="sec-body">
+    <table>
+      <tr><th>거래처</th><th>목표품목1</th><th>목표품목2</th><th>품목1<br>2Q목표</th><th>품목2<br>2Q목표</th><th>6월<br>품목1실적</th><th>6월<br>품목2실적</th><th>6월<br>방문횟수</th><th>상태</th></tr>
+<tr><td class="td-name">윤종길내과의원</td><td><span class="badge badge-b">아토바미브정</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">2,500</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">연세우리내과의원</td><td><span class="badge badge-b">아토바미브정</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">3,000</td><td style="text-align:right">2,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">1</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">은계하나내과의원</td><td><span class="badge badge-b">아토바미브정</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">1,000</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">성모베스트내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">5,000</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">동인천내과</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">에스글리토</span></td><td style="text-align:right">2,500</td><td style="text-align:right">3,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">굿모닝내과의원</td><td><span class="badge badge-b">트루셋저용량</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">500</td><td style="text-align:right">1,300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">박재성내과의원</td><td><span class="badge badge-b">트윈스타</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">2,500</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">이배진내과의원</td><td><span class="badge badge-b">자디앙</span></td><td><span class="badge badge-b">에스글리토</span></td><td style="text-align:right">1,500</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">365장곡편한내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">1,200</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">매화의원</td><td><span class="badge badge-b">자디앙듀오</span></td><td><span class="badge badge-b">자디앙</span></td><td style="text-align:right">3,000</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">삼성바른내과의원</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">500</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">연세성모의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">1,500</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">연세드림내과의원</td><td><span class="badge badge-b">트윈스타</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">800</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">365서울가정의학과의원</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">리알트리스</span></td><td style="text-align:right">800</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">1</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">인천광역시동구보건소</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">1,500</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">연세제일의원</td><td><span class="badge badge-b">에스글리토</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">1,000</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">코코이비인후과의원</td><td><span class="badge badge-b">리알트리스</span></td><td><span class="badge badge-b">코푸시럽스틱</span></td><td style="text-align:right">300</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">제일내과의원</td><td><span class="badge badge-b">트윈로우</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">200</td><td style="text-align:right">400</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">현대의원</td><td><span class="badge badge-b">트윈로우</span></td><td><span class="badge badge-b">리알트리스</span></td><td style="text-align:right">100</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">화수성심의원</td><td><span class="badge badge-b">자디앙듀오</span></td><td><span class="badge badge-b">트루셋정</span></td><td style="text-align:right">600</td><td style="text-align:right">400</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">1</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">서울열린내과</td><td><span class="badge badge-b">베믈리디</span></td><td><span class="badge badge-b">트윈스타</span></td><td style="text-align:right">1,000</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">서울안녕내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트루셋정</span></td><td style="text-align:right">1,500</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">이영우내과</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">자디앙듀오</span></td><td style="text-align:right">500</td><td style="text-align:right">600</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">장현가정의학과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">500</td><td style="text-align:right">100</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">박애의원</td><td><span class="badge badge-b">트루셋저용량</span></td><td><span class="badge badge-b">코푸시럽스틱</span></td><td style="text-align:right">200</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">이현우메디칼의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">1,000</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">비타민내과의원</td><td><span class="badge badge-b">트윈로우</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">200</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">배곧누리의원</td><td><span class="badge badge-b">트윈스타</span></td><td><span class="badge badge-b">리알트리스</span></td><td style="text-align:right">800</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">서울삼성내과</td><td><span class="badge badge-b">베믈리디</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">500</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">1</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">성모퍼스트내과</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">300</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>숙박심포지움 활용 (6월)</h3></div>
+  <div class="sec-body">
+    <table>
+      <tr><th>날짜</th><th>장소</th><th>거래처</th><th>원장</th><th>비고</th></tr>
+<tr><td>06/07</td><td>부산롯데</td><td class="td-name">은계하나내과</td><td>천지현</td><td></td></tr>
+<tr><td>06/27</td><td>레스케이프(명동)</td><td class="td-name">연세우리내과</td><td>문병섭</td><td></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>일별 활동 내역</h3></div>
+  <div class="sec-body">
+    <table>
+      <tr><th>일자</th><th>방문처 수</th><th>식사활동 내역</th><th>마케팅활동 내역</th><th>처방약속 내역</th><th>증량약속 내역</th></tr>
+<tr>
+  <td style="font-weight:700;white-space:nowrap">6/8</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/9</td>
+  <td>5</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">업무지원(서울안녕내과 비급여 신고)</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/10</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/11</td>
+  <td>9</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">업무지원(서울안녕내과 비급여 신고 완료)</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/12</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/15</td>
+  <td>7</td>
+  <td class="td-detail"><span class="meal-chip">동구보건소 트윈스타f 증량 요청, 중식 식사 진행중 면담</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="increase-chip">이현우메디컬, 이영우내과 로수바미브 증량약속(ez-pave 연구자료, NEJM 적극검토)</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/16</td>
+  <td>10</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="increase-chip">연세성모의원, 동인천내과 로수바미브 증량 약속</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/17</td>
+  <td>9</td>
+  <td class="td-detail"><span class="meal-chip">제일내과 저녁 식사 24일 확정, 트윈스타 증량약속</span></td>
+  <td class="td-detail"><span class="mktg-chip">거래처 업무지원</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="increase-chip">제일내과 저녁 식사 24일 확정, 트윈스타 증량약속</span><span class="increase-chip">은계하나내과 트루셋f, 트루셋저용량 중심으로 증량 약속</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/18</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">코코이비인후과 라베피드 증량 요청 및 판촉 마케팅</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="increase-chip">아이엔드소아청소년과 리알트리스 증량 약속</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/22</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/24</td>
+  <td>8</td>
+  <td class="td-detail"><span class="meal-chip">(25일 저녁식사 일정 확인)</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/25</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">365장곡편한내과 트루셋저용량 증량 판촉 마케팅 진항</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="increase-chip">은계하나내과 트루셋저용량 증량 약속</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/29</td>
+  <td>6</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">거래처 업무지원</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="increase-chip">동구보건소 로수바미브 증량약속</span><span class="increase-chip">동구보건소 트윈스타f 증량 약속</span></td>
+</tr>    </table>
+  </div>
+</div>
+</div>
+
+<div id="황태영" class="page">
+<div class="mem-hdr" style="background:#5c3a1a;border-radius:8px;margin-bottom:16px;padding:14px 18px">황태영 — 6월 활동 분석</div>
+
+<div class="summary-grid">
+  <div class="sum-card" style="border-top-color:#5c3a1a">
+    <div class="sum-label">보고일수</div>
+    <div class="sum-value" style="color:#5c3a1a">17</div>
+    <div class="sum-sub">6월 방문보고 작성일</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#5c3a1a">
+    <div class="sum-label">총 방문건수</div>
+    <div class="sum-value" style="color:#5c3a1a">126건</div>
+    <div class="sum-sub">17일 (일평균 7.4건)</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#27ae60">
+    <div class="sum-label">중점처 방문</div>
+    <div class="sum-value" style="color:#27ae60">23 / 28</div>
+    <div class="sum-sub">방문율 82%</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#e67e22">
+    <div class="sum-label">식사 활동</div>
+    <div class="sum-value" style="color:#e67e22">4</div>
+    <div class="sum-sub">점심·저녁 합계</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#1a6b3a">
+    <div class="sum-label">마케팅활동</div>
+    <div class="sum-value" style="color:#1a6b3a">2</div>
+    <div class="sum-sub">업무지원·마케팅 키워드</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#9b59b6">
+    <div class="sum-label">처방약속</div>
+    <div class="sum-value" style="color:#9b59b6">0</div>
+    <div class="sum-sub">처방약속 키워드 카운트</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#c0392b">
+    <div class="sum-label">증량약속</div>
+    <div class="sum-value" style="color:#c0392b">0</div>
+    <div class="sum-sub">증량약속 키워드 카운트</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>중점처 방문 현황</h3><span style="font-size:11px;color:#adb5bd;margin-left:8px">실적 단위: 천원</span></div>
+  <div class="sec-body">
+    <table>
+      <tr><th>거래처</th><th>목표품목1</th><th>목표품목2</th><th>품목1<br>2Q목표</th><th>품목2<br>2Q목표</th><th>6월<br>품목1실적</th><th>6월<br>품목2실적</th><th>6월<br>방문횟수</th><th>상태</th></tr>
+<tr><td class="td-name">마음속내과</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">베믈리디</span></td><td style="text-align:right">1,500</td><td style="text-align:right">3,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">7</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">한종완신경외과의원</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">에스글리토</span></td><td style="text-align:right">1,000</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">김철수내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트윈스타</span></td><td style="text-align:right">3,500</td><td style="text-align:right">1,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">6</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">목감마음속내과의원</td><td><span class="badge badge-b">에스글리토</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">800</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">365제이에스JS소아청소년과의원</td><td><span class="badge badge-b">리알트리스</span></td><td><span class="badge badge-b"></span></td><td style="text-align:right">500</td><td style="text-align:right">400</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">8</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">시화윤내과의원</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">에스글리토</span></td><td style="text-align:right">700</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">김희승내과</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">트윈스타</span></td><td style="text-align:right">300</td><td style="text-align:right">700</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">흥케이병원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트루셋정</span></td><td style="text-align:right">2,000</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">6</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">삼성연합의원금성한의원</td><td><span class="badge badge-b">트루셋저용량</span></td><td><span class="badge badge-b">에스글리토</span></td><td style="text-align:right">300</td><td style="text-align:right">1,300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">참조은의원</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">에스글리토</span></td><td style="text-align:right">700</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">속사랑내과</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">800</td><td style="text-align:right">700</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">드림내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트루셋정</span></td><td style="text-align:right">500</td><td style="text-align:right">700</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">동서외과</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">300</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">하나가정의학과</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">에스글리토</span></td><td style="text-align:right">500</td><td style="text-align:right">150</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">목감연세내과</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">자디앙</span></td><td style="text-align:right">500</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">9</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">세종내과</td><td><span class="badge badge-b">에스글리토</span></td><td><span class="badge badge-b">리알트리스</span></td><td style="text-align:right">500</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">조은내과의원</td><td><span class="badge badge-b">트윈스타</span></td><td><span class="badge badge-b">에스글리토</span></td><td style="text-align:right">500</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#adb5bd">-</td><td style="color:#adb5bd;font-weight:700">○ 미방문</td></tr>
+<tr><td class="td-name">누가의원</td><td><span class="badge badge-b">리알트리스</span></td><td><span class="badge badge-b">트루셋정</span></td><td style="text-align:right">300</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">두리이비인후과의원</td><td><span class="badge badge-b">리알트리스</span></td><td><span class="badge badge-b"></span></td><td style="text-align:right">800</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">정가정의학과의원</td><td><span class="badge badge-b">에스글리토</span></td><td><span class="badge badge-b">트루셋정</span></td><td style="text-align:right">200</td><td style="text-align:right">150</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">능곡하나내과의원</td><td><span class="badge badge-b">베믈리디</span></td><td><span class="badge badge-b"></span></td><td style="text-align:right">500</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#adb5bd">-</td><td style="color:#adb5bd;font-weight:700">○ 미방문</td></tr>
+<tr><td class="td-name">365이지힐링의원</td><td><span class="badge badge-b">트윈로우</span></td><td><span class="badge badge-b"></span></td><td style="text-align:right">300</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">가까운의원</td><td><span class="badge badge-b">트루셋저용량</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">200</td><td style="text-align:right">150</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">베스트내과의원</td><td><span class="badge badge-b">에스글리토</span></td><td><span class="badge badge-b"></span></td><td style="text-align:right">200</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#adb5bd">-</td><td style="color:#adb5bd;font-weight:700">○ 미방문</td></tr>
+<tr><td class="td-name">심편한내과의원</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">자디앙</span></td><td style="text-align:right">200</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">1</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">서울성모의원</td><td><span class="badge badge-b">리알트리스</span></td><td><span class="badge badge-b"></span></td><td style="text-align:right">200</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#adb5bd">-</td><td style="color:#adb5bd;font-weight:700">○ 미방문</td></tr>
+<tr><td class="td-name">바로성모내과</td><td><span class="badge badge-b">트루셋정</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">300</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">더이비인후과의원</td><td><span class="badge badge-b">리알트리스</span></td><td><span class="badge badge-b"></span></td><td style="text-align:right">500</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#adb5bd">-</td><td style="color:#adb5bd;font-weight:700">○ 미방문</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>숙박심포지움 활용 (6월)</h3></div>
+  <div class="sec-body">
+    <table>
+      <tr><th>날짜</th><th>장소</th><th>거래처</th><th>원장</th><th>비고</th></tr>
+<tr><td>06/27</td><td>서울콘래드</td><td class="td-name">한종완신경외과</td><td>한종완</td><td></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>일별 활동 내역</h3></div>
+  <div class="sec-body">
+    <table>
+      <tr><th>일자</th><th>방문처 수</th><th>식사활동 내역</th><th>마케팅활동 내역</th><th>처방약속 내역</th><th>증량약속 내역</th></tr>
+<tr>
+  <td style="font-weight:700;white-space:nowrap">6/1</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/2</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/4</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/5</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/8</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/9</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/10</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/11</td>
+  <td>7</td>
+  <td class="td-detail"><span class="meal-chip">js소아과 내일 11시 점심식사 예정</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/12</td>
+  <td>7</td>
+  <td class="td-detail"><span class="meal-chip">js소아과 점심식사</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/15</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/17</td>
+  <td>7</td>
+  <td class="td-detail"><span class="meal-chip">우리서울내과 점심식사</span></td>
+  <td class="td-detail"><span class="mktg-chip">김철수내과 김철수 트윈스타 증량관련 업무지원 22~27일 휴진</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/18</td>
+  <td>7</td>
+  <td class="td-detail"><span class="meal-chip">내일 10시반 JS소아과 식사예정</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/22</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/23</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">금일 김철수내과 조한민 업무지원 로수바미브/트윈스타 집중요청</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/24</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/25</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/29</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr>    </table>
+  </div>
+</div>
+</div>
+
+<div id="김혜성" class="page">
+<div class="mem-hdr" style="background:#4a1a5c;border-radius:8px;margin-bottom:16px;padding:14px 18px">김혜성 — 6월 활동 분석</div>
+
+<div class="summary-grid">
+  <div class="sum-card" style="border-top-color:#4a1a5c">
+    <div class="sum-label">보고일수</div>
+    <div class="sum-value" style="color:#4a1a5c">15</div>
+    <div class="sum-sub">6월 방문보고 작성일</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#4a1a5c">
+    <div class="sum-label">총 방문건수</div>
+    <div class="sum-value" style="color:#4a1a5c">121건</div>
+    <div class="sum-sub">15일 (일평균 8.1건)</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#27ae60">
+    <div class="sum-label">중점처 방문</div>
+    <div class="sum-value" style="color:#27ae60">28 / 30</div>
+    <div class="sum-sub">방문율 93%</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#e67e22">
+    <div class="sum-label">식사 활동</div>
+    <div class="sum-value" style="color:#e67e22">0</div>
+    <div class="sum-sub">점심·저녁 합계</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#1a6b3a">
+    <div class="sum-label">마케팅활동</div>
+    <div class="sum-value" style="color:#1a6b3a">9</div>
+    <div class="sum-sub">업무지원·마케팅 키워드</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#9b59b6">
+    <div class="sum-label">처방약속</div>
+    <div class="sum-value" style="color:#9b59b6">0</div>
+    <div class="sum-sub">처방약속 키워드 카운트</div>
+  </div>
+  <div class="sum-card" style="border-top-color:#c0392b">
+    <div class="sum-label">증량약속</div>
+    <div class="sum-value" style="color:#c0392b">0</div>
+    <div class="sum-sub">증량약속 키워드 카운트</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>중점처 방문 현황</h3><span style="font-size:11px;color:#adb5bd;margin-left:8px">실적 단위: 천원</span></div>
+  <div class="sec-body">
+    <table>
+      <tr><th>거래처</th><th>목표품목1</th><th>목표품목2</th><th>품목1<br>2Q목표</th><th>품목2<br>2Q목표</th><th>6월<br>품목1실적</th><th>6월<br>품목2실적</th><th>6월<br>방문횟수</th><th>상태</th></tr>
+<tr><td class="td-name">부평내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">아토바미브정</span></td><td style="text-align:right">5,300</td><td style="text-align:right">3,700</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">서울든든내과</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">2,000</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">박상현내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">2,200</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">부평바른내과의원</td><td><span class="badge badge-b">아토바미브정</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">2,000</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">최태열내과의원</td><td><span class="badge badge-b">아토바미브정</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">2,000</td><td style="text-align:right">1,000</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">(의)상원의료재단부평힘찬병원</td><td><span class="badge badge-b">자디앙듀오</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">350</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">성모내과의원</td><td><span class="badge badge-b">자디앙</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">700</td><td style="text-align:right">400</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">6</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">노내과의원</td><td><span class="badge badge-b">자디앙</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">1,200</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">로로와 내과</td><td><span class="badge badge-b">자디앙</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">1,000</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">자애내과의원</td><td><span class="badge badge-b">트윈스타</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">700</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">에이스가정의원</td><td><span class="badge badge-b">자디앙</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">2,300</td><td style="text-align:right">100</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">정속편안내과</td><td><span class="badge badge-b">자디앙</span></td><td><span class="badge badge-b">트윈스타</span></td><td style="text-align:right">200</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#adb5bd">-</td><td style="color:#adb5bd;font-weight:700">○ 미방문</td></tr>
+<tr><td class="td-name">김방수내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">베믈리디</span></td><td style="text-align:right">700</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">5</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">이수금내과의원</td><td><span class="badge badge-b">트윈스타</span></td><td><span class="badge badge-b">베믈리디</span></td><td style="text-align:right">300</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">우리가정의학과의원</td><td><span class="badge badge-b">자디앙듀오</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">900</td><td style="text-align:right">250</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">인천성모내과</td><td><span class="badge badge-b">자디앙</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">200</td><td style="text-align:right">100</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#adb5bd">-</td><td style="color:#adb5bd;font-weight:700">○ 미방문</td></tr>
+<tr><td class="td-name">미소진의원</td><td><span class="badge badge-b">트윈스타</span></td><td><span class="badge badge-b">트루셋정</span></td><td style="text-align:right">300</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">서울드림내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">베믈리디</span></td><td style="text-align:right">500</td><td style="text-align:right">700</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">김인호내과</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">베믈리디</span></td><td style="text-align:right">300</td><td style="text-align:right">350</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">부평정진의원</td><td><span class="badge badge-b">메트포르민</span></td><td><span class="badge badge-b">로수바미브</span></td><td style="text-align:right">500</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">1</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">연세코아내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">아토바미브정</span></td><td style="text-align:right">300</td><td style="text-align:right">500</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">9</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">함춘내과</td><td><span class="badge badge-b">자디앙</span></td><td><span class="badge badge-b">에스글리토</span></td><td style="text-align:right">150</td><td style="text-align:right">100</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">김성철내과의원</td><td><span class="badge badge-b">트라젠타</span></td><td><span class="badge badge-b">베믈리디</span></td><td style="text-align:right">300</td><td style="text-align:right">150</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">1</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">새롬이비인후과</td><td><span class="badge badge-b">나자케어</span></td><td><span class="badge badge-b">코푸시럽스틱</span></td><td style="text-align:right">500</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">박이비인후과</td><td><span class="badge badge-b">리알트리스</span></td><td><span class="badge badge-b">코푸시럽스틱</span></td><td style="text-align:right">500</td><td style="text-align:right">1,200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">연세내과의원</td><td><span class="badge badge-b">베믈리디</span></td><td><span class="badge badge-b">트윈스타</span></td><td style="text-align:right">150</td><td style="text-align:right">300</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">부평탑내과의원</td><td><span class="badge badge-b">베믈리디</span></td><td><span class="badge badge-b">트윈스타</span></td><td style="text-align:right">200</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">2</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">88하내과의원</td><td><span class="badge badge-b">로수바미브</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">1,000</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">예스가정의학과의원</td><td><span class="badge badge-b">리알트리스</span></td><td><span class="badge badge-b">트루셋저용량</span></td><td style="text-align:right">150</td><td style="text-align:right">100</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="color:#27ae60;font-weight:700">3</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+<tr><td class="td-name">중앙신경외과</td><td><span class="badge badge-b">트루셋저용량</span></td><td><span class="badge badge-b">트윈로우</span></td><td style="text-align:right">200</td><td style="text-align:right">200</td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="text-align:right"><span style="color:#adb5bd">-</span></td><td style="font-weight:800;color:#c0392b">4</td><td style="color:#27ae60;font-weight:700">● 방문</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>숙박심포지움 활용 (6월)</h3></div>
+  <div class="sec-body">
+    <table>
+      <tr><th>날짜</th><th>장소</th><th>거래처</th><th>원장</th><th>비고</th></tr>
+<tr><td>06/27</td><td>그랜드 인터컨티넨탈</td><td class="td-name">88하내과</td><td>하형구</td><td></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr"><h3>일별 활동 내역</h3></div>
+  <div class="sec-body">
+    <table>
+      <tr><th>일자</th><th>방문처 수</th><th>식사활동 내역</th><th>마케팅활동 내역</th><th>처방약속 내역</th><th>증량약속 내역</th></tr>
+<tr>
+  <td style="font-weight:700;white-space:nowrap">6/1</td>
+  <td>6</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/2</td>
+  <td>10</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">88하내과 고혈압 관련 마케팅 활동</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/4</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/8</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/9</td>
+  <td>9</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">연세코아내과 제일외과 환자 전원 도움 요청으로 마케팅 활동 예정</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/10</td>
+  <td>9</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">연세코아내과 업무지원</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/11</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">연세코아내과 마케팅 활동 (제일외과 전원환자 로수바미브/아토바미브 스위칭 약속)</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/12</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/16</td>
+  <td>9</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/17</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/18</td>
+  <td>9</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">연세코아내과 고지혈증 마케팅 활동</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/22</td>
+  <td>7</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/24</td>
+  <td>10</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">88하내과 로수바미브 마케팅 자료 전달</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/25</td>
+  <td>8</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">부평바른내과 로수바미브 증량 감사 마케팅 활동 및 이지페이브 디테일 및 논문자료 전달</span><span class="mktg-chip">뱅뱅이비인후과, 연세코아내과 업무지원</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr><tr>
+  <td style="font-weight:700;white-space:nowrap">6/29</td>
+  <td>6</td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span class="mktg-chip">연세코아내과 업무지원</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+  <td class="td-detail"><span style="color:#adb5bd">-</span></td>
+</tr>    </table>
+  </div>
+</div>
+</div>
+
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
