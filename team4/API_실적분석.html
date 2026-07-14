@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>API 5월 실적분석 - 인천일병2팀</title>
+<title>API 6월 실적분석 - 인천일병2팀</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <script>
 // 통합 포털 iframe(self!==top) 안에서는 자동 리로드 비활성화 (무한 깜박임 방지)
-const VER = '20260714090459';
+const VER = '20260714093034';
 if (window.self === window.top) {
   const prev = localStorage.getItem('api_ver');
   if (prev && prev !== VER) { localStorage.setItem('api_ver', VER); location.reload(true); }
@@ -174,7 +174,7 @@ table.dt tfoot td.name { background: #f0f3f5!important; }
 </head>
 <body>
 <header>
-  <h1>API 실적분석 · 2026년 5월 마감</h1>
+  <h1>API 실적분석 · 2026년 6월 1차</h1>
   <div class="sub">인천일병2팀 · 자료: 2606월 API 실적분석 1차(4팀).xlsx · 단위: 원</div>
 </header>
 
@@ -814,7 +814,7 @@ if (sectionEntries.length > 0) showSection(sectionEntries[0][0]);
 
 // ── Service Worker 등록 + 즉시 업데이트 (단독 앱일 때만, iframe 포털에선 스킵) ──
 if ('serviceWorker' in navigator && window.self === window.top) {
-  navigator.serviceWorker.register('./sw.js?v=20260714090459').then(reg => {
+  navigator.serviceWorker.register('./sw.js?v=20260714093034').then(reg => {
     reg.update();
     reg.addEventListener('updatefound', () => {
       const nw = reg.installing;
