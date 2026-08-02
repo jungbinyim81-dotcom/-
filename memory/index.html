@@ -1477,9 +1477,31 @@ function closeAllSheets(){
 $('cText').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();addCmt();}});
 
+/* ---------------- 안드로이드 뒤로가기 ----------------
+   PWA에서 뒤로가기를 그냥 두면 앱이 통째로 닫힌다.
+   히스토리에 '가드'를 하나 깔아두고, 뒤로가기를 '지금 열린 화면 닫기'로 해석한다. */
+function guardPush(){try{history.pushState({jm:1},'');}catch(e){}}
+function isOn(id){const e=$(id);return !!(e&&e.classList.contains('on'));}
+let backAt=0;
+window.addEventListener('popstate',function(){
+  if(isOn('light')){guardPush();closeLight();return;}       // 1) 사진 크게 보기 → 닫기
+  if(isOn('mMenu')){guardPush();closeMenu();return;}        // 2) 열린 시트부터 닫기
+  if(isOn('mCmt')){guardPush();closeCmt();return;}
+  if(isOn('mUp')){                                          //    올리려던 사진은 확인 후에만 버림
+    guardPush();
+    if(UP.length&&!confirm('고른 사진 '+UP.length+'장을 버리고 닫을까요?'))return;
+    closeUpload();return;}
+  if(isOn('mSet')){guardPush();closeSettings();return;}
+  if(!UNLOCKED)return;                                      // 3) 잠금화면이면 그냥 나가게
+  if(VIEW!=='feed'){guardPush();go('feed');return;}         // 4) 다른 탭이면 피드로
+  if(Date.now()-backAt>2000){                               // 5) 피드에서 한 번 더 눌러야 종료
+    backAt=Date.now();guardPush();toast('한 번 더 누르면 앱이 닫혀요');return;}
+});
+
 /* ---------------- 시작 ---------------- */
 (async function boot(){
   buildPad();
+  guardPush();                 // 뒤로가기를 가로챌 히스토리 가드 1개
   $('pad').addEventListener('click',e=>{
     const b=e.target.closest('button');if(!b)return;keyIn(b.dataset.k);});
   if(!CFG.codeHash){CFG.codeHash=await sha(DEF_CODE);saveCfg();}
