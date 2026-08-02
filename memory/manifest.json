@@ -1,0 +1,20 @@
+{
+  "name": "정승메모리",
+  "short_name": "정승메모리",
+  "description": "둘만의 사진첩",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0b0f",
+  "theme_color": "#0d0b0f",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
