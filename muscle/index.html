@@ -2,9 +2,9 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0f1b33">
-<title>머슬플랜 - 근육 키우기 코치</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1424">
+<title>머슬플랜 - 집에서 근육 키우기</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
@@ -12,1038 +12,1563 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="머슬플랜">
 <style>
-  :root{
-    --navy:#0f1b33; --navy2:#16294a; --card:#172a4d; --card2:#1d3358;
-    --line:#27406b; --txt:#e8eef9; --sub:#9fb3d4; --mut:#6f86ad;
-    --accent:#3ad6c4; --accent2:#5b8cff; --warn:#ffb347;
-    --bad:#ff6b6b; --good:#56d97f; --gold:#ffd166;
-    --r:16px;
-  }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;padding:0}
-  body{
-    font-family:'Pretendard','Segoe UI',system-ui,-apple-system,sans-serif;
-    background:linear-gradient(180deg,#0c1628,#0f1b33 30%,#0c1628);
-    color:var(--txt);-webkit-font-smoothing:antialiased;
-    padding-bottom:86px;min-height:100vh;
-  }
-  .wrap{max-width:760px;margin:0 auto;padding:0 14px}
-  header.top{position:sticky;top:0;z-index:30;backdrop-filter:blur(10px);
-    background:rgba(12,22,40,.85);border-bottom:1px solid var(--line);
-    padding:13px 16px;display:flex;align-items:center;justify-content:space-between}
-  header.top h1{font-size:19px;margin:0;letter-spacing:-.3px;font-weight:800}
-  header.top h1 span{color:var(--accent)}
-  .pill{font-size:11px;color:var(--sub);background:var(--card);border:1px solid var(--line);
-    padding:5px 11px;border-radius:999px}
-  h2.sec{font-size:16px;margin:22px 2px 12px;color:var(--txt);font-weight:800;letter-spacing:-.2px}
-  .sub2{font-size:12px;color:var(--mut);font-weight:500;margin-left:6px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
-    padding:16px;margin-bottom:12px}
-  .card.tight{padding:13px}
-  .row{display:flex;gap:10px;align-items:center}
-  .row.wrap{flex-wrap:wrap}
-  .grow{flex:1}
-  .muted{color:var(--mut)} .sub{color:var(--sub)} .small{font-size:12px}
-  .big{font-size:27px;font-weight:800;letter-spacing:-.5px}
-  .label{font-size:13px;color:var(--sub);margin-bottom:7px;display:block;font-weight:700}
-  button{font-family:inherit;cursor:pointer;border:none;border-radius:12px;font-weight:700}
-  .btn{background:var(--accent);color:#06251f;padding:14px 16px;font-size:15px;width:100%}
-  .btn.alt{background:var(--accent2);color:#06122e}
-  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
-  .btn.sm{padding:9px 13px;font-size:13px;width:auto}
-  .btn.danger{background:transparent;border:1px solid var(--bad);color:var(--bad)}
-  .btn.yt{background:#ff3d3d;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px}
-  input,select{font-family:inherit;background:var(--navy);color:var(--txt);
-    border:1px solid var(--line);border-radius:12px;padding:12px;font-size:16px;width:100%}
-  input:focus,select:focus{outline:none;border-color:var(--accent)}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .chips{display:flex;gap:8px;flex-wrap:wrap}
-  .chip{padding:10px 14px;border:1px solid var(--line);border-radius:999px;font-size:14px;
-    color:var(--sub);background:var(--navy);cursor:pointer;user-select:none}
-  .chip.on{background:var(--accent);color:#06251f;border-color:var(--accent);font-weight:800}
-  nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;
-    background:rgba(12,22,40,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line)}
-  nav.tabs button{flex:1;background:none;color:var(--mut);padding:10px 0 11px;font-size:11px;
-    display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:0;font-weight:700}
-  nav.tabs button.on{color:var(--accent)}
-  nav.tabs .ic{width:23px;height:23px}
-  .view{display:none;animation:fade .25s ease}
-  .view.on{display:block}
-  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
-  .ex{border:1px solid var(--line);border-radius:14px;margin-bottom:11px;overflow:hidden;background:var(--card2)}
-  .ex .head{padding:13px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-  .ex .name{font-weight:800;font-size:16px}
-  .ex .tag{font-size:12px;color:var(--sub);margin-top:3px}
-  .badge{font-size:11px;padding:3px 8px;border-radius:7px;font-weight:800;margin-left:6px}
-  .badge.knee{background:rgba(86,217,127,.16);color:var(--good)}
-  .howbtn{background:var(--navy);border:1px solid var(--accent);color:var(--accent);
-    padding:9px 12px;border-radius:10px;font-size:13px;white-space:nowrap;flex-shrink:0}
-  .setrow{display:grid;grid-template-columns:26px 1fr 1fr 42px;gap:8px;align-items:center;padding:5px 14px}
-  .setrow input{padding:11px;text-align:center;font-size:17px}
-  .setrow .sn{color:var(--mut);font-size:14px;text-align:center;font-weight:800}
-  .setrow .done{font-size:26px;text-align:center;cursor:pointer;color:var(--mut);line-height:1}
-  .setrow .done.ok{color:var(--good)}
-  .setlbl{display:grid;grid-template-columns:26px 1fr 1fr 42px;gap:8px;padding:2px 14px 4px;
-    font-size:11px;color:var(--mut);font-weight:700}
-  .setlbl div{text-align:center}
-  .ex .foot{padding:9px 14px 13px;display:flex;gap:8px}
-  .rec{font-size:13px;color:var(--gold);padding:9px 14px;background:rgba(255,209,102,.08);
-    display:flex;gap:8px;align-items:center;line-height:1.4}
-  .rec b{color:#fff}
-  .hint{font-size:13px;color:var(--sub);line-height:1.6}
-  .kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .kpi .card{margin:0;text-align:center;padding:15px 10px}
-  .kpi .big{font-size:24px} .kpi .lbl{font-size:12px;color:var(--sub);margin-top:4px}
-  table.log{width:100%;border-collapse:collapse;font-size:13px}
-  table.log th,table.log td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
-  table.log th{color:var(--sub);font-weight:700;font-size:11px}
-  .bar{height:10px;background:var(--navy);border-radius:6px;overflow:hidden;margin-top:6px}
-  .bar > i{display:block;height:100%;border-radius:6px;background:var(--accent)}
-  .insight{border-left:3px solid var(--accent);padding:11px 13px;background:rgba(58,214,196,.07);
-    border-radius:0 12px 12px 0;margin-bottom:10px;font-size:13.5px;line-height:1.6}
-  .insight.warn{border-color:var(--gold);background:rgba(255,209,102,.07)}
-  .insight.bad{border-color:var(--bad);background:rgba(255,107,107,.07)}
-  .insight.good{border-color:var(--good);background:rgba(86,217,127,.07)}
-  .insight b{color:#fff}
-  canvas{width:100%;display:block}
-  .disc{font-size:11.5px;color:var(--mut);line-height:1.55}
-  .modal{position:fixed;inset:0;z-index:60;background:rgba(6,12,24,.72);backdrop-filter:blur(4px);
-    display:none;align-items:flex-end;justify-content:center}
-  .modal.on{display:flex}
-  .sheet{background:var(--navy2);border:1px solid var(--line);border-radius:20px 20px 0 0;
-    width:100%;max-width:760px;max-height:90vh;overflow:auto;padding:18px 16px 30px;
-    animation:up .28s cubic-bezier(.2,.8,.2,1)}
-  @keyframes up{from{transform:translateY(40px);opacity:.6}to{transform:translateY(0);opacity:1}}
-  .sheet h3{margin:2px 0 4px;font-size:20px}
-  .seg{display:flex;background:var(--navy);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
-  .seg button{flex:1;background:none;color:var(--sub);padding:11px 0;font-size:14px}
-  .seg button.on{background:var(--accent);color:#06251f}
-  .timer{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:35;
-    background:var(--accent2);color:#fff;padding:11px 20px;border-radius:999px;font-weight:800;
-    box-shadow:0 6px 22px rgba(0,0,0,.45);display:none;align-items:center;gap:13px}
-  .timer.on{display:flex}
-  .timer button{background:rgba(255,255,255,.22);color:#fff;width:32px;height:32px;border-radius:50%;font-size:18px}
-  .empty{text-align:center;color:var(--mut);padding:34px 12px;font-size:14px;line-height:1.7}
-  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--sub);margin-top:9px}
-  .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:middle}
-  /* 가이드 시트 */
-  .gnum{display:flex;gap:11px;margin-bottom:13px;align-items:flex-start}
-  .gnum .n{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);
-    color:#06251f;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px}
-  .gnum .t{font-size:14.5px;line-height:1.55;padding-top:3px}
-  .gbox{border-radius:12px;padding:13px 14px;margin-bottom:11px;font-size:13.5px;line-height:1.6}
-  .gbox.tip{background:rgba(58,214,196,.08);border:1px solid rgba(58,214,196,.25)}
-  .gbox.bad{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.3)}
-  .gbox.knee{background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.3)}
-  .gbox .gt{font-weight:800;margin-bottom:6px;display:block}
-  .gbox ul{margin:0;padding-left:18px} .gbox li{margin-bottom:4px}
-  .bodywrap{display:flex;gap:14px;align-items:center;justify-content:center;
-    background:var(--navy);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
-  .bodywrap .cap{font-size:12px;color:var(--sub);text-align:center;margin-top:4px;font-weight:700}
-  .onbox{background:rgba(91,140,255,.08);border:1px solid rgba(91,140,255,.28);
-    border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.65;color:var(--sub)}
-  .onbox b{color:#fff}
+:root{
+  --bg:#0b1424; --bg2:#101d33; --card:#152641; --card2:#1b3050; --line:#25406b;
+  --txt:#e9eff9; --dim:#8ea3c4; --dim2:#5f7599;
+  --acc:#3ad6c4; --acc2:#5b8cff; --gold:#f5c451; --good:#4ade80; --bad:#ff6b6b;
+  --sat:env(safe-area-inset-top); --sab:env(safe-area-inset-bottom);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;overscroll-behavior:none}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','맑은 고딕',system-ui,sans-serif;
+  font-size:15px; line-height:1.55; letter-spacing:-.2px;
+  padding-bottom:calc(76px + var(--sab));
+}
+button{font-family:inherit;color:inherit;border:none;background:none;cursor:pointer;font-size:15px}
+input,select{font-family:inherit;font-size:16px}
+.hide{display:none !important}
+
+/* ---------- 헤더 ---------- */
+header{
+  position:sticky;top:0;z-index:40;background:rgba(11,20,36,.92);backdrop-filter:blur(12px);
+  padding:calc(var(--sat) + 12px) 16px 12px;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid rgba(37,64,107,.5);
+}
+.logo{font-size:18px;font-weight:800;letter-spacing:-.6px}
+.logo span{color:var(--acc)}
+.hbtn{margin-left:auto;width:36px;height:36px;border-radius:11px;background:var(--card);
+  display:flex;align-items:center;justify-content:center}
+.hbtn svg{width:19px;height:19px;stroke:var(--dim);fill:none;stroke-width:1.8}
+
+/* ---------- 공통 ---------- */
+.wrap{padding:16px 16px 24px;max-width:560px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+.card.flat{background:var(--bg2)}
+.sect{font-size:12px;font-weight:800;color:var(--dim);letter-spacing:.4px;margin:22px 2px 9px;text-transform:uppercase}
+.sect:first-child{margin-top:4px}
+.row{display:flex;align-items:center;gap:10px}
+.sp{margin-left:auto}
+.mut{color:var(--dim)}
+.sm{font-size:13px}
+.xs{font-size:11.5px}
+.b{font-weight:700}
+.big{font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;
+  font-size:11.5px;font-weight:700;background:var(--card2);color:var(--dim)}
+.pill.acc{background:rgba(58,214,196,.14);color:var(--acc)}
+.pill.gold{background:rgba(245,196,81,.14);color:var(--gold)}
+.pill.good{background:rgba(74,222,128,.14);color:var(--good)}
+.pill.bad{background:rgba(255,107,107,.14);color:var(--bad)}
+.btn{display:block;width:100%;padding:15px;border-radius:15px;background:var(--card2);
+  font-weight:700;text-align:center;border:1px solid var(--line)}
+.btn.primary{background:linear-gradient(135deg,#3ad6c4,#2fb8d4);color:#04202a;border:none;
+  font-size:17px;font-weight:800;padding:18px;box-shadow:0 8px 22px -8px rgba(58,214,196,.6)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad)}
+.btn:active{transform:scale(.985)}
+.btn2{display:flex;gap:9px}
+.btn2>*{flex:1}
+
+/* ---------- 홈 ---------- */
+.hero{background:linear-gradient(160deg,#16304f,#111f36);border:1px solid var(--line);
+  border-radius:22px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden}
+.hero:after{content:'';position:absolute;right:-40px;top:-40px;width:150px;height:150px;
+  border-radius:50%;background:radial-gradient(circle,rgba(58,214,196,.18),transparent 70%)}
+.greet{font-size:13px;color:var(--dim);margin-bottom:2px}
+.htitle{font-size:24px;font-weight:800;letter-spacing:-.8px;margin-bottom:12px}
+.dots{display:flex;gap:6px;align-items:center;margin-bottom:14px}
+.dot{width:26px;height:6px;border-radius:3px;background:var(--line)}
+.dot.on{background:var(--acc)}
+.dot.today{background:var(--gold)}
+.preview{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.ptag{font-size:11.5px;padding:5px 9px;border-radius:9px;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.07);color:#c8d6ea}
+.goal{background:rgba(245,196,81,.1);border:1px solid rgba(245,196,81,.25);border-radius:13px;
+  padding:11px 13px;margin-bottom:14px;font-size:13.5px;color:#ffe6ac}
+.goal b{color:var(--gold)}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.stat3>div{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:13px 10px;text-align:center}
+.stat3 .v{font-size:21px;font-weight:800;letter-spacing:-.5px}
+.stat3 .l{font-size:11px;color:var(--dim);margin-top:1px}
+
+/* ---------- 플레이어 ---------- */
+#player{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;
+  padding-top:var(--sat);padding-bottom:var(--sab)}
+.pbar{padding:12px 16px 0}
+.ptop{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.ptime{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.pstep{font-size:12px;color:var(--dim);font-weight:700}
+.pquit{width:32px;height:32px;border-radius:10px;background:var(--card);display:flex;
+  align-items:center;justify-content:center;font-size:17px;color:var(--dim)}
+.track{height:5px;border-radius:3px;background:var(--card2);overflow:hidden}
+.track>i{display:block;height:100%;background:linear-gradient(90deg,#3ad6c4,#5b8cff);
+  border-radius:3px;transition:width .4s}
+.track.over>i{background:linear-gradient(90deg,#f5c451,#ff8a5b)}
+.pbody{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;justify-content:center}
+.pfoot{padding:12px 16px 16px}
+
+.exblock{text-align:center}
+.exlv{display:inline-flex;align-items:center;gap:7px;margin-bottom:12px}
+.lvbar{display:flex;gap:3px}
+.lvbar i{width:14px;height:4px;border-radius:2px;background:var(--line)}
+.lvbar i.on{background:var(--acc)}
+.exname{font-size:27px;font-weight:800;letter-spacing:-1px;line-height:1.2;margin-bottom:5px}
+.exeasy{font-size:14px;color:var(--dim);margin-bottom:16px}
+.extgt{display:inline-block;background:var(--card);border:1px solid var(--line);border-radius:13px;
+  padding:9px 16px;font-size:14px;font-weight:700;margin-bottom:20px}
+.extgt b{color:var(--acc)}
+.counter{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:8px}
+.cbtn{width:58px;height:58px;border-radius:50%;background:var(--card);border:1px solid var(--line);
+  font-size:26px;font-weight:300;display:flex;align-items:center;justify-content:center;color:var(--acc)}
+.cbtn:active{background:var(--card2)}
+.cval{font-size:64px;font-weight:800;letter-spacing:-3px;min-width:110px;font-variant-numeric:tabular-nums;line-height:1}
+.cunit{font-size:13px;color:var(--dim);margin-bottom:18px}
+.lasthint{font-size:12.5px;color:var(--dim);margin-bottom:16px}
+.lasthint b{color:var(--txt)}
+.howbtn{display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border-radius:12px;
+  background:var(--card);border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--dim)}
+.pairtag{font-size:11.5px;color:var(--acc);font-weight:700;margin-bottom:10px;letter-spacing:.3px}
+
+/* 휴식 */
+.restwrap{text-align:center}
+.ring{position:relative;width:214px;height:214px;margin:0 auto 20px}
+.ring svg{transform:rotate(-90deg)}
+.ring .bgc{stroke:var(--card2)}
+.ring .fgc{stroke:var(--acc);transition:stroke-dashoffset .95s linear}
+.ring .inn{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .n{font-size:52px;font-weight:800;letter-spacing:-2px;font-variant-numeric:tabular-nums}
+.ring .t{font-size:12px;color:var(--dim);letter-spacing:.5px;font-weight:700}
+.nextup{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:13px 15px;
+  text-align:left;margin-bottom:6px}
+.nextup .l{font-size:11px;color:var(--acc);font-weight:800;letter-spacing:.5px;margin-bottom:3px}
+.nextup .n{font-size:17px;font-weight:700}
+.nextup .s{font-size:12.5px;color:var(--dim)}
+
+/* 준비운동 */
+.warmnum{font-size:12px;font-weight:800;color:var(--gold);letter-spacing:.5px;margin-bottom:8px}
+.holdt{font-size:60px;font-weight:800;letter-spacing:-2px;font-variant-numeric:tabular-nums;margin:6px 0 4px}
+
+/* ---------- 마무리 ---------- */
+#finish{position:fixed;inset:0;z-index:210;background:var(--bg);overflow-y:auto;
+  padding:calc(var(--sat) + 20px) 16px calc(var(--sab) + 20px)}
+.fin-h{text-align:center;margin-bottom:20px}
+.fin-h .t{font-size:27px;font-weight:800;letter-spacing:-1px}
+.fin-h .s{color:var(--dim);font-size:14px;margin-top:3px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.fgrid>div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center}
+.fgrid .v{font-size:24px;font-weight:800;letter-spacing:-.8px}
+.fgrid .l{font-size:11.5px;color:var(--dim);margin-top:2px}
+.badge{display:flex;align-items:center;gap:11px;background:linear-gradient(120deg,rgba(245,196,81,.16),rgba(245,196,81,.04));
+  border:1px solid rgba(245,196,81,.3);border-radius:15px;padding:13px 15px;margin-bottom:9px}
+.badge .ic{width:34px;height:34px;border-radius:11px;background:rgba(245,196,81,.2);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex:0 0 auto}
+.badge .tt{font-weight:800;font-size:14.5px}
+.badge .ss{font-size:12.5px;color:var(--dim)}
+.badge.up{background:linear-gradient(120deg,rgba(58,214,196,.16),rgba(58,214,196,.04));border-color:rgba(58,214,196,.32)}
+.badge.up .ic{background:rgba(58,214,196,.2);color:var(--acc)}
+.pick{display:flex;gap:8px}
+.pick button{flex:1;padding:13px 6px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);
+  font-size:13.5px;font-weight:700;color:var(--dim)}
+.pick button.on{background:rgba(58,214,196,.14);border-color:var(--acc);color:var(--acc)}
+textarea{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:14px;
+  padding:13px;color:var(--txt);font-size:15px;resize:none;font-family:inherit}
+
+/* ---------- 기록 ---------- */
+.heat{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
+.heat i{aspect-ratio:1;border-radius:5px;background:var(--card2);display:block}
+.heat i.l1{background:rgba(58,214,196,.35)}
+.heat i.l2{background:rgba(58,214,196,.65)}
+.heat i.l3{background:var(--acc)}
+.heat i.fut{background:rgba(255,255,255,.03)}
+.hlbl{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-top:5px;font-size:9.5px;color:var(--dim);text-align:center}
+.sess{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(37,64,107,.45)}
+.sess:last-child{border-bottom:none}
+.sess .d{width:44px;flex:0 0 auto;text-align:center}
+.sess .d .m{font-size:10.5px;color:var(--dim)}
+.sess .d .n{font-size:18px;font-weight:800;line-height:1}
+.sess .tag{width:26px;height:26px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;background:var(--card2);color:var(--acc);flex:0 0 auto}
+.sess .info{flex:1;min-width:0}
+.sess .info .t{font-size:14px;font-weight:700}
+.sess .info .s{font-size:12px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- 성장 ---------- */
+.lvrow{display:flex;align-items:center;gap:11px;padding:10px 0}
+.lvrow .nm{width:88px;flex:0 0 auto;font-size:13.5px;font-weight:700}
+.lvrow .bar{flex:1;height:8px;border-radius:4px;background:var(--card2);overflow:hidden;display:flex;gap:2px}
+.lvrow .bar i{flex:1;background:var(--card2);border-radius:2px}
+.lvrow .bar i.on{background:linear-gradient(90deg,#3ad6c4,#5b8cff)}
+.lvrow .cur{font-size:11.5px;color:var(--dim);width:70px;text-align:right;flex:0 0 auto}
+.chart{display:flex;align-items:flex-end;gap:6px;height:104px;margin:8px 0 4px}
+.chart .cb{flex:1;background:linear-gradient(180deg,#3ad6c4,#2b7fa8);border-radius:5px 5px 0 0;min-height:3px;position:relative}
+.chart .cb.now{background:linear-gradient(180deg,#f5c451,#e08a3c)}
+.clbl{display:flex;gap:6px;font-size:10px;color:var(--dim);text-align:center}
+.clbl div{flex:1}
+.bal{display:flex;height:12px;border-radius:6px;overflow:hidden;background:var(--card2);margin:8px 0}
+.bal i{display:block;height:100%}
+.tip{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid rgba(37,64,107,.4);font-size:13.5px;line-height:1.5}
+.tip:last-child{border-bottom:none}
+.tip .ic{width:5px;flex:0 0 auto;border-radius:3px;background:var(--acc)}
+.tip.warn .ic{background:var(--gold)} .tip.bad .ic{background:var(--bad)} .tip.good .ic{background:var(--good)}
+
+/* ---------- 하단 탭 ---------- */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
+  background:rgba(11,20,36,.95);backdrop-filter:blur(14px);border-top:1px solid rgba(37,64,107,.6);
+  padding-bottom:var(--sab)}
+nav button{flex:1;padding:11px 0 9px;display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:10.5px;font-weight:700;color:var(--dim)}
+nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--acc)}
+
+/* ---------- 모달/시트 ---------- */
+.modal{position:fixed;inset:0;z-index:300;background:rgba(4,9,18,.72);backdrop-filter:blur(3px);
+  display:none;align-items:flex-end;justify-content:center}
+.modal.on{display:flex}
+.sheet{width:100%;max-width:560px;max-height:88vh;overflow-y:auto;background:var(--bg2);
+  border-radius:24px 24px 0 0;padding:8px 18px calc(24px + var(--sab));border-top:1px solid var(--line)}
+.grab{width:38px;height:4px;border-radius:2px;background:var(--line);margin:8px auto 16px}
+.sh-t{font-size:20px;font-weight:800;letter-spacing:-.6px;margin-bottom:3px}
+.fld{margin-bottom:15px}
+.fld>label{display:block;font-size:12.5px;color:var(--dim);font-weight:700;margin-bottom:7px}
+.fld input[type=number],.fld input[type=text]{width:100%;background:var(--card);border:1px solid var(--line);
+  border-radius:13px;padding:13px;color:var(--txt)}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;padding:12px 4px;border-radius:12px;background:var(--card);border:1px solid var(--line);
+  font-size:13.5px;font-weight:700;color:var(--dim)}
+.seg button.on{background:rgba(58,214,196,.15);border-color:var(--acc);color:var(--acc)}
+.tog{display:flex;align-items:center;padding:13px 0;border-bottom:1px solid rgba(37,64,107,.45)}
+.tog:last-of-type{border-bottom:none}
+.sw{margin-left:auto;width:46px;height:27px;border-radius:14px;background:var(--card2);position:relative;
+  border:1px solid var(--line);flex:0 0 auto}
+.sw:after{content:'';position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;
+  background:var(--dim);transition:.2s}
+.sw.on{background:rgba(58,214,196,.28);border-color:var(--acc)}
+.sw.on:after{left:22px;background:var(--acc)}
+
+/* 가이드 */
+.gsteps{margin:14px 0}
+.gnum{display:flex;gap:11px;margin-bottom:10px}
+.gnum .n{width:23px;height:23px;border-radius:8px;background:var(--acc);color:#04202a;font-size:12px;
+  font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.gnum .t{font-size:14px;line-height:1.45;padding-top:1px}
+.gbox{border-radius:14px;padding:12px 14px;margin-bottom:9px;font-size:13.5px;line-height:1.5}
+.gbox .gt{display:block;font-size:11.5px;font-weight:800;letter-spacing:.4px;margin-bottom:5px}
+.gbox ul{margin:0;padding-left:16px} .gbox li{margin-bottom:3px}
+.gbox.tip{background:rgba(74,222,128,.09);border:1px solid rgba(74,222,128,.24)} .gbox.tip .gt{color:var(--good)}
+.gbox.bad{background:rgba(255,107,107,.09);border:1px solid rgba(255,107,107,.24)} .gbox.bad .gt{color:var(--bad)}
+.gbox.knee{background:rgba(245,196,81,.09);border:1px solid rgba(245,196,81,.26)} .gbox.knee .gt{color:var(--gold)}
+.ytb{display:block;text-align:center;padding:13px;border-radius:14px;background:#c0392b;color:#fff;
+  font-weight:800;text-decoration:none;font-size:14px;margin-top:4px}
+.bodymap{display:block;margin:0 auto}
+.empty{text-align:center;padding:34px 16px;color:var(--dim);font-size:14px;line-height:1.7}
+.toast{position:fixed;left:50%;bottom:calc(92px + var(--sab));transform:translateX(-50%);z-index:400;
+  background:var(--card2);border:1px solid var(--line);border-radius:13px;padding:11px 18px;
+  font-size:13.5px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;white-space:nowrap}
+.toast.on{opacity:1;bottom:calc(102px + var(--sab))}
 </style>
 </head>
 <body>
 
-<header class="top">
-  <h1>머슬<span>플랜</span></h1>
-  <div class="pill" id="topPill">근육 키우기 코치</div>
+<header>
+  <div class="logo">머슬<span>플랜</span></div>
+  <button class="hbtn" onclick="openSettings()" aria-label="설정">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
 </header>
 
-<div class="wrap">
+<div id="tabHome" class="wrap"></div>
+<div id="tabLog"  class="wrap hide"></div>
+<div id="tabGrow" class="wrap hide"></div>
 
-  <section class="view" id="v-today">
-    <h2 class="sec">오늘 할 운동</h2>
-    <div id="todayHead"></div>
-    <div id="todayBody"></div>
-  </section>
-
-  <section class="view" id="v-program">
-    <h2 class="sec">내 운동 계획</h2>
-    <div id="programInfo"></div>
-    <div id="programBody"></div>
-    <button class="btn ghost" style="margin-top:8px" onclick="openSetup()">계획 다시 만들기</button>
-  </section>
-
-  <section class="view" id="v-stats">
-    <h2 class="sec">분석 & 코치 한마디</h2>
-    <div id="statsBody"></div>
-  </section>
-
-  <section class="view" id="v-history">
-    <h2 class="sec">지난 운동 기록</h2>
-    <div id="historyBody"></div>
-  </section>
-
-  <section class="view" id="v-settings">
-    <h2 class="sec">설정</h2>
-    <div class="card">
-      <div class="label">내 정보</div>
-      <div id="profileSummary" class="hint"></div>
-      <button class="btn ghost sm" style="width:100%;margin-top:12px" onclick="openSetup()">정보 / 계획 수정</button>
-    </div>
-    <div class="card">
-      <div class="label">데이터 백업</div>
-      <p class="hint">기록은 이 폰(브라우저)에만 저장돼. 폰을 바꾸거나 캐시를 지우면 사라지니 가끔 백업해줘.</p>
-      <div class="grid2" style="margin-top:11px">
-        <button class="btn ghost sm" onclick="exportData()">내보내기</button>
-        <button class="btn ghost sm" onclick="document.getElementById('importFile').click()">불러오기</button>
-      </div>
-      <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
-    </div>
-    <div class="card">
-      <div class="label">초기화</div>
-      <button class="btn danger sm" style="width:100%" onclick="resetAll()">모든 기록 삭제</button>
-    </div>
-    <div class="card">
-      <div class="disc"><b>안전 안내</b> — 이 앱의 자세 설명과 무릎 보호 기능은 일반적인 가이드일 뿐 진료가 아니야.
-        오른쪽 안쪽 무릎 통증은 정형외과/스포츠의학 또는 물리치료사 평가를 한 번 받아두는 게 좋아.
-        운동 중 무릎에 찌릿함·통증이 오면 즉시 멈추고, 설정에서 그 운동을 바꿔줘.</div>
-    </div>
-    <div class="disc" style="text-align:center;margin-top:6px">머슬플랜 · 폰 홈화면에 추가하면 앱처럼 쓸 수 있어요</div>
-  </section>
-
-</div>
-
-<div class="timer" id="restTimer">
-  <span id="restLabel">휴식</span><span id="restTime">1:30</span>
-  <button onclick="stopRest()">×</button>
-</div>
-
-<nav class="tabs">
-  <button data-tab="today" class="on" onclick="go('today')">
-    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4v16M18 4v16M4 8h4M16 8h4M8 12h8M4 16h4M16 16h4"/></svg>오늘</button>
-  <button data-tab="program" onclick="go('program')">
-    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg>계획</button>
-  <button data-tab="stats" onclick="go('stats')">
-    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>분석</button>
-  <button data-tab="history" onclick="go('history')">
-    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>기록</button>
-  <button data-tab="settings" onclick="go('settings')">
-    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a7.5 7.5 0 0 0 0-2l2-1.5-2-3.4-2.3 1a7.5 7.5 0 0 0-1.7-1L15 3.5h-4l-.3 2.6a7.5 7.5 0 0 0-1.7 1l-2.3-1-2 3.4 2 1.5a7.5 7.5 0 0 0 0 2l-2 1.5 2 3.4 2.3-1a7.5 7.5 0 0 0 1.7 1l.3 2.6h4l.3-2.6a7.5 7.5 0 0 0 1.7-1l2.3 1 2-3.4z"/></svg>설정</button>
+<nav>
+  <button id="nvHome" class="on" onclick="go('home')">
+    <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>오늘</button>
+  <button id="nvLog" onclick="go('log')">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="17" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/></svg>기록</button>
+  <button id="nvGrow" onclick="go('grow')">
+    <svg viewBox="0 0 24 24"><path d="M3 17l5.5-6 4 4L21 6"/><path d="M21 11V6h-5"/></svg>성장</button>
 </nav>
 
-<!-- 설정 모달 -->
-<div class="modal" id="setupModal">
+<!-- ============ 세션 플레이어 ============ -->
+<div id="player" class="hide">
+  <div class="pbar">
+    <div class="ptop">
+      <div class="ptime" id="pTime">0:00</div>
+      <div class="pstep" id="pStep"></div>
+      <button class="pquit sp" onclick="quitSession()">&times;</button>
+    </div>
+    <div class="track" id="pTrack"><i id="pFill" style="width:0%"></i></div>
+  </div>
+  <div class="pbody" id="pBody"></div>
+  <div class="pfoot" id="pFoot"></div>
+</div>
+
+<!-- ============ 마무리 ============ -->
+<div id="finish" class="hide"></div>
+
+<!-- ============ 가이드 시트 ============ -->
+<div class="modal" id="guideModal" onclick="if(event.target===this)closeGuide()">
+  <div class="sheet" id="guideBody"></div>
+</div>
+
+<!-- ============ 설정 ============ -->
+<div class="modal" id="setModal" onclick="if(event.target===this)closeSettings()">
   <div class="sheet">
-    <h3 id="setupTitle">나에게 맞는 운동 계획 만들기</h3>
-    <p class="hint" style="margin:6px 0 16px">몇 가지만 고르면 자동으로 짜줄게. 나중에 언제든 바꿀 수 있어.</p>
+    <div class="grab"></div>
+    <div class="sh-t">설정</div>
+    <div class="mut sm" style="margin-bottom:18px">내 몸과 장비에 맞춰야 계획이 정확해져요</div>
 
-    <div class="card tight">
-      <div class="grid2">
-        <div><label class="label">나이</label><input type="number" id="inAge" value="45"></div>
-        <div><label class="label">몸무게(kg)</label><input type="number" id="inWeight" value="75"></div>
-      </div>
+    <div class="fld"><label>몸무게 (kg) — 맨몸운동 무게 계산에 써요</label>
+      <input type="number" id="stWeight" inputmode="decimal"></div>
+    <div class="fld"><label>나이</label><input type="number" id="stAge" inputmode="numeric"></div>
+
+    <div class="fld"><label>일주일 목표 횟수</label>
+      <div class="seg" id="stDays">
+        <button data-v="3" onclick="segPick('stDays','3')">3번</button>
+        <button data-v="4" onclick="segPick('stDays','4')">4번</button>
+        <button data-v="5" onclick="segPick('stDays','5')">5번</button>
+      </div></div>
+
+    <div class="fld"><label>한 번에 쓸 시간</label>
+      <div class="seg" id="stMin">
+        <button data-v="20" onclick="segPick('stMin','20')">20분</button>
+        <button data-v="30" onclick="segPick('stMin','30')">30분</button>
+        <button data-v="40" onclick="segPick('stMin','40')">40분</button>
+      </div></div>
+
+    <div class="sect">가지고 있는 장비</div>
+    <div class="fld"><label>아령(덤벨) 무게 · 개수</label>
+      <div class="row" style="gap:8px">
+        <input type="number" id="stDb" inputmode="decimal" style="flex:1;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px;color:var(--txt)">
+        <div class="seg" style="flex:1.2" id="stDbN">
+          <button data-v="1" onclick="segPick('stDbN','1')">1개</button>
+          <button data-v="2" onclick="segPick('stDbN','2')">2개</button>
+        </div>
+      </div></div>
+    <div class="fld"><label>케틀벨 무게 (kg)</label><input type="number" id="stKb" inputmode="decimal"></div>
+    <div class="tog"><div><div class="b sm">턱걸이 바</div><div class="xs mut">있으면 등 운동이 훨씬 좋아져요</div></div>
+      <div class="sw" id="swPull" onclick="this.classList.toggle('on')"></div></div>
+
+    <div class="sect">무릎</div>
+    <div class="tog"><div><div class="b sm">무릎 보호 모드</div><div class="xs mut">깊은 스쿼트 대신 엉덩이·뒤허벅지 위주</div></div>
+      <div class="sw" id="swKnee" onclick="this.classList.toggle('on')"></div></div>
+
+    <div class="sect">운동할 때</div>
+    <div class="tog"><div><div class="b sm">화면 안 꺼지게</div><div class="xs mut">운동 중 화면이 계속 켜져 있어요</div></div>
+      <div class="sw" id="swWake" onclick="this.classList.toggle('on')"></div></div>
+    <div class="tog"><div><div class="b sm">휴식 끝 소리</div></div>
+      <div class="sw" id="swSound" onclick="this.classList.toggle('on')"></div></div>
+    <div class="tog"><div><div class="b sm">휴식 끝 진동</div></div>
+      <div class="sw" id="swVib" onclick="this.classList.toggle('on')"></div></div>
+    <div class="fld" style="margin-top:15px"><label>기본 휴식 시간 (초)</label>
+      <div class="seg" id="stRest">
+        <button data-v="45" onclick="segPick('stRest','45')">45초</button>
+        <button data-v="60" onclick="segPick('stRest','60')">60초</button>
+        <button data-v="75" onclick="segPick('stRest','75')">75초</button>
+        <button data-v="90" onclick="segPick('stRest','90')">90초</button>
+      </div></div>
+
+    <button class="btn primary" style="margin-top:6px" onclick="saveSettings()">저장</button>
+
+    <div class="sect">데이터</div>
+    <div class="btn2" style="margin-bottom:9px">
+      <button class="btn" onclick="exportData()">백업 파일 저장</button>
+      <button class="btn" onclick="document.getElementById('impFile').click()">불러오기</button>
     </div>
-
-    <div class="card tight">
-      <label class="label">헬스 경험</label>
-      <div class="seg" id="segExp">
-        <button data-v="초보" class="on">처음이에요</button>
-        <button data-v="중급">조금 해봤어요</button>
-      </div>
+    <input type="file" id="impFile" accept="application/json" class="hide" onchange="importData(this)">
+    <button class="btn ghost danger" onclick="resetAll()">모든 기록 지우기</button>
+    <div class="xs mut" style="text-align:center;margin-top:18px;line-height:1.6">
+      이 앱은 의학적 진단이나 처방이 아니에요.<br>무릎에 날카로운 통증이 오면 멈추고 전문의와 상담하세요.
     </div>
-
-    <div class="card tight">
-      <label class="label">일주일에 몇 번 운동할까?</label>
-      <div class="chips" id="chipDays">
-        <div class="chip" data-v="2">주 2번</div>
-        <div class="chip on" data-v="3">주 3번</div>
-        <div class="chip" data-v="4">주 4번</div>
-        <div class="chip" data-v="5">주 5번</div>
-      </div>
-      <p class="hint" id="splitHint" style="margin-top:9px"></p>
-    </div>
-
-    <div class="card tight">
-      <label class="label">어디서 운동해?</label>
-      <div class="seg" id="segEquip">
-        <button data-v="gym">헬스장</button>
-        <button data-v="home">집·기구</button>
-        <button data-v="body" class="on">맨몸</button>
-      </div>
-      <p class="hint" style="margin-top:9px"><b style="color:var(--accent)">맨몸</b> = 장비 없이(턱걸이 봉만 있으면 더 좋아요) 푸쉬업·턱걸이·파이크푸쉬업·딥스·한다리RDL 등으로 20~30분짜리 짧은 전신을 짜줄게. 무릎에 부담 없는 동작 위주라 무게 대신 자세·횟수로 키워요.</p>
-    </div>
-
-    <div class="card tight">
-      <label class="label">무릎 보호 모드</label>
-      <div class="seg" id="segKnee">
-        <button data-v="on" class="on">켜기 (추천)</button>
-        <button data-v="off">끄기</button>
-      </div>
-      <p class="hint" style="margin-top:9px">켜면 무릎에 부담 큰 스쿼트·런지를 빼고, 무릎이 편한 하체 운동(레그컬·힙쓰러스트 등)으로 짜줄게.</p>
-    </div>
-
-    <button class="btn" onclick="saveSetup()">이대로 계획 만들기</button>
-    <button class="btn ghost" style="margin-top:8px" onclick="closeSetup()">취소</button>
   </div>
 </div>
 
-<!-- 운동 방법 가이드 모달 -->
-<div class="modal" id="guideModal">
-  <div class="sheet" id="guideSheet"></div>
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
-/* ============================================================
-   머슬플랜 v2 — 데이터
-   ============================================================ */
-const KEY='musclePlan_v1';
-let DB=load();
-function load(){ try{return JSON.parse(localStorage.getItem(KEY))||blank();}catch(e){return blank();} }
-function blank(){ return {profile:null,program:null,logs:[]}; }
-function save(){ localStorage.setItem(KEY,JSON.stringify(DB)); }
+'use strict';
+/* ==================================================================
+   머슬플랜 v2 — 집 맨몸/케틀벨 중심, 30분 세션, 레벨 사다리 진행
+   저장키 musclePlan_v2 (v1 기록 자동 이관)
+   ================================================================== */
 
-const MUSCLES=['가슴','등','어깨','이두','삼두','대퇴사두','햄스트링','둔근','종아리','코어'];
-const MUSCLE_EASY={가슴:'가슴',등:'등',어깨:'어깨',이두:'앞팔(알통)',삼두:'뒷팔',
-  대퇴사두:'허벅지 앞',햄스트링:'허벅지 뒤',둔근:'엉덩이',종아리:'종아리',코어:'배(코어)'};
+const KEY='musclePlan_v2', OLDKEY='musclePlan_v1';
 
-/* 운동 DB + 가이드 통합
-   equip:barbell/dumbbell/machine/cable/body, comp:복합, kneeSafe:무릎보호모드 허용
-   g: {easy 쉬운이름, sum 한줄, region 앞/뒤, steps[], tips[], avoid[], knee, yt 검색어} */
-const EX=[
-/* 가슴 */
-{id:'bench',name:'벤치프레스(바벨)',m:'가슴',equip:'barbell',comp:1,kneeSafe:1,g:{
-  easy:'누워서 바벨 밀어올리기',sum:'가슴 전체를 키우는 대표 운동',region:'앞',
-  steps:['벤치에 누워 어깨를 뒤로 모으고 가슴을 살짝 내밀어요','바벨을 어깨너비보다 약간 넓게 잡아요','가슴 가운데(젖꼭지 라인)로 천천히 내려요','가슴을 밀어 바벨을 위로 올려요'],
-  tips:['손목은 꺾지 말고 곧게','발은 바닥에 단단히 고정','내릴 때 2초, 올릴 때 1초'],
-  avoid:['바벨을 가슴에 튕기지 않기','허리를 과하게 들어 올리지 않기','처음엔 꼭 빈 봉이나 보조자와'],yt:'벤치프레스 초보 정확한 자세'}},
-{id:'dbbench',name:'덤벨 벤치프레스',m:'가슴',equip:'dumbbell',comp:1,kneeSafe:1,g:{
-  easy:'누워서 덤벨 밀어올리기',sum:'바벨보다 안전하고 가슴을 더 늘려줘요',region:'앞',
-  steps:['덤벨 두 개를 들고 벤치에 누워요','팔꿈치를 가슴 옆으로 천천히 내려요','가슴 힘으로 위로 모아 올려요'],
-  tips:['덤벨이 가슴 옆까지 충분히 내려가게','맨 위에서 살짝 모아주기'],
-  avoid:['팔꿈치를 너무 아래(어깨 뒤)로 빼지 않기'],yt:'덤벨 벤치프레스 자세'}},
-{id:'incdb',name:'인클라인 덤벨프레스',m:'가슴',equip:'dumbbell',comp:1,kneeSafe:1,g:{
-  easy:'비스듬히 누워 덤벨 밀기',sum:'윗가슴을 채워 가슴을 또렷하게',region:'앞',
-  steps:['벤치를 30~45도로 세워요','덤벨을 들고 비스듬히 누워요','윗가슴 힘으로 위로 밀어올려요'],
-  tips:['각도는 30도면 충분','윗가슴에 자극이 느껴지는지 확인'],
-  avoid:['등받이를 너무 세우면 어깨 운동이 됨'],yt:'인클라인 덤벨프레스 자세'}},
-{id:'chestpr',name:'체스트 프레스 머신',m:'가슴',equip:'machine',comp:1,kneeSafe:1,g:{
-  easy:'기계로 가슴 밀기',sum:'초보가 가장 안전하게 가슴 자극',region:'앞',
-  steps:['손잡이가 가슴 높이에 오게 의자 조절','손잡이를 잡고 앞으로 밀어요','천천히 돌아와요'],
-  tips:['끝까지 펴되 팔꿈치 잠그지 않기','가슴을 모으는 느낌'],
-  avoid:['반동으로 빠르게 밀지 않기'],yt:'체스트프레스 머신 사용법'}},
-{id:'pecdec',name:'펙덱 플라이(머신)',m:'가슴',equip:'machine',comp:0,kneeSafe:1,g:{
-  easy:'기계로 가슴 모으기',sum:'가슴 안쪽 선을 만드는 마무리 운동',region:'앞',
-  steps:['팔을 패드에 대고 의자에 앉아요','양팔을 가슴 앞으로 모아요','천천히 벌려 돌아와요'],
-  tips:['가슴이 늘어나는 느낌까지 벌리기'],avoid:['팔 힘으로 당기지 말고 가슴으로'],yt:'펙덱 플라이 자세'}},
-{id:'ccross',name:'케이블 크로스오버',m:'가슴',equip:'cable',comp:0,kneeSafe:1,g:{
-  easy:'케이블 가슴 모으기',sum:'가슴 안쪽 자극 마무리 운동',region:'앞',
-  steps:['양쪽 케이블을 위쪽에 걸어요','손잡이 잡고 한 발 앞으로','가슴 아래로 손을 모아요'],
-  tips:['살짝 앞으로 숙여 가슴에 집중'],avoid:['어깨가 앞으로 말리지 않게'],yt:'케이블 크로스오버 자세'}},
-{id:'pushup',name:'푸쉬업(팔굽혀펴기)',m:'가슴',equip:'body',comp:1,kneeSafe:1,g:{
-  easy:'팔굽혀펴기',sum:'장비 없이 가슴·팔을 키워요',region:'앞',
-  steps:['손은 어깨보다 약간 넓게 바닥에','몸은 머리부터 발끝까지 일자','가슴이 바닥에 닿을 듯 내려요','밀어 올려요'],
-  tips:['힘들면 무릎을 바닥에 대고','엉덩이가 처지거나 솟지 않게'],
-  avoid:['목을 빼서 머리만 내리지 않기'],yt:'푸쉬업 정확한 자세'}},
-/* 등 */
-{id:'latpd',name:'랫풀다운',m:'등',equip:'machine',comp:1,kneeSafe:1,g:{
-  easy:'위에서 바 끌어내리기',sum:'넓은 등(역삼각형)을 만드는 기본',region:'뒤',
-  steps:['허벅지 패드 고정하고 앉아요','바를 어깨보다 넓게 잡아요','가슴 위쪽으로 바를 당겨 내려요','천천히 위로 돌려보내요'],
-  tips:['팔이 아니라 등(겨드랑이)으로 당기기','가슴을 펴고 살짝 뒤로'],
-  avoid:['목 뒤로 내리지 않기','반동 쓰지 않기'],yt:'랫풀다운 등에 자극 주는 법'}},
-{id:'seatrow',name:'시티드 케이블 로우',m:'등',equip:'cable',comp:1,kneeSafe:1,g:{
-  easy:'앉아서 케이블 당기기',sum:'등 가운데 두께를 만들어요',region:'뒤',
-  steps:['발판에 발 대고 앉아 손잡이 잡아요','허리는 곧게 세워요','배꼽 쪽으로 당겨요','천천히 보내요'],
-  tips:['어깨뼈를 뒤로 모은다는 느낌','가슴을 펴기'],
-  avoid:['허리를 굽혔다 펴며 반동 주지 않기'],yt:'시티드 로우 자세'}},
-{id:'brow',name:'바벨 로우',m:'등',equip:'barbell',comp:1,kneeSafe:1,g:{
-  easy:'숙여서 바벨 당기기',sum:'등 전체를 두껍게 (중급용)',region:'뒤',
-  steps:['무릎 살짝 굽히고 상체를 45도 숙여요','바벨을 어깨너비로 잡아요','배꼽 아래로 당겨요','천천히 내려요'],
-  tips:['허리는 곧게 편 상태 유지','등으로 당기기'],
-  avoid:['허리를 둥글게 말지 않기(부상)','너무 무겁게 시작 금지'],yt:'바벨로우 허리 안전하게'}},
-{id:'dbrow',name:'덤벨 로우(원암)',m:'등',equip:'dumbbell',comp:1,kneeSafe:1,g:{
-  easy:'한손 덤벨 당기기',sum:'한쪽씩 등을 집중 자극, 허리 부담 적음',region:'뒤',
-  steps:['벤치에 한 손·한 무릎 대고 지지','반대손으로 덤벨 들어요','옆구리 쪽으로 당겨 올려요','천천히 내려요'],
-  tips:['등이 일자가 되게','팔꿈치를 뒤로 보내기'],
-  avoid:['몸통을 비틀어 반동 쓰지 않기'],yt:'원암 덤벨로우 자세'}},
-{id:'pullup',name:'풀업 / 어시스트 풀업',m:'등',equip:'body',comp:1,kneeSafe:1,g:{
-  easy:'턱걸이(보조기계 가능)',sum:'등 상부를 키우는 최고의 운동',region:'뒤',
-  steps:['바를 어깨보다 넓게 잡아요','매달려 어깨를 아래로 내려요','가슴을 바에 가까이 끌어올려요','천천히 내려가요'],
-  tips:['힘들면 보조(어시스트) 머신이나 밴드 사용','턱이 바를 넘기게'],
-  avoid:['다리 차서 반동 주지 않기'],yt:'풀업 초보 어시스트 사용법'}},
-{id:'face',name:'페이스풀',m:'등',equip:'cable',comp:0,kneeSafe:1,g:{
-  easy:'얼굴 쪽으로 줄 당기기',sum:'굽은 어깨·자세 교정에 좋은 운동',region:'뒤',
-  steps:['케이블을 얼굴 높이에 걸어요','로프를 잡고 얼굴 쪽으로 당겨요','팔꿈치를 높게 벌려요'],
-  tips:['어깨뼈를 뒤로 모으기','가벼운 무게로'],avoid:['허리 젖히며 당기지 않기'],yt:'페이스풀 자세'}},
-/* 어깨 */
-{id:'ohp',name:'오버헤드 프레스',m:'어깨',equip:'barbell',comp:1,kneeSafe:1,g:{
-  easy:'머리 위로 바벨 밀기',sum:'동그란 어깨를 만드는 기본',region:'앞',
-  steps:['바벨을 어깨 앞에 걸쳐요','어깨너비로 잡아요','머리 위로 곧게 밀어올려요','천천히 내려요'],
-  tips:['배에 힘주고 허리 곧게','턱은 살짝 당기기'],
-  avoid:['허리를 뒤로 과하게 젖히지 않기'],yt:'오버헤드프레스 자세'}},
-{id:'dbshld',name:'덤벨 숄더프레스',m:'어깨',equip:'dumbbell',comp:1,kneeSafe:1,g:{
-  easy:'앉아서 덤벨 위로 밀기',sum:'어깨를 안전하게 키워요',region:'앞',
-  steps:['등받이 있는 의자에 앉아요','덤벨을 귀 옆 높이로','위로 밀어 올려요','천천히 내려요'],
-  tips:['팔꿈치가 너무 뒤로 가지 않게'],avoid:['반동으로 올리지 않기'],yt:'덤벨 숄더프레스 자세'}},
-{id:'latrz',name:'사이드 레터럴 레이즈',m:'어깨',equip:'dumbbell',comp:0,kneeSafe:1,g:{
-  easy:'덤벨 옆으로 들어올리기',sum:'어깨 옆 볼륨(넓이)을 만들어요',region:'앞',
-  steps:['덤벨을 양손에 들고 서요','팔을 옆으로 어깨 높이까지 들어요','천천히 내려요'],
-  tips:['가벼운 무게로 천천히','새끼손가락이 살짝 위로'],
-  avoid:['반동으로 흔들지 않기','어깨를 으쓱하지 않기'],yt:'사이드 레터럴 레이즈 자세'}},
-{id:'reardel',name:'리어델트 플라이',m:'어깨',equip:'dumbbell',comp:0,kneeSafe:1,g:{
-  easy:'숙여서 덤벨 뒤로 벌리기',sum:'어깨 뒷부분(굽은 어깨 교정)',region:'뒤',
-  steps:['상체를 앞으로 숙여요','가벼운 덤벨을 양옆으로 벌려요','천천히 모아요'],
-  tips:['어깨뼈를 모은다는 느낌'],avoid:['무겁게 하면 등 운동이 됨'],yt:'리어델트 플라이 자세'}},
-/* 이두 */
-{id:'bicurl',name:'바벨/덤벨 컬',m:'이두',equip:'dumbbell',comp:0,kneeSafe:1,g:{
-  easy:'알통 만들기(덤벨 들기)',sum:'앞팔(알통)을 키우는 기본',region:'앞',
-  steps:['덤벨을 손바닥이 앞을 보게 잡아요','팔꿈치를 옆구리에 고정','어깨 쪽으로 들어올려요','천천히 내려요'],
-  tips:['팔꿈치는 움직이지 않게','내릴 때 끝까지'],
-  avoid:['허리·반동으로 올리지 않기'],yt:'덤벨 컬 정확한 자세'}},
-{id:'hammer',name:'해머컬',m:'이두',equip:'dumbbell',comp:0,kneeSafe:1,g:{
-  easy:'세로로 덤벨 들기',sum:'팔뚝 두께를 키워요',region:'앞',
-  steps:['덤벨을 망치 쥐듯 세로로 잡아요','팔꿈치 고정하고 들어올려요','천천히 내려요'],
-  tips:['손목 고정'],avoid:['반동 금지'],yt:'해머컬 자세'}},
-{id:'ccurl',name:'케이블 컬',m:'이두',equip:'cable',comp:0,kneeSafe:1,g:{
-  easy:'케이블로 알통',sum:'끝까지 긴장 유지되는 알통 운동',region:'앞',
-  steps:['낮은 케이블에 바를 걸어요','팔꿈치 고정하고 올려요','천천히 내려요'],
-  tips:['일정한 속도로'],avoid:['몸 흔들지 않기'],yt:'케이블 컬 자세'}},
-/* 삼두 */
-{id:'pushdn',name:'케이블 푸쉬다운',m:'삼두',equip:'cable',comp:0,kneeSafe:1,g:{
-  easy:'케이블 아래로 누르기',sum:'팔 뒤쪽(흔들리는 살)을 탄탄하게',region:'뒤',
-  steps:['높은 케이블에 바를 걸어요','팔꿈치를 옆구리에 고정','아래로 쭉 펴 눌러요','천천히 올려요'],
-  tips:['팔꿈치는 절대 움직이지 않게'],avoid:['상체로 누르지 않기'],yt:'케이블 푸쉬다운 자세'}},
-{id:'ohext',name:'오버헤드 익스텐션',m:'삼두',equip:'dumbbell',comp:0,kneeSafe:1,g:{
-  easy:'머리 뒤로 덤벨 내렸다 펴기',sum:'팔 뒤쪽 안쪽을 키워요',region:'뒤',
-  steps:['덤벨 하나를 두 손으로 잡아요','머리 위로 들어요','머리 뒤로 천천히 내려요','펴서 올려요'],
-  tips:['팔꿈치를 안쪽으로 모으기'],avoid:['팔꿈치를 밖으로 벌리지 않기'],yt:'오버헤드 트라이셉 익스텐션 자세'}},
-{id:'dips',name:'딥스',m:'삼두',equip:'body',comp:1,kneeSafe:1,g:{
-  easy:'팔로 몸 들어올리기',sum:'팔 뒤+아랫가슴 (중급용)',region:'뒤',
-  steps:['평행봉을 잡고 몸을 들어요','팔꿈치를 굽혀 내려가요','밀어 올라와요'],
-  tips:['힘들면 보조 머신 사용','몸을 곧게'],avoid:['너무 깊게 내려 어깨 다치지 않기'],yt:'딥스 초보 자세'}},
-/* 대퇴사두 (무릎 주의) */
-{id:'legpr',name:'레그 프레스(부분만)',m:'대퇴사두',equip:'machine',comp:1,kneeSafe:1,g:{
-  easy:'기계로 다리 밀기',sum:'허벅지를 무릎 부담 적게 키워요',region:'앞',
-  steps:['등받이에 등을 붙이고 앉아요','발을 어깨너비로 발판에','무릎을 90도 정도까지만 굽혀요','다리로 밀어 펴요(무릎 잠그지 않기)'],
-  tips:['무릎이 발끝 방향과 일치하게','아픈 범위는 가지 않기'],
-  knee:'무릎을 너무 깊게(90도 이상) 굽히면 내측에 부담이 커요. 통증 없는 범위까지만 내리고, 발을 발판 위쪽에 두면 무릎 부담이 줄어요.',
-  avoid:['무릎을 끝까지 펴 잠그지 않기','엉덩이가 들리지 않게'],yt:'레그프레스 무릎 안 아프게'}},
-{id:'stepup',name:'스텝업(낮은 박스)',m:'대퇴사두',equip:'dumbbell',comp:1,kneeSafe:1,g:{
-  easy:'낮은 박스 올라서기',sum:'허벅지·엉덩이를 무릎 편하게',region:'앞',
-  steps:['무릎 아래 높이의 낮은 박스 준비','한 발을 박스에 올려요','그 다리로 밀어 올라서요','천천히 내려와요'],
-  tips:['올라가는 다리에 체중 싣기','박스는 낮게 시작'],
-  knee:'박스가 높을수록 무릎 부담이 커져요. 무릎보다 낮은 박스로 시작하세요.',
-  avoid:['뒷발로 차서 반동 쓰지 않기'],yt:'스텝업 운동 자세'}},
-{id:'wallsit',name:'월싯(벽 기대 버티기)',m:'대퇴사두',equip:'body',comp:0,kneeSafe:1,g:{
-  easy:'벽에 앉은 자세로 버티기',sum:'무릎 안정근(허벅지 안쪽)을 안전하게 강화',region:'앞',
-  steps:['등을 벽에 대요','무릎이 90도가 되게 천천히 내려가 앉은 자세','30~60초 버텨요'],
-  tips:['무릎이 발끝을 넘지 않게','통증 없으면 시간 늘리기'],
-  knee:'움직임 없이 버티는 운동이라 무릎 부담이 적고, 무릎 주변 근육 강화에 좋아요.',
-  avoid:['무릎이 안쪽으로 모이지 않게'],yt:'월싯 운동 자세'}},
-{id:'legext',name:'레그 익스텐션',m:'대퇴사두',equip:'machine',comp:0,kneeSafe:0,g:{
-  easy:'앉아서 다리 펴기',sum:'허벅지 앞을 집중 자극',region:'앞',
-  steps:['패드를 발목 위에 걸고 앉아요','다리를 펴 올려요','천천히 내려요'],
-  tips:['가벼운 무게, 부분 범위로'],
-  knee:'끝까지 펴는 동작이 내측 무릎에 부담을 줄 수 있어요. 무릎 보호 모드에선 빠집니다. 하더라도 가볍게·부분 범위로.',
-  avoid:['통증이 있으면 즉시 중단'],yt:'레그익스텐션 자세'}},
-{id:'bsquat',name:'바벨 백스쿼트',m:'대퇴사두',equip:'barbell',comp:1,kneeSafe:0,g:{
-  easy:'바벨 메고 앉았다 일어나기',sum:'하체 전체 최고의 운동(무릎 부담 큼)',region:'앞',
-  steps:['바벨을 등 위(승모근)에 걸쳐요','발은 어깨너비','엉덩이를 뒤로 빼며 앉아요','일어서요'],
-  tips:['가슴 펴고 허리 곧게','무릎과 발끝 같은 방향'],
-  knee:'깊은 스쿼트는 내측 무릎 부담이 커요. 무릎 통증이 있으면 피하고 레그프레스로 대체하세요.',
-  avoid:['무릎이 안쪽으로 모이지 않기','허리 말지 않기'],yt:'백스쿼트 무릎 자세'}},
-{id:'hacksq',name:'핵스쿼트 머신',m:'대퇴사두',equip:'machine',comp:1,kneeSafe:0,g:{
-  easy:'기계 스쿼트',sum:'허벅지 앞을 강하게 (무릎 부담 큼)',region:'앞',
-  steps:['어깨 패드에 어깨를 대요','발을 발판에','천천히 앉았다 밀어 올라와요'],
-  tips:['무릎이 발끝 방향과 일치'],
-  knee:'깊게 앉을수록 무릎 부담이 큽니다. 무릎 보호 모드에선 제외돼요.',
-  avoid:['무릎 통증 시 중단'],yt:'핵스쿼트 자세'}},
-{id:'goblet',name:'고블릿 스쿼트',m:'대퇴사두',equip:'dumbbell',comp:1,kneeSafe:0,g:{
-  easy:'덤벨 안고 앉았다 일어나기',sum:'스쿼트 입문용(그래도 무릎 부담 있음)',region:'앞',
-  steps:['덤벨 하나를 가슴 앞에 안아요','발은 어깨너비','앉았다 일어나요'],
-  tips:['가슴 펴고 천천히'],
-  knee:'무릎 통증이 있으면 피하고, 깊게 앉지 마세요. 무릎 보호 모드에선 제외돼요.',
-  avoid:['무릎이 모이지 않게'],yt:'고블릿 스쿼트 자세'}},
-/* 햄스트링 (무릎 친화) */
-{id:'legcurl',name:'레그 컬',m:'햄스트링',equip:'machine',comp:0,kneeSafe:1,g:{
-  easy:'다리 뒤로 접기',sum:'허벅지 뒤를 키워 무릎을 보호해요',region:'뒤',
-  steps:['엎드리거나 앉아서 패드를 발뒤꿈치에','다리를 접어 당겨요','천천히 펴요'],
-  tips:['천천히 끝까지 접기'],
-  knee:'무릎 뒤 근육을 강화해 무릎 관절을 안정시켜줘요. 무릎 통증 있는 사람에게 특히 좋은 운동.',
-  avoid:['반동으로 차지 않기'],yt:'레그컬 자세'}},
-{id:'rdl',name:'루마니안 데드리프트',m:'햄스트링',equip:'barbell',comp:1,kneeSafe:1,g:{
-  easy:'엉덩이 뒤로 빼며 숙이기',sum:'허벅지 뒤+엉덩이 (무릎 거의 안 굽힘)',region:'뒤',
-  steps:['바벨을 허벅지 앞에 들어요','무릎은 살짝만 굽힌 채 고정','엉덩이를 뒤로 빼며 상체를 숙여요','허벅지 뒤가 당기면 엉덩이로 일어나요'],
-  tips:['등은 항상 곧게','바벨은 다리에 붙여 내리기'],
-  knee:'무릎을 거의 굽히지 않고 엉덩이로 하는 운동이라 무릎 부담이 적어요.',
-  avoid:['허리를 둥글게 말지 않기(중요)','무게 욕심 금지'],yt:'루마니안 데드리프트 허리 자세'}},
-{id:'dbrdl',name:'덤벨 RDL',m:'햄스트링',equip:'dumbbell',comp:1,kneeSafe:1,g:{
-  easy:'덤벨 들고 엉덩이 빼며 숙이기',sum:'RDL의 덤벨 버전, 더 쉬움',region:'뒤',
-  steps:['덤벨을 허벅지 앞에 들어요','무릎 살짝 굽힌 채 고정','엉덩이 뒤로 빼며 숙여요','엉덩이로 일어나요'],
-  tips:['등 곧게','허벅지 뒤 당김 느끼기'],
-  knee:'무릎 부담이 적은 좋은 하체 운동.',
-  avoid:['허리 말지 않기'],yt:'덤벨 RDL 자세'}},
-/* 둔근 (무릎 친화) */
-{id:'hipthr',name:'힙 쓰러스트',m:'둔근',equip:'barbell',comp:1,kneeSafe:1,g:{
-  easy:'엉덩이 들어올리기',sum:'엉덩이를 키우는 최고의 운동',region:'뒤',
-  steps:['벤치에 등 윗부분을 기대요','바벨/중량을 골반 위에 올려요','엉덩이를 천천히 내려요','엉덩이에 힘줘 위로 들어올려요'],
-  tips:['맨 위에서 1초 꽉 조이기','턱은 살짝 당기기'],
-  knee:'엉덩이로 하는 운동이라 무릎 부담이 거의 없고, 엉덩이 힘이 무릎을 보호해줘요.',
-  avoid:['허리로 젖혀 올리지 않기'],yt:'힙쓰러스트 자세'}},
-{id:'glbridge',name:'글루트 브릿지',m:'둔근',equip:'body',comp:0,kneeSafe:1,g:{
-  easy:'누워서 엉덩이 들기',sum:'장비 없이 엉덩이 운동',region:'뒤',
-  steps:['바닥에 누워 무릎을 세워요','엉덩이를 위로 들어올려요','꽉 조이고 천천히 내려요'],
-  tips:['맨 위에서 엉덩이 조이기'],
-  knee:'무릎 부담 없는 안전한 운동.',
-  avoid:['허리로 들지 않기'],yt:'글루트 브릿지 자세'}},
-{id:'kickback',name:'케이블 킥백',m:'둔근',equip:'cable',comp:0,kneeSafe:1,g:{
-  easy:'다리 뒤로 차기',sum:'엉덩이 위쪽을 집중',region:'뒤',
-  steps:['발목에 케이블을 걸어요','다리를 뒤로 차 올려요','천천히 돌아와요'],
-  tips:['엉덩이 힘으로'],knee:'무릎 부담 적음.',avoid:['허리 젖히지 않기'],yt:'케이블 킥백 자세'}},
-/* 종아리 */
-{id:'calf',name:'스탠딩 카프레이즈',m:'종아리',equip:'machine',comp:0,kneeSafe:1,g:{
-  easy:'서서 까치발 들기',sum:'종아리를 키워요',region:'뒤',
-  steps:['발 앞꿈치를 발판에 올려요','발뒤꿈치를 최대한 들어요','천천히 내려요'],
-  tips:['맨 위에서 1초 멈춤','끝까지 내려 늘리기'],avoid:['반동 쓰지 않기'],yt:'카프레이즈 자세'}},
-{id:'scalf',name:'시티드 카프레이즈',m:'종아리',equip:'dumbbell',comp:0,kneeSafe:1,g:{
-  easy:'앉아서 까치발 들기',sum:'종아리 안쪽(가자미근)',region:'뒤',
-  steps:['앉아서 무릎 위에 덤벨을 올려요','앞꿈치로 발뒤꿈치를 들어요','천천히 내려요'],
-  tips:['천천히 끝까지'],avoid:['반동 금지'],yt:'시티드 카프레이즈 자세'}},
-/* 코어 */
-{id:'plank',name:'플랭크',m:'코어',equip:'body',comp:0,kneeSafe:1,g:{
-  easy:'엎드려 버티기',sum:'배 전체와 허리를 단단하게',region:'앞',
-  steps:['팔꿈치를 바닥에 대고 엎드려요','머리부터 발끝까지 일자로','배에 힘주고 버텨요(20~40초)'],
-  tips:['엉덩이가 처지거나 솟지 않게','숨 참지 말고 호흡'],avoid:['허리가 꺼지지 않게'],yt:'플랭크 정확한 자세'}},
-{id:'legraise',name:'레그레이즈',m:'코어',equip:'body',comp:0,kneeSafe:1,g:{
-  easy:'누워서 다리 들기',sum:'아랫배를 자극해요',region:'앞',
-  steps:['바닥에 누워요(손은 엉덩이 옆)','다리를 곧게 들어 올려요','천천히 내려요(바닥에 안 닿게)'],
-  tips:['허리가 뜨면 무릎을 살짝 굽히기'],avoid:['반동으로 올리지 않기'],yt:'레그레이즈 자세'}},
-{id:'cablecr',name:'케이블 크런치',m:'코어',equip:'cable',comp:0,kneeSafe:1,g:{
-  easy:'무릎 꿇고 배 말기',sum:'복근에 무게를 줘서 키워요',region:'앞',
-  steps:['높은 케이블 로프를 잡고 무릎 꿇어요','배를 말듯 상체를 둥글게 숙여요','천천히 펴요'],
-  tips:['배 힘으로 말기'],avoid:['엉덩이로 당기지 않기'],yt:'케이블 크런치 자세'}},
-{id:'deadbug',name:'데드버그',m:'코어',equip:'body',comp:0,kneeSafe:1,g:{
-  easy:'누워 팔다리 교차로 뻗기',sum:'허리에 안전한 코어 운동',region:'앞',
-  steps:['누워서 팔과 무릎을 90도로 들어요','반대쪽 팔·다리를 천천히 뻗어요','돌아와 반대로 반복'],
-  tips:['허리를 바닥에 붙인 채'],avoid:['허리가 뜨지 않게'],yt:'데드버그 자세'}},
-/* ── 집 소도구 (케틀벨·덤벨·맨몸) ── */
-{id:'kbswing',name:'케틀벨 스윙',m:'둔근',equip:'kettlebell',comp:1,kneeSafe:1,g:{
-  easy:'케틀벨 다리 사이로 스윙',sum:'엉덩이·허벅지 뒤를 한 번에, 심박수도 올라가는 전신 운동',region:'뒤',
-  steps:['발을 어깨너비보다 약간 넓게 서요','케틀벨을 두 손으로 잡고 무릎은 살짝만 굽혀요','엉덩이를 뒤로 빼며 케틀벨을 다리 사이로 보내요','엉덩이를 힘차게 펴 케틀벨을 가슴 높이까지 띄워요(팔 힘 아님)'],
-  tips:['팔이 아니라 엉덩이 힘으로 던지듯','맨 위에서 엉덩이·배에 꽉 힘주기','등은 항상 곧게'],
-  knee:'무릎을 거의 굽히지 않는 엉덩이 운동이라 무릎 부담이 적어요. 쪼그려 앉지 말고 엉덩이만 뒤로 빼세요.',
-  avoid:['쪼그려 앉듯(스쿼트처럼) 하지 않기','허리를 둥글게 말지 않기','팔로 들어올리지 않기'],yt:'케틀벨 스윙 초보 엉덩이 자세'}},
-{id:'kbrdl',name:'케틀벨 RDL',m:'햄스트링',equip:'kettlebell',comp:1,kneeSafe:1,g:{
-  easy:'케틀벨 들고 엉덩이 빼며 숙이기',sum:'허벅지 뒤·엉덩이를 무릎 부담 없이',region:'뒤',
-  steps:['케틀벨을 두 손으로 허벅지 앞에 들어요','무릎은 살짝만 굽힌 채 고정','엉덩이를 뒤로 빼며 상체를 천천히 숙여요','허벅지 뒤가 당기면 엉덩이로 일어나요'],
-  tips:['등은 항상 곧게','케틀벨을 다리에 붙여 내리기'],
-  knee:'무릎을 거의 굽히지 않아 무릎이 편한 하체 운동이에요.',
-  avoid:['허리 말지 않기','무릎을 깊게 굽히지 않기'],yt:'케틀벨 루마니안 데드리프트 자세'}},
-{id:'kbrow',name:'케틀벨 로우(원암)',m:'등',equip:'kettlebell',comp:1,kneeSafe:1,g:{
-  easy:'숙여서 한손 케틀벨 당기기',sum:'등 가운데를 두껍게',region:'뒤',
-  steps:['엉덩이를 빼고 상체를 45도 숙여요','케틀벨을 한 손으로 잡아요(반대 손은 무릎/의자 지지)','옆구리 쪽으로 당겨 올려요','천천히 내려요'],
-  tips:['등은 일자로','팔꿈치를 뒤로 보내기'],
-  avoid:['몸통을 비틀어 반동 쓰지 않기','허리 말지 않기'],yt:'케틀벨 원암 로우 자세'}},
-{id:'kbpress',name:'케틀벨 숄더프레스',m:'어깨',equip:'kettlebell',comp:1,kneeSafe:1,g:{
-  easy:'케틀벨 머리 위로 밀기(한 손씩)',sum:'어깨를 안전하게 키워요',region:'앞',
-  steps:['케틀벨을 어깨 앞에 들어요(케틀벨 몸통이 팔뚝 바깥에 걸치게)','배에 힘주고 곧게 서요','머리 위로 밀어 올려요','천천히 내려요'],
-  tips:['손목이 꺾이지 않게','반대 손은 허리에'],
-  avoid:['허리를 뒤로 젖히지 않기','반동으로 올리지 않기'],yt:'케틀벨 숄더프레스 자세'}},
-{id:'kbhipthr',name:'케틀벨 힙 쓰러스트',m:'둔근',equip:'kettlebell',comp:1,kneeSafe:1,g:{
-  easy:'케틀벨 올리고 엉덩이 들기',sum:'엉덩이를 집중해서 키워요',region:'뒤',
-  steps:['소파/침대에 등 윗부분을 기대고 무릎 세워 앉아요','케틀벨을 골반 위에 올려 두 손으로 잡아요','엉덩이를 천천히 내려요','엉덩이 힘으로 위로 들어 1초 꽉 조여요'],
-  tips:['맨 위에서 엉덩이 꽉 조이기','턱은 살짝 당기기'],
-  knee:'엉덩이로 하는 운동이라 무릎 부담이 거의 없어요.',
-  avoid:['허리로 젖혀 올리지 않기'],yt:'케틀벨 힙쓰러스트 자세'}},
-{id:'floorpress',name:'바닥 덤벨 프레스',m:'가슴',equip:'dumbbell',comp:1,kneeSafe:1,g:{
-  easy:'바닥에 누워 덤벨 밀기',sum:'벤치 없이 집에서 가슴·팔 운동',region:'앞',
-  steps:['바닥에 누워 무릎을 세워요','덤벨을 양손에 들고 팔꿈치가 바닥에 닿을 때까지 천천히 내려요','가슴 힘으로 위로 밀어 모아요'],
-  tips:['팔꿈치는 몸과 45도','팔꿈치가 바닥에 닿으면 1초 멈췄다 밀기'],
-  avoid:['반동으로 튕기지 않기'],yt:'바닥 덤벨 플로어 프레스 자세'}},
-{id:'diapush',name:'다이아몬드 푸쉬업',m:'삼두',equip:'body',comp:1,kneeSafe:1,g:{
-  easy:'손 모아 팔굽혀펴기',sum:'팔 뒤쪽을 장비 없이 키워요',region:'뒤',
-  steps:['두 손의 엄지·검지를 모아 삼각형을 만들어 가슴 아래 바닥에','몸은 머리부터 발끝까지 일자로','가슴이 손에 닿을 듯 천천히 내려요','밀어 올려요'],
-  tips:['힘들면 무릎을 바닥에 대고','팔꿈치는 몸쪽으로'],
-  avoid:['엉덩이가 솟거나 처지지 않게'],yt:'다이아몬드 푸쉬업 자세'}},
-/* ── 순수 맨몸 (장비 없이 / 턱걸이 봉만) ── */
-{id:'pikepush',name:'파이크 푸쉬업',m:'어깨',equip:'body',comp:1,kneeSafe:1,g:{
-  easy:'엉덩이 들고 팔굽혀펴기',sum:'장비 없이 어깨를 키우는 운동',region:'앞',
-  steps:['엎드린 자세에서 엉덩이를 위로 들어 몸이 역V(ㅅ자)가 되게','손은 어깨너비, 머리는 두 손 사이로','팔꿈치를 굽혀 정수리가 바닥에 닿을 듯 내려요','어깨 힘으로 밀어 올려요'],
-  tips:['엉덩이를 높일수록 어깨에 더 자극','시선은 발쪽','내릴 때 2초로 천천히'],
-  avoid:['허리로 출렁이며 반동 주지 않기','목으로 바닥을 박지 않기'],yt:'파이크 푸쉬업 어깨 자세'}},
-{id:'chinup',name:'친업(언더그립 턱걸이)',m:'이두',equip:'body',comp:1,kneeSafe:1,g:{
-  easy:'손바닥 나를 보게 잡고 턱걸이',sum:'턱걸이 봉 하나로 앞팔(알통)과 등을 같이 키워요',region:'앞',
-  steps:['손바닥이 나를 향하게(언더그립) 어깨너비로 잡아요','매달려 어깨를 아래로 내려요','알통을 접듯 가슴을 봉 쪽으로 끌어올려요','천천히 내려가요'],
-  tips:['힘들면 의자로 발을 살짝 받치거나 밴드를 걸어 보조','턱이 봉을 넘기게'],
-  avoid:['다리 차서 반동 주지 않기','맨 아래에서 어깨가 축 빠지지 않게'],yt:'친업 초보 자세'}},
-{id:'slrdl',name:'맨몸 한다리 RDL',m:'햄스트링',equip:'body',comp:1,kneeSafe:1,g:{
-  easy:'한 다리로 서서 상체 숙이기',sum:'장비 없이 허벅지 뒤·엉덩이를 무릎 부담 없이',region:'뒤',
-  steps:['한 다리로 서고 무릎은 살짝만 굽혀요','반대 다리를 뒤로 뻗으며 상체를 천천히 숙여요','허벅지 뒤가 당기는 지점까지 내려가요','엉덩이로 일어나 바로 서요'],
-  tips:['몸이 머리부터 뒷발까지 일자가 되게','균형이 흔들리면 벽을 한 손으로 짚기'],
-  knee:'무릎을 거의 굽히지 않는 엉덩이 운동이라 무릎이 편해요.',
-  avoid:['허리를 둥글게 말지 않기','무릎이 안쪽으로 무너지지 않게'],yt:'싱글레그 루마니안 데드리프트 맨몸 자세'}},
-{id:'bwcalf',name:'맨몸 카프레이즈',m:'종아리',equip:'body',comp:0,kneeSafe:1,g:{
-  easy:'서서 까치발 들기',sum:'장비 없이 종아리를 키워요',region:'뒤',
-  steps:['바르게 서요(계단 끝을 이용하면 더 좋아요)','발뒤꿈치를 최대한 높이 들어요','맨 위에서 1초 멈춰요','천천히 내려 종아리를 늘려요'],
-  tips:['한 다리로 하면 난이도가 올라가요','계단 끝에 앞꿈치만 올리면 더 깊게 늘어나요'],
-  avoid:['반동으로 튕기지 않기'],yt:'맨몸 카프레이즈 자세'}},
+/* ---------------- 기본값 ---------------- */
+function blank(){return{
+  profile:{weight:75,age:45,days:3,minutes:30,db:8,dbN:2,kb:10,pullbar:true,knee:true},
+  opt:{wake:true,sound:true,vib:true,rest:60},
+  levels:{},          // 패턴별 현재 레벨
+  clears:{},          // 패턴별 연속 목표달성 횟수
+  logs:[],            // 세션 기록
+  prs:{},             // 종목별 최고기록
+  bodylog:[],         // 체중 기록
+  created:Date.now()
+};}
+let DB=loadDB();
+function loadDB(){
+  let d;
+  try{d=JSON.parse(localStorage.getItem(KEY));}catch(e){d=null;}
+  if(!d){ d=blank(); migrateV1(d); }
+  const b=blank();
+  d.profile=Object.assign(b.profile,d.profile||{});
+  d.opt=Object.assign(b.opt,d.opt||{});
+  d.levels=d.levels||{}; d.clears=d.clears||{}; d.logs=d.logs||[];
+  d.prs=d.prs||{}; d.bodylog=d.bodylog||[];
+  return d;
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){toast('저장 공간이 부족해요');}}
+
+/* v1 기록 이관 — 횟수/날짜만 살려서 히스토리 유지 */
+function migrateV1(d){
+  let o; try{o=JSON.parse(localStorage.getItem(OLDKEY));}catch(e){return;}
+  if(!o||!o.logs||!o.logs.length)return;
+  if(o.profile&&o.profile.weight)d.profile.weight=o.profile.weight;
+  if(o.profile&&o.profile.age)d.profile.age=o.profile.age;
+  d.logs=o.logs.map(l=>{
+    let sets=0,vol=0;
+    (l.entries||[]).forEach(e=>(e.sets||[]).forEach(s=>{if(s.weight&&s.reps){sets++;vol+=s.weight*s.reps;}}));
+    return{date:l.date||Date.now(),tpl:'구',dur:0,sets,vol:Math.round(vol),entries:[],
+           mood:'',knee:'',memo:'',legacy:true};
+  });
+}
+
+/* ---------------- 근육 / 패턴 ---------------- */
+const AREA={push:'상체',vpush:'상체',vpull:'상체',hpull:'상체',tri:'상체',bi:'상체',
+            hinge:'하체',knee:'하체',calf:'하체',core:'코어'};
+const PATNAME={push:'가슴 밀기',vpush:'어깨 밀기',vpull:'턱걸이(등)',hpull:'로우(등)',
+               hinge:'엉덩이·뒤허벅지',knee:'허벅지·다리',tri:'뒷팔',bi:'앞팔',core:'코어',calf:'종아리'};
+
+/* ---------------- 운동 DB ----------------
+   load: bw(맨몸) / db(아령) / kb(케틀벨) / bwkb(맨몸+케틀벨)
+   bwF : 맨몸일 때 체중 대비 실제 부하 비율
+   type: rep(횟수) / hold(버티기,초) / side(한쪽씩 — 볼륨 2배)
+------------------------------------------ */
+const EX={
+/* --- 수평 밀기 (가슴/삼두) --- */
+inclpush:{n:'인클라인 푸쉬업',e:'책상·식탁에 손 짚고 팔굽혀펴기',m:'가슴',pat:'push',lv:1,load:'bw',bwF:.4,type:'rep',tgt:[10,15],g:{
+  sum:'가장 쉬운 단계. 자세부터 몸에 익혀요',steps:['식탁이나 튼튼한 책상 끝을 어깨너비보다 조금 넓게 잡아요','머리부터 발끝까지 일자를 만들어요','가슴이 책상에 닿을 듯 천천히 내렸다가 밀어요'],
+  tips:['높을수록 쉬워요. 15회가 편해지면 더 낮은 곳으로','내릴 때 2초, 올릴 때 1초'],avoid:['엉덩이가 처지거나 솟지 않게','목만 앞으로 빼지 않기'],yt:'인클라인 푸쉬업 자세'}},
+kneepush:{n:'무릎 푸쉬업',e:'무릎 대고 팔굽혀펴기',m:'가슴',pat:'push',lv:2,load:'bw',bwF:.5,type:'rep',tgt:[10,15],g:{
+  sum:'정자세로 가기 직전 단계',steps:['무릎을 바닥에 대고 발목을 들어요','무릎-엉덩이-어깨가 일직선이 되게','가슴을 바닥 쪽으로 내렸다가 밀어요'],
+  tips:['무릎 아래 수건을 깔면 편해요','엉덩이를 뒤로 빼지 말기'],avoid:['허리가 꺾이지 않게 배에 힘'],knee:'무릎이 눌려 아프면 수건을 두껍게 깔거나 인클라인으로 내려오세요',yt:'무릎 푸쉬업 자세'}},
+pushup:{n:'푸쉬업',e:'기본 팔굽혀펴기',m:'가슴',pat:'push',lv:3,load:'bw',bwF:.64,type:'rep',tgt:[8,14],g:{
+  sum:'집에서 가슴을 키우는 가장 확실한 운동',steps:['손은 어깨보다 조금 넓게, 가슴 옆 바닥에','머리부터 발끝까지 판자처럼 일자','가슴이 바닥에 닿을 듯 내렸다가 밀어 올려요'],
+  tips:['팔꿈치를 몸통에서 45도 정도로','바닥을 밀어낸다는 느낌'],avoid:['반만 내려가지 않기 — 가슴이 주먹 하나 높이까지','목을 빼서 머리부터 내리지 않기'],yt:'푸쉬업 정확한 자세'}},
+tempopush:{n:'3초 푸쉬업',e:'천천히 내리는 팔굽혀펴기',m:'가슴',pat:'push',lv:4,load:'bw',bwF:.72,type:'rep',tgt:[6,10],g:{
+  sum:'무게 없이 강도를 올리는 방법 — 속도를 죽여요',steps:['정자세 푸쉬업 자세를 잡아요','속으로 셋을 세며 3초에 걸쳐 내려가요','바닥 1cm에서 1초 멈췄다가 힘차게 밀어요'],
+  tips:['반동이 사라져서 가슴에 자극이 훨씬 커져요','횟수가 줄어드는 게 정상'],avoid:['내려갈 때 툭 떨어뜨리지 않기'],yt:'템포 푸쉬업'}},
+declpush:{n:'발 올린 푸쉬업',e:'발을 의자에 올리고 팔굽혀펴기',m:'가슴',pat:'push',lv:5,load:'bw',bwF:.75,type:'rep',tgt:[8,12],g:{
+  sum:'윗가슴과 어깨에 부하를 더 실어요',steps:['발을 의자나 소파에 올려요','손은 어깨보다 조금 넓게 바닥에','가슴을 바닥 쪽으로 내렸다가 밀어요'],
+  tips:['발이 높을수록 어려워요. 의자 → 소파 순서','허리가 꺾이지 않게 배에 힘'],avoid:['엉덩이를 위로 뽑아 올리지 않기'],yt:'디클라인 푸쉬업'}},
+archerpush:{n:'아처 푸쉬업',e:'한쪽으로 기울여 내리는 팔굽혀펴기',m:'가슴',pat:'push',lv:6,load:'bw',bwF:.85,type:'side',tgt:[5,8],g:{
+  sum:'한 팔 푸쉬업으로 가는 길. 한쪽씩 부하가 확 커져요',steps:['손을 아주 넓게 벌려요','한쪽 팔만 굽히며 그쪽으로 몸을 내려요','반대 팔은 쭉 편 채로 버텨요','밀어 올리고 반대쪽'],
+  tips:['펴는 팔의 손바닥을 살짝 바깥으로 돌리면 어깨가 편해요'],avoid:['어깨가 아프면 발 올린 푸쉬업으로 돌아가기'],yt:'아처 푸쉬업 자세'}},
+
+/* --- 수직 밀기 (어깨) --- */
+dbshld:{n:'아령 숄더프레스',e:'앉아서 아령 위로 밀기',m:'어깨',pat:'vpush',lv:1,load:'db',type:'rep',tgt:[10,15],g:{
+  sum:'어깨를 둥글게 만드는 기본',steps:['앉거나 서서 아령을 귀 옆 높이로 들어요','손등이 앞을 보게 잡아요','머리 위로 곧게 밀어 올렸다가 천천히 내려요'],
+  tips:['허리가 뒤로 젖혀지지 않게 배에 힘','귀 옆까지만 내려도 충분'],avoid:['목을 앞으로 빼지 않기'],yt:'덤벨 숄더프레스 자세'}},
+kbpress:{n:'케틀벨 한손 프레스',e:'케틀벨 한손으로 밀어올리기',m:'어깨',pat:'vpush',lv:2,load:'kb',type:'side',tgt:[6,10],g:{
+  sum:'한쪽씩 들어 어깨와 코어를 같이 잡아요',steps:['케틀벨을 어깨 앞(랙 자세)에 올려요','손목이 꺾이지 않게 세워요','천장으로 밀어 올렸다가 천천히 내려요'],
+  tips:['반대 손은 옆구리에 붙여 몸이 기울지 않게','배와 엉덩이에 힘을 주고'],avoid:['허리를 옆으로 휘게 하지 않기'],yt:'케틀벨 밀리터리 프레스'}},
+pikepush:{n:'파이크 푸쉬업',e:'엉덩이 들고 머리 아래로 미는 팔굽혀펴기',m:'어깨',pat:'vpush',lv:3,load:'bw',bwF:.62,type:'rep',tgt:[8,12],g:{
+  sum:'맨몸으로 어깨를 키우는 최고의 운동',steps:['엎드려 엉덩이를 위로 높이 들어 산 모양을 만들어요','머리를 손 사이 바닥 쪽으로 내려요','어깨 힘으로 밀어 올려요'],
+  tips:['엉덩이가 높을수록 어깨에 잘 들어와요','시선은 발 쪽'],avoid:['정수리를 바닥에 찧지 않기'],yt:'파이크 푸쉬업 자세'}},
+elpike:{n:'발 올린 파이크 푸쉬업',e:'발을 올려 더 세운 파이크',m:'어깨',pat:'vpush',lv:4,load:'bw',bwF:.75,type:'rep',tgt:[6,10],g:{
+  sum:'물구나무 푸쉬업 직전 단계',steps:['발을 의자에 올리고 엉덩이를 높이 들어요','몸이 거의 ㄱ자가 되게','머리를 손 사이로 내렸다가 밀어요'],
+  tips:['손을 어깨너비로 좁게 두면 삼두에도 들어와요'],avoid:['어깨가 아프면 한 단계 내리기'],yt:'엘리베이티드 파이크 푸쉬업'}},
+
+/* --- 수직 당기기 (턱걸이) --- */
+deadhang:{n:'데드행 + 견갑 당기기',e:'매달려 버티며 어깨 내리기',m:'등',pat:'vpull',lv:1,load:'bw',bwF:1,type:'hold',tgt:[20,30],g:{
+  sum:'턱걸이 0개여도 여기서 시작하면 됩니다',steps:['바를 어깨너비보다 조금 넓게 잡고 매달려요','어깨가 귀에 붙게 늘어뜨렸다가','팔은 편 채로 어깨만 아래로 끌어내려요','5번 반복하고 그대로 버텨요'],
+  tips:['악력이 먼저 지쳐요. 그게 정상','손바닥이 아프면 수건을 감아요'],avoid:['어깨 통증이 있으면 바로 내려오기'],yt:'데드행 스캡풀 초보'}},
+negpull:{n:'네거티브 턱걸이',e:'점프해서 올라가 천천히 내려오기',m:'등',pat:'vpull',lv:2,load:'bw',bwF:1,type:'rep',tgt:[4,6],g:{
+  sum:'턱걸이 1개를 만드는 가장 빠른 길',steps:['의자를 밟거나 점프해서 턱이 바 위로 오게 올라가요','발을 떼고 5초에 걸쳐 아주 천천히 내려와요','다시 올라가서 반복'],
+  tips:['내려오는 속도가 전부예요. 5초를 지키세요','5초 × 6회가 되면 다음 단계'],avoid:['뚝 떨어지지 않기 — 어깨 부상 위험'],yt:'네거티브 풀업'}},
+pullup:{n:'턱걸이',e:'매달려 턱을 바 위로',m:'등',pat:'vpull',lv:3,load:'bw',bwF:1,type:'rep',tgt:[3,8],g:{
+  sum:'상체 최고의 운동. 등 전체와 팔이 같이 커요',steps:['바를 어깨너비보다 조금 넓게, 손등이 앞으로 오게 잡아요','어깨를 먼저 아래로 내리고','가슴을 바에 붙인다는 느낌으로 당겨요','천천히 팔이 다 펴질 때까지 내려요'],
+  tips:['팔이 아니라 겨드랑이로 당기기','턱이 바를 넘으면 1개'],avoid:['다리를 차서 반동 쓰지 않기','반만 내려오지 않기'],yt:'턱걸이 등에 자극'}},
+wpullup:{n:'가중 턱걸이',e:'케틀벨 걸고 턱걸이',m:'등',pat:'vpull',lv:4,load:'bwkb',bwF:1,type:'rep',tgt:[5,8],g:{
+  sum:'턱걸이 8개가 넘으면 무게를 더할 차례',steps:['케틀벨을 두 발 사이에 끼우거나 벨트에 걸어요','평소처럼 턱걸이','다리가 흔들리지 않게 발을 꽉 조여요'],
+  tips:['처음엔 발 사이에 끼우는 게 가장 안전'],avoid:['떨어뜨릴 수 있으니 바닥에 매트/수건을'],yt:'가중 턱걸이'}},
+
+/* --- 수평 당기기 (로우) --- */
+dbrow:{n:'아령 원암 로우',e:'한 손으로 아령 당기기',m:'등',pat:'hpull',lv:1,load:'db',type:'side',tgt:[10,15],g:{
+  sum:'등 두께를 만드는 운동. 허리 부담이 적어요',steps:['의자에 한 손과 한 무릎을 올려 상체를 숙여요','반대 손으로 아령을 들어요','팔꿈치를 옆구리 쪽으로 끌어올려요','천천히 내려요'],
+  tips:['어깨뼈를 뒤 주머니에 넣는 느낌','맨 위에서 1초 멈추기'],avoid:['몸통을 비틀며 반동 주지 않기','허리를 둥글게 말지 않기'],yt:'원암 덤벨로우 자세'}},
+kbrow:{n:'케틀벨 원암 로우',e:'한 손으로 케틀벨 당기기',m:'등',pat:'hpull',lv:2,load:'kb',type:'side',tgt:[8,12],g:{
+  sum:'아령보다 무거워 등에 더 강한 자극',steps:['한 손과 한 무릎을 의자에','케틀벨을 바닥에서 들어 올려요','팔꿈치를 옆구리 뒤로 끌어당겨요'],
+  tips:['손목을 곧게 유지','내릴 때 팔을 완전히 펴서 등을 늘리기'],avoid:['허리가 말리면 무게를 줄이거나 아령으로'],yt:'케틀벨 원암로우'}},
+tempokbrow:{n:'3초 케틀벨 로우',e:'천천히 내리는 케틀벨 로우',m:'등',pat:'hpull',lv:3,load:'kb',type:'side',tgt:[6,10],g:{
+  sum:'같은 무게로 강도를 올리는 방법',steps:['케틀벨 로우 자세를 잡아요','1초에 당기고 맨 위에서 1초 멈춰요','3초에 걸쳐 천천히 내려요'],
+  tips:['속으로 하나-둘-셋을 세며 내려요'],avoid:['속도가 빨라지면 무게를 줄이세요'],yt:'템포 로우'}},
+bentrow:{n:'양손 벤트오버 로우',e:'숙여서 양손으로 당기기',m:'등',pat:'hpull',lv:4,load:'db',type:'rep',tgt:[10,15],g:{
+  sum:'양손을 동시에 써서 등 전체를 두껍게',steps:['발을 어깨너비로 서서 무릎을 살짝 굽혀요','엉덩이를 뒤로 빼며 상체를 45도 숙여요','아령을 배꼽 쪽으로 당겨요'],
+  tips:['가슴을 펴고 시선은 1~2m 앞 바닥','허리는 처음부터 끝까지 곧게'],avoid:['허리를 굽혔다 폈다 하며 반동 주지 않기'],yt:'벤트오버 로우 허리 안전'}},
+
+/* --- 힌지 (엉덩이·뒤허벅지) --- */
+glbridge:{n:'글루트 브릿지',e:'누워서 엉덩이 들어올리기',m:'둔근',pat:'hinge',lv:1,load:'bw',bwF:.4,type:'rep',tgt:[15,20],g:{
+  sum:'무릎에 부담 0. 엉덩이 깨우기의 시작',steps:['누워서 무릎을 세우고 발을 엉덩이 가까이','발뒤꿈치로 바닥을 밀며 엉덩이를 들어요','맨 위에서 엉덩이를 1초 꽉 조여요','천천히 내려요'],
+  tips:['허리로 들지 말고 엉덩이로 들기','무릎이 안쪽으로 모이지 않게'],avoid:['너무 높이 들어 허리를 꺾지 않기'],knee:'무릎이 아플 때도 안전한 운동이에요',yt:'글루트 브릿지 자세'}},
+kbrdl:{n:'케틀벨 RDL',e:'케틀벨 들고 엉덩이 뒤로 빼기',m:'햄스트링',pat:'hinge',lv:2,load:'kb',type:'rep',tgt:[10,15],g:{
+  sum:'뒤허벅지와 엉덩이. 무릎 대신 고관절을 쓰는 법을 배워요',steps:['케틀벨을 두 손으로 들고 서요','무릎은 살짝만 굽힌 채 고정','엉덩이를 뒤로 쭉 빼며 상체를 숙여요','뒤허벅지가 당기면 엉덩이를 조이며 일어나요'],
+  tips:['케틀벨이 다리를 스치듯 내려가게','허리가 아니라 엉덩이가 힘든 게 정상'],avoid:['등이 둥글게 말리면 즉시 중단','무릎을 더 굽혀 스쿼트처럼 하지 않기'],knee:'무릎을 거의 안 굽히므로 무릎에 매우 안전해요',yt:'케틀벨 RDL 자세'}},
+slrdl:{n:'한다리 RDL',e:'한 발로 서서 상체 숙이기',m:'햄스트링',pat:'hinge',lv:3,load:'kb',type:'side',tgt:[8,12],g:{
+  sum:'균형까지 잡아줘서 무릎 안정에 아주 좋아요',steps:['한 발로 서고 반대 다리는 뒤로 뻗어요','케틀벨을 반대쪽 손에 들어요','몸이 시소처럼 되도록 상체를 숙여요','엉덩이 힘으로 일어나요'],
+  tips:['골반이 옆으로 열리지 않게 정면 유지','벽을 손끝으로 짚어도 괜찮아요'],avoid:['무릎이 안쪽으로 무너지지 않게'],knee:'딛는 다리의 무릎이 발끝 방향을 보게 하세요. 안쪽으로 말리면 안 됩니다',yt:'싱글레그 RDL'}},
+kbswing:{n:'케틀벨 스윙',e:'케틀벨 앞뒤로 던지듯 흔들기',m:'둔근',pat:'hinge',lv:4,load:'kb',type:'rep',tgt:[15,20],g:{
+  sum:'엉덩이 폭발력 + 심폐. 러닝 대체로도 훌륭해요',steps:['케틀벨을 두 손으로 잡고 다리 사이로 보내요','엉덩이를 앞으로 튕기며 케틀벨을 가슴 높이까지','팔은 밧줄일 뿐, 힘은 엉덩이에서','다시 다리 사이로 받아요'],
+  tips:['맨 위에서 엉덩이와 배를 꽉 조이기','스쿼트가 아니라 힌지 — 무릎은 거의 안 굽혀요'],avoid:['팔로 들어올리지 않기','허리를 젖혀 마무리하지 않기'],knee:'무릎을 거의 쓰지 않아 무릎에 안전합니다',yt:'케틀벨 스윙 초보'}},
+slhipthr:{n:'한다리 힙 쓰러스트',e:'한 발로 엉덩이 들어올리기',m:'둔근',pat:'hinge',lv:5,load:'bw',bwF:.55,type:'side',tgt:[10,15],g:{
+  sum:'엉덩이 한쪽씩. 좌우 불균형을 잡아요',steps:['등 윗부분을 소파나 침대에 기대요','한 발만 바닥에 딛고 반대 다리는 들어요','발뒤꿈치로 밀며 엉덩이를 들어 올려요','맨 위에서 1초 조이기'],
+  tips:['턱을 살짝 당겨 시선은 앞쪽','케틀벨을 골반에 올리면 더 힘들어요'],avoid:['허리를 꺾어서 들지 않기'],knee:'무릎 부담이 거의 없어요',yt:'싱글레그 힙쓰러스트'}},
+
+/* --- 무릎 친화 하체 --- */
+boxsq:{n:'박스 스쿼트',e:'의자에 살짝 앉았다 일어나기',m:'대퇴사두',pat:'knee',lv:1,load:'bw',bwF:.55,type:'rep',tgt:[12,18],g:{
+  sum:'깊이를 의자로 제한해 무릎을 보호해요',steps:['의자 앞에 발을 어깨너비로 서요','엉덩이를 뒤로 빼며 의자에 살짝 닿을 때까지 앉아요','완전히 앉지 말고 닿자마자 일어나요'],
+  tips:['무릎이 발끝 방향을 보게 (안쪽으로 모이면 안 돼요)','발 전체로 바닥을 밀며 일어나기'],avoid:['의자에 털썩 앉지 않기','무릎을 앞으로 많이 밀지 않기'],knee:'의자가 높을수록 무릎이 편해요. 통증 없는 높이에서만 하세요',yt:'박스 스쿼트 자세'}},
+stepup:{n:'스텝업',e:'낮은 계단에 한 발씩 올라가기',m:'대퇴사두',pat:'knee',lv:2,load:'bw',bwF:.7,type:'side',tgt:[10,15],g:{
+  sum:'한쪽씩 다리를 쓰면서도 무릎 부담이 적어요',steps:['20~30cm 높이 계단이나 튼튼한 박스 앞에 서요','한 발을 올리고 그 발로만 밀어 올라가요','천천히 통제하며 내려와요'],
+  tips:['올라갈 때 뒷발로 차지 않기 — 앞발 힘으로만','내려올 때 소리가 안 나게 천천히'],avoid:['높이가 무릎보다 높으면 안 돼요'],knee:'무릎이 안쪽으로 무너지면 높이를 낮추세요. 통증 없는 높이가 정답',yt:'스텝업 운동 자세'}},
+splitsq:{n:'스플릿 스쿼트',e:'앞뒤로 벌리고 앉았다 일어나기',m:'대퇴사두',pat:'knee',lv:3,load:'bw',bwF:.85,type:'side',tgt:[8,12],g:{
+  sum:'한 다리 힘을 제대로 키워요',steps:['발을 앞뒤로 크게 벌려요','상체를 세운 채 뒷무릎을 바닥 쪽으로 내려요','앞발 뒤꿈치로 밀어 일어나요'],
+  tips:['앞무릎이 발끝을 넘지 않게 보폭을 넓게','상체를 살짝 앞으로 기울이면 엉덩이에 더 들어와요'],avoid:['앞무릎이 안쪽으로 말리지 않게'],knee:'통증이 있으면 내려가는 깊이를 반만. 그래도 아프면 스텝업으로 돌아가세요',yt:'스플릿 스쿼트 자세'}},
+kbstepup:{n:'케틀벨 스텝업',e:'케틀벨 들고 계단 오르기',m:'대퇴사두',pat:'knee',lv:4,load:'kb',type:'side',tgt:[8,12],g:{
+  sum:'무게를 더해 다리 힘을 한 단계 위로',steps:['케틀벨을 가슴 앞에 안거나 한 손에 들어요','스텝업과 동일하게 한 발로 밀어 올라가요','천천히 내려와요'],
+  tips:['가슴 앞에 안으면 코어까지 같이 써요'],avoid:['균형이 흔들리면 무게 없이 먼저'],knee:'무릎 통증이 있는 날은 건너뛰세요',yt:'웨이티드 스텝업'}},
+kbsplitsq:{n:'케틀벨 스플릿 스쿼트',e:'케틀벨 들고 앞뒤 스쿼트',m:'대퇴사두',pat:'knee',lv:5,load:'kb',type:'side',tgt:[8,12],g:{
+  sum:'집에서 할 수 있는 가장 강한 다리 운동',steps:['케틀벨을 가슴 앞에 안아요','발을 앞뒤로 크게 벌려요','뒷무릎을 내렸다가 앞발로 밀어 일어나요'],
+  tips:['뒷발을 의자에 올리면 더 강해져요(불가리안)'],avoid:['무릎에 찌릿한 통증이 오면 즉시 중단'],knee:'내측 무릎이 아프면 하지 마세요. 힌지 운동으로 대체됩니다',yt:'불가리안 스플릿 스쿼트'}},
+wallsit:{n:'월싯',e:'벽에 기대 앉은 자세로 버티기',m:'대퇴사두',pat:'knee',lv:0,load:'bw',bwF:.5,type:'hold',tgt:[30,45],g:{
+  sum:'무릎이 아픈 날의 안전한 대체 운동',steps:['벽에 등을 대고 발을 앞으로 한 걸음','무릎이 90도보다 덜 굽게(60도 정도) 내려가 앉아요','그대로 버텨요'],
+  tips:['덜 앉을수록 무릎이 편해요','발을 더 앞에 두면 무릎 부담이 줄어요'],avoid:['통증이 오는 각도까지 내려가지 않기'],knee:'각도를 얕게 하면 재활에도 쓰이는 안전한 운동이에요',yt:'월싯 자세'}},
+
+/* --- 팔 --- */
+benchdip:{n:'의자 딥스',e:'의자 짚고 팔 굽혔다 펴기',m:'삼두',pat:'tri',lv:1,load:'bw',bwF:.45,type:'rep',tgt:[10,15],g:{
+  sum:'뒷팔(삼두)을 키우는 쉬운 운동',steps:['의자에 등을 지고 손으로 의자 앞쪽을 잡아요','엉덩이를 의자 앞으로 빼요','팔꿈치를 뒤로 굽히며 몸을 내렸다가 밀어 올려요'],
+  tips:['다리를 굽히면 쉽고, 펴면 어려워요','팔꿈치는 뒤로 곧게'],avoid:['어깨가 아플 정도로 깊이 내려가지 않기'],yt:'벤치 딥스 자세'}},
+ohext:{n:'오버헤드 익스텐션',e:'머리 뒤로 아령 내렸다 펴기',m:'삼두',pat:'tri',lv:2,load:'db',type:'rep',tgt:[10,15],g:{
+  sum:'뒷팔을 길게 늘려 자극해요',steps:['아령 하나를 두 손으로 잡고 머리 위로 들어요','팔꿈치를 고정한 채 머리 뒤로 천천히 내려요','팔꿈치만 펴서 다시 올려요'],
+  tips:['팔꿈치가 벌어지지 않게 귀 옆에','내릴 때 뒷팔이 늘어나는 느낌'],avoid:['어깨로 들어올리지 않기'],yt:'오버헤드 트라이셉스 익스텐션'}},
+diapush:{n:'다이아몬드 푸쉬업',e:'손을 모으고 팔굽혀펴기',m:'삼두',pat:'tri',lv:3,load:'bw',bwF:.7,type:'rep',tgt:[6,12],g:{
+  sum:'뒷팔에 가장 강하게 들어오는 맨몸 운동',steps:['두 손 엄지와 검지를 붙여 다이아몬드를 만들어요','가슴 아래 바닥에 두고 엎드려요','팔꿈치를 몸통에 붙이며 내렸다가 밀어요'],
+  tips:['힘들면 무릎을 대고','팔꿈치가 벌어지지 않게'],avoid:['손목이 아프면 주먹을 쥐거나 아령을 잡고'],yt:'다이아몬드 푸쉬업'}},
+dbcurl:{n:'아령 컬',e:'아령 들어 팔 접기',m:'이두',pat:'bi',lv:1,load:'db',type:'rep',tgt:[10,15],g:{
+  sum:'앞팔(알통) 기본',steps:['아령을 손바닥이 앞을 보게 잡고 서요','팔꿈치를 옆구리에 붙인 채 고정','아령을 어깨 쪽으로 접어 올렸다가 천천히 내려요'],
+  tips:['맨 위에서 1초 꽉 조이기','내릴 때가 더 중요해요 — 2~3초'],avoid:['몸을 뒤로 젖히며 반동 주지 않기'],yt:'덤벨컬 자세'}},
+hammer:{n:'해머컬',e:'망치 잡듯 세워서 컬',m:'이두',pat:'bi',lv:2,load:'db',type:'rep',tgt:[10,15],g:{
+  sum:'팔뚝 두께까지 같이 만들어요',steps:['아령을 망치 쥐듯 세로로 잡아요','팔꿈치 고정하고 접어 올려요','천천히 내려요'],
+  tips:['양팔 번갈아 해도 좋아요'],avoid:['어깨를 으쓱 올리지 않기'],yt:'해머컬 자세'}},
+chinup:{n:'친업',e:'손바닥이 나를 보게 턱걸이',m:'이두',pat:'bi',lv:3,load:'bw',bwF:1,type:'rep',tgt:[3,8],g:{
+  sum:'앞팔에 가장 강한 운동 (등도 같이)',steps:['손바닥이 나를 보게 어깨너비로 바를 잡아요','가슴을 바 쪽으로 당겨 올려요','천천히 내려와요'],
+  tips:['턱걸이보다 쉬워서 개수가 더 나와요'],avoid:['반동 쓰지 않기'],yt:'친업 자세'}},
+
+/* --- 코어 --- */
+deadbug:{n:'데드버그',e:'누워서 팔다리 번갈아 뻗기',m:'코어',pat:'core',lv:1,load:'bw',bwF:.3,type:'rep',tgt:[10,14],g:{
+  sum:'허리를 지키는 코어 운동. 허리 통증 예방 1순위',steps:['누워서 팔을 천장으로, 무릎을 90도로 들어요','허리를 바닥에 눌러 붙여요','오른팔과 왼다리를 동시에 천천히 뻗어요','돌아오고 반대쪽'],
+  tips:['허리와 바닥 사이 틈이 생기면 덜 뻗기','숨을 내쉬며 뻗어요'],avoid:['허리가 뜨면 동작 범위를 줄이세요'],yt:'데드버그 자세'}},
+plank:{n:'플랭크',e:'엎드려 버티기',m:'코어',pat:'core',lv:2,load:'bw',bwF:.35,type:'hold',tgt:[30,50],g:{
+  sum:'몸통 전체를 단단하게',steps:['팔꿈치를 어깨 아래 두고 엎드려요','머리부터 발끝까지 일자','배와 엉덩이를 꽉 조이고 버텨요'],
+  tips:['엉덩이를 살짝 말아 넣으면 허리가 편해요','1분 넘게 버틸 수 있으면 다음 단계로'],avoid:['엉덩이가 처지거나 솟지 않게'],yt:'플랭크 정확한 자세'}},
+sideplank:{n:'사이드 플랭크',e:'옆으로 누워 버티기',m:'코어',pat:'core',lv:3,load:'bw',bwF:.4,type:'hold',tgt:[20,35],g:{
+  sum:'옆구리와 엉덩이 옆(중둔근)까지 — 무릎 안정에 직결',steps:['옆으로 누워 팔꿈치를 어깨 아래에','엉덩이를 들어 몸을 일자로','반대 손은 골반에 올리고 버텨요','좌우 각각'],
+  tips:['힘들면 무릎을 굽혀서','골반이 뒤로 빠지지 않게'],avoid:['어깨에 체중을 다 싣지 말고 옆구리로 버티기'],knee:'중둔근을 강화해서 무릎이 안쪽으로 무너지는 걸 막아줘요',yt:'사이드 플랭크 자세'}},
+hollow:{n:'할로우 홀드',e:'누워서 배 오목하게 버티기',m:'코어',pat:'core',lv:4,load:'bw',bwF:.45,type:'hold',tgt:[20,35],g:{
+  sum:'복근 전체를 태우는 자세',steps:['누워서 허리를 바닥에 완전히 붙여요','팔과 다리를 바닥에서 살짝 들어요','바나나 모양을 만들어 버텨요'],
+  tips:['허리가 뜨면 다리를 더 높이 들어요','팔을 옆구리에 두면 쉬워요'],avoid:['허리가 뜬 채로 버티지 않기'],yt:'할로우 홀드'}},
+legraise:{n:'누워 레그레이즈',e:'누워서 다리 들어올리기',m:'코어',pat:'core',lv:5,load:'bw',bwF:.4,type:'rep',tgt:[10,15],g:{
+  sum:'아랫배를 집중 공략',steps:['누워서 손을 엉덩이 옆에 두거나 깔아요','다리를 편 채 천천히 90도까지 들어요','바닥에 닿기 직전까지 천천히 내려요'],
+  tips:['허리가 뜨면 무릎을 살짝 굽혀요','내릴 때 3초'],avoid:['반동으로 다리를 던지지 않기'],yt:'레그레이즈 자세'}},
+
+/* --- 종아리 / 캐리 --- */
+bwcalf:{n:'카프레이즈',e:'까치발 들기',m:'종아리',pat:'calf',lv:1,load:'bw',bwF:.9,type:'rep',tgt:[15,25],g:{
+  sum:'종아리는 무릎 안정에도 도움이 돼요',steps:['계단 끝이나 바닥에 서요','뒤꿈치를 최대한 높이 들어요','맨 위에서 1초 멈추고 천천히 내려요'],
+  tips:['계단 끝에서 하면 더 깊게 늘어나요'],avoid:['튕기듯 반동 주지 않기'],yt:'카프레이즈 자세'}},
+carry:{n:'파머스 캐리',e:'케틀벨 들고 걷기',m:'코어',pat:'core',lv:0,load:'kb',type:'hold',tgt:[30,45],g:{
+  sum:'코어·악력·자세를 한 번에. 가장 실용적인 운동',steps:['케틀벨을 한 손에 들고 어깨를 펴요','배에 힘을 주고 몸이 기울지 않게 걸어요','절반 시간마다 손을 바꿔요'],
+  tips:['집 안을 왔다갔다 하면 돼요','어깨를 뒤로 젖히고 턱을 당기고'],avoid:['몸이 반대로 기울지 않게'],yt:'파머스 워크'}}
+};
+
+/* 패턴별 사다리 */
+const LADDER={};
+Object.keys(EX).forEach(id=>{const e=EX[id];if(!e.lv)return;
+  (LADDER[e.pat]=LADDER[e.pat]||[]).push(id);});
+Object.keys(LADDER).forEach(p=>LADDER[p].sort((a,b)=>EX[a].lv-EX[b].lv));
+
+/* 준비운동 — 무릎 처방 포함 3분 고정 */
+const WARM=[
+ {id:'w1',n:'발목·무릎 돌리기',e:'선 채로 발목과 무릎을 천천히 원으로',sec:30,
+  g:{sum:'관절에 윤활액을 돌려요',steps:['한 발씩 발목을 10바퀴씩 돌려요','무릎을 살짝 굽혀 좌우로 10바퀴'],tips:['천천히, 크게'],avoid:['통증이 오는 범위까지 돌리지 않기'],yt:'무릎 관절 워밍업'}},
+ {id:'w2',n:'클램쉘 (좌우)',e:'옆으로 누워 무릎 벌리기 — 엉덩이 옆 근육 깨우기',sec:45,
+  g:{sum:'중둔근을 깨웁니다. 내측 무릎 통증에 가장 중요한 준비운동',steps:['옆으로 누워 무릎을 90도로 굽혀요','발뒤꿈치는 붙인 채 위쪽 무릎만 조개처럼 벌려요','20초 하고 반대쪽'],
+  tips:['골반이 뒤로 넘어가지 않게 고정','엉덩이 옆이 뻐근하면 제대로 하는 것'],avoid:['허리를 비틀며 벌리지 않기'],
+  knee:'약한 중둔근은 무릎이 안쪽으로 무너지게 만들어 내측에 부담을 줍니다. 이 동작이 그걸 막아줘요',yt:'클램쉘 중둔근'}},
+ {id:'w3',n:'글루트 브릿지 15회',e:'누워서 엉덩이 들어올리기',sec:45,
+  g:{sum:'엉덩이에 시동을 걸어요',steps:['누워 무릎 세우고 발뒤꿈치로 밀며 엉덩이 들기','맨 위에서 1초 조이고 내려요','15회'],tips:['허리 말고 엉덩이로'],avoid:['너무 높이 들어 허리 꺾지 않기'],yt:'글루트 브릿지'}},
+ {id:'w4',n:'팔 크게 돌리기 + 견갑',e:'어깨 관절을 앞뒤로 크게',sec:30,
+  g:{sum:'어깨를 데워 푸쉬업/턱걸이 부상을 막아요',steps:['팔을 앞으로 10바퀴, 뒤로 10바퀴 크게','어깨를 으쓱 올렸다 뒤로 돌려 내리기 10회'],tips:['최대한 크게'],avoid:['통증 각도에서 멈추기'],yt:'어깨 워밍업'}},
+ {id:'w5',n:'힙 힌지 연습',e:'엉덩이 뒤로 빼는 동작 익히기',sec:30,
+  g:{sum:'오늘 할 RDL·스윙의 자세를 몸에 넣어요',steps:['벽에서 한 뼘 앞에 등지고 서요','무릎은 살짝만 굽힌 채 엉덩이를 뒤로 빼 벽을 톡 쳐요','10회 반복'],
+  tips:['무릎이 앞으로 나가면 스쿼트가 된 것 — 엉덩이만 뒤로'],avoid:['등이 말리지 않게'],yt:'힙힌지 연습'}}
 ];
-const exById=id=>EX.find(e=>e.id===id);
 
-/* 집·기구 = 케틀벨12kg + 덤벨6kg2개 + 턱걸이 + 맨몸 으로 할 수 있는 운동 (벤치/머신/케이블 제외) */
-const HOME_OK=new Set(['pushup','floorpress','diapush','pullup','dbrow','kbrow','dbshld','latrz','reardel','kbpress',
-  'bicurl','hammer','ohext','wallsit','stepup','goblet','dbrdl','kbrdl','glbridge','kbhipthr','kbswing',
-  'scalf','plank','legraise','deadbug','pikepush','chinup','slrdl','bwcalf']);
-function equipOK(e,equip){
-  if(equip==='gym')return true;
-  if(equip==='home')return HOME_OK.has(e.id);
-  if(equip==='dumbbell')return(e.equip==='dumbbell'||e.equip==='body'||e.equip==='barbell');
-  if(equip==='body')return e.equip==='body';
+/* 세션 템플릿 */
+const TPL={
+ A:{name:'미는 날',short:'A',blocks:[
+   {pats:['push','hinge'],rounds:3},
+   {pats:['vpush','knee'],rounds:3},
+   {pats:['tri','core'],rounds:2}]},
+ B:{name:'당기는 날',short:'B',blocks:[
+   {pats:['vpull','hinge'],rounds:3},
+   {pats:['hpull','knee'],rounds:3},
+   {pats:['bi','core'],rounds:2}]},
+ C:{name:'컨디셔닝',short:'C',blocks:[
+   {pats:['hinge','core'],rounds:3},
+   {pats:['calf','core'],rounds:2}]}
+};
+
+/* ==================== 유틸 ==================== */
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const mmss=s=>Math.floor(s/60)+':'+pad(s%60);
+const dnum=d=>{const t=new Date(d);return t.getFullYear()*10000+(t.getMonth()+1)*100+t.getDate();};
+const today0=()=>{const d=new Date();d.setHours(0,0,0,0);return d.getTime();};
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');
+  clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),1900);}
+function isoWeekKey(d){const t=new Date(d);const day=(t.getDay()+6)%7;t.setDate(t.getDate()-day);
+  t.setHours(0,0,0,0);return t.getTime();}
+function comma(n){return Math.round(n).toLocaleString('ko-KR');}
+
+/* 운동 무게 계산 */
+function loadKg(ex){
+  const p=DB.profile;
+  if(ex.load==='db')return p.db||8;
+  if(ex.load==='kb')return p.kb||10;
+  if(ex.load==='bwkb')return Math.round((p.weight||75)+(p.kb||10));
+  return Math.round((p.weight||75)*(ex.bwF||.5));
+}
+function volOf(ex,reps,sec){
+  const w=loadKg(ex);
+  let r = ex.type==='hold' ? (sec||0)/3 : (reps||0);
+  if(ex.type==='side')r*=2;
+  return w*r;
+}
+function curLevel(pat){
+  const max=(LADDER[pat]||[]).length;
+  let l=DB.levels[pat]||1;
+  return Math.max(1,Math.min(max,l));
+}
+function exOfPat(pat,lvOff){
+  const arr=LADDER[pat]||[];if(!arr.length)return null;
+  let i=curLevel(pat)-1+(lvOff||0);
+  i=Math.max(0,Math.min(arr.length-1,i));
+  return arr[i];
+}
+/* 장비 없으면 대체 */
+function usable(id){
+  const e=EX[id];if(!e)return false;
+  if((e.load==='bw'||e.load==='bwkb')&&(e.pat==='vpull'||id==='chinup')&&!DB.profile.pullbar)return false;
+  if(e.load==='bwkb'&&!DB.profile.pullbar)return false;
   return true;
 }
-
-/* ===== 스플릿 ===== */
-function splitTemplate(days){
-  if(days==2)return[
-    {name:'전신 A',slots:[['가슴',1],['등',1],['대퇴사두',1],['어깨',1],['이두',1],['코어',1]]},
-    {name:'전신 B',slots:[['가슴',1],['등',1],['햄스트링',1],['둔근',1],['삼두',1],['코어',1]]}];
-  if(days==3)return[
-    {name:'전신 A',slots:[['가슴',1],['등',1],['대퇴사두',1],['어깨',1],['이두',1],['코어',1]]},
-    {name:'전신 B',slots:[['가슴',1],['등',1],['햄스트링',1],['둔근',1],['삼두',1],['종아리',1]]},
-    {name:'전신 C',slots:[['가슴',1],['등',1],['어깨',1],['대퇴사두',1],['이두',1],['코어',1]]}];
-  if(days==4)return[
-    {name:'상체 A',slots:[['가슴',2],['등',2],['어깨',1],['삼두',1]]},
-    {name:'하체 A',slots:[['햄스트링',1],['대퇴사두',1],['둔근',1],['종아리',1],['코어',1]]},
-    {name:'상체 B',slots:[['등',2],['가슴',1],['어깨',1],['이두',1],['삼두',1]]},
-    {name:'하체 B',slots:[['대퇴사두',1],['햄스트링',1],['둔근',1],['종아리',1],['코어',1]]}];
-  return[
-    {name:'가슴·어깨·팔뒤',slots:[['가슴',2],['어깨',2],['삼두',1]]},
-    {name:'등·팔앞',slots:[['등',3],['이두',2]]},
-    {name:'하체 A',slots:[['햄스트링',1],['대퇴사두',1],['둔근',1],['종아리',1]]},
-    {name:'상체 전체',slots:[['가슴',1],['등',1],['어깨',1],['이두',1],['삼두',1]]},
-    {name:'하체 B·코어',slots:[['대퇴사두',1],['햄스트링',1],['둔근',1],['코어',2]]}];
-}
-/* 집·기구 전용 짧은 전신 분할 (20~30분, 5종목 내외) */
-function homeSplit(days){
-  if(days==2)return[
-    {name:'전신 A',slots:[['등',1],['둔근',1],['가슴',1],['어깨',1],['코어',1]]},
-    {name:'전신 B',slots:[['가슴',1],['등',1],['햄스트링',1],['삼두',1],['이두',1]]}];
-  if(days==4)return[
-    {name:'당기기·엉덩이',slots:[['등',2],['둔근',1],['이두',1],['코어',1]]},
-    {name:'밀기·코어',slots:[['가슴',2],['어깨',1],['삼두',1],['코어',1]]},
-    {name:'하체 뒤·엉덩이',slots:[['햄스트링',1],['둔근',1],['대퇴사두',1],['종아리',1],['코어',1]]},
-    {name:'전신 마무리',slots:[['등',1],['가슴',1],['어깨',1],['둔근',1],['이두',1]]}];
-  return[ /* 주 3번 — 기본 */
-    {name:'당기기·엉덩이',slots:[['등',1],['둔근',1],['어깨',1],['가슴',1],['코어',1]]},
-    {name:'밀기·뒤허벅지',slots:[['가슴',1],['등',1],['햄스트링',1],['삼두',1],['코어',1]]},
-    {name:'전신·팔',slots:[['등',1],['둔근',1],['대퇴사두',1],['이두',1],['어깨',1]]}];
-}
-function prescribe(e,exp){
-  const beg=exp==='초보';
-  if(e.comp)return{sets:beg?3:4,repMin:6,repMax:10};
-  if(e.m==='코어')return{sets:3,repMin:12,repMax:20};
-  return{sets:3,repMin:10,repMax:15};
-}
-function buildProgram(p){
-  const tmpl=((p.equip==='home'||p.equip==='body')?homeSplit(+p.days):splitTemplate(+p.days));const used={};
-  const pool=m=>{let a=EX.filter(e=>e.m===m&&equipOK(e,p.equip));if(p.knee==='on')a=a.filter(e=>e.kneeSafe);a.sort((x,y)=>y.comp-x.comp);return a;};
-  const days=tmpl.map(d=>{const exercises=[];
-    d.slots.forEach(([m,n])=>{const pl=pool(m);if(!pl.length)return;used[m]=used[m]||0;
-      for(let i=0;i<n;i++){const e=pl[(used[m]+i)%pl.length];const rx=prescribe(e,p.exp);
-        if(!exercises.find(x=>x.id===e.id))exercises.push({id:e.id,name:e.name,m:e.m,comp:e.comp,kneeSafe:e.kneeSafe,...rx});}
-      used[m]+=n;});
-    return{name:d.name,exercises};});
-  const splitLabel=p.equip==='body'?`맨몸 전신 · 주 ${p.days}번`:p.equip==='home'?`집 전신 · 주 ${p.days}번`:`주 ${p.days}번 (${p.days}분할)`;
-  return{generatedAt:Date.now(),split:splitLabel,days};
-}
-
-/* ============================================================
-   설정 모달
-   ============================================================ */
-let setupState={age:45,weight:75,exp:'초보',days:'3',equip:'body',knee:'on'};
-function openSetup(){
-  if(DB.profile)setupState={...setupState,...DB.profile};
-  document.getElementById('inAge').value=setupState.age;
-  document.getElementById('inWeight').value=setupState.weight;
-  segSet('segExp',setupState.exp);segSet('segEquip',setupState.equip);segSet('segKnee',setupState.knee);
-  chipSet('chipDays',setupState.days);updateSplitHint();
-  document.getElementById('setupModal').classList.add('on');
-}
-function closeSetup(){document.getElementById('setupModal').classList.remove('on');}
-function segSet(id,v){document.querySelectorAll('#'+id+' button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
-function chipSet(id,v){document.querySelectorAll('#'+id+' .chip').forEach(c=>c.classList.toggle('on',c.dataset.v===v));}
-document.querySelectorAll('#segExp button,#segEquip button,#segKnee button').forEach(b=>{
-  b.onclick=()=>{b.parentNode.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');};});
-document.querySelectorAll('#chipDays .chip').forEach(c=>{
-  c.onclick=()=>{document.querySelectorAll('#chipDays .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');updateSplitHint();};});
-function updateSplitHint(){
-  const d=document.querySelector('#chipDays .chip.on').dataset.v;
-  const m={'2':'전신 2분할 — 바쁠 때. 온몸을 두 번에 나눠 골고루.',
-    '3':'전신 3분할 — 처음 시작에 가장 좋아요. 온몸을 골고루 자주 자극해 균형 있게 성장.',
-    '4':'상체/하체 — 부위별로 더 집중. 무릎 보호와 잘 맞아요.',
-    '5':'5분할 — 운동량 최대. 회복할 여유가 있을 때.'};
-  document.getElementById('splitHint').textContent=m[d];
-}
-function segVal(id){return document.querySelector('#'+id+' button.on').dataset.v;}
-function saveSetup(){
-  const p={age:+document.getElementById('inAge').value||45,weight:+document.getElementById('inWeight').value||75,
-    exp:segVal('segExp'),days:document.querySelector('#chipDays .chip.on').dataset.v,
-    equip:segVal('segEquip'),knee:segVal('segKnee')};
-  DB.profile=p;DB.program=buildProgram(p);save();closeSetup();draft=null;renderAll();go('program');
-}
-
-/* ============================================================
-   분석 헬퍼
-   ============================================================ */
-const e1RM=(w,r)=>r<=0?0:w*(1+r/30);
-const setVolume=s=>(s.weight||0)*(s.reps||0);
-function bestE1RM(en){let m=0;(en.sets||[]).forEach(s=>{if(s.weight&&s.reps)m=Math.max(m,e1RM(s.weight,s.reps));});return m;}
-function isoWeek(d){const dt=new Date(d);const day=(dt.getDay()+6)%7;dt.setDate(dt.getDate()-day+3);
-  const f=new Date(dt.getFullYear(),0,4);const wk=1+Math.round(((dt-f)/86400000-3+((f.getDay()+6)%7))/7);
-  return dt.getFullYear()+'-W'+String(wk).padStart(2,'0');}
-function lastEntryFor(id){for(let i=DB.logs.length-1;i>=0;i--){
-  const e=(DB.logs[i].entries||[]).find(x=>x.exerciseId===id&&x.sets.some(s=>s.weight&&s.reps));if(e)return e;}return null;}
-
-/* 다음 세션 추천 — 쉬운 말 */
-function progressionFor(ex){
-  const fixed=DB.profile&&(DB.profile.equip==='home'||DB.profile.equip==='body');
-  const last=lastEntryFor(ex.id);
-  if(!last)return{text:fixed?`<b>${ex.repMax}회</b>까지 바른 자세로 익히기`:`가벼운 무게로 <b>${ex.repMax}회</b>까지 폼 익히기`,type:'start'};
-  const done=last.sets.filter(s=>s.weight&&s.reps);
-  if(!done.length)return{text:`바른 자세부터`,type:'start'};
-  const topW=Math.max(...done.map(s=>s.weight));
-  const atTop=done.filter(s=>s.weight===topW);
-  const inc=(ex.m==='대퇴사두'||ex.m==='햄스트링'||ex.m==='둔근')?5:2.5;
-  if(atTop.every(s=>s.reps>=ex.repMax)&&done.length>=ex.sets){
-    if(fixed)return{text:`지난번 다 성공! 무게가 고정이니 이번엔 <b>더 천천히(내릴 때 3초)</b> 또는 <b>한쪽씩</b> 해서 난이도를 올려보자`,type:'up'};
-    return{text:`지난번 다 성공! 이번엔 <b>${topW+inc}kg</b>로 올려보자`,type:'up',w:topW+inc};}
-  if(done.every(s=>s.reps>=ex.repMin))
-    return{text:`<b>${topW}kg</b> 그대로, ${ex.repMax}회까지 늘리기 (지난번 ${done.map(s=>s.reps).join('·')}회)`,type:'reps',w:topW};
-  return{text:`<b>${topW}kg</b>에서 ${ex.repMin}회 안정적으로, 폼 우선`,type:'hold',w:topW};
-}
-function weeklySetsByMuscle(){
-  const wk=isoWeek(Date.now());const c={};MUSCLES.forEach(m=>c[m]=0);
-  DB.logs.filter(l=>isoWeek(l.date)===wk).forEach(l=>l.entries.forEach(e=>{
-    const d=(e.sets||[]).filter(s=>s.weight&&s.reps).length;if(c[e.muscle]!=null)c[e.muscle]+=d;}));
-  return c;
-}
-
-/* ============================================================
-   화면 전환
-   ============================================================ */
-function go(tab){
-  ['today','program','stats','history','settings'].forEach(t=>document.getElementById('v-'+t).classList.toggle('on',t===tab));
-  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
-  window.scrollTo(0,0);
-  if(tab==='stats')renderStats();if(tab==='history')renderHistory();if(tab==='today')renderToday();
-}
-
-/* ============================================================
-   오늘 운동
-   ============================================================ */
-let draft=null;
-function recommendedDayIdx(){
-  if(!DB.program)return 0;const n=DB.program.days.length;if(!DB.logs.length)return 0;
-  const last=DB.logs[DB.logs.length-1].dayName;const i=DB.program.days.findIndex(d=>d.name===last);
-  return i<0?0:(i+1)%n;
-}
-function renderToday(){
-  const head=document.getElementById('todayHead'),body=document.getElementById('todayBody');
-  if(!DB.program){
-    head.innerHTML='';
-    body.innerHTML=`<div class="card"><div class="empty">아직 운동 계획이 없어요.<br>몇 가지만 고르면 나에게 맞는 계획을<br>자동으로 만들어 드려요.</div>
-      <button class="btn" onclick="openSetup()">내 운동 계획 만들기</button></div>`;
-    return;
+function pickEx(pat,kneeState){
+  if(pat==='knee'){
+    if(kneeState==='bad')return 'wallsit';
+    let id=exOfPat(pat,kneeState==='soso'?-1:0);
+    return id;
   }
-  const idx=recommendedDayIdx();
-  if(!draft)draft=makeDraft(idx);
-  let pick='';
-  DB.program.days.forEach((d,i)=>pick+=`<div class="chip ${i===draft.dayIdx?'on':''}" onclick="switchDay(${i})">${d.name}</div>`);
-  head.innerHTML=`<div class="card tight">
-    <div class="row"><div class="grow">
-      <div class="small sub">오늘은</div><div style="font-size:21px;font-weight:800">${draft.dayName}</div></div>
-      <div class="pill">${draft.date}</div></div>
-    <div class="chips" style="margin-top:11px">${pick}</div>
-    <p class="hint" style="margin-top:10px">운동 이름이나 <b style="color:var(--accent)">방법</b> 버튼을 누르면 자세·영상 설명이 나와요.</p></div>`;
+  if(pat==='vpull'&&!DB.profile.pullbar)return exOfPat('hpull',0);
+  let id=exOfPat(pat,0);
+  if(!usable(id)){
+    const arr=LADDER[pat]||[];
+    for(let i=arr.length-1;i>=0;i--)if(usable(arr[i]))return arr[i];
+    return arr[0];
+  }
+  return id;
+}
 
-  let html='';
-  draft.entries.forEach((en,ei)=>{
-    const rx=en.prescribe;const prog=progressionFor({id:en.exerciseId,m:en.muscle,...rx});
-    let sets=`<div class="setlbl"><div>세트</div><div>무게(kg)</div><div>횟수</div><div>완료</div></div>`;
-    en.sets.forEach((s,si)=>sets+=`<div class="setrow"><div class="sn">${si+1}</div>
-      <input type="number" inputmode="decimal" placeholder="-" value="${s.weight}" onchange="setVal(${ei},${si},'weight',this.value)">
-      <input type="number" inputmode="numeric" placeholder="-" value="${s.reps}" onchange="setVal(${ei},${si},'reps',this.value)">
-      <div class="done ${s.done?'ok':''}" onclick="toggleDone(${ei},${si})">${s.done?'●':'○'}</div></div>`);
-    html+=`<div class="ex">
-      <div class="head"><div class="grow" onclick="showGuide('${en.exerciseId}')">
-        <span class="name">${en.name}</span>${rx.kneeSafe?'<span class="badge knee">무릎OK</span>':''}
-        <div class="tag">${MUSCLE_EASY[en.muscle]} · ${rx.sets}세트 × ${rx.repMin}~${rx.repMax}회</div></div>
-        <button class="howbtn" onclick="showGuide('${en.exerciseId}')">방법</button></div>
-      <div class="rec">코치 · ${prog.text}</div>
-      ${sets}
-      <div class="foot"><button class="btn ghost sm" onclick="addSet(${ei})">+ 세트 추가</button>
-        <button class="btn ghost sm" onclick="startRest(90)">휴식 1:30</button></div></div>`;
+/* 다음 템플릿 추천 */
+function nextTpl(){
+  const real=DB.logs.filter(l=>!l.legacy);
+  const wkCount=weekSessions().length;
+  const target=+DB.profile.days||3;
+  if(!real.length)return 'A';
+  const last=real[real.length-1].tpl;
+  if(target>=4&&wkCount>=3&&wkCount<target)return 'C';
+  return last==='A'?'B':(last==='B'?'A':'A');
+}
+function weekSessions(){
+  const wk=isoWeekKey(Date.now());
+  return DB.logs.filter(l=>!l.legacy&&isoWeekKey(l.date)===wk);
+}
+function streakWeeks(){
+  const target=+DB.profile.days||3;let n=0;
+  let wk=isoWeekKey(Date.now());
+  const cnt=w=>DB.logs.filter(l=>!l.legacy&&isoWeekKey(l.date)===w).length;
+  if(cnt(wk)<target)wk-=7*86400000;
+  while(cnt(wk)>=target){n++;wk-=7*86400000;}
+  return n;
+}
+function didToday(){const t=dnum(Date.now());return DB.logs.some(l=>!l.legacy&&dnum(l.date)===t);}
+
+/* ==================== 탭 ==================== */
+let TAB='home';
+function go(t){
+  TAB=t;
+  ['home','log','grow'].forEach(x=>{
+    $('tab'+x[0].toUpperCase()+x.slice(1)).classList.toggle('hide',x!==t);
+    $('nv'+x[0].toUpperCase()+x.slice(1)).classList.toggle('on',x===t);});
+  if(t==='home')renderHome(); if(t==='log')renderLog(); if(t==='grow')renderGrow();
+  window.scrollTo(0,0);
+}
+
+/* ==================== 홈 ==================== */
+function renderHome(){
+  const p=DB.profile,target=+p.days||3;
+  const wk=weekSessions(),done=wk.length;
+  const tpl=nextTpl(),T=TPL[tpl];
+  const h=new Date().getHours();
+  const greet=h<11?'좋은 아침이에요':h<17?'오늘도 수고 많으세요':h<22?'하루 마무리 운동':'늦은 시간이네요';
+
+  let dots='';
+  for(let i=0;i<target;i++)dots+=`<div class="dot ${i<done?'on':''}"></div>`;
+
+  // 오늘 종목 미리보기
+  const pats=[];T.blocks.forEach(b=>b.pats.forEach(x=>{if(pats.indexOf(x)<0)pats.push(x);}));
+  const exs=pats.map(x=>pickEx(x,'ok')).filter(Boolean);
+  const tags=exs.map(id=>`<span class="ptag">${EX[id].n}</span>`).join('');
+  const est=estimateMin(tpl);
+
+  // 오늘의 목표 한 줄
+  const goal=todayGoal(tpl);
+
+  const last=DB.logs.filter(l=>!l.legacy).slice(-1)[0];
+  const total=DB.logs.filter(l=>!l.legacy).length;
+  const vol=DB.logs.reduce((a,l)=>a+(l.vol||0),0);
+
+  let html=`
+  <div class="hero">
+    <div class="greet">${greet}, 빛날빈님</div>
+    <div class="htitle">${didToday()?'오늘 운동 완료':`오늘은 <span style="color:var(--acc)">${T.name}</span>`}</div>
+    <div class="dots">${dots}<span class="sm mut" style="margin-left:6px">이번 주 ${done}/${target}회</span></div>
+    <div class="preview">${tags}</div>
+    ${goal?`<div class="goal">${goal}</div>`:''}
+    <button class="btn primary" onclick="preStart('${tpl}')">
+      ${didToday()?'한 번 더 하기':`운동 시작 · 약 ${est}분`}
+    </button>
+  </div>
+
+  <div class="stat3">
+    <div><div class="v">${total}</div><div class="l">총 운동 횟수</div></div>
+    <div><div class="v">${streakWeeks()}<span style="font-size:13px">주</span></div><div class="l">연속 목표달성</div></div>
+    <div><div class="v">${vol>=10000?(vol/1000).toFixed(0)+'t':comma(vol)}</div><div class="l">총 든 무게</div></div>
+  </div>`;
+
+  if(last){
+    const d=new Date(last.date);
+    html+=`<div class="sect">지난 운동</div>
+    <div class="card">
+      <div class="row">
+        <div class="tag" style="width:30px;height:30px;border-radius:10px;background:var(--card2);color:var(--acc);display:flex;align-items:center;justify-content:center;font-weight:800">${TPL[last.tpl]?TPL[last.tpl].short:'-'}</div>
+        <div><div class="b">${d.getMonth()+1}월 ${d.getDate()}일 · ${TPL[last.tpl]?TPL[last.tpl].name:'운동'}</div>
+        <div class="sm mut">${mmss(last.dur||0)} · ${last.sets}세트 · ${comma(last.vol)}kg</div></div>
+        <div class="sp pill ${last.mood==='좋음'?'good':last.mood==='힘듦'?'gold':''}">${last.mood||'-'}</div>
+      </div>
+      ${last.memo?`<div class="sm mut" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(37,64,107,.5)">"${esc(last.memo)}"</div>`:''}
+    </div>`;
+  }else{
+    html+=`<div class="card flat" style="margin-top:14px">
+      <div class="b" style="margin-bottom:6px">처음이시죠?</div>
+      <div class="sm mut" style="line-height:1.65">A(미는 날) → B(당기는 날)을 번갈아 하시면 됩니다.
+      첫 주는 무리하지 말고 <b style="color:var(--acc)">자세를 익히는 데</b>만 집중하세요.
+      각 종목 화면의 <b style="color:var(--acc)">[방법 보기]</b>를 꼭 한 번씩 눌러보세요.</div></div>`;
+  }
+
+  html+=`<div class="sect">이번 주 계획</div><div class="card">${weekPlanHTML(tpl,done,target)}</div>`;
+  $('tabHome').innerHTML=html;
+}
+function esc(s){return String(s).replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+
+function weekPlanHTML(next,done,target){
+  const seq=[];let t=next;
+  for(let i=0;i<target-done;i++){seq.push(t);t=(t==='A')?'B':(t==='B'?'A':'A');}
+  let out='';
+  for(let i=0;i<done;i++)out+=`<div class="row" style="padding:8px 0;color:var(--dim)"><span class="pill good">완료</span><span style="margin-left:8px">${i+1}번째 운동</span></div>`;
+  seq.forEach((x,i)=>{out+=`<div class="row" style="padding:8px 0"><span class="pill ${i===0?'acc':''}">${TPL[x].short}</span>
+    <span style="margin-left:8px">${TPL[x].name}</span><span class="sp sm mut">${i===0?'다음':''}</span></div>`;});
+  if(!seq.length)out+=`<div class="sm" style="color:var(--good);padding:6px 0">이번 주 목표를 다 채웠어요. 더 하시면 보너스입니다.</div>`;
+  return out;
+}
+function estimateMin(tpl){
+  const T=TPL[tpl];let sec=WARM.reduce((a,w)=>a+w.sec,0)+40;
+  T.blocks.forEach(b=>{const rest=restFor(b),r=roundsOf(b);
+    sec+=r*(b.pats.length*42+ (b.pats.length-1)*15 + rest);});
+  return Math.round(sec/60);
+}
+function restFor(b){const base=+DB.opt.rest||60;
+  return b.pats.indexOf('core')>=0?Math.max(35,base-20):base;}
+/* 설정한 "한 번에 쓸 시간"에 따라 라운드 수를 조절 */
+function roundsOf(b){
+  const m=+DB.profile.minutes||30;
+  const d=m<=20?-1:(m>=40?1:0);
+  return Math.max(2,b.rounds+d);
+}
+
+function todayGoal(tpl){
+  const T=TPL[tpl];
+  for(const b of T.blocks)for(const pat of b.pats){
+    const id=pickEx(pat,'ok');if(!id)continue;
+    const ex=EX[id];const last=lastPerf(id);
+    const c=DB.clears[pat]||0;
+    if(c===1){return `<b>${ex.n}</b> 한 번만 더 목표를 채우면 <b>다음 단계</b>로 올라갑니다.`;}
+    if(last){
+      const tgtTop=ex.tgt[1];
+      const best=ex.type==='hold'?last.sec:last.reps;
+      if(best&&best<tgtTop)return `오늘 목표: <b>${ex.n} ${best}${unit(ex)} → ${Math.min(tgtTop,best+1)}${unit(ex)}</b>`;
+    }
+  }
+  return `준비운동 3분은 건너뛰지 마세요. <b>무릎을 지키는 시간</b>입니다.`;
+}
+function unit(ex){return ex.type==='hold'?'초':'회';}
+function lastPerf(id){
+  for(let i=DB.logs.length-1;i>=0;i--){
+    const e=(DB.logs[i].entries||[]).find(x=>x.id===id);
+    if(e&&e.sets&&e.sets.length){
+      const best=e.sets.reduce((a,s)=>Math.max(a,s.sec||s.reps||0),0);
+      return{reps:best,sec:best,sets:e.sets.length,date:DB.logs[i].date};}
+  }
+  return null;
+}
+
+/* ==================== 세션 시작 전: 무릎 체크 ==================== */
+let pendingTpl=null;
+function preStart(tpl){
+  pendingTpl=tpl;
+  $('guideBody').innerHTML=`
+    <div class="grab"></div>
+    <div class="sh-t">시작 전 한 가지</div>
+    <div class="mut sm" style="margin-bottom:18px">오늘 오른쪽 무릎 상태는 어떤가요? 이거에 맞춰 하체를 바꿔드려요.</div>
+    <button class="btn" style="margin-bottom:9px;text-align:left;padding:16px" onclick="startSession('ok')">
+      <div class="b">괜찮아요</div><div class="sm mut">계획대로 진행합니다</div></button>
+    <button class="btn" style="margin-bottom:9px;text-align:left;padding:16px" onclick="startSession('soso')">
+      <div class="b">조금 뻐근해요</div><div class="sm mut">하체 강도를 한 단계 낮춥니다</div></button>
+    <button class="btn" style="margin-bottom:16px;text-align:left;padding:16px" onclick="startSession('bad')">
+      <div class="b">아파요</div><div class="sm mut">무릎 쓰는 동작을 빼고 엉덩이·뒤허벅지 위주로 바꿉니다</div></button>
+    <div class="xs mut" style="text-align:center;line-height:1.6">날카롭거나 찌르는 통증, 부기가 있으면<br>오늘은 쉬고 전문의와 상담하세요.</div>`;
+  $('guideModal').classList.add('on');
+}
+
+/* ==================== 세션 플레이어 ==================== */
+let S=null,tickInt=null,restInt=null,holdInt=null,wakeLock=null,AC=null;
+
+function startSession(kneeState){
+  $('guideModal').classList.remove('on');
+  const tpl=pendingTpl||'A';
+  S={tpl,knee:kneeState,start:Date.now(),elapsed:0,q:buildQueue(tpl,kneeState),i:0,
+     rec:{},holdSec:0,holdRun:false,val:0,paused:false};
+  $('player').classList.remove('hide');
+  document.body.style.overflow='hidden';
+  clearInterval(tickInt);tickInt=setInterval(()=>{
+    if(!S)return;S.elapsed=Math.floor((Date.now()-S.start)/1000);paintTop();},1000);
+  requestWake();
+  renderStep();
+}
+function buildQueue(tpl,kneeState){
+  const q=[];
+  WARM.forEach((w,i)=>q.push({t:'warm',w,i:i+1,n:WARM.length}));
+  const T=TPL[tpl];
+  T.blocks.forEach((b,bi)=>{
+    const ids=b.pats.map(p=>pickEx(p,kneeState)).filter(Boolean);
+    const rest=restFor(b),nr=roundsOf(b);
+    for(let r=1;r<=nr;r++){
+      ids.forEach((id,ei)=>{
+        q.push({t:'set',id,pat:b.pats[ei],r,rounds:nr,bi,pair:ids,pairIdx:ei});
+        const lastOfPair=(ei===ids.length-1);
+        const veryLast=(r===nr&&bi===T.blocks.length-1&&lastOfPair);
+        if(!veryLast)q.push({t:'rest',sec:lastOfPair?rest:15,short:!lastOfPair});
+      });
+    }
   });
-  html+=`<button class="btn" style="margin-top:6px" onclick="finishSession()">오늘 운동 저장</button>
-         <button class="btn ghost" style="margin-top:8px" onclick="cancelDraft()">처음부터</button>`;
-  body.innerHTML=html;
+  q.push({t:'end'});
+  return q;
 }
-/* 집·기구/맨몸이면 무게를 자동으로: 케틀벨 12kg · 덤벨 6kg · 맨몸은 내 몸무게 */
-function defWeight(id){
-  if(!(DB.profile&&(DB.profile.equip==='home'||DB.profile.equip==='body')))return '';
-  const e=exById(id);if(!e)return '';
-  if(e.equip==='kettlebell')return 12;
-  if(e.equip==='dumbbell')return 6;
-  if(e.equip==='body')return DB.profile.weight||'';
-  return '';
+function paintTop(){
+  if(!S)return;
+  $('pTime').textContent=mmss(S.elapsed);
+  const goal=(+DB.profile.minutes||30)*60;
+  const pct=Math.min(100,S.elapsed/goal*100);
+  $('pFill').style.width=pct+'%';
+  $('pTrack').classList.toggle('over',S.elapsed>goal);
+  const sets=S.q.filter(x=>x.t==='set').length;
+  const doneSets=S.q.slice(0,S.i).filter(x=>x.t==='set').length;
+  const cur=S.q[S.i];
+  $('pStep').textContent=cur&&cur.t==='warm'?`준비운동 ${cur.i}/${cur.n}`:`${Math.min(doneSets+1,sets)} / ${sets} 세트`;
 }
-function makeDraft(i){
-  const day=DB.program.days[i];
-  return{date:new Date().toISOString().slice(0,10),dayName:day.name,dayIdx:i,
-    entries:day.exercises.map(ex=>{const dw=defWeight(ex.id);return{exerciseId:ex.id,name:ex.name,muscle:ex.m,
-      prescribe:{sets:ex.sets,repMin:ex.repMin,repMax:ex.repMax,comp:ex.comp,kneeSafe:ex.kneeSafe},
-      sets:Array.from({length:ex.sets},()=>({weight:dw,reps:'',done:false}))};})};
+function renderStep(){
+  if(!S)return;
+  const it=S.q[S.i];
+  if(!it||it.t==='end'){return finishSession();}
+  paintTop();
+  clearInterval(holdInt);S.holdRun=false;
+  if(it.t==='warm')return renderWarm(it);
+  if(it.t==='rest')return renderRest(it);
+  return renderSet(it);
 }
-function switchDay(i){draft=makeDraft(i);renderToday();}
-function setVal(ei,si,k,v){draft.entries[ei].sets[si][k]=v===''?'':+v;}
-function toggleDone(ei,si){const s=draft.entries[ei].sets[si];s.done=!s.done;if(s.done)startRest(90);renderToday();}
-function addSet(ei){draft.entries[ei].sets.push({weight:'',reps:'',done:false});renderToday();}
-function cancelDraft(){draft=null;renderToday();}
+
+/* --- 준비운동 --- */
+function renderWarm(it){
+  S.holdSec=it.w.sec;
+  $('pBody').innerHTML=`
+    <div class="exblock">
+      <div class="warmnum">준비운동 ${it.i} / ${it.n}</div>
+      <div class="exname">${it.w.n}</div>
+      <div class="exeasy">${it.w.e}</div>
+      <div class="holdt" id="hT">${it.w.sec}</div>
+      <div class="cunit">초</div>
+      <button class="howbtn" onclick="showGuideW(${it.i-1})">방법 보기</button>
+    </div>`;
+  $('pFoot').innerHTML=`
+    <div class="btn2">
+      <button class="btn" onclick="nextStep()">건너뛰기</button>
+      <button class="btn primary" id="hBtn" onclick="toggleHold(${it.w.sec})">시작</button>
+    </div>`;
+}
+function toggleHold(total){
+  if(S.holdRun){clearInterval(holdInt);S.holdRun=false;$('hBtn').textContent='계속';return;}
+  S.holdRun=true;$('hBtn').textContent='멈춤';
+  clearInterval(holdInt);
+  holdInt=setInterval(()=>{
+    S.holdSec--;
+    const el=$('hT');if(el)el.textContent=Math.max(0,S.holdSec);
+    if(S.holdSec<=0){clearInterval(holdInt);S.holdRun=false;beep();buzz();nextStep();}
+  },1000);
+}
+
+/* --- 세트 --- */
+function renderSet(it){
+  const ex=EX[it.id];
+  const arr=LADDER[ex.pat]||[];const li=arr.indexOf(it.id);
+  const lvb=arr.map((_,i)=>`<i class="${i<=li?'on':''}"></i>`).join('');
+  const last=lastPerf(it.id);
+  const isHold=ex.type==='hold';
+  // 첫 도전이면 목표 하단에서 시작(그냥 탭만 해도 기록이 부풀지 않게), 이후엔 지난번 값
+  S.val = last ? (isHold?last.sec:last.reps) : ex.tgt[0];
+  if(!S.val)S.val=ex.tgt[0];
+  S.holdSec=S.val;
+
+  const pairName=it.pair.length>1?
+    `${it.pair.map((id,i)=>i===it.pairIdx?`<b style="color:var(--acc)">${EX[id].n}</b>`:EX[id].n).join(' → ')}`:'';
+
+  const w=loadKg(ex);
+  const wtxt=ex.load==='bw'?`맨몸 (약 ${w}kg)`:ex.load==='db'?`아령 ${DB.profile.db}kg`:
+             ex.load==='kb'?`케틀벨 ${DB.profile.kb}kg`:`몸무게+케틀벨 ${w}kg`;
+
+  $('pBody').innerHTML=`
+    <div class="exblock">
+      ${pairName?`<div class="pairtag">짝운동 · ${it.r}라운드 / ${it.rounds}</div>`:''}
+      <div class="exlv"><span class="pill acc">${PATNAME[ex.pat]||''}</span><span class="lvbar">${lvb}</span></div>
+      <div class="exname">${ex.n}</div>
+      <div class="exeasy">${ex.e}</div>
+      <div class="extgt">목표 <b>${ex.tgt[0]}~${ex.tgt[1]}${unit(ex)}</b>${ex.type==='side'?' (한쪽씩)':''} · ${wtxt}</div>
+      ${isHold?renderHoldUI():renderRepUI()}
+      ${last?`<div class="lasthint">지난번 <b>${isHold?last.sec+'초':last.reps+'회'}</b></div>`:
+              `<div class="lasthint">첫 도전이에요. 목표 범위 안에서 편하게</div>`}
+      <button class="howbtn" onclick="showGuide('${it.id}')">방법 보기</button>
+    </div>`;
+  $('pFoot').innerHTML=`<button class="btn primary" onclick="doneSet()">세트 완료</button>`;
+}
+function renderRepUI(){
+  return `<div class="counter">
+      <button class="cbtn" onclick="adj(-1)">&minus;</button>
+      <div class="cval" id="cVal">${S.val}</div>
+      <button class="cbtn" onclick="adj(1)">+</button>
+    </div><div class="cunit">회</div>`;
+}
+function renderHoldUI(){
+  return `<div class="counter">
+      <button class="cbtn" onclick="adj(-5)">&minus;</button>
+      <div class="cval" id="cVal">${S.val}</div>
+      <button class="cbtn" onclick="adj(5)">+</button>
+    </div><div class="cunit">초 &nbsp;·&nbsp; <span id="hRun" style="color:var(--acc);font-weight:700;cursor:pointer" onclick="runHold()">타이머 시작</span></div>`;
+}
+function runHold(){
+  if(S.holdRun){clearInterval(holdInt);S.holdRun=false;$('hRun').textContent='이어서';return;}
+  S.holdSec=S.val;S.holdRun=true;$('hRun').textContent='멈춤';
+  clearInterval(holdInt);
+  holdInt=setInterval(()=>{
+    S.holdSec--;const el=$('cVal');if(el)el.textContent=Math.max(0,S.holdSec);
+    if(S.holdSec<=0){clearInterval(holdInt);S.holdRun=false;beep();buzz();doneSet();}
+  },1000);
+}
+function adj(d){
+  if(S.holdRun)return;
+  S.val=Math.max(0,S.val+d);S.holdSec=S.val;
+  const el=$('cVal');if(el)el.textContent=S.val;
+}
+function doneSet(){
+  clearInterval(holdInt);S.holdRun=false;
+  const it=S.q[S.i];if(!it||it.t!=='set')return;
+  const ex=EX[it.id];
+  const r=S.rec[it.id]||(S.rec[it.id]={id:it.id,pat:it.pat,sets:[]});
+  r.sets.push(ex.type==='hold'?{sec:S.val}:{reps:S.val});
+  buzz(40);
+  nextStep();
+}
+function nextStep(){clearInterval(holdInt);S.i++;renderStep();}
+
+/* --- 휴식 --- */
+function renderRest(it){
+  const nxt=S.q.slice(S.i+1).find(x=>x.t==='set'||x.t==='warm');
+  let nlabel='마무리',nsub='';
+  if(nxt&&nxt.t==='set'){const e=EX[nxt.id];nlabel=e.n;
+    nsub=`${e.tgt[0]}~${e.tgt[1]}${unit(e)} · ${nxt.r}라운드/${nxt.rounds}`;}
+  const R=214/2-9,C=2*Math.PI*R;
+  $('pBody').innerHTML=`
+    <div class="restwrap">
+      <div class="ring">
+        <svg width="214" height="214">
+          <circle class="bgc" cx="107" cy="107" r="${R}" fill="none" stroke-width="11"/>
+          <circle class="fgc" id="rArc" cx="107" cy="107" r="${R}" fill="none" stroke-width="11"
+            stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="0"/>
+        </svg>
+        <div class="inn"><div class="n" id="rNum">${it.sec}</div><div class="t">${it.short?'바로 다음':'휴 식'}</div></div>
+      </div>
+      <div class="nextup"><div class="l">다음</div><div class="n">${nlabel}</div><div class="s">${nsub}</div></div>
+    </div>`;
+  $('pFoot').innerHTML=`<div class="btn2">
+      <button class="btn" onclick="addRest(15)">+15초</button>
+      <button class="btn primary" onclick="nextStep()">바로 시작</button></div>`;
+  S.restLeft=it.sec;S.restTotal=it.sec;S.arcC=C;
+  clearInterval(restInt);
+  restInt=setInterval(()=>{
+    S.restLeft--;
+    const n=$('rNum'),a=$('rArc');
+    if(!n){clearInterval(restInt);return;}
+    n.textContent=Math.max(0,S.restLeft);
+    if(a)a.style.strokeDashoffset=S.arcC*(1-S.restLeft/S.restTotal);
+    if(S.restLeft<=0){clearInterval(restInt);beep();buzz([80,60,80]);nextStep();}
+  },1000);
+}
+function addRest(s){S.restLeft+=s;S.restTotal+=s;const n=$('rNum');if(n)n.textContent=S.restLeft;}
+
+/* --- 소리/진동/화면 --- */
+function beep(){
+  if(!DB.opt.sound)return;
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended')AC.resume();
+    [0,.16].forEach((t,i)=>{
+      const o=AC.createOscillator(),g=AC.createGain();
+      o.type='sine';o.frequency.value=i?1046:784;
+      g.gain.setValueAtTime(.0001,AC.currentTime+t);
+      g.gain.exponentialRampToValueAtTime(.28,AC.currentTime+t+.02);
+      g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+t+.14);
+      o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+.16);
+    });
+  }catch(e){}
+}
+function buzz(p){if(!DB.opt.vib)return;try{navigator.vibrate&&navigator.vibrate(p||60);}catch(e){}}
+async function requestWake(){
+  if(!DB.opt.wake||!('wakeLock' in navigator))return;
+  try{wakeLock=await navigator.wakeLock.request('screen');}catch(e){}
+}
+function releaseWake(){try{wakeLock&&wakeLock.release();}catch(e){}wakeLock=null;}
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&S&&!wakeLock)requestWake();});
+
+function quitSession(){
+  const doneSets=Object.values(S?S.rec:{}).reduce((a,r)=>a+r.sets.length,0);
+  if(doneSets>0){
+    if(!confirm(`${doneSets}세트 했어요. 여기서 마칠까요?\n(취소하면 계속 진행)`))return;
+    return finishSession();
+  }
+  closePlayer();
+}
+function closePlayer(){
+  clearInterval(tickInt);clearInterval(restInt);clearInterval(holdInt);
+  releaseWake();S=null;
+  $('player').classList.add('hide');$('finish').classList.add('hide');
+  document.body.style.overflow='';
+  go('home');
+}
+
+/* ==================== 마무리 ==================== */
+let finState={mood:'',knee:'',ups:[]};
 function finishSession(){
-  const entries=draft.entries.map(en=>({exerciseId:en.exerciseId,name:en.name,muscle:en.muscle,
-    sets:en.sets.filter(s=>s.weight!==''&&s.reps!=='').map(s=>({weight:+s.weight,reps:+s.reps}))})).filter(en=>en.sets.length);
-  if(!entries.length){alert('기록된 게 없어요. 무게와 횟수를 입력해 주세요.');return;}
-  DB.logs.push({date:draft.date,dayName:draft.dayName,entries});
-  DB.logs.sort((a,b)=>a.date<b.date?-1:1);save();draft=null;
-  alert('오늘 운동 저장 완료! 분석 탭에서 변화를 확인해 보세요.');renderAll();go('stats');
+  clearInterval(tickInt);clearInterval(restInt);clearInterval(holdInt);
+  const recs=Object.values(S.rec);
+  let sets=0,vol=0;
+  recs.forEach(r=>{const ex=EX[r.id];r.sets.forEach(s=>{sets++;vol+=volOf(ex,s.reps,s.sec);});});
+  const dur=S.elapsed;
+
+  /* 신기록 판정 */
+  const prs=[];
+  recs.forEach(r=>{
+    const ex=EX[r.id];
+    const best=r.sets.reduce((a,s)=>Math.max(a,s.sec||s.reps||0),0);
+    const old=DB.prs[r.id];
+    if(best>0&&(!old||best>old.v)){prs.push({id:r.id,v:best,old:old?old.v:0});}
+  });
+
+  /* 레벨업 판정 — 모든 세트가 목표 상단 도달 (저장할 때만 실제 반영) */
+  const ups=[],clr={};
+  recs.forEach(r=>{
+    const ex=EX[r.id];if(!ex.lv)return;
+    const arr=LADDER[ex.pat]||[];
+    if(arr.indexOf(r.id)!==arr.length-1){
+      const allTop=r.sets.length>=2&&r.sets.every(s=>(s.sec||s.reps||0)>=ex.tgt[1]);
+      const c=DB.clears[ex.pat]||0;
+      if(allTop){
+        clr[ex.pat]=c+1;
+        if(c+1>=2)ups.push({pat:ex.pat,from:r.id,to:arr[arr.indexOf(r.id)+1]});
+      }else clr[ex.pat]=0;
+    }
+  });
+  finState={mood:'',knee:S.knee==='bad'?'아팠음':'',ups,clr};
+
+  const entries=recs.map(r=>({id:r.id,pat:r.pat,sets:r.sets}));
+  const log={date:Date.now(),tpl:S.tpl,dur,sets,vol:Math.round(vol),entries,
+             mood:'',knee:S.knee,memo:''};
+  finState.log=log;finState.prs=prs;
+
+  const goal=(+DB.profile.minutes||30)*60;
+  const rice=Math.round(vol/20);
+
+  let html=`<div style="max-width:560px;margin:0 auto">
+    <div class="fin-h">
+      <div class="t">운동 끝!</div>
+      <div class="s">${TPL[S.tpl].name} · ${new Date().getMonth()+1}월 ${new Date().getDate()}일</div>
+    </div>
+    <div class="fgrid">
+      <div><div class="v">${mmss(dur)}</div><div class="l">걸린 시간 ${dur<=goal?'(목표 안)':'(목표 초과)'}</div></div>
+      <div><div class="v">${sets}</div><div class="l">완료 세트</div></div>
+      <div><div class="v">${comma(vol)}<span style="font-size:13px">kg</span></div><div class="l">오늘 든 총 무게</div></div>
+      <div><div class="v">${rice}</div><div class="l">쌀 20kg 포대 (환산)</div></div>
+    </div>`;
+
+  ups.forEach(u=>{html+=`<div class="badge up"><div class="ic">UP</div>
+    <div><div class="tt">레벨 업 · ${PATNAME[u.pat]}</div>
+    <div class="ss">${EX[u.from].n} → <b style="color:var(--acc)">${EX[u.to].n}</b> 다음 운동부터 적용됩니다</div></div></div>`;});
+  prs.forEach(p=>{const ex=EX[p.id];html+=`<div class="badge"><div class="ic">PR</div>
+    <div><div class="tt">신기록 · ${ex.n}</div>
+    <div class="ss">${p.old?p.old+unit(ex)+' → ':''}<b style="color:var(--gold)">${p.v}${unit(ex)}</b></div></div></div>`;});
+  if(!ups.length&&!prs.length)
+    html+=`<div class="card flat sm mut" style="text-align:center;line-height:1.6">
+      오늘도 한 칸 쌓았습니다.<br>기록은 쌓이는 순간보다 <b style="color:var(--txt)">빠지지 않는 게</b> 더 중요해요.</div>`;
+
+  html+=`
+    <div class="sect">오늘 몸 상태</div>
+    <div class="pick" style="margin-bottom:10px">
+      <button onclick="pick('mood','좋음',this)">가벼웠다</button>
+      <button onclick="pick('mood','보통',this)">적당했다</button>
+      <button onclick="pick('mood','힘듦',this)">힘들었다</button>
+    </div>
+    <div class="sect">운동 후 무릎</div>
+    <div class="pick" style="margin-bottom:10px">
+      <button onclick="pick('knee','괜찮음',this)">괜찮다</button>
+      <button onclick="pick('knee','뻐근',this)">뻐근하다</button>
+      <button onclick="pick('knee','아팠음',this)">아프다</button>
+    </div>
+    <div class="sect">한 줄 메모 (선택)</div>
+    <textarea id="finMemo" rows="2" placeholder="예: 턱걸이 3개 성공. 무릎은 괜찮음"></textarea>
+    <button class="btn primary" style="margin-top:14px" onclick="saveSession()">저장하고 끝내기</button>
+    <button class="btn ghost mut" style="margin-top:8px" onclick="closePlayer()">저장 안 함</button>
+  </div>`;
+
+  $('player').classList.add('hide');
+  $('finish').classList.remove('hide');
+  $('finish').innerHTML=html;
+  releaseWake();
+  beep();
+}
+function pick(k,v,el){
+  finState[k]=v;
+  [...el.parentNode.children].forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+}
+function saveSession(){
+  const l=finState.log;
+  l.mood=finState.mood;l.kneeAfter=finState.knee;
+  l.memo=($('finMemo')&&$('finMemo').value||'').slice(0,140);
+  DB.logs.push(l);
+  (finState.prs||[]).forEach(p=>{DB.prs[p.id]={v:p.v,date:Date.now()};});
+  Object.keys(finState.clr||{}).forEach(p=>{DB.clears[p]=finState.clr[p];});
+  (finState.ups||[]).forEach(u=>{DB.levels[u.pat]=curLevel(u.pat)+1;DB.clears[u.pat]=0;});
+  if(finState.knee==='아팠음'){
+    const bad=DB.logs.filter(x=>x.kneeAfter==='아팠음').length;
+    if(bad>=2)setTimeout(()=>toast('무릎 통증이 반복돼요. 전문의 상담을 권합니다'),700);
+  }
+  save();closePlayer();toast('기록 저장 완료');
 }
 
-/* 휴식 타이머 */
-let restInt=null,restSec=0;
-function startRest(sec){restSec=sec;clearInterval(restInt);document.getElementById('restTimer').classList.add('on');tickRest();
-  restInt=setInterval(()=>{restSec--;tickRest();if(restSec<=0){stopRest();try{navigator.vibrate&&navigator.vibrate(400)}catch(e){}}},1000);}
-function tickRest(){const m=Math.floor(restSec/60),s=restSec%60;document.getElementById('restTime').textContent=`${m}:${String(s).padStart(2,'0')}`;}
-function stopRest(){clearInterval(restInt);document.getElementById('restTimer').classList.remove('on');}
+/* ==================== 기록 탭 ==================== */
+function renderLog(){
+  const logs=DB.logs.slice().reverse();
+  let html=`<div class="sect">최근 8주</div><div class="card">${heatHTML()}</div>`;
 
-/* ============================================================
-   운동 방법 가이드 (그림 + 단계 + 영상)
-   ============================================================ */
-const BODYMAP={
-  가슴:{side:'앞',parts:[[44,68,13,8],[76,68,13,8]]},
-  코어:{side:'앞',parts:[[60,100,15,17]]},
-  어깨:{side:'앞',parts:[[36,56,9,8],[84,56,9,8]]},
-  이두:{side:'앞',parts:[[29,82,7,13],[91,82,7,13]]},
-  삼두:{side:'뒤',parts:[[29,82,7,13],[91,82,7,13]]},
-  등:{side:'뒤',parts:[[60,76,21,17]]},
-  대퇴사두:{side:'앞',parts:[[50,150,10,24],[70,150,10,24]]},
-  햄스트링:{side:'뒤',parts:[[50,150,10,24],[70,150,10,24]]},
-  둔근:{side:'뒤',parts:[[60,120,19,12]]},
-  종아리:{side:'뒤',parts:[[50,200,8,17],[70,200,8,17]]},
-};
-function bodySVG(muscle){
-  const map=BODYMAP[muscle]||{side:'앞',parts:[]};
-  const hi=map.parts.map(([cx,cy,rx,ry])=>
-    `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#3ad6c4" opacity="0.85"/>`).join('');
-  // 사람 실루엣
-  const body=`
-    <circle cx="60" cy="22" r="13" fill="#2c4a7a"/>
-    <rect x="42" y="38" width="36" height="76" rx="14" fill="#2c4a7a"/>
-    <rect x="22" y="44" width="14" height="62" rx="7" fill="#2c4a7a"/>
-    <rect x="84" y="44" width="14" height="62" rx="7" fill="#2c4a7a"/>
-    <rect x="43" y="112" width="15" height="118" rx="7" fill="#2c4a7a"/>
-    <rect x="62" y="112" width="15" height="118" rx="7" fill="#2c4a7a"/>`;
-  return `<svg viewBox="0 0 120 238" width="96" height="190">${body}${hi}</svg>`;
+  const wk=weekSessions().length,target=+DB.profile.days||3;
+  html+=`<div class="stat3" style="margin-bottom:4px">
+    <div><div class="v">${wk}/${target}</div><div class="l">이번 주</div></div>
+    <div><div class="v">${monthCount()}</div><div class="l">이번 달</div></div>
+    <div><div class="v">${avgMin()}<span style="font-size:13px">분</span></div><div class="l">평균 운동시간</div></div></div>`;
+
+  html+=`<div class="sect">몸무게 — 주 1회면 충분해요</div>${bodyHTML()}`;
+  html+=`<div class="sect">운동 일지</div>`;
+  if(!logs.length){html+=`<div class="card"><div class="empty">아직 기록이 없어요.<br>첫 운동을 시작해보세요.</div></div>`;}
+  else{
+    html+='<div class="card">';
+    logs.slice(0,60).forEach((l,i)=>{
+      const d=new Date(l.date);
+      const idx=DB.logs.indexOf(l);
+      html+=`<div class="sess" onclick="showSess(${idx})">
+        <div class="d"><div class="m">${d.getMonth()+1}월</div><div class="n">${d.getDate()}</div></div>
+        <div class="tag">${TPL[l.tpl]?TPL[l.tpl].short:'구'}</div>
+        <div class="info"><div class="t">${TPL[l.tpl]?TPL[l.tpl].name:'이전 기록'}${l.mood?` · ${l.mood}`:''}</div>
+        <div class="s">${l.dur?mmss(l.dur)+' · ':''}${l.sets}세트 · ${comma(l.vol)}kg${l.memo?' · '+esc(l.memo):''}</div></div>
+        <div class="mut" style="font-size:18px">&rsaquo;</div></div>`;
+    });
+    html+='</div>';
+  }
+  $('tabLog').innerHTML=html;
+}
+function heatHTML(){
+  const start=isoWeekKey(Date.now())-7*7*86400000;
+  const set={};DB.logs.forEach(l=>{if(!l.legacy)set[dnum(l.date)]=(set[dnum(l.date)]||0)+1;});
+  // 가로 8주 x 세로 월~일
+  let out='<div class="heat">';
+  for(let d=0;d<7;d++){
+    for(let w=0;w<8;w++){
+      const t=start+w*7*86400000+d*86400000;
+      const c=set[dnum(t)]||0;const fut=t>today0()+86400000;
+      out+=`<i class="${fut?'fut':c>=2?'l3':c===1?'l2':''}"></i>`;
+    }
+  }
+  out+='</div><div class="hlbl">';
+  for(let w=0;w<8;w++){const t=start+w*7*86400000;
+    out+=`<div>${w%2===0?(new Date(t).getMonth()+1)+'/'+new Date(t).getDate():''}</div>`;}
+  out+='</div><div class="xs mut" style="margin-top:8px">가로=주, 세로=월~일. 진할수록 그날 운동함</div>';
+  return out;
+}
+/* 몸무게 기록 — 맨몸운동 무게 환산의 기준이라 정확할수록 좋아요 */
+function bodyHTML(){
+  const b=DB.bodylog.slice(-10);
+  const last=b[b.length-1];
+  const first=b[0];
+  let spark='';
+  if(b.length>=2){
+    const mn=Math.min(...b.map(x=>x.w)),mx=Math.max(...b.map(x=>x.w)),rg=(mx-mn)||1;
+    spark=`<div class="chart" style="height:52px;margin:12px 0 2px">`+
+      b.map(x=>`<div class="cb" style="height:${18+(x.w-mn)/rg*82}%"></div>`).join('')+`</div>`;
+  }
+  const diff=(last&&first&&b.length>=2)?(last.w-first.w):0;
+  return `<div class="card">
+    <div class="row">
+      <input type="number" id="bwIn" inputmode="decimal" step="0.1" placeholder="${DB.profile.weight}"
+        style="width:104px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:11px;color:var(--txt);text-align:center;font-weight:800;font-size:18px">
+      <span class="mut">kg</span>
+      <button class="btn sp" style="width:auto;padding:11px 18px" onclick="logBody()">오늘 기록</button>
+    </div>
+    ${spark}
+    ${last?`<div class="row xs mut" style="margin-top:6px">
+      <span>최근 ${b.length}회 기록 · 마지막 ${new Date(last.d).getMonth()+1}/${new Date(last.d).getDate()} ${last.w}kg</span>
+      ${b.length>=2?`<span class="sp b" style="color:${diff<0?'var(--good)':diff>0?'var(--gold)':'var(--dim)'}">${diff>0?'+':''}${diff.toFixed(1)}kg</span>`:''}
+    </div>`:`<div class="xs mut" style="margin-top:8px">근육이 붙으면 몸무게는 잘 안 줄어요. 숫자보다 <b>레벨</b>과 <b>든 무게</b>를 보세요.</div>`}
+  </div>`;
+}
+function logBody(){
+  const v=+($('bwIn').value);
+  if(!v||v<30||v>200)return toast('몸무게를 확인해주세요');
+  const t=dnum(Date.now());
+  const i=DB.bodylog.findIndex(x=>dnum(x.d)===t);
+  if(i>=0)DB.bodylog[i]={d:Date.now(),w:v}; else DB.bodylog.push({d:Date.now(),w:v});
+  DB.profile.weight=v;   // 맨몸운동 무게 환산 기준 갱신
+  save();renderLog();toast('기록했어요');
+}
+function monthCount(){const n=new Date();return DB.logs.filter(l=>!l.legacy&&
+  new Date(l.date).getMonth()===n.getMonth()&&new Date(l.date).getFullYear()===n.getFullYear()).length;}
+function avgMin(){const a=DB.logs.filter(l=>l.dur>0);if(!a.length)return 0;
+  return Math.round(a.reduce((s,l)=>s+l.dur,0)/a.length/60);}
+
+function showSess(i){
+  const l=DB.logs[i];if(!l)return;
+  const d=new Date(l.date);
+  let rows='';
+  (l.entries||[]).forEach(e=>{
+    const ex=EX[e.id];if(!ex)return;
+    const s=e.sets.map(x=>(x.sec?x.sec+'초':x.reps+'회')).join(' / ');
+    rows+=`<div class="row" style="padding:9px 0;border-bottom:1px solid rgba(37,64,107,.4)">
+      <div><div class="b sm">${ex.n}</div><div class="xs mut">${PATNAME[ex.pat]||''}</div></div>
+      <div class="sp sm" style="color:var(--acc);font-weight:700">${s}</div></div>`;
+  });
+  if(!rows)rows='<div class="empty sm">세부 기록이 없는 이전 버전 데이터예요</div>';
+  $('guideBody').innerHTML=`<div class="grab"></div>
+    <div class="sh-t">${d.getMonth()+1}월 ${d.getDate()}일 · ${TPL[l.tpl]?TPL[l.tpl].name:'이전 기록'}</div>
+    <div class="mut sm" style="margin-bottom:14px">${l.dur?mmss(l.dur)+' · ':''}${l.sets}세트 · ${comma(l.vol)}kg
+      ${l.mood?' · '+l.mood:''}${l.kneeAfter?' · 무릎 '+l.kneeAfter:''}</div>
+    ${l.memo?`<div class="card flat sm" style="margin-bottom:12px">"${esc(l.memo)}"</div>`:''}
+    ${rows}
+    <button class="btn ghost danger" style="margin-top:16px" onclick="delSess(${i})">이 기록 삭제</button>`;
+  $('guideModal').classList.add('on');
+}
+function delSess(i){
+  if(!confirm('이 기록을 삭제할까요?'))return;
+  DB.logs.splice(i,1);save();closeGuide();renderLog();toast('삭제했어요');
+}
+
+/* ==================== 성장 탭 ==================== */
+function renderGrow(){
+  const real=DB.logs.filter(l=>!l.legacy);
+  if(!real.length){
+    $('tabGrow').innerHTML=`<div class="card"><div class="empty">
+      운동을 시작하면 여기에<br>레벨·볼륨·부위 밸런스가 쌓입니다.</div></div>`;return;}
+
+  /* 주간 차트 */
+  const wks={};real.forEach(l=>{const k=isoWeekKey(l.date);
+    wks[k]=wks[k]||{n:0,vol:0,min:0};wks[k].n++;wks[k].vol+=l.vol;wks[k].min+=(l.dur||0)/60;});
+  const keys=Object.keys(wks).map(Number).sort().slice(-8);
+  const maxV=Math.max(...keys.map(k=>wks[k].vol),1);
+  const nowK=isoWeekKey(Date.now());
+  let bars='',lbls='';
+  keys.forEach(k=>{
+    const h=Math.max(4,wks[k].vol/maxV*100);
+    bars+=`<div class="cb ${k===nowK?'now':''}" style="height:${h}%"></div>`;
+    lbls+=`<div>${new Date(k).getMonth()+1}/${new Date(k).getDate()}</div>`;});
+
+  /* 레벨 현황 */
+  const pats=['push','vpush','vpull','hpull','hinge','knee','tri','bi','core'];
+  let lv='';
+  pats.forEach(p=>{
+    const arr=LADDER[p]||[];if(!arr.length)return;
+    const cl=curLevel(p);const id=arr[cl-1];
+    const c=DB.clears[p]||0;
+    lv+=`<div class="lvrow" onclick="showGuide('${id}')">
+      <div class="nm">${PATNAME[p]}</div>
+      <div class="bar">${arr.map((_,i)=>`<i class="${i<cl?'on':''}"></i>`).join('')}</div>
+      <div class="cur">${cl}/${arr.length}${c?' ·통과'+c:''}</div></div>
+      <div class="xs mut" style="margin:-6px 0 4px 99px">${EX[id].n}</div>`;
+  });
+
+  /* 부위 밸런스 (최근 4주) */
+  const cut=Date.now()-28*86400000;
+  const ar={상체:0,하체:0,코어:0};
+  real.filter(l=>l.date>=cut).forEach(l=>(l.entries||[]).forEach(e=>{
+    const a=AREA[e.pat];if(a)ar[a]+=e.sets.length;}));
+  const tot=ar.상체+ar.하체+ar.코어||1;
+  const bal=`<div class="bal">
+    <i style="width:${ar.상체/tot*100}%;background:#3ad6c4"></i>
+    <i style="width:${ar.하체/tot*100}%;background:#5b8cff"></i>
+    <i style="width:${ar.코어/tot*100}%;background:#f5c451"></i></div>
+    <div class="row xs mut" style="gap:14px">
+      <span><b style="color:#3ad6c4">■</b> 상체 ${ar.상체}세트</span>
+      <span><b style="color:#5b8cff">■</b> 하체 ${ar.하체}세트</span>
+      <span><b style="color:#f5c451">■</b> 코어 ${ar.코어}세트</span></div>`;
+
+  /* PR */
+  let prs='';
+  Object.keys(DB.prs).sort((a,b)=>DB.prs[b].date-DB.prs[a].date).slice(0,8).forEach(id=>{
+    const ex=EX[id];if(!ex)return;const p=DB.prs[id];
+    prs+=`<div class="row" style="padding:9px 0;border-bottom:1px solid rgba(37,64,107,.4)">
+      <div class="sm b">${ex.n}</div>
+      <div class="sp b" style="color:var(--gold)">${p.v}${unit(ex)}</div></div>`;});
+
+  const tips=coach(real,wks,keys,ar);
+
+  $('tabGrow').innerHTML=`
+    <div class="sect">주간 운동량 (든 무게)</div>
+    <div class="card">
+      <div class="chart">${bars}</div>
+      <div class="clbl">${lbls}</div>
+      <div class="row sm mut" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(37,64,107,.5)">
+        <span>이번 주 ${wks[nowK]?wks[nowK].n:0}회 · ${comma(wks[nowK]?wks[nowK].vol:0)}kg</span>
+        <span class="sp">평균 ${avgMin()}분</span></div>
+    </div>
+
+    <div class="sect">부위 밸런스 (최근 4주)</div>
+    <div class="card">${bal}</div>
+
+    <div class="sect">레벨 현황 — 눌러서 자세 보기</div>
+    <div class="card">${lv}</div>
+
+    ${prs?`<div class="sect">최고 기록</div><div class="card">${prs}</div>`:''}
+
+    <div class="sect">코치 한마디</div>
+    <div class="card">${tips}</div>
+
+    <div class="sect">단백질</div>
+    <div class="card sm" style="line-height:1.65">
+      근육은 <b style="color:var(--acc)">먹어야</b> 붙습니다. ${DB.profile.weight}kg 기준 하루
+      <b style="color:var(--acc)">${Math.round(DB.profile.weight*1.6)}~${Math.round(DB.profile.weight*2.0)}g</b>.<br>
+      <span class="mut">달걀1개 6g · 닭가슴살100g 23g · 우유200ml 6g · 두부반모 10g · 프로틴1스쿱 20g</span>
+    </div>`;
+}
+function coach(real,wks,keys,ar){
+  const t=[];const target=+DB.profile.days||3;
+  const wk=weekSessions().length;
+  const now=isoWeekKey(Date.now());
+
+  if(wk>=target)t.push(['good',`이번 주 목표 ${target}회를 채웠어요. 이게 3주 이어지면 몸이 바뀌기 시작합니다.`]);
+  else{
+    const left=target-wk;const dleft=7-((new Date().getDay()+6)%7);
+    t.push([left>dleft?'bad':'warn',`이번 주 ${left}번 남았고, 남은 날은 ${dleft}일이에요.${left>dleft?' 오늘 하지 않으면 목표를 못 채웁니다.':''}`]);
+  }
+
+  const st=streakWeeks();
+  if(st>=2)t.push(['good',`${st}주 연속 목표 달성 중. 지금이 제일 무너지기 쉬운 구간이니 이번 주만 버티세요.`]);
+
+  // 상하체 불균형
+  const tot=ar.상체+ar.하체||1;
+  if(ar.상체>ar.하체*2)t.push(['warn','하체 세트가 상체의 절반도 안 됩니다. 무릎 보호를 위해서라도 하체(엉덩이·뒤허벅지)를 빼먹지 마세요.']);
+  if(ar.하체>ar.상체*2)t.push(['warn','상체가 부족해요. 턱걸이·푸쉬업 쪽을 채우세요.']);
+  if(ar.코어===0&&tot>6)t.push(['warn','코어 세트가 0입니다. 마지막 블록을 건너뛰고 계신 것 같아요.']);
+
+  // 시간
+  const am=avgMin(),goalm=+DB.profile.minutes||30;
+  if(am>goalm+10)t.push(['warn',`평균 ${am}분으로 목표 ${goalm}분보다 깁니다. 휴식 시간을 줄이거나 짝운동 사이를 15초로 지키세요.`]);
+  if(am>0&&am<goalm-12)t.push(['','평소보다 빨리 끝나고 있어요. 세트당 횟수를 목표 상단까지 채워보세요.']);
+
+  // 정체
+  Object.keys(LADDER).forEach(p=>{
+    const arr=LADDER[p];const id=arr[curLevel(p)-1];
+    const perf=lastPerf(id);
+    if(!perf)return;
+    const ex=EX[id];
+    const older=real.filter(l=>(l.entries||[]).some(e=>e.id===id));
+    if(older.length>=4){
+      const first=older[older.length-4];
+      const fe=first.entries.find(e=>e.id===id);
+      const fb=fe?fe.sets.reduce((a,s)=>Math.max(a,s.sec||s.reps||0),0):0;
+      if(fb&&perf.reps<=fb)t.push(['warn',`${ex.n}이(가) 4번째 제자리예요. 3초 템포로 내리거나 휴식을 15초 줄여보세요.`]);
+    }
+  });
+
+  // 무릎
+  const kbad=DB.logs.filter(l=>l.kneeAfter==='아팠음').length;
+  if(kbad>=2)t.push(['bad',`운동 후 무릎 통증이 ${kbad}번 기록됐어요. 하체는 힌지(RDL·스윙) 위주로 유지하고 전문의 상담을 권합니다.`]);
+  else if(kbad===1)t.push(['warn','최근 무릎 통증이 한 번 있었어요. 다음 세션에서 하체 강도를 한 단계 낮춰보세요.']);
+  else if(real.length>=4)t.push(['good','무릎 통증 기록 없이 진행 중입니다. 준비운동의 클램쉘을 계속 지키세요.']);
+
+  // 러닝 병행
+  if(real.length>=6)t.push(['','하체 한 날 바로 다음날 러닝은 피하세요. 하체 → 하루 쉬고 러닝 순서가 무릎에 가장 안전합니다.']);
+
+  return t.slice(0,7).map(x=>`<div class="tip ${x[0]}"><div class="ic"></div><div>${x[1]}</div></div>`).join('');
+}
+
+/* ==================== 가이드 ==================== */
+const BODY={가슴:{s:'앞',p:[[36,34,11,8],[64,34,11,8]]},등:{s:'뒤',p:[[50,36,20,13]]},
+  어깨:{s:'앞',p:[[26,27,8,7],[74,27,8,7]]},이두:{s:'앞',p:[[20,42,5,10],[80,42,5,10]]},
+  삼두:{s:'뒤',p:[[20,42,5,10],[80,42,5,10]]},대퇴사두:{s:'앞',p:[[39,66,8,15],[61,66,8,15]]},
+  햄스트링:{s:'뒤',p:[[39,66,8,15],[61,66,8,15]]},둔근:{s:'뒤',p:[[50,55,17,9]]},
+  종아리:{s:'뒤',p:[[39,86,6,10],[61,86,6,10]]},코어:{s:'앞',p:[[50,47,13,11]]}};
+function bodySVG(m){
+  const b=BODY[m]||{s:'앞',p:[]};
+  const hi=b.p.map(([cx,cy,rx,ry])=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#3ad6c4" opacity=".8"/>`).join('');
+  return `<svg class="bodymap" width="118" height="200" viewBox="0 0 100 105">
+    <g fill="#25406b">
+      <circle cx="50" cy="9" r="7"/><rect x="34" y="18" width="32" height="34" rx="9"/>
+      <rect x="14" y="21" width="10" height="30" rx="5"/><rect x="76" y="21" width="10" height="30" rx="5"/>
+      <rect x="16" y="47" width="8" height="14" rx="4"/><rect x="76" y="47" width="8" height="14" rx="4"/>
+      <rect x="36" y="50" width="28" height="12" rx="5"/>
+      <rect x="34" y="58" width="13" height="26" rx="6"/><rect x="53" y="58" width="13" height="26" rx="6"/>
+      <rect x="35" y="80" width="10" height="22" rx="5"/><rect x="55" y="80" width="10" height="22" rx="5"/>
+    </g>${hi}
+    <text x="50" y="105" font-size="6" fill="#8ea3c4" text-anchor="middle">몸 ${b.s}쪽</text></svg>`;
 }
 function showGuide(id){
-  const e=exById(id);if(!e)return;const g=e.g;
-  const steps=g.steps.map((s,i)=>`<div class="gnum"><div class="n">${i+1}</div><div class="t">${s}</div></div>`).join('');
-  const tips=g.tips&&g.tips.length?`<div class="gbox tip"><span class="gt">잘하는 법</span><ul>${g.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:'';
-  const avoid=g.avoid&&g.avoid.length?`<div class="gbox bad"><span class="gt">이건 조심 (다칠 수 있어요)</span><ul>${g.avoid.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:'';
-  const knee=g.knee?`<div class="gbox knee"><span class="gt">무릎 주의</span>${g.knee}</div>`:'';
-  const yturl='https://www.youtube.com/results?search_query='+encodeURIComponent(g.yt);
-  document.getElementById('guideSheet').innerHTML=`
-    <h3>${e.name}</h3>
-    <p class="hint" style="margin:4px 0 14px">${g.sum} · <b style="color:var(--accent)">${g.easy}</b></p>
-    <div class="bodywrap">
-      <div>${bodySVG(e.m)}<div class="cap">${map_side(e.m)} · ${MUSCLE_EASY[e.m]}</div></div>
-      <div class="hint" style="flex:1">
-        <b style="color:#fff">어디에 좋은가요?</b><br>${MUSCLE_EASY[e.m]} 근육을 키워요.<br><br>
-        초록색 부분이 이 운동으로 자극되는 곳이에요.
-      </div>
+  const e=EX[id];if(!e)return;const g=e.g;
+  guideSheet(e.n,e.e,e.m,g);
+}
+function showGuideW(i){
+  const w=WARM[i];if(!w)return;
+  guideSheet(w.n,w.e,'',w.g);
+}
+function guideSheet(name,easy,muscle,g){
+  const steps=(g.steps||[]).map((s,i)=>`<div class="gnum"><div class="n">${i+1}</div><div class="t">${s}</div></div>`).join('');
+  const tips=(g.tips&&g.tips.length)?`<div class="gbox tip"><span class="gt">잘하는 법</span><ul>${g.tips.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:'';
+  const av=(g.avoid&&g.avoid.length)?`<div class="gbox bad"><span class="gt">이건 조심하세요</span><ul>${g.avoid.map(x=>`<li>${x}</li>`).join('')}</ul></div>`:'';
+  const kn=g.knee?`<div class="gbox knee"><span class="gt">무릎</span>${g.knee}</div>`:'';
+  const yt='https://www.youtube.com/results?search_query='+encodeURIComponent(g.yt||name);
+  $('guideBody').innerHTML=`<div class="grab"></div>
+    <div class="sh-t">${name}</div>
+    <div class="mut sm" style="margin-bottom:12px">${easy}</div>
+    <div class="row" style="align-items:flex-start;gap:14px">
+      ${muscle?bodySVG(muscle):''}
+      <div style="flex:1"><div class="card flat sm" style="margin:0">${g.sum||''}</div>
+      ${muscle?`<div class="pill acc" style="margin-top:10px">쓰는 곳 · ${muscle}</div>`:''}</div>
     </div>
-    <a class="btn yt" href="${yturl}" target="_blank" rel="noopener">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M10 15l5.2-3L10 9v6zm12-3c0 2-.2 3.4-.4 4.1-.3 1-.9 1.6-1.9 1.9C18.4 18.4 12 18.4 12 18.4s-6.4 0-7.7-.4c-1-.3-1.6-.9-1.9-1.9C2.2 15.4 2 14 2 12s.2-3.4.4-4.1c.3-1 .9-1.6 1.9-1.9C5.6 5.6 12 5.6 12 5.6s6.4 0 7.7.4c1 .3 1.6.9 1.9 1.9.2.7.4 2.1.4 4.1z"/></svg>
-      유튜브에서 영상으로 보기</a>
-    <h2 class="sec" style="margin:18px 0 12px">따라하기</h2>
-    ${steps}${tips}${avoid}${knee}
-    <button class="btn ghost" style="margin-top:6px" onclick="closeGuide()">닫기</button>`;
-  document.getElementById('guideModal').classList.add('on');
+    <div class="gsteps">${steps}</div>${tips}${av}${kn}
+    <a class="ytb" href="${yt}" target="_blank" rel="noopener">유튜브에서 영상으로 보기</a>
+    <button class="btn ghost mut" style="margin-top:10px" onclick="closeGuide()">닫기</button>`;
+  $('guideModal').classList.add('on');
 }
-function map_side(m){return (BODYMAP[m]||{}).side||'앞';}
-function closeGuide(){document.getElementById('guideModal').classList.remove('on');}
-document.getElementById('guideModal').addEventListener('click',e=>{if(e.target.id==='guideModal')closeGuide();});
-document.getElementById('setupModal').addEventListener('click',e=>{if(e.target.id==='setupModal')closeSetup();});
+function closeGuide(){$('guideModal').classList.remove('on');}
 
-/* ============================================================
-   프로그램 화면
-   ============================================================ */
-function renderProgram(){
-  const info=document.getElementById('programInfo'),body=document.getElementById('programBody');
-  if(!DB.program){info.innerHTML='';body.innerHTML=`<div class="card"><div class="empty">운동 계획이 아직 없어요.</div>
-    <button class="btn" onclick="openSetup()">내 운동 계획 만들기</button></div>`;return;}
-  const p=DB.profile;
-  info.innerHTML=`<div class="card tight"><div class="row wrap" style="gap:8px">
-    <span class="pill">${DB.program.split}</span><span class="pill">${p.exp}</span>
-    <span class="pill">${({gym:'헬스장',home:'집·기구',dumbbell:'집(덤벨)',body:'맨몸'})[p.equip]}</span>
-    ${p.knee==='on'?'<span class="pill" style="color:var(--good)">무릎 보호 ON</span>':''}</div>
-    ${p.equip==='home'?'<p class="hint" style="margin-top:10px">새벽 20~30분용 짧은 전신이에요. 시간이 빠듯하면 <b>두 운동을 번갈아(슈퍼세트)</b> 하고 휴식을 30~45초로 줄이면 딱 맞아요. 케틀벨 12kg·덤벨 6kg·맨몸 무게는 자동으로 채워져 있으니 <b>횟수만</b> 적으면 돼요.</p>':''}</div>`;
-  let html='';
-  DB.program.days.forEach((d,i)=>{
-    let rows='';
-    d.exercises.forEach(ex=>rows+=`<div class="setrow" style="grid-template-columns:1fr auto auto;gap:10px" >
-      <div onclick="showGuide('${ex.id}')"><b>${ex.name}</b>${ex.kneeSafe?'<span class="badge knee">무릎OK</span>':''}
-        <div class="tag">${MUSCLE_EASY[ex.m]}</div></div>
-      <div class="sub small" style="align-self:center">${ex.sets}×${ex.repMin}~${ex.repMax}</div>
-      <button class="howbtn" style="padding:6px 10px;font-size:12px" onclick="showGuide('${ex.id}')">방법</button></div>`);
-    html+=`<div class="card"><div class="row"><div class="grow"><b style="font-size:17px">${i+1}일차 · ${d.name}</b></div>
-      <button class="btn alt sm" onclick="startDay(${i})">시작</button></div>
-      <div style="margin-top:10px">${rows}</div></div>`;
-  });
-  body.innerHTML=html;
+/* ==================== 설정 ==================== */
+function openSettings(){
+  const p=DB.profile,o=DB.opt;
+  $('stWeight').value=p.weight;$('stAge').value=p.age;
+  $('stDb').value=p.db;$('stKb').value=p.kb;
+  segPick('stDays',String(p.days));segPick('stMin',String(p.minutes));
+  segPick('stDbN',String(p.dbN));segPick('stRest',String(o.rest));
+  $('swPull').classList.toggle('on',!!p.pullbar);
+  $('swKnee').classList.toggle('on',!!p.knee);
+  $('swWake').classList.toggle('on',!!o.wake);
+  $('swSound').classList.toggle('on',!!o.sound);
+  $('swVib').classList.toggle('on',!!o.vib);
+  $('setModal').classList.add('on');
 }
-function startDay(i){switchDay(i);go('today');}
-
-/* ============================================================
-   분석 화면
-   ============================================================ */
-function renderStats(){
-  const box=document.getElementById('statsBody');
-  if(!DB.logs.length){box.innerHTML=`<div class="card"><div class="empty">아직 기록이 없어요.<br>오늘 첫 운동을 저장하면 여기에<br>운동량·근력·균형 분석이 채워져요.</div></div>`;return;}
-  const sessions=DB.logs.length;
-  const ton=DB.logs.reduce((a,l)=>a+l.entries.reduce((b,e)=>b+e.sets.reduce((c,s)=>c+setVolume(s),0),0),0);
-  const wk=weeklySetsByMuscle();const wkTot=Object.values(wk).reduce((a,b)=>a+b,0);
-  const weeks={};DB.logs.forEach(l=>{const w=isoWeek(l.date);weeks[w]=(weeks[w]||0)+1;});
-  const rWeeks=Object.keys(weeks).sort().slice(-4);
-  const avgFreq=rWeeks.length?(rWeeks.reduce((a,w)=>a+weeks[w],0)/rWeeks.length).toFixed(1):0;
-
-  let html=`<div class="kpi" style="margin-bottom:12px">
-    <div class="card"><div class="big">${sessions}</div><div class="lbl">총 운동 횟수</div></div>
-    <div class="card"><div class="big">${(ton/1000).toFixed(1)}t</div><div class="lbl">지금까지 든 무게</div></div>
-    <div class="card"><div class="big">${wkTot}</div><div class="lbl">이번 주 세트</div></div>
-    <div class="card"><div class="big">${avgFreq}</div><div class="lbl">주 평균 운동</div></div></div>`;
-
-  html+=`<h2 class="sec">코치 한마디</h2>${coachingInsights(wk,weeks,rWeeks)}`;
-
-  html+=`<h2 class="sec">부위별 운동량<span class="sub2">이번 주 (목표 10세트 이상)</span></h2><div class="card">`;
-  MUSCLES.forEach(m=>{const v=wk[m]||0;const pct=Math.min(100,v/20*100);
-    const col=v>=10?'var(--good)':v>=5?'var(--gold)':v>0?'var(--accent2)':'var(--line)';
-    html+=`<div style="margin-bottom:10px"><div class="row small"><div class="grow sub">${MUSCLE_EASY[m]}</div><div class="sub">${v}세트</div></div>
-      <div class="bar"><i style="width:${pct}%;background:${col}"></i></div></div>`;});
-  html+=`<div class="legend"><span><i style="background:var(--good)"></i>충분</span>
-    <span><i style="background:var(--gold)"></i>조금 부족</span><span><i style="background:var(--accent2)"></i>많이 부족</span></div></div>`;
-
-  html+=`<h2 class="sec">근력 변화<span class="sub2">예상 최대중량</span></h2>`;
-  const lifts=topLifts(3);
-  if(lifts.length){lifts.forEach((lf,i)=>{
-    html+=`<div class="card tight"><div class="row"><div class="grow"><b>${lf.name}</b>
-      <span class="sub small"> · 약 ${Math.round(lf.points[lf.points.length-1].v)}kg</span></div>
-      <span class="small" style="color:${lf.trend>=0?'var(--good)':'var(--bad)'}">${lf.trend>=0?'▲':'▼'} ${Math.abs(lf.trend).toFixed(0)}%</span></div>
-      <canvas id="lc${i}" height="120"></canvas></div>`;});
-  }else html+=`<div class="card"><div class="empty small">같은 운동을 2번 이상 하면 근력 변화 그래프가 그려져요.</div></div>`;
-
-  html+=`<h2 class="sec">주별 운동량 변화</h2><div class="card tight"><canvas id="volChart" height="130"></canvas></div>`;
-  box.innerHTML=html;
-
-  lifts.forEach((lf,i)=>lineChart(document.getElementById('lc'+i),lf.points.map(p=>p.v),lf.points.map(p=>p.d.slice(5))));
-  const wkKeys=Object.keys(weeks).sort();
-  const wkVol=wkKeys.map(w=>DB.logs.filter(l=>isoWeek(l.date)===w).reduce((a,l)=>a+l.entries.reduce((b,e)=>b+e.sets.reduce((c,s)=>c+setVolume(s),0),0),0)/1000);
-  barChart(document.getElementById('volChart'),wkVol,wkKeys.map(w=>w.split('-W')[1]+'주'));
+function closeSettings(){$('setModal').classList.remove('on');}
+function segPick(id,v){[...$(id).children].forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
+function segGet(id){const b=$(id).querySelector('button.on');return b?b.dataset.v:null;}
+function saveSettings(){
+  const p=DB.profile,o=DB.opt;
+  p.weight=+$('stWeight').value||75; p.age=+$('stAge').value||45;
+  p.db=+$('stDb').value||8; p.kb=+$('stKb').value||10;
+  p.days=+segGet('stDays')||3; p.minutes=+segGet('stMin')||30; p.dbN=+segGet('stDbN')||2;
+  p.pullbar=$('swPull').classList.contains('on');
+  p.knee=$('swKnee').classList.contains('on');
+  o.wake=$('swWake').classList.contains('on');
+  o.sound=$('swSound').classList.contains('on');
+  o.vib=$('swVib').classList.contains('on');
+  o.rest=+segGet('stRest')||60;
+  save();closeSettings();go(TAB);toast('설정을 저장했어요');
 }
-function topLifts(n){
-  const by={};DB.logs.forEach(l=>l.entries.forEach(e=>{const v=bestE1RM(e);if(!v)return;
-    (by[e.exerciseId]=by[e.exerciseId]||{name:e.name,points:[]}).points.push({d:l.date,v});}));
-  return Object.values(by).filter(x=>x.points.length>=2).map(x=>{const f=x.points[0].v,la=x.points[x.points.length-1].v;
-    return{...x,trend:f?(la-f)/f*100:0};}).sort((a,b)=>b.points.length-a.points.length).slice(0,n);
+function exportData(){
+  const blob=new Blob([JSON.stringify(DB)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='머슬플랜_백업_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+  toast('백업 파일을 저장했어요');
 }
-function coachingInsights(wk,weeks,rWeeks){
-  const tips=[];
-  const strong=MUSCLES.filter(m=>(wk[m]||0)>=10);
-  const zero=MUSCLES.filter(m=>(wk[m]||0)===0);
-  if(strong.length)tips.push({c:'good',t:`이번 주 <b>${strong.map(m=>MUSCLE_EASY[m]).join(', ')}</b>는 충분히 운동했어요. 근육이 자랄 자극이 됐어요.`});
-  if(zero.length&&DB.logs.length>=2)tips.push({c:'warn',t:`이번 주 <b>${zero.slice(0,4).map(m=>MUSCLE_EASY[m]).join(', ')}</b>는 아직 안 했어요. 골고루 커야 보기 좋으니 다음 운동에 꼭 넣어요.`});
-  const stalls=detectStalls();
-  if(stalls.length)tips.push({c:'bad',t:`<b>${stalls.join(', ')}</b>가 3번째 무게가 안 늘고 있어요. 한 주는 무게를 10% 낮춰 쉬어가고(디로드) 다시 도전하거나, 횟수를 1~2회 더 늘려보세요.`});
-  const gains=detectGains();
-  if(gains.length)tips.push({c:'good',t:`<b>${gains.join(', ')}</b>는 점점 세지고 있어요! 지금처럼 '다 성공하면 무게 올리기'를 계속하면 돼요.`});
-  const avg=rWeeks.length?rWeeks.reduce((a,w)=>a+weeks[w],0)/rWeeks.length:0;
-  const target=+(DB.profile?.days||3);
-  if(avg&&avg<target-0.5)tips.push({c:'warn',t:`최근 주 평균 ${avg.toFixed(1)}번으로 목표(${target}번)보다 적어요. 40대 근육은 <b>자주(부위별 주 2번)</b> 하는 게 핵심이에요.`});
-  if(DB.logs.length<=2)tips.push({c:'',t:`처음 2~3주는 무게보다 <b>바른 자세</b>가 우선이에요. 운동 이름의 '방법' 버튼으로 자세를 꼭 확인하고, 무릎이 찌릿하면 그 운동은 빼주세요.`});
-  const w=DB.profile?DB.profile.weight:75;
-  tips.push({c:'',t:`근육이 자라려면 <b>단백질</b>이 필요해요. 하루 <b>${Math.round(w*1.6)}~${Math.round(w*2.2)}g</b>(닭가슴살·계란·두부·단백질보충제) + <b>잠 7시간</b>이 운동만큼 중요해요.`});
-  return tips.map(t=>`<div class="insight ${t.c}">${t.t}</div>`).join('');
+function importData(inp){
+  const f=inp.files&&inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const d=JSON.parse(r.result);
+    if(!d||!d.logs)throw 0;
+    if(!confirm('지금 기록을 덮어씁니다. 진행할까요?'))return;
+    localStorage.setItem(KEY,JSON.stringify(d));DB=loadDB();
+    closeSettings();go('home');toast('불러오기 완료');
+  }catch(e){toast('파일을 읽을 수 없어요');}};
+  r.readAsText(f);inp.value='';
 }
-function detectStalls(){const out=[],by={};
-  DB.logs.forEach(l=>l.entries.forEach(e=>{const v=bestE1RM(e);if(v)(by[e.exerciseId]=by[e.exerciseId]||{name:e.name,pts:[]}).pts.push(v);}));
-  Object.values(by).forEach(x=>{if(x.pts.length>=3){const l3=x.pts.slice(-3),max3=Math.max(...l3),before=Math.max(...x.pts.slice(0,-3),0);
-    if(l3[2]<=l3[0]*1.01&&max3<=before*1.02&&before>0)out.push(x.name);}});return out;}
-function detectGains(){const out=[],by={};
-  DB.logs.forEach(l=>l.entries.forEach(e=>{const v=bestE1RM(e);if(v)(by[e.exerciseId]=by[e.exerciseId]||{name:e.name,pts:[]}).pts.push(v);}));
-  Object.values(by).forEach(x=>{if(x.pts.length>=2){const f=x.pts[0],l=x.pts[x.pts.length-1];if(l>=f*1.05)out.push(x.name);}});return out.slice(0,4);}
-
-/* ===== 캔버스 차트 ===== */
-function setupCanvas(cv){const dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=cv.height;
-  cv.width=w*dpr;cv.height=h*dpr;const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);return{ctx,w,h};}
-function lineChart(cv,vals,labels){if(!cv||!vals.length)return;const{ctx,w,h}=setupCanvas(cv);
-  const pad={l:34,r:8,t:10,b:20};const max=Math.max(...vals)*1.08,min=Math.min(...vals)*0.92,rng=(max-min)||1;
-  const X=i=>pad.l+(w-pad.l-pad.r)*(vals.length<2?0.5:i/(vals.length-1));const Y=v=>pad.t+(h-pad.t-pad.b)*(1-(v-min)/rng);
-  ctx.strokeStyle='#27406b';ctx.fillStyle='#6f86ad';ctx.font='10px sans-serif';
-  for(let g=0;g<=2;g++){const v=min+rng*g/2,y=Y(v);ctx.globalAlpha=.4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.globalAlpha=1;ctx.fillText(Math.round(v),4,y+3);}
-  const grad=ctx.createLinearGradient(0,pad.t,0,h-pad.b);grad.addColorStop(0,'rgba(58,214,196,.35)');grad.addColorStop(1,'rgba(58,214,196,0)');
-  ctx.beginPath();ctx.moveTo(X(0),Y(vals[0]));vals.forEach((v,i)=>ctx.lineTo(X(i),Y(v)));ctx.lineTo(X(vals.length-1),h-pad.b);ctx.lineTo(X(0),h-pad.b);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
-  ctx.beginPath();ctx.lineWidth=2.4;ctx.strokeStyle='#3ad6c4';vals.forEach((v,i)=>i?ctx.lineTo(X(i),Y(v)):ctx.moveTo(X(i),Y(v)));ctx.stroke();
-  vals.forEach((v,i)=>{ctx.beginPath();ctx.fillStyle='#3ad6c4';ctx.arc(X(i),Y(v),3,0,7);ctx.fill();});
-  ctx.fillStyle='#6f86ad';const step=Math.ceil(labels.length/4);labels.forEach((l,i)=>{if(i%step===0||i===labels.length-1)ctx.fillText(l,X(i)-12,h-6);});}
-function barChart(cv,vals,labels){if(!cv||!vals.length)return;const{ctx,w,h}=setupCanvas(cv);
-  const pad={l:30,r:8,t:10,b:20};const max=Math.max(...vals,0.1)*1.1;const gap=(w-pad.l-pad.r)/vals.length,bw=gap*0.62;
-  ctx.fillStyle='#6f86ad';ctx.font='10px sans-serif';
-  for(let g=0;g<=2;g++){const v=max*g/2,y=pad.t+(h-pad.t-pad.b)*(1-g/2);ctx.globalAlpha=.4;ctx.strokeStyle='#27406b';ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.globalAlpha=1;ctx.fillText(v.toFixed(1),2,y+3);}
-  vals.forEach((v,i)=>{const x=pad.l+gap*i+(gap-bw)/2,bh=(h-pad.t-pad.b)*(v/max),y=h-pad.b-bh;
-    const grad=ctx.createLinearGradient(0,y,0,h-pad.b);grad.addColorStop(0,'#5b8cff');grad.addColorStop(1,'#3ad6c4');
-    ctx.fillStyle=grad;roundRect(ctx,x,y,bw,bh,4);ctx.fill();ctx.fillStyle='#6f86ad';ctx.fillText(labels[i],x-2,h-6);});}
-function roundRect(ctx,x,y,w,h,r){r=Math.min(r,h/2,w/2);ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
-
-/* ===== 기록 ===== */
-function renderHistory(){
-  const box=document.getElementById('historyBody');
-  if(!DB.logs.length){box.innerHTML=`<div class="card"><div class="empty">기록이 없어요.</div></div>`;return;}
-  let html='';
-  [...DB.logs].reverse().forEach((l,ri)=>{const idx=DB.logs.length-1-ri;
-    const ton=l.entries.reduce((a,e)=>a+e.sets.reduce((b,s)=>b+setVolume(s),0),0);let rows='';
-    l.entries.forEach(e=>rows+=`<tr><td>${e.name}</td><td class="sub">${e.sets.map(s=>`${s.weight}×${s.reps}`).join(', ')}</td></tr>`);
-    html+=`<div class="card"><div class="row"><div class="grow"><b>${l.date}</b> <span class="sub small">· ${l.dayName}</span></div>
-      <button class="btn danger sm" onclick="delLog(${idx})">삭제</button></div>
-      <table class="log" style="margin-top:8px"><tr><th>운동</th><th>무게×횟수</th></tr>${rows}</table>
-      <div class="sub small" style="margin-top:6px">이날 든 무게 ${(ton/1000).toFixed(2)}t</div></div>`;});
-  box.innerHTML=html;
+function resetAll(){
+  if(!confirm('모든 기록이 사라집니다. 정말 지울까요?'))return;
+  if(!confirm('되돌릴 수 없습니다. 한 번 더 확인할게요.'))return;
+  localStorage.removeItem(KEY);DB=blank();save();closeSettings();go('home');toast('초기화했어요');
 }
-function delLog(i){if(confirm('이 기록을 지울까요?')){DB.logs.splice(i,1);save();renderHistory();}}
 
-/* ===== 설정/데이터 ===== */
-function renderSettings(){
-  const el=document.getElementById('profileSummary');
-  if(!DB.profile){el.innerHTML='아직 정보가 없어요. 아래 버튼으로 시작하세요.';return;}
-  const p=DB.profile;
-  el.innerHTML=`나이 ${p.age} · ${p.weight}kg · ${p.exp} · 주 ${p.days}번 · ${({gym:'헬스장',home:'집·기구',dumbbell:'집(덤벨)',body:'맨몸'})[p.equip]} · 무릎보호 ${p.knee==='on'?'ON':'OFF'}`;
+/* ==================== 시작 ==================== */
+save();
+go('home');
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
-function exportData(){const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`머슬플랜_백업_${new Date().toISOString().slice(0,10)}.json`;a.click();}
-function importData(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();
-  r.onload=()=>{try{const d=JSON.parse(r.result);if(d.logs){DB=d;save();renderAll();alert('불러오기 완료!');go('stats');}else alert('파일 형식이 맞지 않아요.');}catch(e){alert('불러오기 실패: '+e.message);}};r.readAsText(f);}
-function resetAll(){if(confirm('정말 모든 기록을 지울까요? 되돌릴 수 없어요.')){DB=blank();save();draft=null;renderAll();go('today');}}
-
-/* ===== 초기화 ===== */
-function renderAll(){renderToday();renderProgram();renderSettings();
-  document.getElementById('topPill').textContent=DB.program?DB.program.split:'근육 키우기 코치';}
-renderAll();
-if(!DB.profile)setTimeout(openSetup,400);
-go('today');
-
-/* PWA 서비스워커 */
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+document.addEventListener('touchstart',()=>{ if(!AC&&DB.opt.sound){
+  try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } },{once:true});
 </script>
 </body>
 </html>
