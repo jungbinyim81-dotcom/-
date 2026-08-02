@@ -1102,6 +1102,7 @@ async function openSettings(){
       사진은 서버에 올라가지 않지만, 소중한 건 <b>백업</b>을 꼭 남겨두세요.
     </div>
     <button class="btn ghost danger" style="margin-top:6px" onclick="wipeAll()">모든 사진·기록 지우기</button>
+    <div class="xs" style="text-align:center;color:var(--line);margin-top:12px">버전 ${BUILD}</div>
     <div style="height:10px"></div>`;
   $('mSet').classList.add('on');
 }
@@ -1481,6 +1482,13 @@ $('cText').addEventListener('keydown',e=>{
    PWA에서 뒤로가기를 그냥 두면 앱이 통째로 닫힌다.
    히스토리에 '가드'를 하나 깔아두고, 뒤로가기를 '지금 열린 화면 닫기'로 해석한다. */
 function guardPush(){try{history.pushState({jm:1},'');}catch(e){}}
+/* ★ Chrome은 '사용자가 화면을 건드리기 전에' 쌓인 히스토리 항목을 가짜로 보고
+   뒤로가기에서 통째로 건너뛴다(history manipulation intervention).
+   그래서 앱이 뜨자마자가 아니라 '첫 터치' 순간에 가드를 깐다. */
+let guardArmed=false;
+function armGuard(){if(guardArmed)return;guardArmed=true;guardPush();}
+['pointerdown','touchstart','click','keydown'].forEach(t=>
+  document.addEventListener(t,armGuard,{once:true,passive:true}));
 function isOn(id){const e=$(id);return !!(e&&e.classList.contains('on'));}
 let backAt=0;
 window.addEventListener('popstate',function(){
@@ -1499,9 +1507,10 @@ window.addEventListener('popstate',function(){
 });
 
 /* ---------------- 시작 ---------------- */
+const BUILD='2026-08-03d';
 (async function boot(){
   buildPad();
-  guardPush();                 // 뒤로가기를 가로챌 히스토리 가드 1개
+  /* 가드는 armGuard()가 '첫 터치' 때 깐다 (여기서 깔면 Chrome이 무시함) */
   $('pad').addEventListener('click',e=>{
     const b=e.target.closest('button');if(!b)return;keyIn(b.dataset.k);});
   if(!CFG.codeHash){CFG.codeHash=await sha(DEF_CODE);saveCfg();}
@@ -1509,7 +1518,10 @@ window.addEventListener('popstate',function(){
   try{if(navigator.storage&&navigator.storage.persist)await navigator.storage.persist();}catch(e){}
   await loadPosts();
   if('serviceWorker' in navigator){
-    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+    /* 새 버전이 배포되면 자동으로 갈아끼운다 (사진 올리는 중일 땐 건드리지 않음) */
+    navigator.serviceWorker.addEventListener('controllerchange',()=>{
+      if(window.__swReloaded||isOn('mUp'))return;window.__swReloaded=true;location.reload();});}
   /* 앱을 보고 있는 동안 90초마다 새 사진 확인 */
   setInterval(()=>{
     if(UNLOCKED&&document.visibilityState==='visible'&&syncOn()&&sy().auto)syncNow(false);
