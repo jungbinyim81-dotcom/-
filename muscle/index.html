@@ -749,7 +749,25 @@ function renderHome(){
   const total=DB.logs.filter(l=>!l.legacy).length;
   const vol=DB.logs.reduce((a,l)=>a+(l.vol||0),0);
 
-  let html=`
+  /* 앱이 내려갔다 켜졌을 때 — 하던 운동 이어가기 */
+  const rs=sessLoad();
+  let resumeHTML='';
+  if(rs){
+    const dn=Object.values(rs.rec||{}).reduce((a,r)=>a+(r.sets?r.sets.length:0),0);
+    const tot=rs.q.filter(x=>x.t==='set').length;
+    resumeHTML=`<div class="card" style="border-color:rgba(245,196,81,.5);
+        background:linear-gradient(150deg,rgba(245,196,81,.13),var(--card))">
+      <div class="b" style="margin-bottom:3px">하던 운동이 남아 있어요</div>
+      <div class="sm mut" style="margin-bottom:12px">
+        ${TPL[rs.tpl]?TPL[rs.tpl].name:'운동'} · ${dn}/${tot}세트 · ${mmss(rs.elapsed||0)} 진행
+      </div>
+      <div class="btn2">
+        <button class="btn primary" style="padding:14px;font-size:15px" onclick="resumeSession()">이어서 하기</button>
+        <button class="btn ghost mut" onclick="dropSession()">버리기</button>
+      </div></div>`;
+  }
+
+  let html=resumeHTML+`
   <div class="hero">
     <div class="greet">${greet}, 빛날빈님</div>
     <div class="htitle">${didToday()?'오늘 운동 완료':`오늘은 <span style="color:var(--acc)">${T.name}</span>`}</div>
@@ -864,6 +882,53 @@ function preStart(tpl){
 /* ==================== 세션 플레이어 ==================== */
 let S=null,tickInt=null,restInt=null,holdInt=null,wakeLock=null,AC=null;
 
+/* ---- 진행 중인 운동 자동 저장 ----
+   뒤로가기·전화·앱 강제종료로 앱이 내려가도 세트 기록이 날아가지 않게 매 순간 저장한다.
+   복구 시 경과시간은 '자리 비운 시간'을 빼고 이어간다(멈춰 있던 걸로 계산). */
+const SKEY='musclePlan_sess';
+function sessSave(){
+  if(!S)return;
+  try{
+    localStorage.setItem(SKEY,JSON.stringify({
+      tpl:S.tpl,knee:S.knee,elapsed:S.elapsed,i:S.i,rec:S.rec,at:Date.now(),
+      q:S.q.map(it=>it.t==='warm'?{t:'warm',wi:WARM.indexOf(it.w),i:it.i,n:it.n}:it)
+    }));
+  }catch(e){}
+}
+function sessClear(){try{localStorage.removeItem(SKEY);}catch(e){}}
+function sessLoad(){
+  try{
+    const d=JSON.parse(localStorage.getItem(SKEY));
+    if(!d||!Array.isArray(d.q)||!d.q.length)return null;
+    if(Date.now()-(d.at||0)>12*3600000){sessClear();return null;}   // 12시간 지난 건 폐기
+    d.q=d.q.map(it=>it.t==='warm'?{t:'warm',w:WARM[it.wi]||WARM[0],i:it.i,n:it.n}:it);
+    return d;
+  }catch(e){sessClear();return null;}
+}
+function startTick(){
+  clearInterval(tickInt);
+  tickInt=setInterval(()=>{
+    if(!S)return;
+    S.elapsed=Math.floor((Date.now()-S.start)/1000);
+    paintTop();
+    if(S.elapsed%3===0)sessSave();
+  },1000);
+}
+function resumeSession(){
+  const d=sessLoad();
+  if(!d){renderHome();return toast('이어서 할 운동이 없어요');}
+  S={tpl:d.tpl,knee:d.knee,start:Date.now()-(d.elapsed||0)*1000,elapsed:d.elapsed||0,
+     q:d.q,i:d.i||0,rec:d.rec||{},holdSec:0,holdRun:false,val:0,paused:false};
+  $('player').classList.remove('hide');
+  document.body.style.overflow='hidden';
+  startTick();requestWake();guardPush();renderStep();
+  toast('이어서 진행합니다');
+}
+function dropSession(){
+  if(!confirm('진행 중이던 운동 기록을 버릴까요?'))return;
+  sessClear();renderHome();toast('지웠어요');
+}
+
 function startSession(kneeState){
   $('guideModal').classList.remove('on');
   const tpl=pendingTpl||'A';
@@ -871,9 +936,8 @@ function startSession(kneeState){
      rec:{},holdSec:0,holdRun:false,val:0,paused:false};
   $('player').classList.remove('hide');
   document.body.style.overflow='hidden';
-  clearInterval(tickInt);tickInt=setInterval(()=>{
-    if(!S)return;S.elapsed=Math.floor((Date.now()-S.start)/1000);paintTop();},1000);
-  requestWake();
+  startTick();sessSave();
+  requestWake();guardPush();
   renderStep();
 }
 function buildQueue(tpl,kneeState){
@@ -1017,7 +1081,7 @@ function doneSet(){
   buzz(40);
   nextStep();
 }
-function nextStep(){clearInterval(holdInt);S.i++;renderStep();}
+function nextStep(){clearInterval(holdInt);S.i++;renderStep();sessSave();}
 
 /* --- 휴식 --- */
 function renderRest(it){
@@ -1089,11 +1153,28 @@ function quitSession(){
 }
 function closePlayer(){
   clearInterval(tickInt);clearInterval(restInt);clearInterval(holdInt);
-  releaseWake();S=null;
+  releaseWake();S=null;sessClear();
   $('player').classList.add('hide');$('finish').classList.add('hide');
   document.body.style.overflow='';
   go('home');
 }
+
+/* ==================== 안드로이드 뒤로가기 ====================
+   PWA에서 뒤로가기를 그냥 두면 앱이 통째로 닫혀 운동이 날아간다.
+   히스토리에 '가드'를 하나 깔아두고, 뒤로가기를 '지금 화면 닫기'로 해석한다. */
+function guardPush(){try{history.pushState({mp:1},'');}catch(e){}}
+function isOn(id){const e=$(id);return !!(e&&e.classList.contains('on'));}
+let backHomeAt=0;
+window.addEventListener('popstate',function(){
+  if(isOn('guideModal')){guardPush();closeGuide();return;}      // 1) 열린 시트부터 닫기
+  if(isOn('setModal')){guardPush();closeSettings();return;}
+  if(!$('finish').classList.contains('hide')){                   // 2) 마무리 화면은 붙잡기
+    guardPush();toast('아래 [저장하고 끝내기]를 눌러주세요');return;}
+  if(S){guardPush();quitSession();return;}                       // 3) 운동 중이면 종료 확인
+  if(TAB!=='home'){guardPush();go('home');return;}               // 4) 다른 탭이면 홈으로
+  if(Date.now()-backHomeAt>2000){                                // 5) 홈에서 한 번 더 눌러야 종료
+    backHomeAt=Date.now();guardPush();toast('한 번 더 누르면 앱이 닫혀요');return;}
+});
 
 /* ==================== 마무리 ==================== */
 let finState={mood:'',knee:'',ups:[]};
@@ -1564,6 +1645,10 @@ function resetAll(){
 /* ==================== 시작 ==================== */
 save();
 go('home');
+guardPush();                    // 뒤로가기를 가로챌 히스토리 가드 1개 깔아두기
+window.addEventListener('pagehide',sessSave);   // 앱이 내려갈 때 마지막으로 한 번 더 저장
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden')sessSave();});
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
