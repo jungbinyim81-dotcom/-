@@ -274,6 +274,8 @@ textarea.inp{resize:none;line-height:1.6}
   <div class="dots" id="dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="pad" id="pad"></div>
   <div class="lk-msg" id="lkMsg"></div>
+  <div id="lkVer" style="position:absolute;left:0;right:0;bottom:calc(var(--sab) + 10px);
+    text-align:center;font-size:10.5px;color:#6f6570;letter-spacing:.2px"></div>
 </div>
 
 <!-- ================= 앱 ================= -->
@@ -1102,7 +1104,8 @@ async function openSettings(){
       사진은 서버에 올라가지 않지만, 소중한 건 <b>백업</b>을 꼭 남겨두세요.
     </div>
     <button class="btn ghost danger" style="margin-top:6px" onclick="wipeAll()">모든 사진·기록 지우기</button>
-    <div class="xs" style="text-align:center;color:var(--line);margin-top:12px">버전 ${BUILD}</div>
+    <div class="xs" style="text-align:center;color:var(--dim);margin-top:14px;
+      padding:9px;border:1px solid var(--line);border-radius:10px">버전 ${BUILD} · 뒤로가기 보호 ${guardArmed?'켜짐':'꺼짐'}</div>
     <div style="height:10px"></div>`;
   $('mSet').classList.add('on');
 }
@@ -1507,7 +1510,7 @@ window.addEventListener('popstate',function(){
 });
 
 /* ---------------- 시작 ---------------- */
-const BUILD='2026-08-03d';
+const BUILD='2026-08-03e';
 (async function boot(){
   buildPad();
   /* 가드는 armGuard()가 '첫 터치' 때 깐다 (여기서 깔면 Chrome이 무시함) */
@@ -1517,8 +1520,10 @@ const BUILD='2026-08-03d';
   paintDots();
   try{if(navigator.storage&&navigator.storage.persist)await navigator.storage.persist();}catch(e){}
   await loadPosts();
+  const lv=$('lkVer');if(lv)lv.textContent='v '+BUILD;
   if('serviceWorker' in navigator){
-    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js')
+      .then(r=>{try{r.update();}catch(e){}}).catch(()=>{}));
     /* 새 버전이 배포되면 자동으로 갈아끼운다 (사진 올리는 중일 땐 건드리지 않음) */
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       if(window.__swReloaded||isOn('mUp'))return;window.__swReloaded=true;location.reload();});}
