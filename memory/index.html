@@ -380,7 +380,9 @@ const DEF_CODE='260618';
 /* ---------------- 설정 ---------------- */
 function cfgDefault(){return{
   codeHash:'', names:{a:'정',b:'승'}, me:'a', anniv:'2026-06-18',
-  autolock:120, lockOnHide:true, vib:true, tries:0, lockUntil:0, ver:1
+  autolock:120, lockOnHide:true, vib:true, tries:0, lockUntil:0, ver:1,
+  /* 동기화: url·pass 는 기기별로 직접 입력(공개 페이지에 비밀이 안 남게) */
+  sync:{url:'',secret:'',pass:'',auto:true,cursor:0,dev:'',at:0,posts:{},photos:[],dels:[]}
 };}
 let CFG=loadCfg();
 function loadCfg(){
@@ -488,6 +490,7 @@ function unlock(){
   setTimeout(()=>{l.classList.add('hide');l.classList.remove('out');},380);
   $('app').classList.remove('hide');
   refresh();
+  if(syncOn()&&sy().auto)syncNow(false);
 }
 function lockNow(){
   UNLOCKED=false;buf='';
@@ -503,6 +506,7 @@ document.addEventListener('visibilitychange',()=>{
   else if(UNLOCKED&&hidAt){
     const away=(Date.now()-hidAt)/1000;
     if(CFG.lockOnHide&&away>=(CFG.autolock||0))lockNow();
+    else syncSoon();
     hidAt=0;
   }
 });
@@ -659,6 +663,7 @@ async function toggleLike(id){
     btn.classList.toggle('liked',!!p.likes[CFG.me]);
     btn.innerHTML=HEART+(n?n:'');
   }
+  syncSoon();
 }
 
 /* ---------------- 사진첩(그리드) ---------------- */
@@ -861,6 +866,7 @@ async function savePost(){
     go('feed');await refresh();
     toast('사진첩에 담았어요');
     buzz([16,40,16]);
+    syncSoon();
   }catch(e){
     toast('저장에 실패했어요. 저장 공간을 확인해주세요');
   }finally{btn.disabled=false;paintUp();}
@@ -912,6 +918,7 @@ async function addCmt(){
   paintCmt();buzz(12);
   setTimeout(()=>{const b=$('cmtBody');b.scrollTop=b.scrollHeight;},40);
   if(VIEW==='feed')renderFeedSoft();
+  syncSoon();
 }
 async function delCmt(i){
   const p=POSTS.find(x=>x.id===CID);if(!p)return;
@@ -964,7 +971,8 @@ async function saveEdit(){
   p.caption=$('edCap').value.trim();
   p.place=$('edPlace').value.trim();
   const d=$('edDate').value;if(d)p.ts=new Date(d+'T12:00:00').getTime();
-  await iput('posts',p);closeMenu();await refresh();toast('고쳤어요');
+  p.edited=Date.now();
+  await iput('posts',p);closeMenu();await refresh();toast('고쳤어요');syncSoon();
 }
 async function delPost(){
   const p=POSTS.find(x=>x.id===MID);if(!p)return;
@@ -972,7 +980,8 @@ async function delPost(){
   for(const pid of p.photos){await idel('files',pid);
     URLC.delete('thumb:'+pid);URLC.delete('full:'+pid);}
   await idel('posts',p.id);
-  closeMenu();await refresh();toast('지웠어요');
+  const S=sy();if(!S.dels.includes(p.id))S.dels.push(p.id);delete S.posts[p.id];saveCfg();
+  closeMenu();await refresh();toast('지웠어요');syncSoon();
 }
 
 /* ---------------- 라이트박스 ---------------- */
@@ -1018,6 +1027,7 @@ function closeLight(){$('light').classList.remove('on');document.body.style.over
 async function openSettings(){
   const est=await usage();
   const nPhoto=POSTS.reduce((a,p)=>a+p.photos.length,0);
+  const S=sy();
   $('setBody').innerHTML=`
     <div class="fld"><label>두 사람 이름</label>
       <div class="row" style="gap:9px">
@@ -1047,9 +1057,31 @@ async function openSettings(){
 
     <button class="btn primary" style="margin-top:16px" onclick="saveSet()">저장</button>
 
-    <div class="sect" style="margin-left:0">둘이 같이 보기</div>
-    <div class="card" style="background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;font-size:13.5px;line-height:1.7;color:var(--dim)">
-      사진은 각자 폰 안에만 있어요. 상대 폰에도 똑같이 채우려면
+    <div class="sect" style="margin-left:0">둘이 같이 보기 (자동 동기화)</div>
+    <div class="card" style="background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;font-size:13px;line-height:1.7;color:var(--dim)">
+      사진은 폰에서 <b style="color:var(--txt)">암호로 잠근 뒤</b> 올라가요. 구글도, 주소를 주운 사람도
+      내용은 못 봅니다. 열쇠가 되는 <b style="color:var(--txt)">공유 암호</b>는 서버로 가지 않고
+      두 폰에만 있어요 — 그래서 <b style="color:var(--txt)">양쪽에 똑같이</b> 넣어야 합니다.
+    </div>
+    <div class="fld" style="margin-top:12px"><label>동기화 주소 (Apps Script /exec)</label>
+      <input class="inp" id="syUrl" value="${esc(S.url)}" placeholder="https://script.google.com/macros/s/.../exec"></div>
+    <div class="fld"><label>접속 열쇠 (스크립트에 넣은 값)</label>
+      <input class="inp" id="sySec" value="${esc(S.secret)}" placeholder="백엔드 setSecret 값"></div>
+    <div class="fld"><label>공유 암호 (둘이 약속한 문장 · 8자 이상)</label>
+      <input class="inp" type="password" id="syPass" value="${esc(S.pass)}" placeholder="사진을 여는 열쇠"></div>
+    <div class="tog"><div><div class="b sm">자동 동기화</div>
+      <div class="xs mut">앱 열 때와 사진·메시지 남길 때 알아서 주고받기</div></div>
+      <div class="sw ${S.auto?'on':''}" id="swSync" onclick="this.classList.toggle('on')"></div></div>
+    <div class="xs mut" style="margin-top:10px" id="syncState">${S.at?('마지막 동기화 '+ago(S.at)):'아직 동기화한 적 없음'}</div>
+    <div class="btn2" style="margin-top:10px">
+      <button class="btn" onclick="syncTest()">연결 테스트</button>
+      <button class="btn primary" onclick="syncManual()">지금 동기화</button>
+    </div>
+    <button class="btn ghost" style="margin-top:8px" onclick="syncSave()">동기화 설정만 저장</button>
+    <button class="btn ghost" style="margin-top:8px" onclick="syncReset()">처음부터 다시 맞추기</button>
+
+    <div class="sect" style="margin-left:0">파일로 주고받기 (동기화 없이)</div>
+    <div class="card" style="background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;font-size:13px;line-height:1.7;color:var(--dim)">
       <b style="color:var(--txt)">백업 내보내기</b> 로 만든 파일을 카톡 등으로 보내고,
       상대가 <b style="color:var(--txt)">백업 불러오기</b> 하면 됩니다. 겹치는 사진은 자동으로 걸러져요.
     </div>
@@ -1171,6 +1203,7 @@ async function doImport(file){
     await refresh();
     closeSettings();
     toast('기록 '+np+'개 · 사진 '+nf+'장을 새로 담았어요');
+    syncSoon();
   }catch(e){toast('파일을 읽을 수 없어요');}
 }
 async function wipeAll(){
@@ -1178,6 +1211,259 @@ async function wipeAll(){
   if(!confirm('되돌릴 수 없습니다. 백업은 만들어 두셨나요?'))return;
   for(const p of POSTS){for(const pid of p.photos)await idel('files',pid);await idel('posts',p.id);}
   URLC.clear();await refresh();closeSettings();toast('모두 지웠어요');
+}
+
+/* =====================================================================
+   동기화 (E2E 암호화)
+   - 사진·글은 폰에서 AES-256-GCM 으로 암호화한 뒤에만 올라간다.
+     열쇠는 두 사람이 약속한 "공유 암호"에서 만들어지고 서버로 절대 안 간다.
+     따라서 구글도, 링크와 접속열쇠를 주운 사람도 내용은 볼 수 없다.
+   - 서버(구글 드라이브)는 암호문 우편함일 뿐. 평문 원본은 각자 폰에만 남는다.
+   ===================================================================== */
+const SALT='jsmemory.sync.v1', ITER=200000;
+let KEYC=null, KEYC_FOR='', SYNCING=false, SYNCT=null;
+
+function sy(){ /* 설정 접근 + 구버전 보정 */
+  if(!CFG.sync)CFG.sync=cfgDefault().sync;
+  const d=cfgDefault().sync;
+  for(const k in d) if(CFG.sync[k]===undefined)CFG.sync[k]=d[k];
+  if(!CFG.sync.dev){CFG.sync.dev=Math.random().toString(36).slice(2,8);saveCfg();}
+  return CFG.sync;
+}
+function syncOn(){const s=sy();return !!(s.url&&s.secret&&s.pass);}
+
+/* --- 열쇠/암복호 --- */
+async function syncKey(){
+  const s=sy();
+  if(KEYC&&KEYC_FOR===s.pass)return KEYC;
+  const enc=new TextEncoder();
+  const base=await crypto.subtle.importKey('raw',enc.encode(s.pass),'PBKDF2',false,['deriveKey']);
+  KEYC=await crypto.subtle.deriveKey(
+    {name:'PBKDF2',salt:enc.encode(SALT),iterations:ITER,hash:'SHA-256'},
+    base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+  KEYC_FOR=s.pass;
+  return KEYC;
+}
+async function encU8(u8){
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},await syncKey(),u8));
+  const o=new Uint8Array(12+ct.length);o.set(iv);o.set(ct,12);return o;
+}
+async function decU8(u8){
+  const iv=u8.slice(0,12),ct=u8.slice(12);
+  return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv},await syncKey(),ct));
+}
+function u8ToB64(u8){let s='';const CH=0x8000;
+  for(let i=0;i<u8.length;i+=CH)s+=String.fromCharCode.apply(null,u8.subarray(i,i+CH));
+  return btoa(s);}
+function b64ToU8(b){const bin=atob(b||'');const a=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return a;}
+const blobToU8=async b=>new Uint8Array(await b.arrayBuffer());
+
+/* --- 서버 통신 --- */
+async function sreq(action,params){
+  const s=sy();
+  const q=new URLSearchParams(Object.assign({action,secret:s.secret},params||{}));
+  const r=await fetch(s.url+'?'+q.toString(),{redirect:'follow'});
+  const j=await r.json();
+  if(j.error)throw new Error(j.error);
+  return j;
+}
+async function spush(name,u8){
+  const s=sy();
+  /* text/plain 이라 프리플라이트(OPTIONS) 없이 통과 */
+  const r=await fetch(s.url,{method:'POST',redirect:'follow',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'push',secret:s.secret,name,data:u8ToB64(u8)})});
+  const j=await r.json();
+  if(j.error)throw new Error(j.error);
+  return j;
+}
+
+/* --- 무엇이 바뀌었는지 판단 --- */
+function postSig(p){
+  return [p.ts,p.caption||'',p.place||'',p.edited||0,
+    (p.comments||[]).length,Object.keys(p.likes||{}).sort().join(',')].join('|');
+}
+
+/* --- 받은 이벤트를 로컬에 반영 (백업 불러오기와 같은 병합 규칙) --- */
+async function applyEvent(ev){
+  const s=sy();
+  if(ev.t==='del'){
+    if(!s.dels.includes(ev.id))s.dels.push(ev.id);
+    /* 같은 회차에 방금 받은 기록일 수도 있으니 저장소에서 직접 찾는다 */
+    const rec=POSTS.find(x=>x.id===ev.id)||await iget('posts',ev.id);
+    if(rec){for(const pid of (rec.photos||[]))await idel('files',pid);await idel('posts',ev.id);}
+    delete s.posts[ev.id];
+    return {del:1};
+  }
+  if(ev.t!=='post'||!ev.post)return {};
+  if(s.dels.includes(ev.post.id))return {};          /* 지운 건 되살리지 않는다 */
+
+  const p=ev.post, mine=POSTS.find(x=>x.id===p.id)||await iget('posts',p.id);
+  if(!mine){await iput('posts',p);return {add:1};}
+
+  /* 메시지 합치기 (who|ts|text 중복 제거) */
+  const seen=new Set((mine.comments||[]).map(c=>c.who+'|'+c.ts+'|'+c.text));
+  (p.comments||[]).forEach(c=>{const k=c.who+'|'+c.ts+'|'+c.text;
+    if(!seen.has(k)){mine.comments=mine.comments||[];mine.comments.push(c);seen.add(k);}});
+  (mine.comments||[]).sort((x,y)=>x.ts-y.ts);
+  mine.likes=Object.assign({},p.likes||{},mine.likes||{});
+  /* 글·날짜·장소는 나중에 고친 쪽이 이김 */
+  if((p.edited||0)>(mine.edited||0)){
+    mine.caption=p.caption;mine.place=p.place;mine.ts=p.ts;mine.edited=p.edited;
+  }
+  await iput('posts',mine);
+  return {merge:1};
+}
+
+/* --- 내려받기 --- */
+async function syncPull(){
+  const s=sy();
+  const {files}=await sreq('list',{since:s.cursor||0});
+  let got=0,maxTs=s.cursor||0,bad=0,stopAt=null;
+
+  for(const f of files){
+    if(f.ts>maxTs)maxTs=f.ts;
+    if(f.name.indexOf('_'+s.dev+'_')>=0)continue;      /* 내가 올린 건 건너뜀 */
+    try{
+      const r=await sreq('get',{id:f.id});
+      const ev=JSON.parse(new TextDecoder().decode(await decU8(b64ToU8(r.data))));
+      const res=await applyEvent(ev);
+      if(res.add||res.merge||res.del)got++;
+    }catch(e){
+      /* 못 읽은 건(암호 불일치 등)은 표시만 남기고 다음 동기화에서 다시 시도 */
+      bad++;if(stopAt===null)stopAt=f.ts;
+    }
+  }
+  /* 실패한 지점 앞까지만 커서를 옮긴다 — 나중에 암호를 고치면 놓친 것도 들어온다 */
+  s.cursor=(stopAt!==null)?Math.max(0,stopAt-1):maxTs;
+  saveCfg();
+
+  /* 글은 왔는데 사진이 없는 것들 채워넣기 */
+  await loadPosts();
+  let photos=0;
+  for(const p of POSTS){
+    for(const pid of (p.photos||[])){
+      if(await iget('files',pid))continue;
+      try{
+        const [rf,rt]=await Promise.all([
+          sreq('get',{name:'ph_'+pid+'_f'}), sreq('get',{name:'ph_'+pid+'_t'})]);
+        const full=new Blob([await decU8(b64ToU8(rf.data))],{type:'image/jpeg'});
+        const thumb=new Blob([await decU8(b64ToU8(rt.data))],{type:'image/jpeg'});
+        const dim=(p.dims&&p.dims[pid])||{w:0,h:0};
+        await iput('files',{full,thumb,w:dim.w,h:dim.h},pid);
+        photos++;
+      }catch(e){ }
+    }
+  }
+  return {got,photos,bad};
+}
+
+/* --- 올리기 --- */
+async function syncPush(){
+  const s=sy();
+  let sent=0,photos=0;
+
+  /* 1) 삭제 알림 */
+  for(const id of s.dels.slice()){
+    if(s.posts[id]==='DEL')continue;
+    const body=new TextEncoder().encode(JSON.stringify({t:'del',id,at:Date.now()}));
+    await spush('ev_'+Date.now()+'_'+s.dev+'_'+Math.random().toString(36).slice(2,7),await encU8(body));
+    s.posts[id]='DEL';sent++;saveCfg();
+  }
+
+  /* 2) 새로 만들었거나 바뀐 기록 */
+  for(const p of POSTS){
+    const sig=postSig(p);
+    if(s.posts[p.id]===sig)continue;
+
+    /* 사진 먼저 (한 번 올리면 끝) */
+    const dims={};
+    for(const pid of (p.photos||[])){
+      const f=await iget('files',pid);
+      if(!f)continue;
+      dims[pid]={w:f.w||0,h:f.h||0};
+      if(s.photos.includes(pid))continue;
+      await spush('ph_'+pid+'_f',await encU8(await blobToU8(f.full)));
+      await spush('ph_'+pid+'_t',await encU8(await blobToU8(f.thumb)));
+      s.photos.push(pid);photos++;saveCfg();
+    }
+
+    const post=Object.assign({},p,{dims});
+    const body=new TextEncoder().encode(JSON.stringify({t:'post',post}));
+    await spush('ev_'+Date.now()+'_'+s.dev+'_'+Math.random().toString(36).slice(2,7),await encU8(body));
+    s.posts[p.id]=sig;sent++;saveCfg();
+  }
+  return {sent,photos};
+}
+
+/* --- 한 번 동기화 --- */
+async function syncNow(loud){
+  if(!syncOn()){if(loud)toast('설정에서 동기화 주소와 공유 암호를 먼저 넣어주세요',3000);return;}
+  if(SYNCING)return;
+  SYNCING=true;
+  const badge=$('syncState');
+  if(badge)badge.textContent='동기화 중...';
+  if(loud)toast('<span class="spin"></span> 주고받는 중...',60000);
+  try{
+    const pull=await syncPull();
+    const push=await syncPush();
+    sy().at=Date.now();saveCfg();
+    await refresh();
+    if(pull.bad){
+      const w='못 읽은 항목 '+pull.bad+'건 — 두 폰의 공유 암호가 다를 수 있어요';
+      if(badge)badge.textContent=w;
+      if(loud)toast(w,4500);
+    }else if(badge)badge.textContent='방금 동기화됨';
+    if(loud&&!pull.bad){
+      const bits=[];
+      if(pull.got)bits.push('받은 기록 '+pull.got+'개');
+      if(pull.photos)bits.push('받은 사진 '+pull.photos+'장');
+      if(push.sent)bits.push('보낸 기록 '+push.sent+'개');
+      if(push.photos)bits.push('보낸 사진 '+push.photos+'장');
+      toast(bits.length?bits.join(' · '):'이미 최신이에요');
+    }
+  }catch(e){
+    const msg=String(e.message||e);
+    if(badge)badge.textContent='실패: '+msg;
+    if(loud)toast('동기화 실패 — '+esc(msg),4000);
+  }finally{SYNCING=false;}
+}
+function syncSoon(){ /* 글·메시지 바뀐 뒤 잠깐 모아서 한 번 */
+  if(!syncOn()||!sy().auto)return;
+  clearTimeout(SYNCT);SYNCT=setTimeout(()=>syncNow(false),2500);
+}
+
+/* --- 설정 화면 동작 --- */
+function syncSave(){
+  const s=sy();
+  s.url=$('syUrl').value.trim();
+  s.secret=$('sySec').value.trim();
+  s.pass=$('syPass').value;
+  s.auto=$('swSync').classList.contains('on');
+  KEYC=null;saveCfg();
+  if(s.pass&&s.pass.length<8)return toast('공유 암호는 8자 이상을 권해요',3000);
+  toast('동기화 설정 저장');
+}
+async function syncTest(){
+  syncSave();
+  if(!syncOn())return toast('주소·접속열쇠·공유 암호를 모두 넣어주세요',3000);
+  try{
+    await sreq('ping',{});
+    const st=await sreq('stat',{});
+    $('syncState').textContent='연결됨 · 보관함 '+st.photos+'장 / '+st.mb+'MB';
+    toast('연결됐어요');
+  }catch(e){
+    $('syncState').textContent='연결 실패';
+    toast('연결 실패 — '+esc(String(e.message||e)),4000);
+  }
+}
+async function syncManual(){syncSave();await syncNow(true);}
+function syncReset(){
+  if(!confirm('받은 기록 표시를 지우고 처음부터 다시 주고받을까요? (사진이 사라지진 않아요)'))return;
+  const s=sy();s.cursor=0;s.posts={};s.photos=[];saveCfg();
+  toast('다음 동기화에서 전부 다시 맞춰요');
 }
 
 /* ---------------- 공통 ---------------- */
@@ -1202,6 +1488,10 @@ $('cText').addEventListener('keydown',e=>{
   await loadPosts();
   if('serviceWorker' in navigator){
     window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+  /* 앱을 보고 있는 동안 90초마다 새 사진 확인 */
+  setInterval(()=>{
+    if(UNLOCKED&&document.visibilityState==='visible'&&syncOn()&&sy().auto)syncNow(false);
+  },90000);
 })();
 </script>
 </body>
