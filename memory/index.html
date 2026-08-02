@@ -69,7 +69,7 @@ main{padding-bottom:calc(80px + var(--sab));min-height:70vh}
 .wrap{max-width:600px;margin:0 auto}
 .sect{font-size:12px;font-weight:800;color:var(--dim);letter-spacing:.5px;margin:22px 16px 10px}
 .empty{text-align:center;padding:70px 30px;color:var(--dim);line-height:1.85;font-size:14.5px}
-.empty .big{font-size:44px;margin-bottom:14px;opacity:.5}
+.empty .big{margin-bottom:14px;opacity:.85;display:flex;justify-content:center}
 
 /* ================= 피드 ================= */
 .post{margin-bottom:22px}
@@ -240,10 +240,19 @@ textarea.inp{resize:none;line-height:1.6}
 <!-- ================= 잠금 화면 ================= -->
 <div id="lock">
   <svg class="lk-mark" viewBox="0 0 64 64" fill="none">
-    <path d="M32 55S8 41.5 8 25.5C8 17 14.5 11 22 11c4.7 0 8.4 2.3 10 5.4C33.6 13.3 37.3 11 42 11c7.5 0 14 6 14 14.5C56 41.5 32 55 32 55z"
-      fill="url(#g1)"/>
-    <defs><linearGradient id="g1" x1="8" y1="11" x2="56" y2="55">
-      <stop stop-color="#ff8fa6"/><stop offset="1" stop-color="#e8547a"/></linearGradient></defs>
+    <defs>
+      <linearGradient id="g1" x1="18" y1="21.5" x2="43.3" y2="46.8">
+        <stop stop-color="#ff8fa6"/><stop offset="1" stop-color="#e8547a"/></linearGradient>
+      <clipPath id="cp1"><rect x="18" y="21.5" width="25.3" height="25.3" rx="2"/></clipPath>
+    </defs>
+    <g transform="rotate(14 36 27.5)"><rect x="22.3" y="13.8" width="27.5" height="27.5" rx="3.3" fill="#5c4450"/></g>
+    <g transform="rotate(7 35.5 28)"><rect x="21.8" y="14.3" width="27.5" height="27.5" rx="3.3" fill="#9c7383"/></g>
+    <rect x="15" y="18.5" width="31.3" height="31.3" rx="3.8" fill="#f4eef1"/>
+    <rect x="18" y="21.5" width="25.3" height="25.3" rx="2" fill="url(#g1)"/>
+    <g clip-path="url(#cp1)">
+      <circle cx="24" cy="27.4" r="2.3" fill="#fff" opacity=".92"/>
+      <path d="M16.8 47.5 L26.3 36 L31.8 42.1 L36.8 37 L45.5 47.5 Z" fill="#fff" opacity=".45"/>
+    </g>
   </svg>
   <div class="lk-t">정승메모리</div>
   <div class="lk-s">우리 둘만의 사진첩</div>
@@ -279,7 +288,7 @@ textarea.inp{resize:none;line-height:1.6}
   <button class="fab" onclick="openUpload()" aria-label="사진 올리기">
     <div><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div></button>
   <button id="nMem" onclick="go('mem')">
-    <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-7.5-10A4.5 4.5 0 0 1 12 8.2 4.5 4.5 0 0 1 19.5 11c0 5.4-7.5 10-7.5 10z"/></svg>추억</button>
+    <svg viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3 4.2v4.4h4.4"/><path d="M12 7.8V12l2.9 1.8"/></svg>추억</button>
   <button id="nSet" onclick="openSettings()">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M4.5 20c.9-3.6 3.9-5.6 7.5-5.6s6.6 2 7.5 5.6"/></svg>우리</button>
 </nav>
@@ -552,7 +561,17 @@ function renderFeed(){
 }
 function emptyHTML(){
   return `<div class="empty">
-    <div class="big">&#9825;</div>
+    <div class="big"><svg viewBox="0 0 64 64" width="74" height="74" fill="none" style="margin:0 auto">
+      <defs><clipPath id="cpE"><rect x="18" y="21.5" width="25.3" height="25.3" rx="2"/></clipPath></defs>
+      <g transform="rotate(14 36 27.5)"><rect x="22.3" y="13.8" width="27.5" height="27.5" rx="3.3" fill="#241f28"/></g>
+      <g transform="rotate(7 35.5 28)"><rect x="21.8" y="14.3" width="27.5" height="27.5" rx="3.3" fill="#3a3340"/></g>
+      <rect x="15" y="18.5" width="31.3" height="31.3" rx="3.8" fill="#4a4150"/>
+      <rect x="18" y="21.5" width="25.3" height="25.3" rx="2" fill="#2e2833"/>
+      <g clip-path="url(#cpE)">
+        <circle cx="24" cy="27.4" r="2.3" fill="#6f6570"/>
+        <path d="M16.8 47.5 L26.3 36 L31.8 42.1 L36.8 37 L45.5 47.5 Z" fill="#6f6570"/>
+      </g>
+    </svg></div>
     아직 담긴 사진이 없어요.<br>
     아래 <b style="color:var(--rose)">＋</b> 를 눌러 첫 사진을 올려보세요.<br>
     <span class="xs" style="display:block;margin-top:14px;line-height:1.7">

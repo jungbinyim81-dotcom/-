@@ -1,4 +1,4 @@
-const CACHE = "jsmem-20260803-0640";
+const CACHE = "jsmem-20260803-0655";
 const ASSETS = ["./","./index.html","./manifest.json","./icon.svg"];
 self.addEventListener("install", e => {
   self.skipWaiting();

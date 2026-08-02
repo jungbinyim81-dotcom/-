@@ -1,7 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="g" x1="144" y1="172" x2="346" y2="374">
+      <stop stop-color="#ff8fa6"/><stop offset="1" stop-color="#e8547a"/>
+    </linearGradient>
+    <clipPath id="cp"><rect x="144" y="172" width="202" height="202" rx="16"/></clipPath>
+  </defs>
   <rect width="512" height="512" rx="96" fill="#0d0b0f"/>
-  <path d="M256 404S86 296 86 194c0-53 41-90 89-90 30 0 57 15 81 44 24-29 51-44 81-44 48 0 89 37 89 90 0 102-170 210-170 210z"
-        fill="url(#g)"/>
-  <defs><linearGradient id="g" x1="86" y1="104" x2="426" y2="404">
-    <stop stop-color="#ff8fa6"/><stop offset="1" stop-color="#e8547a"/></linearGradient></defs>
+  <!-- 뒤에 겹쳐진 사진 2장 (사진첩 느낌) -->
+  <g transform="rotate(14 288 220)"><rect x="178" y="110" width="220" height="220" rx="26" fill="#5c4450"/></g>
+  <g transform="rotate(7 284 224)"><rect x="174" y="114" width="220" height="220" rx="26" fill="#9c7383"/></g>
+  <!-- 맨 앞 사진 -->
+  <rect x="120" y="148" width="250" height="250" rx="30" fill="#f4eef1"/>
+  <rect x="144" y="172" width="202" height="202" rx="16" fill="url(#g)"/>
+  <g clip-path="url(#cp)">
+    <circle cx="192" cy="219" r="18" fill="#ffffff" opacity=".92"/>
+    <path d="M134 380 L210 288 L254 337 L294 296 L364 380 Z" fill="#ffffff" opacity=".45"/>
+  </g>
 </svg>
