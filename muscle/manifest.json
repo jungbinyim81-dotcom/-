@@ -1,13 +1,13 @@
 {
-  "name": "머슬플랜 - 근육 키우기 코치",
+  "name": "머슬플랜 - 집에서 근육 키우기",
   "short_name": "머슬플랜",
-  "description": "나에게 맞는 운동 계획 + 자세 가이드 + 성장 분석",
+  "description": "집 맨몸/케틀벨 30분 전신운동. 탭 한 번 기록 + 휴식 타이머 + 레벨 성장",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f1b33",
-  "theme_color": "#0f1b33",
+  "background_color": "#0b1424",
+  "theme_color": "#0b1424",
   "lang": "ko",
   "icons": [
     {
