@@ -98,8 +98,14 @@ main{padding-bottom:calc(80px + var(--sab));min-height:70vh}
 .p-more{margin-left:auto;color:var(--dim);font-size:19px;padding:0 4px;letter-spacing:1px}
 .carou{position:relative;background:#000;overflow:hidden}
 .slides{display:flex;transition:transform .28s cubic-bezier(.3,.8,.4,1);will-change:transform}
-.slides>div{min-width:100%;display:flex;align-items:center;justify-content:center;background:#000}
+.slides>div{min-width:100%;min-height:210px;display:flex;align-items:center;justify-content:center;background:#000}
 .slides img{width:100%;height:auto;object-fit:contain;max-height:74vh}
+/* 사진이 붙기 전 — 까만 네모 대신 부드럽게 흐르는 자리표시 */
+img[data-pid]{background:linear-gradient(100deg,#17141a 32%,#241f2a 50%,#17141a 68%);
+  background-size:220% 100%;animation:shim 1.15s linear infinite;opacity:.55;transition:opacity .2s ease}
+img[data-pid].ok{background:none;animation:none;opacity:1}
+.slides img[data-pid]:not(.ok){min-height:210px}
+@keyframes shim{to{background-position:-220% 0}}
 .cdots{position:absolute;left:0;right:0;bottom:9px;display:flex;justify-content:center;gap:5px;pointer-events:none}
 .cdots i{width:5.5px;height:5.5px;border-radius:50%;background:rgba(255,255,255,.42)}
 .cdots i.on{background:#fff}
@@ -314,7 +320,9 @@ textarea.inp{resize:none;line-height:1.6}
 <!-- ================= 업로드 시트 ================= -->
 <div class="modal" id="mUp"><div class="sheet">
   <div class="grab"></div>
-  <div class="sh-h"><div class="sh-t">사진 올리기</div><button class="sh-x" onclick="closeUpload()">&times;</button></div>
+  <div class="sh-h"><div class="sh-t">사진 올리기</div>
+    <span class="xs mut" id="upCnt" style="font-weight:700">0 / 8</span>
+    <button class="sh-x" onclick="closeUpload()">&times;</button></div>
   <div class="sh-b">
     <div class="upgrid" id="upGrid"></div>
     <div class="bar hide" id="upBar"><i style="width:0%"></i></div>
@@ -376,7 +384,7 @@ textarea.inp{resize:none;line-height:1.6}
    · 6자리 코드는 '기기 잠금'이지 암호학적 보안이 아님 (공개 페이지 특성상)
    ===================================================================== */
 
-const LS='jsmem_cfg', DBN='jsmemory', DBV=1;
+const LS='jsmem_cfg', DBN='jsmemory', DBV=2;
 const DEF_CODE='260618';
 
 /* ---------------- 설정 ---------------- */
@@ -403,6 +411,8 @@ function idb(){
       const d=e.target.result;
       if(!d.objectStoreNames.contains('posts'))d.createObjectStore('posts',{keyPath:'id'});
       if(!d.objectStoreNames.contains('files'))d.createObjectStore('files');
+      /* 썸네일 전용 — 목록을 그릴 때 원본(1600px)까지 통째로 꺼내오지 않도록 분리 */
+      if(!d.objectStoreNames.contains('thumbs'))d.createObjectStore('thumbs');
     };
     r.onsuccess=()=>{_db=r.result;res(_db);};
     r.onerror=()=>rej(r.error);
@@ -417,6 +427,9 @@ function idel(store,key){return ist(store,'readwrite').then(s=>new Promise((res,
   const r=s.delete(key);r.onsuccess=()=>res(true);r.onerror=()=>rej(r.error);}));}
 function iall(store){return ist(store,'readonly').then(s=>new Promise((res,rej)=>{
   const r=s.getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error);}));}
+/* 값을 읽지 않고 있는지만 확인 — 큰 원본 blob 을 꺼내오지 않아 훨씬 빠르다 */
+function ihas(store,key){return ist(store,'readonly').then(s=>new Promise((res,rej)=>{
+  const r=s.count(key);r.onsuccess=()=>res(r.result>0);r.onerror=()=>rej(r.error);})).catch(()=>false);}
 
 /* ---------------- 유틸 ---------------- */
 const $=id=>document.getElementById(id);
@@ -527,18 +540,74 @@ async function loadPosts(){
 }
 async function fileOf(pid){return await iget('files',pid);}
 
-/* 썸네일/원본을 화면에 붙이기 (비동기 로딩) */
-async function hydrate(root){
-  const imgs=(root||document).querySelectorAll('img[data-pid]');
+/* 썸네일만 따로 읽기 — 예전에 저장된 사진은 처음 읽을 때 thumbs 로 옮겨심는다 */
+async function thumbOf(pid){
+  let t=await iget('thumbs',pid);
+  if(t)return t;
+  const f=await iget('files',pid);
+  if(!f)return null;
+  t=f.thumb||f.full;
+  try{await iput('thumbs',t,pid);}catch(e){}
+  return t;
+}
+async function blobOf(pid,kind){
+  if(kind==='full'){const f=await fileOf(pid);return f?(f.full||f.thumb):null;}
+  return await thumbOf(pid);
+}
+
+/* 사진을 화면에 붙이기
+   1) 캐시에 있으면 그 자리에서 바로 붙인다 (await 없음 → 다시 그려도 안 깜빡임)
+   2) 없는 것만 6장씩 병렬로 읽는다 (예전엔 한 장씩 줄 서서 읽어 까맣게 있었음)
+   3) 피드는 가벼운 썸네일로 먼저 띄우고, 화면에 보이는 것만 원본으로 조용히 교체 */
+const HYD_PAR=6;
+const UPOB=window.IntersectionObserver?new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){UPOB.unobserve(e.target);upNow(e.target);}});
+},{rootMargin:'400px 0px'}):null;
+async function upNow(im){
+  if(!im||im.dataset.upped)return;
+  im.dataset.upped='1';
+  const pid=im.dataset.pid;
+  try{
+    let u=URLC.get('full:'+pid);
+    if(!u){
+      const f=await fileOf(pid);
+      if(!f||!f.full)return;
+      u=urlFor(pid,'full',f.full);
+    }
+    const pre=new Image();                 /* 다 받은 뒤 갈아끼워야 중간에 안 깜빡인다 */
+    pre.onload=()=>{if(im.isConnected)im.src=u;};
+    pre.src=u;
+  }catch(e){}
+}
+function upLater(im){
+  if(im.dataset.up!=='full')return;
+  if(UPOB)UPOB.observe(im); else upNow(im);
+}
+function paintImg(im,url){im.src=url;im.classList.add('ok');upLater(im);}
+function hydrate(root){
+  const imgs=[...(root||document).querySelectorAll('img[data-pid]')].filter(im=>!im.dataset.done);
+  const todo=[];
   for(const im of imgs){
-    if(im.dataset.done)continue;
-    im.dataset.done='1';
-    const f=await fileOf(im.dataset.pid);
-    if(!f){im.remove();continue;}
     const kind=im.dataset.kind||'thumb';
-    const blob=(kind==='full'?f.full:f.thumb)||f.full;
-    im.src=urlFor(im.dataset.pid,kind,blob);
+    const u=URLC.get(kind+':'+im.dataset.pid);
+    if(u){im.dataset.done='1';paintImg(im,u);}      /* 캐시 적중 — 즉시 */
+    else todo.push(im);
   }
+  if(!todo.length)return Promise.resolve();
+  let i=0;
+  const worker=async()=>{
+    while(i<todo.length){
+      const im=todo[i++];
+      im.dataset.done='1';
+      const kind=im.dataset.kind||'thumb';
+      try{
+        const blob=await blobOf(im.dataset.pid,kind);
+        if(!blob){im.remove();continue;}
+        paintImg(im,urlFor(im.dataset.pid,kind,blob));
+      }catch(e){im.remove();}
+    }
+  };
+  return Promise.all(Array.from({length:Math.min(HYD_PAR,todo.length)},worker));
 }
 
 /* ---------------- 화면 전환 ---------------- */
@@ -552,11 +621,24 @@ function go(v){
   $('nGrid').classList.toggle('on',v==='grid');
   $('nMem').classList.toggle('on',v==='mem');
   if(v==='feed')renderFeed(); if(v==='grid')renderGrid(); if(v==='mem')renderMem();
+  LASTSIG=VIEW+'|'+viewSig();
   window.scrollTo(0,0);
 }
-async function refresh(){
+/* 화면에 실제로 영향을 주는 것만 모은 지문 — 바뀐 게 없으면 다시 그리지 않는다.
+   (배경 동기화가 90초마다 화면을 통째로 새로 그려서 사진이 다시 까매지던 원인) */
+let LASTSIG='';
+function viewSig(){
+  return CFG.me+'/'+nameOf('a')+'/'+nameOf('b')+'/'+POSTS.map(p=>[
+    p.id,p.ts,p.edited||0,p.caption||'',p.place||'',p.photos.length,
+    (p.comments||[]).length,Object.keys(p.likes||{}).filter(k=>p.likes[k]).sort().join('')
+  ].join('~')).join('|');
+}
+async function refresh(force){
   await loadPosts();
   paintDday();
+  const sig=VIEW+'|'+viewSig();
+  if(!force&&sig===LASTSIG)return;      /* 그대로면 손대지 않음 */
+  LASTSIG=sig;
   if(VIEW==='feed')renderFeed(); else if(VIEW==='grid')renderGrid(); else renderMem();
 }
 function paintDday(){
@@ -605,7 +687,8 @@ function postHTML(p){
   const cms=p.comments||[];
   const prev=cms.slice(-2).map(c=>
     `<div class="cmt"><b class="${c.who}">${esc(nameOf(c.who))}</b>${esc(c.text)}</div>`).join('');
-  const slides=p.photos.map(pid=>`<div><img data-pid="${pid}" data-kind="full" alt=""></div>`).join('');
+  /* 피드는 썸네일로 먼저 뜨고, 보이는 카드만 원본으로 바뀐다 (data-up) */
+  const slides=p.photos.map(pid=>`<div><img data-pid="${pid}" data-kind="thumb" data-up="full" alt=""></div>`).join('');
   const dots=p.photos.length>1?
     `<div class="cdots" id="cd${p.id}">${p.photos.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>
      <div class="cnum" id="cn${p.id}">1/${p.photos.length}</div>`:'';
@@ -755,6 +838,7 @@ function renderMem(){
 
 /* ---------------- 업로드 ---------------- */
 let UP=[];   // {blobFull, blobThumb, url, w, h}
+const MAXUP=8;   // 한 번에 담을 수 있는 사진 수
 function openUpload(){
   UP=[];
   $('upCap').value='';$('upPlace').value='';
@@ -775,8 +859,13 @@ function pickFiles(){
   const inp=document.createElement('input');
   inp.type='file';inp.accept='image/*';inp.multiple=true;
   inp.onchange=async()=>{
-    const fs=[...inp.files].slice(0,20-UP.length);
-    if(!fs.length)return;
+    const picked=[...inp.files];
+    const room=MAXUP-UP.length;
+    const fs=picked.slice(0,Math.max(0,room));
+    if(!fs.length){
+      toast('한 번에 '+MAXUP+'장까지 담을 수 있어요',2600);return;}
+    if(picked.length>fs.length)
+      toast('한 번에 '+MAXUP+'장까지예요. 앞의 '+fs.length+'장만 담을게요',3000);
     $('upBar').classList.remove('hide');
     let done=0;
     // 가장 오래된 촬영일을 기본 날짜로
@@ -800,8 +889,9 @@ function paintUp(){
   const g=$('upGrid');
   g.innerHTML=UP.map((u,i)=>
     `<div class="u"><img src="${u.url}" alt=""><button class="x" onclick="rmUp(${i})">&times;</button></div>`).join('')
-    +(UP.length<20?`<div class="u add" onclick="pickFiles()">+</div>`:'');
+    +(UP.length<MAXUP?`<div class="u add" onclick="pickFiles()">+</div>`:'');
   $('upSave').textContent=UP.length?`사진 ${UP.length}장 담기`:'사진첩에 담기';
+  const c=$('upCnt');if(c)c.textContent=UP.length+' / '+MAXUP;
 }
 function rmUp(i){URL.revokeObjectURL(UP[i].url);UP.splice(i,1);paintUp();}
 
@@ -853,16 +943,21 @@ async function savePost(){
   if(!UP.length)return toast('사진을 먼저 골라주세요');
   const btn=$('upSave');btn.disabled=true;btn.innerHTML='<span class="spin"></span> 담는 중...';
   try{
-    const ids=[];
+    const ids=[],dims={};
     for(const u of UP){
       const pid=uid();
       await iput('files',{full:u.full,thumb:u.thumb,w:u.w,h:u.h},pid);
+      await iput('thumbs',u.thumb,pid);
+      /* 방금 만든 사진은 캐시에 미리 넣어둔다 — 피드로 나가자마자 바로 보이게 */
+      URLC.set('thumb:'+pid,URL.createObjectURL(u.thumb));
+      URLC.set('full:'+pid,URL.createObjectURL(u.full));
+      dims[pid]={w:u.w||0,h:u.h||0};
       ids.push(pid);
     }
     const dv=$('upDate').value;
     const post={id:uid(),ts:dv?new Date(dv+'T12:00:00').getTime():Date.now(),
       created:Date.now(),by:CFG.me,caption:$('upCap').value.trim(),
-      place:$('upPlace').value.trim(),photos:ids,likes:{},comments:[]};
+      place:$('upPlace').value.trim(),photos:ids,dims,likes:{},comments:[]};
     await iput('posts',post);
     closeUpload();
     go('feed');await refresh();
@@ -979,7 +1074,7 @@ async function saveEdit(){
 async function delPost(){
   const p=POSTS.find(x=>x.id===MID);if(!p)return;
   if(!confirm('사진 '+p.photos.length+'장과 메시지가 모두 지워져요. 정말 지울까요?'))return;
-  for(const pid of p.photos){await idel('files',pid);
+  for(const pid of p.photos){await idel('files',pid);await idel('thumbs',pid);
     URLC.delete('thumb:'+pid);URLC.delete('full:'+pid);}
   await idel('posts',p.id);
   const S=sy();if(!S.dels.includes(p.id))S.dels.push(p.id);delete S.posts[p.id];saveCfg();
@@ -1186,10 +1281,11 @@ async function doImport(file){
     const have=new Set(POSTS.map(p=>p.id));
     let np=0,nf=0;
     for(const pid of Object.keys(pack.files)){
-      const ex=await iget('files',pid);
-      if(ex)continue;
+      if(await ihas('files',pid))continue;
       const f=pack.files[pid];
-      await iput('files',{full:b64ToBlob(f.full),thumb:b64ToBlob(f.thumb),w:f.w,h:f.h},pid);
+      const thumb=b64ToBlob(f.thumb);
+      await iput('files',{full:b64ToBlob(f.full),thumb,w:f.w,h:f.h},pid);
+      await iput('thumbs',thumb,pid);
       nf++;
     }
     for(const p of pack.posts){
@@ -1204,7 +1300,7 @@ async function doImport(file){
         await iput('posts',mine);
       }else{await iput('posts',p);np++;}
     }
-    await refresh();
+    await refresh(true);
     closeSettings();
     toast('기록 '+np+'개 · 사진 '+nf+'장을 새로 담았어요');
     syncSoon();
@@ -1213,8 +1309,10 @@ async function doImport(file){
 async function wipeAll(){
   if(!confirm('모든 사진과 메시지가 사라져요. 정말 지울까요?'))return;
   if(!confirm('되돌릴 수 없습니다. 백업은 만들어 두셨나요?'))return;
-  for(const p of POSTS){for(const pid of p.photos)await idel('files',pid);await idel('posts',p.id);}
-  URLC.clear();await refresh();closeSettings();toast('모두 지웠어요');
+  for(const p of POSTS){
+    for(const pid of p.photos){await idel('files',pid);await idel('thumbs',pid);}
+    await idel('posts',p.id);}
+  URLC.clear();await refresh(true);closeSettings();toast('모두 지웠어요');
 }
 
 /* =====================================================================
@@ -1297,7 +1395,9 @@ async function applyEvent(ev){
     if(!s.dels.includes(ev.id))s.dels.push(ev.id);
     /* 같은 회차에 방금 받은 기록일 수도 있으니 저장소에서 직접 찾는다 */
     const rec=POSTS.find(x=>x.id===ev.id)||await iget('posts',ev.id);
-    if(rec){for(const pid of (rec.photos||[]))await idel('files',pid);await idel('posts',ev.id);}
+    if(rec){for(const pid of (rec.photos||[])){await idel('files',pid);await idel('thumbs',pid);
+      URLC.delete('thumb:'+pid);URLC.delete('full:'+pid);}
+      await idel('posts',ev.id);}
     delete s.posts[ev.id];
     return {del:1};
   }
@@ -1322,23 +1422,39 @@ async function applyEvent(ev){
 }
 
 /* --- 내려받기 --- */
+/* 여러 건을 조금씩 동시에 받아온다 — 한 건씩 줄 세우면 왕복시간이 그대로 쌓인다.
+   결과는 넣은 순서 그대로 돌려주므로, 반영 순서(병합 규칙)는 그대로 지켜진다. */
+async function pool(items,n,fn){
+  const out=new Array(items.length);
+  let i=0;
+  const worker=async()=>{
+    while(i<items.length){const k=i++;
+      try{out[k]={v:await fn(items[k])};}catch(e){out[k]={e};}}
+  };
+  await Promise.all(Array.from({length:Math.min(n,items.length)},worker));
+  return out;
+}
 async function syncPull(){
   const s=sy();
   const {files}=await sreq('list',{since:s.cursor||0});
   let got=0,maxTs=s.cursor||0,bad=0,stopAt=null;
 
-  for(const f of files){
-    if(f.ts>maxTs)maxTs=f.ts;
-    if(f.name.indexOf('_'+s.dev+'_')>=0)continue;      /* 내가 올린 건 건너뜀 */
+  files.forEach(f=>{if(f.ts>maxTs)maxTs=f.ts;});
+  const evs=files.filter(f=>f.name.indexOf('_'+s.dev+'_')<0);   /* 내가 올린 건 건너뜀 */
+
+  /* 내려받기는 동시에(4개), 반영은 순서대로 */
+  const fetched=await pool(evs,4,async f=>{
+    const r=await sreq('get',{id:f.id});
+    return JSON.parse(new TextDecoder().decode(await decU8(b64ToU8(r.data))));
+  });
+  for(let k=0;k<evs.length;k++){
+    const g=fetched[k];
+    /* 못 읽은 건(암호 불일치 등)은 표시만 남기고 다음 동기화에서 다시 시도 */
+    if(g.e){bad++;if(stopAt===null)stopAt=evs[k].ts;continue;}
     try{
-      const r=await sreq('get',{id:f.id});
-      const ev=JSON.parse(new TextDecoder().decode(await decU8(b64ToU8(r.data))));
-      const res=await applyEvent(ev);
+      const res=await applyEvent(g.v);
       if(res.add||res.merge||res.del)got++;
-    }catch(e){
-      /* 못 읽은 건(암호 불일치 등)은 표시만 남기고 다음 동기화에서 다시 시도 */
-      bad++;if(stopAt===null)stopAt=f.ts;
-    }
+    }catch(e){bad++;if(stopAt===null)stopAt=evs[k].ts;}
   }
   /* 실패한 지점 앞까지만 커서를 옮긴다 — 나중에 암호를 고치면 놓친 것도 들어온다 */
   s.cursor=(stopAt!==null)?Math.max(0,stopAt-1):maxTs;
@@ -1346,21 +1462,24 @@ async function syncPull(){
 
   /* 글은 왔는데 사진이 없는 것들 채워넣기 */
   await loadPosts();
-  let photos=0;
+  const need=[],seen={};
   for(const p of POSTS){
     for(const pid of (p.photos||[])){
-      if(await iget('files',pid))continue;
-      try{
-        const [rf,rt]=await Promise.all([
-          sreq('get',{name:'ph_'+pid+'_f'}), sreq('get',{name:'ph_'+pid+'_t'})]);
-        const full=new Blob([await decU8(b64ToU8(rf.data))],{type:'image/jpeg'});
-        const thumb=new Blob([await decU8(b64ToU8(rt.data))],{type:'image/jpeg'});
-        const dim=(p.dims&&p.dims[pid])||{w:0,h:0};
-        await iput('files',{full,thumb,w:dim.w,h:dim.h},pid);
-        photos++;
-      }catch(e){ }
+      if(seen[pid])continue;seen[pid]=1;
+      if(await ihas('files',pid))continue;    /* 있는지만 확인 — 원본을 꺼내오지 않는다 */
+      need.push({pid,dim:(p.dims&&p.dims[pid])||{w:0,h:0}});
     }
   }
+  const done=await pool(need,2,async o=>{     /* 사진은 크니 2장씩만 */
+    const [rf,rt]=await Promise.all([
+      sreq('get',{name:'ph_'+o.pid+'_f'}), sreq('get',{name:'ph_'+o.pid+'_t'})]);
+    const full=new Blob([await decU8(b64ToU8(rf.data))],{type:'image/jpeg'});
+    const thumb=new Blob([await decU8(b64ToU8(rt.data))],{type:'image/jpeg'});
+    await iput('files',{full,thumb,w:o.dim.w,h:o.dim.h},o.pid);
+    await iput('thumbs',thumb,o.pid);
+    return true;
+  });
+  let photos=0;done.forEach(r=>{if(r&&r.v)photos++;});
   return {got,photos,bad};
 }
 
@@ -1385,9 +1504,12 @@ async function syncPush(){
     /* 사진 먼저 (한 번 올리면 끝) */
     const dims={};
     for(const pid of (p.photos||[])){
+      const known=(p.dims&&p.dims[pid])||null;
+      /* 이미 올린 사진이고 크기도 아는 사진이면 원본을 다시 읽지 않는다 */
+      if(known&&s.photos.includes(pid)){dims[pid]=known;continue;}
       const f=await iget('files',pid);
       if(!f)continue;
-      dims[pid]={w:f.w||0,h:f.h||0};
+      dims[pid]=known||{w:f.w||0,h:f.h||0};
       if(s.photos.includes(pid))continue;
       await spush('ph_'+pid+'_f',await encU8(await blobToU8(f.full)));
       await spush('ph_'+pid+'_t',await encU8(await blobToU8(f.thumb)));
@@ -1414,7 +1536,7 @@ async function syncNow(loud){
     const pull=await syncPull();
     const push=await syncPush();
     sy().at=Date.now();saveCfg();
-    await refresh();
+    await refresh(pull.photos>0);   /* 사진만 뒤늦게 채워진 경우엔 다시 그려야 보인다 */
     if(pull.bad){
       const w='못 읽은 항목 '+pull.bad+'건 — 두 폰의 공유 암호가 다를 수 있어요';
       if(badge)badge.textContent=w;
@@ -1510,7 +1632,7 @@ window.addEventListener('popstate',function(){
 });
 
 /* ---------------- 시작 ---------------- */
-const BUILD='2026-08-03e';
+const BUILD='2026-08-08a';
 (async function boot(){
   buildPad();
   /* 가드는 armGuard()가 '첫 터치' 때 깐다 (여기서 깔면 Chrome이 무시함) */
