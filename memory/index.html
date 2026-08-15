@@ -402,11 +402,22 @@ function loadCfg(){
 function saveCfg(){try{localStorage.setItem(LS,JSON.stringify(CFG));}catch(e){}}
 
 /* ---------------- IndexedDB ---------------- */
-let _db=null;
+let _db=null,_dbP=null;
+/* 열기 실패/블락 대비 (2026-08-15)
+   - onblocked: 예전 버전을 잡고 있는 다른 탭이 있으면 onsuccess/onerror 둘 다 안 온다.
+     그대로 두면 promise 가 영영 안 끝나서 앱이 통째로 멈춘다 → 반드시 reject 시킨다
+   - onversionchange/onclose: 브라우저가 연결을 닫으면 _db 가 죽은 채로 남는다 → 캐시를 비운다
+   - 12초 타임아웃: 위 어디에도 안 걸리는 경우의 최후 방어 */
 function idb(){
-  return new Promise((res,rej)=>{
-    if(_db)return res(_db);
-    const r=indexedDB.open(DBN,DBV);
+  if(_db)return Promise.resolve(_db);
+  if(_dbP)return _dbP;
+  _dbP=new Promise((res,rej)=>{
+    let done=false;
+    const fin=(fn,v)=>{if(done)return;done=true;_dbP=null;fn(v);};
+    const to=setTimeout(()=>fin(rej,new Error('저장소를 여는 데 실패했어요 (응답 없음)')),12000);
+    let r;
+    try{r=indexedDB.open(DBN,DBV);}
+    catch(e){clearTimeout(to);fin(rej,e);return;}
     r.onupgradeneeded=e=>{
       const d=e.target.result;
       if(!d.objectStoreNames.contains('posts'))d.createObjectStore('posts',{keyPath:'id'});
@@ -414,11 +425,30 @@ function idb(){
       /* 썸네일 전용 — 목록을 그릴 때 원본(1600px)까지 통째로 꺼내오지 않도록 분리 */
       if(!d.objectStoreNames.contains('thumbs'))d.createObjectStore('thumbs');
     };
-    r.onsuccess=()=>{_db=r.result;res(_db);};
-    r.onerror=()=>rej(r.error);
+    r.onblocked=()=>{clearTimeout(to);
+      fin(rej,new Error('다른 창에서 앱이 열려 있어요. 그 창을 닫고 다시 열어주세요'));};
+    r.onsuccess=()=>{
+      clearTimeout(to);
+      const d=r.result;
+      d.onversionchange=()=>{try{d.close();}catch(e){}_db=null;};
+      d.onclose=()=>{_db=null;};
+      _db=d;fin(res,d);
+    };
+    r.onerror=()=>{clearTimeout(to);fin(rej,r.error||new Error('저장소 열기 실패'));};
+  });
+  return _dbP;
+}
+/* 연결이 죽은 뒤(백그라운드에서 브라우저가 닫는 경우가 있다) 트랜잭션을 열면
+   InvalidStateError 가 난다. 그때 캐시를 버리고 딱 한 번 다시 연결해 본다. */
+function ist(store,mode){
+  return idb().then(d=>{
+    try{return d.transaction(store,mode).objectStore(store);}
+    catch(e){
+      _db=null;
+      return idb().then(d2=>d2.transaction(store,mode).objectStore(store));
+    }
   });
 }
-function ist(store,mode){return idb().then(d=>d.transaction(store,mode).objectStore(store));}
 function iput(store,val,key){return ist(store,'readwrite').then(s=>new Promise((res,rej)=>{
   const r=(key===undefined)?s.put(val):s.put(val,key);r.onsuccess=()=>res(true);r.onerror=()=>rej(r.error);}));}
 function iget(store,key){return ist(store,'readonly').then(s=>new Promise((res,rej)=>{
@@ -499,13 +529,38 @@ async function keyIn(k){
   }else $('lkMsg').textContent='';
 }
 let UNLOCKED=false;
-function unlock(){
+/* 첫 화면이 비어버리는 문제 (2026-08-15)
+   예전엔 refresh() 를 그냥 호출만 해서, 저장소 읽기가 실패하면 아무도 그 실패를 못 받고
+   잠금만 풀린 채 화면이 텅 비었다. 이제는 기다렸다가 실패하면 '다시 시도'를 띄운다. */
+async function unlock(){
   UNLOCKED=true;buf='';paintDots();$('lkMsg').textContent='';
   const l=$('lock');l.classList.add('out');
   setTimeout(()=>{l.classList.add('hide');l.classList.remove('out');},380);
   $('app').classList.remove('hide');
-  refresh();
+  try{
+    await refresh(true);
+  }catch(e){
+    showLoadFail(e);
+  }
+  pollNow();
   if(syncOn()&&sy().auto)syncNow(false);
+}
+/* 저장소를 못 읽었을 때 — 빈 화면 대신 이유와 재시도 버튼을 보여준다 */
+function showLoadFail(e){
+  const box=$('vFeed');if(!box)return;
+  go('feed');
+  box.innerHTML='<div class="empty"><div class="big" style="font-size:44px">&#9888;</div>'+
+    '<h3>사진을 불러오지 못했어요</h3>'+
+    '<p>'+esc(String(e&&e.message||e||'알 수 없는 오류'))+'</p>'+
+    '<p style="opacity:.7">사진이 지워진 건 아니에요. 다시 시도해 주세요.</p>'+
+    '<button class="btn" onclick="retryLoad()" style="margin-top:14px">다시 시도</button></div>';
+}
+async function retryLoad(){
+  _db=null;                       /* 죽은 연결을 버리고 새로 연다 */
+  try{
+    await refresh(true);
+    toast('불러왔어요');
+  }catch(e){ showLoadFail(e); }
 }
 function lockNow(){
   UNLOCKED=false;buf='';
@@ -514,17 +569,26 @@ function lockNow(){
   const l=$('lock');l.classList.remove('hide','out');
   paintDots();$('lkMsg').textContent='';
 }
-/* 백그라운드 다녀오면 자동 잠금 */
+/* 백그라운드 다녀오면 자동 잠금 + 오갈 때 동기화 (2026-08-15 보강)
+   - 나갈 때: 예약만 걸어둔 동기화가 있으면 날아가기 전에 바로 실행
+   - 돌아올 때: 예전엔 1.2초 디바운스로 미뤘는데, 그냥 즉시 확인한다 */
 let hidAt=0;
 document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='hidden'){hidAt=Date.now();}
-  else if(UNLOCKED&&hidAt){
-    const away=(Date.now()-hidAt)/1000;
-    if(CFG.lockOnHide&&away>=(CFG.autolock||0))lockNow();
-    else syncSoon();
-    hidAt=0;
+  if(document.visibilityState==='hidden'){
+    hidAt=Date.now();
+    syncFlush();
+    return;
   }
+  if(!UNLOCKED)return;
+  if(hidAt){
+    const away=(Date.now()-hidAt)/1000;
+    hidAt=0;
+    if(CFG.lockOnHide&&away>=(CFG.autolock||0)){lockNow();return;}
+  }
+  kickSync();pollNow();
+  if(syncOn()&&sy().auto)syncNow(false);
 });
+window.addEventListener('pagehide',()=>{try{syncFlush();}catch(e){}});
 
 /* ---------------- 데이터 ---------------- */
 let POSTS=[];                 // 최신순
@@ -533,6 +597,16 @@ function urlFor(id,kind,blob){
   const k=kind+':'+id;
   if(URLC.has(k))return URLC.get(k);
   const u=URL.createObjectURL(blob);URLC.set(k,u);return u;
+}
+/* objectURL 은 revoke 하지 않으면 그 blob 이 메모리에 계속 붙어 있는다.
+   앱을 며칠씩 켜두는 PWA 라 캐시에서 뺄 때는 반드시 이 함수로 뺀다 (2026-08-15) */
+function dropURL(id,kind){
+  const k=kind+':'+id, u=URLC.get(k);
+  if(u){try{URL.revokeObjectURL(u);}catch(e){}URLC.delete(k);}
+}
+function dropAllURL(){
+  URLC.forEach(u=>{try{URL.revokeObjectURL(u);}catch(e){}});
+  URLC.clear();
 }
 async function loadPosts(){
   POSTS=await iall('posts');
@@ -602,9 +676,11 @@ function hydrate(root){
       const kind=im.dataset.kind||'thumb';
       try{
         const blob=await blobOf(im.dataset.pid,kind);
-        if(!blob){im.remove();continue;}
+        /* 글만 먼저 오고 사진이 아직 안 내려온 경우가 있다.
+           지워버리면 카드가 깨지므로 자리표시(shimmer)를 남기고 다음 렌더에서 다시 시도한다 */
+        if(!blob){delete im.dataset.done;continue;}
         paintImg(im,urlFor(im.dataset.pid,kind,blob));
-      }catch(e){im.remove();}
+      }catch(e){delete im.dataset.done;}
     }
   };
   return Promise.all(Array.from({length:Math.min(HYD_PAR,todo.length)},worker));
@@ -1075,7 +1151,7 @@ async function delPost(){
   const p=POSTS.find(x=>x.id===MID);if(!p)return;
   if(!confirm('사진 '+p.photos.length+'장과 메시지가 모두 지워져요. 정말 지울까요?'))return;
   for(const pid of p.photos){await idel('files',pid);await idel('thumbs',pid);
-    URLC.delete('thumb:'+pid);URLC.delete('full:'+pid);}
+    dropURL(pid,'thumb');dropURL(pid,'full');}
   await idel('posts',p.id);
   const S=sy();if(!S.dels.includes(p.id))S.dels.push(p.id);delete S.posts[p.id];saveCfg();
   closeMenu();await refresh();toast('지웠어요');syncSoon();
@@ -1312,7 +1388,7 @@ async function wipeAll(){
   for(const p of POSTS){
     for(const pid of p.photos){await idel('files',pid);await idel('thumbs',pid);}
     await idel('posts',p.id);}
-  URLC.clear();await refresh(true);closeSettings();toast('모두 지웠어요');
+  dropAllURL();await refresh(true);closeSettings();toast('모두 지웠어요');
 }
 
 /* =====================================================================
@@ -1323,7 +1399,23 @@ async function wipeAll(){
    - 서버(구글 드라이브)는 암호문 우편함일 뿐. 평문 원본은 각자 폰에만 남는다.
    ===================================================================== */
 const SALT='jsmemory.sync.v1', ITER=200000;
-let KEYC=null, KEYC_FOR='', SYNCING=false, SYNCT=null;
+let KEYC=null, KEYC_FOR='', SYNCING=false, SYNCT=null, SYNCING_AT=0;
+const POLL_MS=20000;          /* 확인 주기의 최소 간격(가장 바쁠 때) */
+const POLL_MAX=120000;        /* 조용하면 여기까지 늘린다 */
+const SYNC_MAX=180000;        /* 이 시간을 넘겨 붙잡고 있으면 죽은 것으로 본다 */
+let POLL_GAP=POLL_MS, POLL_AT=0;
+/* 주고받은 게 있으면 다시 바짝, 아무것도 없으면 두 배씩 늘려 서버 호출을 아낀다 */
+function pollGap(active){
+  POLL_GAP=active?POLL_MS:Math.min(POLL_GAP*2,POLL_MAX);
+}
+function pollNow(){POLL_GAP=POLL_MS;POLL_AT=0;}   /* 사용자가 움직이면 즉시 다시 확인 */
+/* 만에 하나 SYNCING 이 굳어도 앱을 껐다 켤 필요가 없도록 풀어준다.
+   이때 회차 번호를 올려서, 나중에 뒤늦게 깨어난 옛 동기화가 새 동기화의
+   잠금을 대신 풀어버리거나 옛 결과를 화면에 덮어쓰지 못하게 한다 (2026-08-15) */
+let SYNCRUN=0;
+function kickSync(){
+  if(SYNCING&&SYNCING_AT&&Date.now()-SYNCING_AT>SYNC_MAX){SYNCING=false;SYNCRUN++;}
+}
 
 function sy(){ /* 설정 접근 + 구버전 보정 */
   if(!CFG.sync)CFG.sync=cfgDefault().sync;
@@ -1363,10 +1455,25 @@ function b64ToU8(b){const bin=atob(b||'');const a=new Uint8Array(bin.length);
 const blobToU8=async b=>new Uint8Array(await b.arrayBuffer());
 
 /* --- 서버 통신 --- */
+/* 반드시 시간제한을 건다 (2026-08-15).
+   예전엔 응답이 안 오면 fetch 가 끝나지 않았고, 그러면 syncNow 의 finally 에
+   영영 도달하지 못해 SYNCING 이 true 로 굳었다. 그 뒤로는 자동이든 수동이든
+   모든 동기화가 조용히 무시됐다 — "동기화가 안 된다"의 진짜 원인. */
+async function ftimeout(url,opts,ms){
+  const ac=new AbortController();
+  const t=setTimeout(()=>ac.abort(),ms);
+  try{
+    return await fetch(url,Object.assign({signal:ac.signal},opts||{}));
+  }catch(e){
+    if(e&&e.name==='AbortError')throw new Error('서버 응답이 없어요 (시간 초과)');
+    throw new Error('연결에 실패했어요 — 네트워크를 확인해 주세요');
+  }finally{clearTimeout(t);}
+}
 async function sreq(action,params){
   const s=sy();
   const q=new URLSearchParams(Object.assign({action,secret:s.secret},params||{}));
-  const r=await fetch(s.url+'?'+q.toString(),{redirect:'follow'});
+  const ms=(action==='get')?45000:20000;      /* 사진 받기는 크니 넉넉히 */
+  const r=await ftimeout(s.url+'?'+q.toString(),{redirect:'follow'},ms);
   const j=await r.json();
   if(j.error)throw new Error(j.error);
   return j;
@@ -1374,9 +1481,9 @@ async function sreq(action,params){
 async function spush(name,u8){
   const s=sy();
   /* text/plain 이라 프리플라이트(OPTIONS) 없이 통과 */
-  const r=await fetch(s.url,{method:'POST',redirect:'follow',
+  const r=await ftimeout(s.url,{method:'POST',redirect:'follow',
     headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body:JSON.stringify({action:'push',secret:s.secret,name,data:u8ToB64(u8)})});
+    body:JSON.stringify({action:'push',secret:s.secret,name,data:u8ToB64(u8)})},60000);
   const j=await r.json();
   if(j.error)throw new Error(j.error);
   return j;
@@ -1396,9 +1503,12 @@ async function applyEvent(ev){
     /* 같은 회차에 방금 받은 기록일 수도 있으니 저장소에서 직접 찾는다 */
     const rec=POSTS.find(x=>x.id===ev.id)||await iget('posts',ev.id);
     if(rec){for(const pid of (rec.photos||[])){await idel('files',pid);await idel('thumbs',pid);
-      URLC.delete('thumb:'+pid);URLC.delete('full:'+pid);}
+      dropURL(pid,'thumb');dropURL(pid,'full');}
       await idel('posts',ev.id);}
-    delete s.posts[ev.id];
+    /* 'DEL' 로 표시해 둔다 (2026-08-15).
+       예전엔 이 자리에서 지워버려서, 상대의 삭제를 받은 폰이 다음 동기화 때
+       같은 삭제를 되쏘고 → 상대가 또 되쏘는 무한 메아리가 생겼다. */
+    s.posts[ev.id]='DEL';
     return {del:1};
   }
   if(ev.t!=='post'||!ev.post)return {};
@@ -1440,6 +1550,8 @@ async function syncPull(){
   let got=0,maxTs=s.cursor||0,bad=0,stopAt=null;
 
   files.forEach(f=>{if(f.ts>maxTs)maxTs=f.ts;});
+  /* 서버도 ts 순으로 주지만, 순서가 어긋나면 커서를 엉뚱한 데 놓게 되므로 여기서도 한 번 세운다 */
+  files.sort((a,b)=>(a.ts-b.ts));
   const evs=files.filter(f=>f.name.indexOf('_'+s.dev+'_')<0);   /* 내가 올린 건 건너뜀 */
 
   /* 내려받기는 동시에(4개), 반영은 순서대로 */
@@ -1525,40 +1637,77 @@ async function syncPush(){
 }
 
 /* --- 한 번 동기화 --- */
+/* 보내기와 받기를 따로 감싼다 (2026-08-15).
+   예전엔 둘을 한 try 에 묶어서, 받기가 실패하면 보내기가 아예 실행되지 않았다.
+   그래서 내가 올린 사진이 서버로 나가지도 못한 채 상대는 계속 못 보는 일이 생겼다.
+   보내기를 먼저 하는 이유 — 내 것이 빨리 나가야 상대가 다음 확인 때 바로 본다. */
 async function syncNow(loud){
   if(!syncOn()){if(loud)toast('설정에서 동기화 주소와 공유 암호를 먼저 넣어주세요',3000);return;}
+  kickSync();
   if(SYNCING)return;
-  SYNCING=true;
+  SYNCING=true;SYNCING_AT=Date.now();
+  const run=++SYNCRUN;                 /* 내 회차 — 도중에 강제해제되면 번호가 바뀐다 */
   const badge=$('syncState');
   if(badge)badge.textContent='동기화 중...';
   if(loud)toast('<span class="spin"></span> 주고받는 중...',60000);
+
+  let push={sent:0,photos:0}, pull={got:0,photos:0,bad:0};
+  let errs=[];
   try{
-    const pull=await syncPull();
-    const push=await syncPush();
+    try{ push=await syncPush(); }
+    catch(e){ errs.push('보내기: '+String(e.message||e)); }
+    try{ pull=await syncPull(); }
+    catch(e){ errs.push('받기: '+String(e.message||e)); }
+
     sy().at=Date.now();saveCfg();
-    await refresh(pull.photos>0);   /* 사진만 뒤늦게 채워진 경우엔 다시 그려야 보인다 */
-    if(pull.bad){
+    try{ await refresh(pull.photos>0); }   /* 사진만 뒤늦게 채워진 경우엔 다시 그려야 보인다 */
+    catch(e){}
+
+    /* 내가 뒤늦게 깨어난 옛 회차라면 받아온 내용만 반영하고 조용히 물러난다 */
+    if(run!==SYNCRUN)return;
+
+    /* 오간 게 있으면 바짝 붙어서 확인하고, 조용하면 간격을 늘린다 */
+    pollGap(!errs.length&&!!(pull.got||pull.photos||push.sent||push.photos));
+
+    if(errs.length){
+      const msg=errs.join(' / ');
+      if(badge)badge.textContent='실패: '+msg;
+      if(loud)toast('동기화 실패 — '+esc(msg),4000);
+    }else if(pull.bad){
       const w='못 읽은 항목 '+pull.bad+'건 — 두 폰의 공유 암호가 다를 수 있어요';
       if(badge)badge.textContent=w;
       if(loud)toast(w,4500);
-    }else if(badge)badge.textContent='방금 동기화됨';
-    if(loud&&!pull.bad){
-      const bits=[];
-      if(pull.got)bits.push('받은 기록 '+pull.got+'개');
-      if(pull.photos)bits.push('받은 사진 '+pull.photos+'장');
-      if(push.sent)bits.push('보낸 기록 '+push.sent+'개');
-      if(push.photos)bits.push('보낸 사진 '+push.photos+'장');
-      toast(bits.length?bits.join(' · '):'이미 최신이에요');
+    }else{
+      if(badge)badge.textContent='방금 동기화됨';
+      if(loud){
+        const bits=[];
+        if(pull.got)bits.push('받은 기록 '+pull.got+'개');
+        if(pull.photos)bits.push('받은 사진 '+pull.photos+'장');
+        if(push.sent)bits.push('보낸 기록 '+push.sent+'개');
+        if(push.photos)bits.push('보낸 사진 '+push.photos+'장');
+        toast(bits.length?bits.join(' · '):'이미 최신이에요');
+      }
     }
-  }catch(e){
-    const msg=String(e.message||e);
-    if(badge)badge.textContent='실패: '+msg;
-    if(loud)toast('동기화 실패 — '+esc(msg),4000);
-  }finally{SYNCING=false;}
+    /* 새로 받은 게 있으면 조용히 알려준다 (조용한 동기화일 때만) */
+    if(!loud&&!errs.length&&(pull.got||pull.photos)){
+      toast(pull.photos?('새 사진 '+pull.photos+'장이 도착했어요'):'새 소식이 있어요');
+      buzz(10);
+    }
+  }finally{ if(run===SYNCRUN){SYNCING=false;SYNCING_AT=0;} }
 }
-function syncSoon(){ /* 글·메시지 바뀐 뒤 잠깐 모아서 한 번 */
+/* 글·메시지 바뀐 뒤 잠깐 모아서 한 번.
+   2.5초는 "올리고 바로 홈으로 나가는" 흔한 동작에서 요청이 통째로 날아갔다 → 1.2초로 줄이고,
+   앱을 벗어날 때는 남은 예약을 즉시 실행한다(syncFlush). */
+function syncSoon(){
   if(!syncOn()||!sy().auto)return;
-  clearTimeout(SYNCT);SYNCT=setTimeout(()=>syncNow(false),2500);
+  pollNow();                      /* 내가 뭔가 했으면 상대도 곧 움직인다 — 확인 간격을 되돌린다 */
+  clearTimeout(SYNCT);SYNCT=setTimeout(()=>syncNow(false),1200);
+}
+function syncFlush(){
+  if(!syncOn()||!sy().auto)return;
+  if(SYNCT){clearTimeout(SYNCT);SYNCT=null;}
+  kickSync();
+  if(!SYNCING)syncNow(false);
 }
 
 /* --- 설정 화면 동작 --- */
@@ -1632,27 +1781,42 @@ window.addEventListener('popstate',function(){
 });
 
 /* ---------------- 시작 ---------------- */
-const BUILD='2026-08-08a';
+const BUILD='2026-08-15b';
 (async function boot(){
-  buildPad();
-  /* 가드는 armGuard()가 '첫 터치' 때 깐다 (여기서 깔면 Chrome이 무시함) */
-  $('pad').addEventListener('click',e=>{
-    const b=e.target.closest('button');if(!b)return;keyIn(b.dataset.k);});
-  if(!CFG.codeHash){CFG.codeHash=await sha(DEF_CODE);saveCfg();}
-  paintDots();
+  /* 예전엔 이 안에서 한 군데라도 실패하면 나머지가 통째로 건너뛰어졌다.
+     특히 loadPosts() 가 실패하면 아래 동기화 타이머가 아예 등록되지 않아서
+     "빈 화면" 과 "자동 동기화 안 됨" 이 한꺼번에 일어났다. 이제 단계별로 감싼다. */
+  try{
+    buildPad();
+    /* 가드는 armGuard()가 '첫 터치' 때 깐다 (여기서 깔면 Chrome이 무시함) */
+    $('pad').addEventListener('click',e=>{
+      const b=e.target.closest('button');if(!b)return;keyIn(b.dataset.k);});
+    if(!CFG.codeHash){CFG.codeHash=await sha(DEF_CODE);saveCfg();}
+    paintDots();
+  }catch(e){}
   try{if(navigator.storage&&navigator.storage.persist)await navigator.storage.persist();}catch(e){}
-  await loadPosts();
-  const lv=$('lkVer');if(lv)lv.textContent='v '+BUILD;
-  if('serviceWorker' in navigator){
-    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js')
-      .then(r=>{try{r.update();}catch(e){}}).catch(()=>{}));
-    /* 새 버전이 배포되면 자동으로 갈아끼운다 (사진 올리는 중일 땐 건드리지 않음) */
-    navigator.serviceWorker.addEventListener('controllerchange',()=>{
-      if(window.__swReloaded||isOn('mUp'))return;window.__swReloaded=true;location.reload();});}
-  /* 앱을 보고 있는 동안 90초마다 새 사진 확인 */
+  /* 미리 읽어두면 잠금해제가 빨라지지만, 실패해도 여기서 멈추면 안 된다.
+     실제 렌더는 unlock() 이 다시 부르고 거기서 실패를 화면에 보여준다. */
+  try{await loadPosts();}catch(e){}
+  try{const lv=$('lkVer');if(lv)lv.textContent='v '+BUILD;}catch(e){}
+  try{
+    if('serviceWorker' in navigator){
+      window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js')
+        .then(r=>{try{r.update();}catch(e){}}).catch(()=>{}));
+      /* 새 버전이 배포되면 자동으로 갈아끼운다 (사진 올리는 중일 땐 건드리지 않음) */
+      navigator.serviceWorker.addEventListener('controllerchange',()=>{
+        if(window.__swReloaded||isOn('mUp'))return;window.__swReloaded=true;location.reload();});}
+  }catch(e){}
+  /* 앱을 보고 있는 동안 새 사진 확인 (2026-08-15).
+     주고받는 게 있을 땐 20초로 바짝, 조용하면 2분까지 늘린다 — pollGap() 참고.
+     구글 Apps Script 는 하루 실행시간 한도가 있어서 무작정 20초로 두면 안 된다. */
   setInterval(()=>{
-    if(UNLOCKED&&document.visibilityState==='visible'&&syncOn()&&sy().auto)syncNow(false);
-  },90000);
+    kickSync();
+    if(!(UNLOCKED&&document.visibilityState==='visible'&&syncOn()&&sy().auto))return;
+    if(Date.now()-POLL_AT<POLL_GAP)return;
+    POLL_AT=Date.now();
+    syncNow(false);
+  },POLL_MS);
 })();
 </script>
 </body>
