@@ -730,13 +730,20 @@ function paintDday(){
 const HEART='<svg viewBox="0 0 24 24"><path d="M12 20.5S3.8 15.4 3.8 9.6A4.8 4.8 0 0 1 12 6.6a4.8 4.8 0 0 1 8.2 3c0 5.8-8.2 10.9-8.2 10.9z"/></svg>';
 const BUBBLE='<svg viewBox="0 0 24 24"><path d="M20.5 11.5a7.9 7.9 0 0 1-8.5 7.9c-1 0-2-.2-2.9-.5L4 20.5l1.6-4.6A7.7 7.7 0 0 1 4 11.5 8 8 0 0 1 12.3 4a7.9 7.9 0 0 1 8.2 7.5z"/></svg>';
 
+/* 피드는 '올린 순서'(최근에 올린 것이 위), 사진첩은 '사진 날짜순'.
+   POSTS 자체는 날짜순으로 두고(사진첩·추억·D+ 계산이 이 순서를 씀) 피드에서만 다시 세운다.
+   created 가 없는 예전·백업 기록은 날짜로 대신한다 (2026-08-15) */
+function feedPosts(){
+  return POSTS.slice().sort((x,y)=>((y.created||y.ts)-(x.created||x.ts))||(y.ts-x.ts));
+}
 function renderFeed(){
   const box=$('vFeed');
   if(!POSTS.length){
     box.innerHTML=emptyHTML();return;}
-  box.innerHTML=POSTS.map(p=>postHTML(p)).join('');
+  const list=feedPosts();
+  box.innerHTML=list.map(p=>postHTML(p)).join('');
   hydrate(box);
-  POSTS.forEach(p=>{if(p.photos.length>1)bindCarousel(p.id);});
+  list.forEach(p=>{if(p.photos.length>1)bindCarousel(p.id);});
 }
 function emptyHTML(){
   return `<div class="empty">
@@ -1781,7 +1788,7 @@ window.addEventListener('popstate',function(){
 });
 
 /* ---------------- 시작 ---------------- */
-const BUILD='2026-08-15b';
+const BUILD='2026-08-15c';
 (async function boot(){
   /* 예전엔 이 안에서 한 군데라도 실패하면 나머지가 통째로 건너뛰어졌다.
      특히 loadPosts() 가 실패하면 아래 동기화 타이머가 아예 등록되지 않아서
