@@ -155,10 +155,18 @@ img[data-pid].ok{background:none;animation:none;opacity:1}
 nav{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;align-items:center;
   background:rgba(13,11,15,.96);backdrop-filter:blur(16px);border-top:1px solid rgba(46,40,51,.8);
   padding-bottom:var(--sab)}
-nav button{flex:1;padding:11px 0 9px;display:flex;flex-direction:column;align-items:center;gap:3px;
+nav button{position:relative;flex:1;padding:11px 0 9px;display:flex;flex-direction:column;align-items:center;gap:3px;
   font-size:10.5px;font-weight:700;color:var(--dim2)}
 nav button svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 nav button.on{color:var(--txt)}
+/* 새 소식 배지 (2026-08-20) */
+.nbadge{position:absolute;top:4px;left:calc(50% + 6px);min-width:17px;height:17px;padding:0 5px;
+  border-radius:9px;background:#e8547a;color:#fff;font-size:10px;font-weight:800;
+  display:none;align-items:center;justify-content:center;line-height:1;
+  box-shadow:0 0 0 2px var(--bg2)}
+.nbadge.on{display:flex}
+.newpill{display:inline-block;margin-left:7px;font-size:9px;font-weight:800;letter-spacing:.4px;
+  color:#fff;background:#e8547a;border-radius:7px;padding:2px 6px;vertical-align:middle}
 nav .fab{flex:0 0 auto;margin:0 4px}
 nav .fab div{width:50px;height:38px;border-radius:13px;background:linear-gradient(135deg,#ff8fa6,#e8547a);
   display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px -6px rgba(232,84,122,.75)}
@@ -304,7 +312,7 @@ textarea.inp{resize:none;line-height:1.6}
 </main>
 
 <nav>
-  <button id="nFeed" class="on" onclick="go('feed')">
+  <button id="nFeed" class="on" onclick="go('feed')"><span class="nbadge" id="nbFeed"></span>
     <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>피드</button>
   <button id="nGrid" onclick="go('grid')">
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></svg>사진첩</button>
@@ -391,6 +399,10 @@ const DEF_CODE='260618';
 function cfgDefault(){return{
   codeHash:'', names:{a:'정',b:'승'}, me:'a', anniv:'2026-06-18',
   autolock:120, lockOnHide:true, vib:true, tries:0, lockUntil:0, ver:1,
+  /* 새 소식 배지·알림 (2026-08-20).
+     loadCfg 가 얕게 합치므로 sync 안이 아니라 반드시 최상위에 둔다 —
+     sync 안에 넣으면 기존 사용자(이미 sync 객체가 있는 폰)에게 기본값이 안 들어간다 */
+  notify:true, seenAt:0, seen:null,
   /* 동기화: url·pass 는 기기별로 직접 입력(공개 페이지에 비밀이 안 남게) */
   sync:{url:'',secret:'',pass:'',auto:true,cursor:0,dev:'',at:0,posts:{},photos:[],dels:[]}
 };}
@@ -537,6 +549,7 @@ async function unlock(){
   const l=$('lock');l.classList.add('out');
   setTimeout(()=>{l.classList.add('hide');l.classList.remove('out');},380);
   $('app').classList.remove('hide');
+  snapSeen();                             /* 이번에 켤 때 안 본 것들에 NEW 딱지 */
   try{
     await refresh(true);
   }catch(e){
@@ -585,6 +598,8 @@ document.addEventListener('visibilitychange',()=>{
     hidAt=0;
     if(CFG.lockOnHide&&away>=(CFG.autolock||0)){lockNow();return;}
   }
+  snapSeen();
+  seenSoon();
   kickSync();pollNow();
   if(syncOn()&&sy().auto)syncNow(false);
 });
@@ -686,6 +701,119 @@ function hydrate(root){
   return Promise.all(Array.from({length:Math.min(HYD_PAR,todo.length)},worker));
 }
 
+/* ---------------- 새 소식 배지 · 알림 (2026-08-20) ----------------
+   상대가 올린 사진·메시지 중 내가 아직 안 본 것을 센다.
+   어디까지 되는지 (표준·실측 기준):
+   · 탭 배지 + NEW 딱지 — 모든 폰에서 뜬다. 권한 필요 없음
+   · 앱 아이콘 숫자(setAppBadge) — iOS 16.4+ 홈화면 설치 PWA, 데스크톱만.
+     안드로이드 크롬은 호출해도 무시한다(대신 알림이 뜨면 런처가 아이콘에 점을 찍는다)
+   · 시스템 알림 — 권한을 준 뒤, 앱이 켜져 있거나 최근앱에 살아있는 동안만.
+     앱을 완전히 종료하면 알릴 방법이 없다 (Web Push 중계 서버가 있어야 가능) */
+/* '언제까지 봤나'를 시각으로 재면 두 폰의 시계가 조금만 어긋나도
+   (created 는 올린 쪽 폰의 시각이다) 배지가 안 지워지거나 새 사진을 통째로 놓친다.
+   그래서 본 것을 목록으로 기억한다 — CFG.seen = { 게시물id: 그때까지 본 상대 메시지 수 }.
+   CFG.seenAt 은 '이 폰에 기능이 들어온 시각'으로, 그 이전 기록을 히스토리로 걸러내는 바닥선일 뿐
+   (markSeen 이 갱신하지 않는다). */
+let SNAP=new Set();    /* 이번에 앱을 켤 때 이미 본 것 — NEW 딱지 기준 */
+let NEWSIG=0;          /* SNAP 이 바뀌면 올린다. viewSig 지문에 섞어 딱지가 남지 않게 한다 */
+let SEENT=0;
+function seenMap(){if(!CFG.seen||typeof CFG.seen!=='object')CFG.seen={};return CFG.seen;}
+function newCmts(p){                       /* 상대가 남긴 메시지 수 (바닥선 이후) */
+  const me=CFG.me,floor=CFG.seenAt||0;
+  return (p.comments||[]).filter(c=>c.who!==me&&c.ts>=floor).length;
+}
+function newsCount(){
+  const sm=seenMap(),floor=CFG.seenAt||0,me=CFG.me;
+  let posts=0,photos=0,cmts=0;
+  POSTS.forEach(p=>{
+    if(p.by!==me&&!Object.prototype.hasOwnProperty.call(sm,p.id)&&(p.created||p.ts)>=floor){
+      posts++;photos+=p.photos.length;
+    }
+    const d=newCmts(p)-(sm[p.id]||0);
+    if(d>0)cmts+=d;
+  });
+  return {posts,photos,cmts,total:posts+cmts};
+}
+function isNewPost(p){
+  return p.by!==CFG.me&&!SNAP.has(p.id)&&(p.created||p.ts)>=(CFG.seenAt||0);
+}
+function snapSeen(){SNAP=new Set(Object.keys(seenMap()));NEWSIG++;}
+function paintNews(){
+  const n=newsCount(),el=$('nbFeed');
+  if(el){el.textContent=n.total>99?'99+':String(n.total);el.classList.toggle('on',n.total>0);}
+  try{
+    if(navigator.setAppBadge){
+      /* 아이콘 숫자는 '알림 받기'를 끄면 같이 꺼진다 (앱 안 배지는 그대로) */
+      if(n.total&&CFG.notify)navigator.setAppBadge(n.total).catch(()=>{});
+      else navigator.clearAppBadge().catch(()=>{});
+    }
+  }catch(e){}
+  return n;
+}
+/* 피드를 2초 이상 보고 있으면 '봤다'로 넘긴다.
+   맵을 통째로 다시 만들기 때문에 지워진 게시물 항목도 같이 정리된다.
+   NEW 딱지는 SNAP 을 쓰므로 앱을 켜 있는 동안은 계속 남아있는다 */
+function markSeen(){
+  if(!UNLOCKED)return;
+  const sm={};
+  POSTS.forEach(p=>{sm[p.id]=newCmts(p);});
+  CFG.seen=sm;saveCfg();paintNews();
+}
+function seenSoon(){
+  clearTimeout(SEENT);
+  if(!UNLOCKED||VIEW!=='feed'||document.visibilityState!=='visible')return;
+  SEENT=setTimeout(markSeen,2000);
+}
+function notifyOn(){
+  return !!CFG.notify&&typeof Notification!=='undefined'&&Notification.permission==='granted';
+}
+function notifyHint(){
+  if(typeof Notification==='undefined')return '이 브라우저는 시스템 알림이 없어요 (앱 안 배지는 그대로 떠요)';
+  if(Notification.permission==='granted')return '앱이 켜져 있거나 최근앱에 남아있을 때 알려줘요';
+  if(Notification.permission==='denied')return '차단됨 — 폰 설정 > 앱 알림에서 허용해 주세요';
+  return '아직 안 켰어요 — 아래 버튼을 눌러주세요';
+}
+/* serviceWorker.ready 는 SW 가 없는 환경(로컬 파일·http)에서 영영 안 끝난다 → 시간을 끊는다 */
+function swReady(ms){
+  if(!('serviceWorker' in navigator))return Promise.resolve(null);
+  return Promise.race([
+    navigator.serviceWorker.ready,
+    new Promise(r=>setTimeout(()=>r(null),ms||4000))
+  ]).catch(()=>null);
+}
+async function notifyNews(n){
+  if(!notifyOn())return false;
+  const bits=[];
+  if(n.photos)bits.push('새 사진 '+n.photos+'장');
+  if(n.cmts)bits.push('새 메시지 '+n.cmts+'개');
+  if(!bits.length)return false;
+  try{
+    const r=await swReady();
+    if(!r)return false;
+    await r.showNotification(nameOf(CFG.me==='a'?'b':'a')+' 님의 새 소식',{
+      body:bits.join(' · '),tag:'jsmem-news',renotify:true,
+      icon:'./icon-192.png',badge:'./icon-192.png',data:{url:'./'}});
+    return true;
+  }catch(e){return false;}
+}
+/* 권한 요청은 반드시 사용자가 버튼을 누른 흐름에서만 (iOS 는 특히 엄격) */
+async function askNotify(){
+  if(typeof Notification==='undefined')return toast('이 브라우저는 알림을 지원하지 않아요',3500);
+  let pm=Notification.permission;
+  if(pm==='default'){try{pm=await Notification.requestPermission();}catch(e){}}
+  if(pm!=='granted')return toast(pm==='denied'
+    ?'차단되어 있어요 — 폰 설정에서 이 앱의 알림을 허용해 주세요'
+    :'알림 권한을 받지 못했어요',4500);
+  CFG.notify=true;saveCfg();paintNews();
+  try{
+    const r=await swReady();
+    if(r)await r.showNotification('알림을 켰어요',{body:'새 사진이 오면 여기로 알려드릴게요',
+      tag:'jsmem-test',icon:'./icon-192.png',badge:'./icon-192.png'});
+  }catch(e){}
+  toast('알림을 켰어요');
+  if(isOn('mSet'))openSettings();
+}
+
 /* ---------------- 화면 전환 ---------------- */
 let VIEW='feed';
 function go(v){
@@ -698,13 +826,14 @@ function go(v){
   $('nMem').classList.toggle('on',v==='mem');
   if(v==='feed')renderFeed(); if(v==='grid')renderGrid(); if(v==='mem')renderMem();
   LASTSIG=VIEW+'|'+viewSig();
+  paintNews();seenSoon();
   window.scrollTo(0,0);
 }
 /* 화면에 실제로 영향을 주는 것만 모은 지문 — 바뀐 게 없으면 다시 그리지 않는다.
    (배경 동기화가 90초마다 화면을 통째로 새로 그려서 사진이 다시 까매지던 원인) */
 let LASTSIG='';
 function viewSig(){
-  return CFG.me+'/'+nameOf('a')+'/'+nameOf('b')+'/'+POSTS.map(p=>[
+  return NEWSIG+'/'+CFG.me+'/'+nameOf('a')+'/'+nameOf('b')+'/'+POSTS.map(p=>[
     p.id,p.ts,p.edited||0,p.caption||'',p.place||'',p.photos.length,
     (p.comments||[]).length,Object.keys(p.likes||{}).filter(k=>p.likes[k]).sort().join('')
   ].join('~')).join('|');
@@ -712,10 +841,12 @@ function viewSig(){
 async function refresh(force){
   await loadPosts();
   paintDday();
+  paintNews();                          /* 다시 안 그리는 경우에도 배지는 갱신한다 */
   const sig=VIEW+'|'+viewSig();
   if(!force&&sig===LASTSIG)return;      /* 그대로면 손대지 않음 */
   LASTSIG=sig;
   if(VIEW==='feed')renderFeed(); else if(VIEW==='grid')renderGrid(); else renderMem();
+  seenSoon();
 }
 function paintDday(){
   const el=$('dday');
@@ -778,7 +909,7 @@ function postHTML(p){
   return `<article class="post" id="p${p.id}">
     <div class="p-head">
       <div class="av ${p.by}">${esc(initOf(p.by))}</div>
-      <div><div class="p-who">${esc(nameOf(p.by))}</div>
+      <div><div class="p-who">${esc(nameOf(p.by))}${isNewPost(p)?'<span class="newpill">NEW</span>':''}</div>
         <div class="p-when">${esc(kdate(p.ts))}${p.place?' · '+esc(p.place):''}</div></div>
       <button class="p-more" onclick="openMenu('${p.id}')">&#8943;</button>
     </div>
@@ -1233,6 +1364,18 @@ async function openSettings(){
       </div></div>
     <div class="tog"><div><div class="b sm">진동 피드백</div></div>
       <div class="sw ${CFG.vib?'on':''}" id="swVib" onclick="this.classList.toggle('on')"></div></div>
+
+    <div class="sect" style="margin-left:0">새 소식 알림</div>
+    <div class="tog"><div><div class="b sm">알림 받기</div>
+      <div class="xs mut">${esc(notifyHint())}</div></div>
+      <div class="sw ${CFG.notify?'on':''}" id="swNoti" onclick="this.classList.toggle('on')"></div></div>
+    ${(typeof Notification==='undefined'||Notification.permission==='granted')?'':
+      '<button class="btn" style="margin-top:10px" onclick="askNotify()">알림 켜기</button>'}
+    <div class="xs mut" style="margin-top:10px;line-height:1.7">
+      상대가 올린 사진·메시지 개수가 <b style="color:var(--txt)">피드 탭에 숫자</b>로 뜨고,
+      새 것에는 <b style="color:var(--txt)">NEW</b> 딱지가 붙어요.
+      앱을 완전히 닫아둔 동안에는 알림이 오지 않아요.
+    </div>
     <button class="btn" style="margin-top:14px" onclick="changeCode()">비밀번호 바꾸기</button>
 
     <button class="btn primary" style="margin-top:16px" onclick="saveSet()">저장</button>
@@ -1290,13 +1433,17 @@ async function openSettings(){
 function closeSettings(){$('mSet').classList.remove('on');}
 function segPick(id,v){[...$(id).children].forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
 function segGet(id){const b=$(id).querySelector('button.on');return b?b.dataset.v:null;}
-function setMe(w){CFG.me=w;saveCfg();[...$('stMe').children].forEach(b=>b.classList.toggle('on',b.dataset.w===w));}
+function setMe(w){CFG.me=w;saveCfg();[...$('stMe').children].forEach(b=>b.classList.toggle('on',b.dataset.w===w));
+  /* 누가 '나'인지 바뀌면 새 소식의 기준도 통째로 뒤집힌다 — 여기서 한 번 맞춰둔다 */
+  markSeen();snapSeen();}
 function saveSet(){
   CFG.names.a=($('stA').value.trim()||'정').slice(0,6);
   CFG.names.b=($('stB').value.trim()||'승').slice(0,6);
   CFG.anniv=$('stAnniv').value||'';
   CFG.lockOnHide=$('swLock').classList.contains('on');
   CFG.vib=$('swVib').classList.contains('on');
+  const sn=$('swNoti');if(sn)CFG.notify=sn.classList.contains('on');
+  if(!CFG.notify){try{navigator.clearAppBadge&&navigator.clearAppBadge().catch(()=>{});}catch(e){}}
   CFG.autolock=+segGet('stAuto');
   saveCfg();closeSettings();refresh();toast('저장했어요');
 }
@@ -1695,10 +1842,16 @@ async function syncNow(loud){
         toast(bits.length?bits.join(' · '):'이미 최신이에요');
       }
     }
-    /* 새로 받은 게 있으면 조용히 알려준다 (조용한 동기화일 때만) */
+    /* 새로 받은 게 있으면 알린다 (조용한 동기화일 때만)
+       — 보고 있으면 화면 배너, 다른 앱에 가 있으면 시스템 알림 */
+    const news=paintNews();
     if(!loud&&!errs.length&&(pull.got||pull.photos)){
-      toast(pull.photos?('새 사진 '+pull.photos+'장이 도착했어요'):'새 소식이 있어요');
-      buzz(10);
+      if(document.visibilityState==='visible'){
+        toast(pull.photos?('새 사진 '+pull.photos+'장이 도착했어요'):'새 소식이 있어요');
+        buzz(10);
+      }else{
+        notifyNews(news);
+      }
     }
   }finally{ if(run===SYNCRUN){SYNCING=false;SYNCING_AT=0;} }
 }
@@ -1788,12 +1941,16 @@ window.addEventListener('popstate',function(){
 });
 
 /* ---------------- 시작 ---------------- */
-const BUILD='2026-08-15c';
+const BUILD='2026-08-20a';
 (async function boot(){
   /* 예전엔 이 안에서 한 군데라도 실패하면 나머지가 통째로 건너뛰어졌다.
      특히 loadPosts() 가 실패하면 아래 동기화 타이머가 아예 등록되지 않아서
      "빈 화면" 과 "자동 동기화 안 됨" 이 한꺼번에 일어났다. 이제 단계별로 감싼다. */
   try{
+    /* 이 기능이 처음 들어온 폰 — 지금까지 쌓인 것은 다 본 걸로 둔다 (배지 폭탄 방지) */
+    if(!CFG.seenAt){CFG.seenAt=Date.now();saveCfg();}
+    if(!CFG.seen)CFG.seen={};
+    snapSeen();
     buildPad();
     /* 가드는 armGuard()가 '첫 터치' 때 깐다 (여기서 깔면 Chrome이 무시함) */
     $('pad').addEventListener('click',e=>{
