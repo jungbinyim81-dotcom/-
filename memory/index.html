@@ -1563,6 +1563,22 @@ function pollGap(active){
   POLL_GAP=active?POLL_MS:Math.min(POLL_GAP*2,POLL_MAX);
 }
 function pollNow(){POLL_GAP=POLL_MS;POLL_AT=0;}   /* 사용자가 움직이면 즉시 다시 확인 */
+
+/* 다른 앱에 가 있는 동안의 확인 규칙 (2026-08-20)
+   예전엔 '화면을 보고 있을 때'만 확인해서, 정작 시스템 알림이 필요한 상황(다른 앱 보는 중)에는
+   확인 자체를 안 했다 — 알림 코드가 사실상 안 돌았다.
+   그렇다고 계속 돌리면 Apps Script 하루 한도와 배터리가 걸리므로 조건을 셋 건다:
+   ① 알림을 실제로 띄울 수 있을 때만 (권한 없으면 확인해봐야 알릴 방법이 없다)
+   ② 나간 지 20분 안쪽만 (브라우저는 몇 분 지나면 페이지를 얼려서 어차피 안 돈다)
+   ③ 간격은 90초 (화면 볼 때의 20초보다 느슨하게) */
+const BG_GAP=90000, BG_WINDOW=20*60000;
+function shouldPoll(now,vis){
+  if(!(UNLOCKED&&syncOn()&&sy().auto))return false;
+  if(vis)return now-POLL_AT>=POLL_GAP;
+  if(!notifyOn())return false;
+  if(!hidAt||now-hidAt>BG_WINDOW)return false;
+  return now-POLL_AT>=BG_GAP;
+}
 /* 만에 하나 SYNCING 이 굳어도 앱을 껐다 켤 필요가 없도록 풀어준다.
    이때 회차 번호를 올려서, 나중에 뒤늦게 깨어난 옛 동기화가 새 동기화의
    잠금을 대신 풀어버리거나 옛 결과를 화면에 덮어쓰지 못하게 한다 (2026-08-15) */
@@ -1941,7 +1957,7 @@ window.addEventListener('popstate',function(){
 });
 
 /* ---------------- 시작 ---------------- */
-const BUILD='2026-08-20a';
+const BUILD='2026-08-20b';
 (async function boot(){
   /* 예전엔 이 안에서 한 군데라도 실패하면 나머지가 통째로 건너뛰어졌다.
      특히 loadPosts() 가 실패하면 아래 동기화 타이머가 아예 등록되지 않아서
@@ -1971,14 +1987,15 @@ const BUILD='2026-08-20a';
       navigator.serviceWorker.addEventListener('controllerchange',()=>{
         if(window.__swReloaded||isOn('mUp'))return;window.__swReloaded=true;location.reload();});}
   }catch(e){}
-  /* 앱을 보고 있는 동안 새 사진 확인 (2026-08-15).
-     주고받는 게 있을 땐 20초로 바짝, 조용하면 2분까지 늘린다 — pollGap() 참고.
-     구글 Apps Script 는 하루 실행시간 한도가 있어서 무작정 20초로 두면 안 된다. */
+  /* 새 사진 확인 (2026-08-15 / 2026-08-20 백그라운드 추가).
+     화면을 보고 있을 땐 주고받는 게 있으면 20초로 바짝, 조용하면 2분까지 — pollGap() 참고.
+     다른 앱에 가 있을 땐 알림을 띄울 수 있을 때만 90초로, 나간 지 20분까지 — shouldPoll() 참고.
+     구글 Apps Script 는 하루 실행시간 한도가 있어서 무작정 돌리면 안 된다. */
   setInterval(()=>{
     kickSync();
-    if(!(UNLOCKED&&document.visibilityState==='visible'&&syncOn()&&sy().auto))return;
-    if(Date.now()-POLL_AT<POLL_GAP)return;
-    POLL_AT=Date.now();
+    const now=Date.now();
+    if(!shouldPoll(now,document.visibilityState==='visible'))return;
+    POLL_AT=now;
     syncNow(false);
   },POLL_MS);
 })();
