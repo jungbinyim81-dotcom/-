@@ -1,0 +1,122 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#12131a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>가계부</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#12131a;--card:#1b1d27;--ink:#fff;--ink2:#a8abbd;--ink3:#5a5e72;
+ --track:#272a37;--s1:#3987e5;--s2:#eb6834;--s4:#eda100;
+ --ok:#2ecc8f;--bad:#ff6b6b}
+body{margin:0;background:var(--bg);color:var(--ink);
+ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif;
+ -webkit-font-smoothing:antialiased;line-height:1.5}
+.wrap{max-width:520px;margin:0 auto;
+ padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 30px)}
+.top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.mon{font-size:15px;font-weight:600}
+.upd{font-size:11px;color:var(--ink3)}
+.hero{text-align:center;margin:2px 0 14px}
+.gauge{width:172px;height:auto;display:block;margin:0 auto}
+.gv{font-size:30px;font-weight:700;fill:var(--ink);text-anchor:middle;
+ font-variant-numeric:tabular-nums}
+.gl{font-size:11px;fill:var(--ink3);text-anchor:middle}
+.verdict{font-size:14px;font-weight:600;margin-top:-6px}
+.verdict.bad{color:var(--bad)} .verdict.ok{color:var(--ok)}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.c{background:var(--card);border-radius:13px;padding:11px 8px;text-align:center}
+.c b{display:block;font-size:17px;font-weight:650;font-variant-numeric:tabular-nums}
+.c b.ok{color:var(--ok)} .c b.bad{color:var(--bad)}
+.c span{font-size:11px;color:var(--ink3)}
+.card{background:var(--card);border-radius:16px;padding:15px 15px 13px;margin-bottom:11px}
+.card.key{background:linear-gradient(160deg,#2a1d16,#1b1d27);
+ border:1px solid rgba(235,104,52,.35)}
+.kl{font-size:12px;color:var(--ink2)}
+.kv{font-size:31px;font-weight:700;letter-spacing:-.02em;margin:3px 0 2px;
+ font-variant-numeric:tabular-nums}
+.kv em{font-size:15px;font-style:normal;font-weight:500;color:var(--ink2);margin-left:3px}
+.kd{font-size:13px;font-weight:600}
+.kd.up{color:var(--bad)} .kd.down{color:var(--ok)}
+.kn{font-size:11px;color:var(--ink3);margin-top:7px}
+.ct{font-size:12px;color:var(--ink2);margin-bottom:11px}
+.ct em{font-style:normal;color:var(--ink3);font-size:11px}
+.bar{display:grid;grid-template-columns:74px 1fr auto;align-items:center;
+ gap:9px;margin-bottom:8px}
+.bl{font-size:12px;color:var(--ink2);white-space:nowrap;overflow:hidden;
+ text-overflow:ellipsis}
+.bt{height:7px;background:var(--track);border-radius:4px;overflow:hidden}
+.bf{height:100%;background:var(--s2);border-radius:4px}
+.bv{font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bv i{font-style:normal;font-size:10px;margin-left:5px}
+.bv i.up{color:var(--bad)} .bv i.down{color:var(--ok)}
+.gr{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);
+ padding:5px 0}
+.gr b{margin-left:auto;color:var(--ink);font-variant-numeric:tabular-nums}
+.gr em{font-style:normal;font-size:11px;color:var(--ink3);width:34px;text-align:right}
+.dot{width:9px;height:9px;border-radius:3px;flex:none}
+.dot.s1{background:var(--s1)} .dot.s2{background:var(--s2)} .dot.s4{background:var(--s4)}
+.spark{width:100%;height:auto;display:block;margin:2px 0 6px}
+.mrow{display:flex;justify-content:space-between;gap:4px}
+.mrow span{font-size:10.5px;color:var(--ink3);text-align:center;flex:1}
+.mrow span b{display:block;font-size:12px;color:var(--ink);font-weight:600;
+ font-variant-numeric:tabular-nums}
+.mrow span.part{opacity:.42}
+.hint2{font-size:10px;color:var(--ink3);margin-top:7px}
+.foot{text-align:center;font-size:10.5px;color:var(--ink3);margin-top:18px;line-height:1.7}
+</style></head><body>
+<div class="wrap">
+<div class="top"><span class="mon">2026-07</span><span class="upd">20260824 기준</span></div>
+<div class="hero">
+<svg viewBox="0 0 168 104" class="gauge"><path d="M 14.0 84.0 A 70.0 70.0 0 1 1 154.0 84.0" fill="none" stroke="var(--track)" stroke-width="13" stroke-linecap="round"/><path d="M 14.0 84.0 A 70.0 70.0 0 1 1 136.4 37.5" fill="none" stroke="var(--bad)" stroke-width="13" stroke-linecap="round"/><line x1="113.5" y1="32.9" x2="123.5" y2="15.6" stroke="var(--ink3)" stroke-width="2"/><text x="84.0" y="72.0" class="gv">115%</text><text x="84.0" y="92.0" class="gl">소비율</text></svg>
+<div class="verdict bad">적자 182만</div>
+</div>
+<div class="row3">
+<div class="c"><b class="ok">1,186만</b><span>수입</span></div>
+<div class="c"><b class="">1,368만</b><span>소비</span></div>
+<div class="c"><b class="bad">-182만</b><span>수지</span></div>
+</div>
+<div class="card key">
+<div class="kl">내가 정하는 돈</div>
+<div class="kv">3,702,812<em>원</em></div>
+<div class="kd up">지난달 대비 +138만</div>
+<div class="kn">여기가 이번 달에 실제로 조절할 수 있는 돈</div>
+</div>
+<div class="card"><div class="ct">어디에 썼나</div>
+<div class="bar"><div class="bl">외식</div><div class="bt"><div class="bf" style="width:100%"></div></div><div class="bv">86만<i class="up">+19만</i></div></div>
+<div class="bar"><div class="bl">간편결제_용도미확인</div><div class="bt"><div class="bf" style="width:67%"></div></div><div class="bv">58만<i class="up">+58만</i></div></div>
+<div class="bar"><div class="bl">골프</div><div class="bt"><div class="bf" style="width:39%"></div></div><div class="bv">34만<i class="up">+20만</i></div></div>
+<div class="bar"><div class="bl">문화</div><div class="bt"><div class="bf" style="width:37%"></div></div><div class="bv">32만<i class="up">+30만</i></div></div>
+<div class="bar"><div class="bl">의류잡화</div><div class="bt"><div class="bf" style="width:35%"></div></div><div class="bv">30만<i class="up">+27만</i></div></div>
+<div class="bar"><div class="bl">온라인쇼핑</div><div class="bt"><div class="bf" style="width:34%"></div></div><div class="bv">29만<i class="up">+19만</i></div></div>
+<div class="bar"><div class="bl">주류</div><div class="bt"><div class="bf" style="width:33%"></div></div><div class="bv">28만<i class="up">+19만</i></div></div>
+<div class="bar"><div class="bl">개인송금</div><div class="bt"><div class="bf" style="width:21%"></div></div><div class="bv">18만<i class="down">-66만</i></div></div>
+</div>
+<div class="card"><div class="ct">소비 1,368만의 구성</div>
+<div class="gr"><span class="dot s2"></span>내가 정하는 돈<b>370만</b><em>27%</em></div>
+<div class="gr"><span class="dot s4"></span>줄이기 어려운 돈<b>145만</b><em>11%</em></div>
+<div class="gr"><span class="dot s1"></span>못 줄이는 돈<b>852만</b><em>62%</em></div>
+</div>
+<div class="card"><div class="ct">소비율 추이 <em class="hint">점선이 100%%</em></div>
+<svg viewBox="0 0 300 54" class="spark"><line x1="0" y1="35.3" x2="300" y2="35.3" stroke="var(--ink3)" stroke-width="1" stroke-dasharray="3 3"/><path d="M0.0,36.9 L100.0,28.5 L200.0,33.0 L300.0,8.0" fill="none" stroke="var(--s2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="0.0" cy="36.9" r="3" fill="var(--s2)"/><circle cx="100.0" cy="28.5" r="3" fill="var(--s2)"/><circle cx="200.0" cy="33.0" r="3" fill="var(--s2)"/><circle cx="300.0" cy="8.0" r="4.5" fill="var(--s2)"/></svg>
+<div class="mrow">
+<span class="part">05월<b>89%</b></span>
+<span class="">06월<b>146%</b></span>
+<span class="">07월<b>115%</b></span>
+<span class="part">08월<b>285%</b></span>
+</div>
+<div class="hint2">연한 글씨는 조회기간이 걸친 부분월</div>
+</div>
+<div class="foot">상세 내역은 PC 대시보드에서<br>Dropbox\빈스\가계부\</div>
+</div>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+</script>
+</body></html>
