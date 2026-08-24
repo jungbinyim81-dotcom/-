@@ -1,4 +1,4 @@
-const C='gagyebu-20260824-1826';
+const C='gagyebu-20260824-1845';
 self.addEventListener('install',e=>{self.skipWaiting();
  e.waitUntil(caches.open(C).then(c=>c.addAll(['./','./manifest.json','./icon.svg'])))});
 self.addEventListener('activate',e=>{e.waitUntil(
