@@ -247,11 +247,21 @@ textarea.inp{resize:none;line-height:1.6}
 .lt-h{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;align-items:center;gap:10px;
   padding:calc(var(--sat) + 12px) 16px 12px;background:linear-gradient(180deg,rgba(0,0,0,.65),transparent);color:#fff}
 .lt-h .n{font-size:13px;font-weight:700}
+.lt-h .hint{font-size:11px;opacity:.62;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#light.zoomed .lt-h .hint{opacity:0}
 .lt-x{margin-left:auto;font-size:26px;line-height:1;padding:0 4px;color:#fff}
-.lt-b{flex:1;display:flex;align-items:center;overflow:hidden}
+.lt-b{flex:1;display:flex;align-items:center;overflow:hidden;touch-action:none}
 .lt-s{display:flex;width:100%;height:100%;transition:transform .26s cubic-bezier(.3,.8,.4,1)}
-.lt-s>div{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.lt-s img{max-width:100%;max-height:100%;object-fit:contain}
+.lt-s>div{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.lt-s img{max-width:100%;max-height:100%;object-fit:contain;transform-origin:center center}
+/* will-change 는 확대 중에만 — 모든 장에 상시로 걸면 사진이 많을 때 GPU 메모리를 먹는다 */
+#light.zoomed .lt-s img{will-change:transform}
+/* 확대 중에는 배지로 배율을 알려주고, 스와이프/탭닫기 대신 끌어서 이동이 된다 */
+.lt-z{position:absolute;left:16px;bottom:calc(70px + var(--sab));z-index:3;color:#fff;font-size:12px;
+  font-weight:800;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;padding:5px 11px;opacity:0;transition:.2s;pointer-events:none}
+#light.zoomed .lt-z{opacity:1}
+#light.zoomed .lt-f{opacity:.25}
 .lt-f{position:absolute;bottom:0;left:0;right:0;padding:14px 16px calc(16px + var(--sab));color:#fff;
   background:linear-gradient(0deg,rgba(0,0,0,.72),transparent);font-size:13.5px;line-height:1.55}
 
@@ -377,8 +387,9 @@ textarea.inp{resize:none;line-height:1.6}
 
 <!-- ================= 라이트박스 ================= -->
 <div id="light">
-  <div class="lt-h"><div class="n" id="ltN"></div><button class="lt-x" onclick="closeLight()">&times;</button></div>
+  <div class="lt-h"><div class="n" id="ltN"></div><div class="hint">두 번 두드리거나 손가락 두 개로 벌리면 확대</div><button class="lt-x" onclick="closeLight()">&times;</button></div>
   <div class="lt-b" id="ltB"><div class="lt-s" id="ltS"></div></div>
+  <div class="lt-z" id="ltZ">1.0배</div>
   <div class="lt-f" id="ltF"></div>
 </div>
 
@@ -1297,6 +1308,68 @@ async function delPost(){
 
 /* ---------------- 라이트박스 ---------------- */
 let LT={ids:[],i:0};
+
+/* 확대해서 보기 (2026-08-30)
+   핀치(두 손가락) · 더블탭 · 마우스 휠로 키우고, 확대한 뒤에는 끌어서 이동한다.
+   확대 중에는 좌우 스와이프와 '탭하면 닫힘'을 끈다 — 안 그러면 들여다보다가
+   엉뚱하게 다음 장으로 넘어가거나 창이 닫혀버린다. */
+const LZ_MAX=5, LZ_DBL=2.5;
+let LZ={sc:1,tx:0,ty:0};
+function ltImg(i){
+  const d=$('ltS').children[i===undefined?LT.i:i];
+  return d?d.querySelector('img'):null;
+}
+/* object-fit:contain 으로 실제 그려진 크기 — 확대 후 이동 한계를 여기서 잡는다 */
+function ltBase(img){
+  const b=$('ltB'), cw=b.clientWidth||1, ch=b.clientHeight||1;
+  const nw=(img&&img.naturalWidth)||0, nh=(img&&img.naturalHeight)||0;
+  if(!nw||!nh)return{w:cw,h:ch,cw:cw,ch:ch,ready:false};
+  const r=Math.min(cw/nw,ch/nh);
+  return{w:nw*r,h:nh*r,cw:cw,ch:ch,ready:true};
+}
+/* 사진이 화면 밖으로 도망가지 않게 이동량을 가둔다 */
+function ltClamp(){
+  const img=ltImg();if(!img)return;
+  const b=ltBase(img);
+  /* 아직 안 뜬 사진은 원래 비율을 모른다 — 그 사이에는 가운데 고정 */
+  const mx=b.ready?Math.max(0,(b.w*LZ.sc-b.cw)/2):0;
+  const my=b.ready?Math.max(0,(b.h*LZ.sc-b.ch)/2):0;
+  LZ.tx=Math.max(-mx,Math.min(mx,LZ.tx));
+  LZ.ty=Math.max(-my,Math.min(my,LZ.ty));
+}
+function ltPaintZoom(anim){
+  const img=ltImg();if(!img)return;
+  img.style.transition=anim?'transform .18s ease-out':'none';
+  img.style.transform='translate('+LZ.tx+'px,'+LZ.ty+'px) scale('+LZ.sc+')';
+  $('light').classList.toggle('zoomed',LZ.sc>1.01);
+  const zb=$('ltZ');if(zb)zb.textContent=LZ.sc.toFixed(1)+'배';
+}
+/* 화면의 한 점을 기준으로 배율을 바꾼다 — 그 점이 손가락 아래 그대로 남는다 */
+function ltZoomAt(sc,px,py,anim){
+  const img=ltImg();if(!img)return;
+  sc=Math.max(1,Math.min(LZ_MAX,sc));
+  const r=$('ltB').getBoundingClientRect();
+  const cx=r.left+r.width/2, cy=r.top+r.height/2;
+  if(px===undefined||px===null){px=cx;py=cy;}
+  const k=sc/(LZ.sc||1);
+  LZ.tx=px-cx-(px-cx-LZ.tx)*k;
+  LZ.ty=py-cy-(py-cy-LZ.ty)*k;
+  LZ.sc=sc;
+  if(sc<=1){LZ.tx=0;LZ.ty=0;}
+  ltClamp();
+  ltPaintZoom(anim!==false);
+}
+/* 장을 넘기거나 창을 닫을 때는 모든 장의 확대를 되돌린다 */
+function ltZoomReset(){
+  LZ={sc:1,tx:0,ty:0};
+  const s=$('ltS');
+  if(s)Array.prototype.forEach.call(s.querySelectorAll('img'),im=>{
+    im.style.transition='none';im.style.transform='';});
+  const l=$('light');if(l)l.classList.remove('zoomed');
+  const zb=$('ltZ');if(zb)zb.textContent='1.0배';
+}
+function ltZoomed(){return LZ.sc>1.01;}
+
 async function openLight(postId,photoId){
   const p=POSTS.find(x=>x.id===postId);if(!p)return;
   LT.ids=p.photos.slice();
@@ -1304,6 +1377,10 @@ async function openLight(postId,photoId){
   $('ltS').innerHTML=LT.ids.map(pid=>`<div><img data-pid="${pid}" data-kind="full" alt=""></div>`).join('');
   $('ltF').innerHTML=(p.caption?esc(p.caption)+'<br>':'')+
     `<span style="opacity:.75;font-size:12px">${esc(kdate(p.ts))}${p.place?' · '+esc(p.place):''}</span>`;
+  ltZoomReset();
+  /* 사진이 뒤늦게 뜨면 그때 비율을 알게 된다 — 이동 한계를 다시 잡아준다 */
+  Array.prototype.forEach.call($('ltS').querySelectorAll('img'),im=>
+    im.addEventListener('load',()=>{if(ltZoomed()){ltClamp();ltPaintZoom(false);}},{once:true}));
   await hydrate($('ltS'));
   paintLt();
   $('light').classList.add('on');
@@ -1314,24 +1391,133 @@ function paintLt(){
   $('ltS').style.transform='translateX('+(-LT.i*100)+'%)';
   $('ltN').textContent=(LT.i+1)+' / '+LT.ids.length;
 }
-function closeLight(){$('light').classList.remove('on');document.body.style.overflow='';}
+function closeLight(){
+  ltZoomReset();
+  $('light').classList.remove('on');document.body.style.overflow='';
+}
 (function bindLt(){
   const b=$('ltB'),s=$('ltS');
-  let x0=0,dx=0,w=0,drag=false;
-  b.addEventListener('touchstart',e=>{drag=true;w=b.clientWidth;x0=e.touches[0].clientX;dx=0;},{passive:true});
-  b.addEventListener('touchmove',e=>{if(!drag)return;dx=e.touches[0].clientX-x0;
+  let x0=0,y0=0,dx=0,w=0,drag=false;      /* 한 손가락 — 스와이프 또는 (확대 중이면) 이동 */
+  let pan=false,ptx=0,pty=0;
+  let pinch=false,d0=0,sc0=1;             /* 두 손가락 — 핀치 확대 */
+  let lastTap=0,tapT=null,lastX=0,lastY=0;
+  const dist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
+  const mid =t=>({x:(t[0].clientX+t[1].clientX)/2,y:(t[0].clientY+t[1].clientY)/2});
+
+  b.addEventListener('touchstart',e=>{
+    if(e.touches.length===2){
+      pinch=true;drag=false;pan=false;
+      d0=dist(e.touches)||1;sc0=LZ.sc;
+      e.preventDefault();
+      return;
+    }
+    if(pinch)return;
+    drag=true;w=b.clientWidth;
+    x0=e.touches[0].clientX;y0=e.touches[0].clientY;dx=0;
+    pan=ltZoomed();ptx=LZ.tx;pty=LZ.ty;
+  },{passive:false});
+
+  b.addEventListener('touchmove',e=>{
+    if(pinch&&e.touches.length===2){
+      const m=mid(e.touches);
+      ltZoomAt(sc0*(dist(e.touches)/d0),m.x,m.y,false);
+      e.preventDefault();
+      return;
+    }
+    if(!drag)return;
+    if(pan){                              /* 확대 중 — 사진을 끌어서 본다 */
+      LZ.tx=ptx+(e.touches[0].clientX-x0);
+      LZ.ty=pty+(e.touches[0].clientY-y0);
+      ltClamp();ltPaintZoom(false);
+      e.preventDefault();
+      return;
+    }
+    dx=e.touches[0].clientX-x0;
     const n=LT.ids.length;
     if((LT.i===0&&dx>0)||(LT.i===n-1&&dx<0))dx*=.3;
     s.style.transition='none';
-    s.style.transform='translateX(calc('+(-LT.i*100)+'% + '+dx+'px))';},{passive:true});
-  b.addEventListener('touchend',()=>{
+    s.style.transform='translateX(calc('+(-LT.i*100)+'% + '+dx+'px))';
+  },{passive:false});
+
+  b.addEventListener('touchend',e=>{
+    if(pinch){
+      const left=(e.touches&&e.touches.length)||0;
+      if(left===0){
+        pinch=false;
+        if(LZ.sc<=1.01)ltZoomAt(1,undefined,undefined,true);   /* 1배 밑으로 줄이면 되돌린다 */
+      }else if(left===1){
+        /* 한 손가락만 남았다 — 핀치를 끝내고 그 손가락으로 이어서 움직인다.
+           여기서 좌표를 다시 잡지 않으면 남은 손가락이 먹통이 된다 */
+        pinch=false;drag=true;w=b.clientWidth;
+        x0=e.touches[0].clientX;y0=e.touches[0].clientY;dx=0;
+        pan=ltZoomed();ptx=LZ.tx;pty=LZ.ty;
+      }
+      return;
+    }
     if(!drag)return;drag=false;
-    if(Math.abs(dx)>w*.18)LT.i=Math.max(0,Math.min(LT.ids.length-1,LT.i+(dx<0?1:-1)));
+    if(pan){
+      pan=false;
+      const tp=(e.changedTouches&&e.changedTouches[0])||null;
+      /* 끌어서 옮겼으면 여기서 끝. 제자리에서 뗐으면 아래 탭 판정으로 넘긴다
+         — 안 그러면 확대한 뒤에는 두 번 두드려도 원래 크기로 못 돌아온다 */
+      if(!tp||Math.hypot(tp.clientX-x0,tp.clientY-y0)>=6)return;
+    }
+    if(Math.abs(dx)>w*.18){
+      LT.i=Math.max(0,Math.min(LT.ids.length-1,LT.i+(dx<0?1:-1)));
+      ltZoomReset();
+    }
     s.style.transition='transform .26s cubic-bezier(.3,.8,.4,1)';
     s.style.transform='translateX('+(-LT.i*100)+'%)';
     $('ltN').textContent=(LT.i+1)+' / '+LT.ids.length;
-    if(Math.abs(dx)<6)closeLight();
+    if(Math.abs(dx)<6){
+      /* 탭 — 두 번 두드리면 확대/원래대로, 한 번이면 (확대 안 했을 때만) 닫기.
+         닫기를 300ms 미루는 건 두 번째 두드림을 기다리기 위해서다 */
+      const now=Date.now();
+      const t=(e.changedTouches&&e.changedTouches[0])||null;
+      const tx=t?t.clientX:0, ty=t?t.clientY:0;
+      const near=Math.hypot(tx-lastX,ty-lastY)<40;   /* 같은 자리를 두 번 두드렸을 때만 확대 */
+      if(now-lastTap<300&&near){
+        clearTimeout(tapT);lastTap=0;
+        if(ltZoomed())ltZoomAt(1,undefined,undefined,true);
+        else ltZoomAt(LZ_DBL,t?tx:undefined,t?ty:undefined,true);
+      }else{
+        lastTap=now;lastX=tx;lastY=ty;clearTimeout(tapT);
+        tapT=setTimeout(()=>{if(!ltZoomed())closeLight();},300);
+      }
+    }
   });
+
+  /* 전화가 오거나 시스템 제스처가 가로채면 touchend 없이 끊긴다.
+     플래그를 그대로 두면 그 다음 스와이프·핀치가 통째로 먹통이 된다 */
+  b.addEventListener('touchcancel',()=>{
+    pinch=false;drag=false;pan=false;
+    s.style.transition='transform .26s cubic-bezier(.3,.8,.4,1)';
+    s.style.transform='translateX('+(-LT.i*100)+'%)';
+    ltClamp();ltPaintZoom(true);
+  });
+
+  /* 데스크톱 — 휠 확대, 더블클릭 토글, 확대 중 끌어서 이동 */
+  b.addEventListener('wheel',e=>{
+    if(!$('light').classList.contains('on'))return;
+    e.preventDefault();
+    ltZoomAt(LZ.sc*(e.deltaY<0?1.15:1/1.15),e.clientX,e.clientY,false);
+  },{passive:false});
+  b.addEventListener('dblclick',e=>{
+    if(ltZoomed())ltZoomAt(1,undefined,undefined,true);
+    else ltZoomAt(LZ_DBL,e.clientX,e.clientY,true);
+  });
+  let md=false,mx0=0,my0=0,mtx=0,mty=0;
+  b.addEventListener('mousedown',e=>{
+    if(!ltZoomed())return;
+    md=true;mx0=e.clientX;my0=e.clientY;mtx=LZ.tx;mty=LZ.ty;e.preventDefault();
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!md)return;
+    LZ.tx=mtx+(e.clientX-mx0);LZ.ty=mty+(e.clientY-my0);
+    ltClamp();ltPaintZoom(false);
+  });
+  window.addEventListener('mouseup',()=>{md=false;});
+  document.documentElement.addEventListener('mouseleave',()=>{md=false;});
 })();
 
 /* ---------------- 설정 ---------------- */
@@ -1393,7 +1579,8 @@ async function openSettings(){
     <div class="fld"><label>공유 암호 (둘이 약속한 문장 · 8자 이상)</label>
       <input class="inp" type="password" id="syPass" value="${esc(S.pass)}" placeholder="사진을 여는 열쇠"></div>
     <div class="tog"><div><div class="b sm">자동 동기화</div>
-      <div class="xs mut">앱 열 때와 사진·메시지 남길 때 알아서 주고받기</div></div>
+      <div class="xs mut">켜두면 버튼을 누를 필요가 없어요 — 앱을 열 때, 다른 앱 갔다 올 때,
+        사진·메시지를 남길 때, 그리고 보고 있는 동안 20초~1분마다 알아서 주고받아요</div></div>
       <div class="sw ${S.auto?'on':''}" id="swSync" onclick="this.classList.toggle('on')"></div></div>
     <div class="xs mut" style="margin-top:10px" id="syncState">${S.at?('마지막 동기화 '+ago(S.at)):'아직 동기화한 적 없음'}</div>
     <div class="btn2" style="margin-top:10px">
@@ -1555,7 +1742,7 @@ async function wipeAll(){
 const SALT='jsmemory.sync.v1', ITER=200000;
 let KEYC=null, KEYC_FOR='', SYNCING=false, SYNCT=null, SYNCING_AT=0;
 const POLL_MS=20000;          /* 확인 주기의 최소 간격(가장 바쁠 때) */
-const POLL_MAX=120000;        /* 조용하면 여기까지 늘린다 */
+const POLL_MAX=60000;         /* 조용하면 여기까지 늘린다 (2026-08-30: 2분 -> 1분) */
 const SYNC_MAX=180000;        /* 이 시간을 넘겨 붙잡고 있으면 죽은 것으로 본다 */
 let POLL_GAP=POLL_MS, POLL_AT=0;
 /* 주고받은 게 있으면 다시 바짝, 아무것도 없으면 두 배씩 늘려 서버 호출을 아낀다 */
@@ -1942,7 +2129,10 @@ function armGuard(){if(guardArmed)return;guardArmed=true;guardPush();}
 function isOn(id){const e=$(id);return !!(e&&e.classList.contains('on'));}
 let backAt=0;
 window.addEventListener('popstate',function(){
-  if(isOn('light')){guardPush();closeLight();return;}       // 1) 사진 크게 보기 → 닫기
+  if(isOn('light')){                                        // 1) 사진 크게 보기
+    guardPush();
+    if(ltZoomed()){ltZoomAt(1,undefined,undefined,true);return;}  //    확대 중이면 먼저 원래 크기로
+    closeLight();return;}                                   //    그 다음 눌러야 닫힘
   if(isOn('mMenu')){guardPush();closeMenu();return;}        // 2) 열린 시트부터 닫기
   if(isOn('mCmt')){guardPush();closeCmt();return;}
   if(isOn('mUp')){                                          //    올리려던 사진은 확인 후에만 버림
@@ -1957,7 +2147,7 @@ window.addEventListener('popstate',function(){
 });
 
 /* ---------------- 시작 ---------------- */
-const BUILD='2026-08-20b';
+const BUILD='2026-08-30a';
 (async function boot(){
   /* 예전엔 이 안에서 한 군데라도 실패하면 나머지가 통째로 건너뛰어졌다.
      특히 loadPosts() 가 실패하면 아래 동기화 타이머가 아예 등록되지 않아서
