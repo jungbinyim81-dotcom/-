@@ -1236,43 +1236,117 @@ function shrinkVideo(file){
   return new Promise(resolve=>{
     const url=URL.createObjectURL(file);
     const v=document.createElement('video');
-    let done=false;
+    let done=false,stage=0;
+
+    /* ── 아이폰 대응 (2026-09-16) ────────────────────────────────────
+       사파리는 화면에 붙어 있지 않은 video 의 프레임을 캔버스로 내주지 않는다.
+       (문서에 없는 요소를 그리면 그냥 까만 판이 나온다)
+       그래서 안 보이는 자리에 실제로 붙여 두고 뽑은 뒤 떼어낸다.
+       muted + playsinline 이라야 사용자가 누르지 않아도 재생이 허용된다. */
+    v.setAttribute('playsinline','');
+    v.setAttribute('webkit-playsinline','');
+    v.setAttribute('muted','');
+    v.muted=true;v.defaultMuted=true;v.playsInline=true;v.preload='auto';
+    /* 화면 밖(-9999px)이나 opacity:0 으로 두면 브라우저가 합성을 건너뛰어
+       프레임 콜백이 오지 않는다 — 보이지 않을 만큼만 작고 투명하게, 화면 안에 둔다 */
+    v.style.cssText='position:fixed;left:0;top:0;width:1px;height:1px;'+
+      'opacity:.01;pointer-events:none;z-index:-1';
+    document.body.appendChild(v);
+
+    const cleanup=()=>{
+      try{v.pause();}catch(e){}
+      /* load() 가 남은 리스너를 다시 부르지 않도록 먼저 떼어낸다 */
+      v.onloadeddata=v.onseeked=v.ontimeupdate=v.onerror=null;
+      v.removeAttribute('src');
+      try{v.load();}catch(e){}
+      if(v.parentNode)v.parentNode.removeChild(v);
+      URL.revokeObjectURL(url);
+    };
     const finish=async(bmp,w,h,dur)=>{
       if(done)return;done=true;
-      clearTimeout(timer);
+      clearTimeout(timer);clearTimeout(t2);
       let thumb;
       try{
         thumb=bmp?await draw(bmp,480,.75):await grayPoster(w,h);
       }catch(e){thumb=await grayPoster(w,h);}
-      try{v.pause();}catch(e){}
-      v.removeAttribute('src');v.load&&v.load();
-      URL.revokeObjectURL(url);
+      cleanup();
       resolve({full:file,thumb,w:w||0,h:h||0,url:URL.createObjectURL(thumb),
         vid:true,dur:dur||0,type:file.type||'video/mp4',size:file.size||0});
     };
-    /* 어떤 이유로든 15초 안에 못 뽑으면 회색 판으로 넘어간다 (앱이 멈추면 안 된다) */
-    const timer=setTimeout(()=>finish(null,v.videoWidth,v.videoHeight,v.duration),15000);
-    v.preload='metadata';v.muted=true;v.playsInline=true;
-    v.onloadedmetadata=()=>{
+    /* 어떤 이유로든 20초 안에 못 뽑으면 회색 판으로 넘어간다 (앱이 멈추면 안 된다) */
+    const timer=setTimeout(()=>finish(null,v.videoWidth,v.videoHeight,v.duration),20000);
+    let t2=0;
+
+    /* 뽑은 장면이 사실상 까맣기만 하면 실패로 본다 —
+       사파리는 아직 디코딩이 안 끝나도 seeked 를 먼저 알려줄 때가 있다 */
+    function looksBlank(cv){
+      try{
+        const n=24,c=document.createElement('canvas');
+        c.width=n;c.height=n;
+        const cx=c.getContext('2d');
+        cx.drawImage(cv,0,0,n,n);
+        const d=cx.getImageData(0,0,n,n).data;
+        let max=0;
+        for(let i=0;i<d.length;i+=4){
+          const lum=(d[i]*299+d[i+1]*587+d[i+2]*114)/1000;
+          if(lum>max)max=lum;
+        }
+        return max<12;       /* 가장 밝은 점조차 거의 검정 */
+      }catch(e){return false;}
+    }
+    function shot(d,allowRetry){
+      if(done)return;
+      try{
+        /* 크기를 못 읽으면 2x2 짜리 점이 썸네일로 박힌다 — 회색 판으로 넘긴다 */
+        if(!v.videoWidth||!v.videoHeight){
+          if(allowRetry&&stage<2){playGrab(d);return;}
+          finish(null,0,0,d);return;
+        }
+        const cv=document.createElement('canvas');
+        cv.width=v.videoWidth;cv.height=v.videoHeight;
+        cv.getContext('2d').drawImage(v,0,0,cv.width,cv.height);
+        if(looksBlank(cv)){
+          if(allowRetry&&stage<2){playGrab(d);return;}
+          finish(null,v.videoWidth,v.videoHeight,d);return;   /* 까만 판보다 회색 판이 낫다 */
+        }
+        finish(cv,v.videoWidth,v.videoHeight,d);
+      }catch(e){
+        if(allowRetry&&stage<2){playGrab(d);return;}
+        finish(null,v.videoWidth,v.videoHeight,d);
+      }
+    }
+    /* 2단계 — 잠깐 소리 없이 재생해서 진짜 그려진 한 장을 받는다.
+       requestVideoFrameCallback 은 '화면에 그려진 프레임'을 알려줘 가장 확실하다 */
+    function playGrab(d){
+      if(done||stage>=2)return;
+      stage=2;
+      clearTimeout(t2);                      /* 1단계 타이머를 지우고 시작한다 */
+      let fired=false;
+      const take=()=>{if(fired||done)return;fired=true;clearTimeout(t2);
+        try{v.pause();}catch(e){}shot(d,false);};
+      if(v.requestVideoFrameCallback){
+        try{v.requestVideoFrameCallback(()=>take());}catch(e){}
+      }
+      v.ontimeupdate=()=>{if(v.currentTime>0)take();};
+      const pr=v.play();
+      /* 저전력 모드 등으로 재생이 막히면 3초를 기다릴 이유가 없다 — 바로 뽑아본다 */
+      if(pr&&pr.catch)pr.catch(()=>take());
+      t2=setTimeout(take,3000);
+    }
+
+    v.onloadeddata=()=>{
+      if(done||stage)return;
+      stage=1;
       const d=isFinite(v.duration)?v.duration:0;
       const at=Math.min(d>0?Math.max(d*0.1,0.1):0.1,0.6);
-      const grab=()=>{
-        try{
-          /* 크기를 못 읽으면 2x2 짜리 점이 썸네일로 박힌다 — 회색 판으로 넘긴다 */
-          if(!v.videoWidth||!v.videoHeight){finish(null,0,0,d);return;}
-          const cv=document.createElement('canvas');
-          cv.width=v.videoWidth;cv.height=v.videoHeight;
-          cv.getContext('2d').drawImage(v,0,0,cv.width,cv.height);
-          finish(cv,v.videoWidth,v.videoHeight,d);
-        }catch(e){finish(null,v.videoWidth,v.videoHeight,d);}
-      };
-      v.onseeked=grab;
-      try{v.currentTime=at;}catch(e){grab();}
-      /* 탐색이 안 먹는 브라우저 대비 */
-      setTimeout(()=>{if(!done)grab();},2500);
+      v.onseeked=()=>shot(d,true);
+      try{v.currentTime=at;}catch(e){playGrab(d);}
+      /* 탐색이 안 먹는 브라우저 대비 — 1.5초 안에 소식 없으면 재생으로 넘어간다 */
+      t2=setTimeout(()=>{if(!done&&stage<2)shot(d,true);},1500);
     };
     v.onerror=()=>finish(null,0,0,0);
     v.src=url;
+    try{v.load();}catch(e){}
   });
 }
 /* 장면을 못 뽑았을 때 쓰는 회색 판 (비율은 알면 맞춰준다) */
