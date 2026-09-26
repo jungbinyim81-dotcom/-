@@ -1460,6 +1460,7 @@ textarea{width:100%;min-height:230px;border:1px solid var(--line);border-radius:
 </div>
 
 <div id="warn"></div>
+<div id="selftest" style="display:none"></div>
 <div id="stage">
   <div id="panel">
     <div class="ph"><input type="text" id="pq" placeholder="목록 내 검색" oninput="renderList()"><button class="ghost" onclick="togglePanel()">닫기</button></div>
@@ -1954,6 +1955,10 @@ if (HAS_MAP) {
   document.getElementById('panel').classList.add('on');
 }
 if (typeof Chart === 'undefined') warn('차트 라이브러리 로드 실패 — 실적은 표로 표시합니다.');
+document.getElementById('selftest').textContent =
+  'L=' + (typeof L !== 'undefined' ? (L.version||'?') : 'X')
+  + ' Chart=' + (typeof Chart !== 'undefined' ? (Chart.version||'?') : 'X')
+  + ' markers=' + Object.keys(markers).length;
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 </script>
 <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');</script>
