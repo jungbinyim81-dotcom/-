@@ -220,7 +220,9 @@ function buildLeafletEngine() {
 }
 
 // ── 마커 클릭 시 뜨는 정보 카드 (엔진 공통) ──
+let cardItem = null;
 function showInfo(d) {
+  cardItem = d;
   const c = document.getElementById('card');
   c.innerHTML =
     '<button class="cx" onclick="hideInfo()">&times;</button>'
@@ -228,11 +230,15 @@ function showInfo(d) {
     + '담당자: ' + d.p + '<br>'
     + '실적: ' + d.s.toLocaleString() + '<br>'
     + '기준월: ' + d.w
-    + '<div style="margin-top:10px"><button onclick="hideInfo();openChart(''
-    + d.n.replace(/\/g, '\\').replace(/'/g, "\'") + '')" '
+    + '<div style="margin-top:10px"><button onclick="openCardChart()" '
     + 'style="width:100%;padding:7px 0;background:#4a90d9;color:#fff;border:none;'
     + 'border-radius:5px;cursor:pointer;font-size:12px;font-weight:bold">처방현황 보기</button></div>';
   c.classList.add('on');
+}
+function openCardChart() {
+  const n = cardItem && cardItem.n;
+  hideInfo();
+  if (n) openChart(n);
 }
 function hideInfo() { document.getElementById('card').classList.remove('on'); }
 
