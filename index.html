@@ -40,6 +40,18 @@ body { font-family:'맑은 고딕',sans-serif; display:flex; flex-direction:colu
 .searchItem:hover { background:#f5f8ff; }
 .searchItem b { color:#4a90d9; }
 #map { flex:1; }
+#card {
+  display:none; position:fixed; left:14px; bottom:16px; z-index:9000;
+  background:#fff; border:1px solid #e3e8ef; border-radius:12px;
+  box-shadow:0 8px 26px rgba(0,0,0,.18); padding:14px 16px 13px;
+  max-width:300px; font-family:'맑은 고딕',sans-serif; font-size:13px; line-height:1.6;
+}
+#card.on { display:block; }
+#card .cx {
+  position:absolute; right:8px; top:5px; border:none; background:none;
+  font-size:18px; color:#8a93a0; cursor:pointer; line-height:1;
+}
+@media (max-width:640px) { #card { left:8px; right:8px; max-width:none; } }
 #chartModal {
   display:none; position:fixed; top:0; left:0; width:100%; height:100%;
   background:rgba(0,0,0,0.55); z-index:99999;
@@ -74,6 +86,7 @@ body { font-family:'맑은 고딕',sans-serif; display:flex; flex-direction:colu
 <div id="searchDropdown"></div>
 
 <div id="map"></div>
+<div id="card"></div>
 
 <div id="chartModal" onclick="if(event.target===this)closeChart()">
   <div id="modalBox">
@@ -100,6 +113,7 @@ body { font-family:'맑은 고딕',sans-serif; display:flex; flex-direction:colu
   </div>
 </div>
 
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=babeeda7e9f711d5ffa130225fb4640a&autoload=false"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -133,44 +147,135 @@ PERSONS.forEach(p => {
   topPanel.insertBefore(btn, countBadge);
 });
 
-// Leaflet 초기화
-const map = L.map('map', {center:[37.5,126.7], zoom:11, preferCanvas:true});
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution:'&copy; OpenStreetMap &copy; CARTO', maxZoom:19
-}).addTo(map);
-
-const CVS = L.canvas({padding:0.5});
-const popupRef = L.popup({maxWidth:230});
+// ── 지도 엔진: 카카오맵 우선(국내망 친화), 없으면 leaflet ──
+const HAS_KAKAO = !!(window.kakao && window.kakao.maps && typeof window.kakao.maps.load === 'function');
+let map = null, CVS = null, MapApi = null;
 let markerObjs = [];
 
-MARKERS_DATA.forEach(d => {
+function dotStyle(d) {
   const color = COLOR_MAP[d.p] || '#888888';
-  const mk = L.circleMarker([d.y, d.x], {
-    radius:d.r, color:color, fillColor:color,
-    fillOpacity:0.75, weight:1.5, renderer:CVS,
-  });
+  const size = Math.round(d.r * 2);
+  return 'width:' + size + 'px;height:' + size + 'px;border-radius:50%;cursor:pointer;'
+       + 'box-sizing:border-box;background:' + color + 'bf;border:1.5px solid ' + color + ';';
+}
 
-  mk.on('click', function() {
-    const box = document.createElement('div');
-    box.style.cssText = "font-family:'맑은 고딕',sans-serif;font-size:13px;min-width:170px;";
-    box.innerHTML =
-      '<b>' + d.n + '</b><br>' +
-      '담당자: ' + d.p + '<br>' +
-      '실적: ' + d.s.toLocaleString() + '<br>' +
-      '기준월: ' + d.w + '<br><br>';
-    const btn = document.createElement('button');
-    btn.textContent = '처방현황 보기';
-    btn.style.cssText =
-      'width:100%;padding:5px 0;background:#4a90d9;color:white;' +
-      'border:none;border-radius:4px;cursor:pointer;font-size:12px;';
-    btn.onclick = function() { map.closePopup(); openChart(d.n); };
-    box.appendChild(btn);
-    popupRef.setLatLng([d.y, d.x]).setContent(box).openOn(map);
-  });
+function buildKakaoEngine() {
+  map = new kakao.maps.Map(document.getElementById('map'),
+    {center:new kakao.maps.LatLng(37.5, 126.7), level:8});
+  map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
+  return {
+    name:'kakao',
+    create(d) {
+      const el = document.createElement('div');
+      el.style.cssText = dotStyle(d);
+      el.title = d.n;
+      el.addEventListener('click', () => showInfo(d));
+      return new kakao.maps.CustomOverlay({
+        position:new kakao.maps.LatLng(d.y, d.x), content:el,
+        xAnchor:0.5, yAnchor:0.5, clickable:true});
+    },
+    show(o) { o.marker.setMap(map); },
+    hide(o) { o.marker.setMap(null); },
+    focus(d) { map.setLevel(3); map.setCenter(new kakao.maps.LatLng(d.y, d.x)); },
+    fitPts(pts) {
+      const b = new kakao.maps.LatLngBounds();
+      pts.forEach(p => b.extend(new kakao.maps.LatLng(p[0], p[1])));
+      map.setBounds(b);
+    },
+    resize() { map.relayout(); },
+  };
+}
 
-  mk.addTo(map);
-  markerObjs.push({marker:mk, data:d, visible:true});
-});
+function buildLeafletEngine() {
+  map = L.map('map', {center:[37.5,126.7], zoom:11, preferCanvas:true});
+  const carto = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution:'&copy; OpenStreetMap &copy; CARTO', maxZoom:19
+  }).addTo(map);
+  let swapped = false;
+  carto.on('tileerror', () => {                 // CARTO 차단 시 OSM 으로 전환
+    if (swapped) return;
+    swapped = true;
+    map.removeLayer(carto);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {attribution:'&copy; OpenStreetMap', maxZoom:19}).addTo(map);
+  });
+  CVS = L.canvas({padding:0.5});
+  return {
+    name:'leaflet',
+    create(d) {
+      const color = COLOR_MAP[d.p] || '#888888';
+      const mk = L.circleMarker([d.y, d.x], {
+        radius:d.r, color:color, fillColor:color,
+        fillOpacity:0.75, weight:1.5, renderer:CVS,
+      });
+      mk.on('click', () => showInfo(d));
+      return mk;
+    },
+    show(o) { o.marker.addTo(map); },
+    hide(o) { map.removeLayer(o.marker); },
+    focus(d) { map.setView([d.y, d.x], 15); },
+    fitPts(pts) { map.fitBounds(pts, {padding:[50,50]}); },
+    resize() { map.invalidateSize(); },
+  };
+}
+
+// ── 마커 클릭 시 뜨는 정보 카드 (엔진 공통) ──
+function showInfo(d) {
+  const c = document.getElementById('card');
+  c.innerHTML =
+    '<button class="cx" onclick="hideInfo()">&times;</button>'
+    + '<b style="font-size:14px">' + d.n + '</b><br>'
+    + '담당자: ' + d.p + '<br>'
+    + '실적: ' + d.s.toLocaleString() + '<br>'
+    + '기준월: ' + d.w
+    + '<div style="margin-top:10px"><button onclick="hideInfo();openChart(''
+    + d.n.replace(/\/g, '\\').replace(/'/g, "\'") + '')" '
+    + 'style="width:100%;padding:7px 0;background:#4a90d9;color:#fff;border:none;'
+    + 'border-radius:5px;cursor:pointer;font-size:12px;font-weight:bold">처방현황 보기</button></div>';
+  c.classList.add('on');
+}
+function hideInfo() { document.getElementById('card').classList.remove('on'); }
+
+function startMap(useKakao) {
+  try {
+    MapApi = useKakao ? buildKakaoEngine() : buildLeafletEngine();
+  } catch (e) {
+    MapApi = buildLeafletEngine();
+  }
+  MARKERS_DATA.forEach(d => {
+    const o = {marker:MapApi.create(d), data:d, visible:true};
+    MapApi.show(o);
+    markerObjs.push(o);
+  });
+  setTimeout(() => MapApi.resize(), 250);
+  window.addEventListener('resize', () => MapApi.resize());
+  if (MapApi.name === 'kakao') {        // 카카오 타일이 안 깔리면 leaflet 으로 되돌림
+    setTimeout(() => {
+      if (document.getElementById('map').querySelectorAll('img').length === 0) {
+        document.getElementById('map').innerHTML = '';
+        markerObjs = [];
+        MapApi = buildLeafletEngine();
+        MARKERS_DATA.forEach(d => {
+          const o = {marker:MapApi.create(d), data:d, visible:true};
+          MapApi.show(o);
+          markerObjs.push(o);
+        });
+        applyVisibility();
+      }
+    }, 3000);
+  }
+}
+
+if (HAS_KAKAO) {
+  let done = false;
+  const go = ok => { if (done) return; done = true; startMap(ok); };
+  try {
+    kakao.maps.load(() => go(true));
+    setTimeout(() => go(false), 6000);
+  } catch (e) { go(false); }
+} else {
+  startMap(false);
+}
 
 // ── 담당자 선택 (dropdown) ──────────────────────────────────
 let selectedPerson = '';
@@ -193,7 +298,7 @@ function onPersonSel() {
     const pts = markerObjs
       .filter(o => o.data.p === selectedPerson)
       .map(o => [o.data.y, o.data.x]);
-    if (pts.length) map.fitBounds(pts, {padding:[50,50]});
+    if (pts.length) MapApi.fitPts(pts);
   }
 }
 
@@ -211,8 +316,8 @@ function applyVisibility() {
   let cnt = 0;
   markerObjs.forEach(o => {
     const show = toggleStates[o.data.p];
-    if (show && !o.visible) { o.marker.addTo(map); o.visible = true; }
-    if (!show && o.visible) { map.removeLayer(o.marker); o.visible = false; }
+    if (show && !o.visible) { MapApi.show(o); o.visible = true; }
+    if (!show && o.visible) { MapApi.hide(o); o.visible = false; }
     if (show) cnt++;
   });
   countBadge.textContent = cnt + '개';
@@ -252,8 +357,8 @@ function selectPlace(name) {
   if (!o) return;
   document.getElementById('searchBox').value = name;
   dd.style.display = 'none';
-  map.setView([o.data.y, o.data.x], 15);
-  o.marker.fire('click');
+  MapApi.focus(o.data);
+  showInfo(o.data);
 }
 
 document.addEventListener('click', e => {
