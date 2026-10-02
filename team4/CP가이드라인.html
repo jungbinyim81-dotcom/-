@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CP 가이드라인</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','맑은 고딕','Malgun Gothic',sans-serif;background:#f4f6fa;color:#222;min-height:100vh;font-size:14px}
+.topbar{background:linear-gradient(90deg,#1A2D50 0%,#243962 100%);color:#fff;padding:14px 22px 12px;position:sticky;top:0;z-index:50;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.tb1{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.topbar h1{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.topbar .sub{font-size:12px;color:#a8b8cf}
+.topbar .meta{font-size:11.5px;color:#cfd8e3;margin-left:auto}
+.sbox{margin-top:10px;display:flex;gap:8px;align-items:center}
+.sbox input{flex:1;max-width:620px;font-size:15px;padding:10px 14px;border-radius:9px;border:none;outline:none;font-family:inherit;box-shadow:inset 0 0 0 2px transparent}
+.sbox input:focus{box-shadow:inset 0 0 0 2px #FA4100}
+.sbox button{border:none;background:rgba(255,255,255,.14);color:#fff;padding:9px 12px;border-radius:8px;font-family:inherit;font-size:12.5px;cursor:pointer}
+.sbox .cnt{font-size:12.5px;color:#ffd7c4;min-width:90px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.chips span{font-size:12px;background:rgba(255,255,255,.1);color:#dfe6f2;padding:4px 10px;border-radius:14px;cursor:pointer;user-select:none}
+.chips span:hover,.chips span.on{background:#FA4100;color:#fff}
+.layout{display:flex;max-width:1280px;margin:0 auto;gap:18px;padding:18px 22px 60px}
+nav{width:200px;flex:none;position:sticky;top:150px;align-self:flex-start}
+nav a{display:block;padding:8px 10px;border-radius:7px;color:#243962;text-decoration:none;font-size:13px;margin-bottom:2px}
+nav a:hover{background:#e8eef8}
+nav a .n{float:right;font-size:11px;color:#FA4100;font-weight:700}
+nav .grp{font-size:11px;color:#8a95a8;margin:12px 10px 4px;font-weight:700}
+main{flex:1;min-width:0}
+.section{margin-bottom:22px;background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;border:1px solid #e5e9f0;scroll-margin-top:160px}
+.section-h{padding:13px 18px;background:#f8fafd;border-bottom:1px solid #e5e9f0;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.section-h .tag{font-size:11px;background:#1A2D50;color:#fff;padding:3px 8px;border-radius:5px;font-weight:700}
+.section-h .ttl{font-size:15.5px;color:#1A2D50;font-weight:700}
+.section-h .note{font-size:11.5px;color:#7a8597;margin-left:auto}
+.section-h a.pdf{font-size:11.5px;color:#008C32;text-decoration:none;font-weight:700}
+.section-body{padding:6px 18px 14px}
+.secnote{font-size:12px;color:#5a6577;background:#f8fafd;border-radius:7px;padding:8px 11px;margin:10px 0 4px}
+.row{display:flex;gap:16px;padding:11px 0;border-bottom:1px solid #eef1f6}
+.row:last-child{border-bottom:none}
+.row .k{width:170px;flex:none;font-weight:700;color:#243962;font-size:13.5px}
+.row ul{list-style:none;flex:1}
+.row li{line-height:1.65;padding:1px 0 1px 14px;position:relative}
+.row li:before{content:'';position:absolute;left:2px;top:.75em;width:5px;height:5px;border-radius:50%;background:#b9c4de}
+.row li.ban{color:#c1352b;font-weight:600}
+.row li.ban:before{background:#c1352b}
+.row li.ref{color:#5a6577;font-size:13px}
+.row li.ref:before{background:transparent}
+mark{background:#ffe08a;color:inherit;border-radius:2px;padding:0 1px}
+.quick{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px;padding:14px 18px 16px}
+.q{border:1px solid #e5e9f0;border-radius:10px;padding:11px 13px;cursor:pointer;background:#fff;transition:.15s}
+.q:hover{border-color:#008C32;box-shadow:0 2px 8px rgba(0,140,50,.12)}
+.q .l{font-size:12px;color:#7a8597}
+.q .v{font-size:19px;font-weight:800;color:#1A2D50;margin:2px 0}
+.q .d{font-size:11.5px;color:#5a6577;line-height:1.45}
+.tw{overflow-x:auto;padding:12px 18px 16px}
+table.c{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;min-width:760px}
+table.c th,table.c td{padding:9px 10px;border-bottom:1px solid #eef1f6;vertical-align:top;text-align:left;line-height:1.55}
+table.c thead th{background:#1A2D50;color:#fff;font-weight:600;position:sticky;top:0}
+table.c td.k{font-weight:700;color:#243962;white-space:nowrap;background:#f8fafd}
+table.c td.diff{background:#fdeee9;color:#b3261e;font-weight:600}
+table.c td.same{color:#8a95a8}
+table.c tr.hide{display:none}
+.legend{font-size:11.5px;color:#7a8597;padding:0 18px 12px}
+.legend i{display:inline-block;width:11px;height:11px;background:#fdeee9;border:1px solid #f3c3b8;vertical-align:-1px;margin-right:4px}
+.co-sel{display:flex;gap:6px;padding:12px 18px 0;flex-wrap:wrap}
+.co-sel label{font-size:12.5px;border:1px solid #d5dce8;border-radius:16px;padding:4px 11px;cursor:pointer;user-select:none}
+.co-sel input{display:none}
+.co-sel label.on{background:#1A2D50;color:#fff;border-color:#1A2D50}
+.empty{display:none;text-align:center;color:#7a8597;padding:50px 0;font-size:14px}
+.hidden{display:none!important}
+.foot{font-size:11px;color:#8a95a8;text-align:center;margin-top:20px}
+@media(max-width:820px){
+  nav{display:none}
+  .layout{padding:12px 12px 50px}
+  .topbar{padding:12px 14px 10px}
+  .row{flex-direction:column;gap:4px}
+  .row .k{width:auto}
+  .section-h .note{margin-left:0}
+  .quick{grid-template-columns:1fr 1fr;padding:10px 12px 12px;gap:8px}
+  .q .v{font-size:16px}
+  .topbar .sub{display:none}
+}
+@media print{.topbar,nav{display:none}.section{break-inside:avoid}}
+</style></head>
+<body>
+<div class="topbar">
+  <div class="tb1">
+    <h1>CP 가이드라인</h1>
+    <span class="sub">제품설명회 · 강연료 · 관계사 · 견본품 · 기부</span>
+    <span class="meta">사외비 · 원본 PDF 기준 2026-10-01 수록</span>
+  </div>
+  <div class="sbox">
+    <input id="q" type="search" placeholder="검색: 예) 주류, 강연료 공무원, 숙박 신고, BMS 방명록" autocomplete="off">
+    <button onclick="setQ('')">초기화</button>
+    <span class="cnt" id="cnt"></span>
+  </div>
+  <div class="chips" id="chips"></div>
+</div>
+<div class="layout">
+  <nav id="nav"></nav>
+  <main id="main"></main>
+</div>
+<script>
+const D = {"guides": [{"id": "single", "title": "제품설명회 (단일기관)", "date": "2026.08", "dept": "준법경영팀", "pdf": "1. 유한 제품설명회(단일기관) 가이드라인(2026.08).pdf", "tag": "제품설명회", "rows": [["목적", ["의약품 정보 제공 목적으로 실시", "!모임지원 불가, 자사 제품 처방을 유도하기 위한 제품설명회 불가"]], ["장소", ["설명회 장소: 원내 (부득이 원내 진행이 불가할 경우 인근 장소 – 사유 기록)", "거리 규정: 제품설명회 후 식음료 제공 장소 (SFA 거리계산 기준) → 수도권·광역시 요양기관 인근 10km 이내 / 그 외 지역 20km 이내", "※ 거리규정 20km 인정 지역: 강화군, 연천군, 울주군, 달성군, 기장군", "※ 관내 이동 시 20km, 관외 이동 시 10km 인정 지역: 파주, 양주, 동두천, 포천, 남양주, 가평, 양평, 평택, 광주(경기), 여주, 이천, 용인, 안성, 화성", "제품설명회를 위한 독립된 공간 확보", "웹심포지엄: 유한 직원이 웹심포지엄 시간에 맞춰 요양기관을 방문하여 HCP와 동석한 상태에서 참가"]], ["준비사항", ["단일기관 제품설명회: 노트북, 교육 PPT, 빔프로젝터, 문헌, 방명록 등", "유한 SFA 3일 전 신청 (방문디테일 제외)", "방문디테일/웹: 문헌, 방명록"]], ["식음료 제공기준", ["금액: 참석 HCP 1일 1인당 10만원 (부가세·봉사료 별도) 이하, 제품설명회 완료 후 제공 원칙", "주류: \"반주\" 개념으로 1인 1병 & 전체 금액의 20% 이하"]], ["강연자", ["!강연료 지급 불가", "제품 관련 정보를 포함한 강의 시간 최소 20분 이상"]], ["판촉물", ["!전문의약품 및 급여 일반의약품: 제공 불가", "※ 원활한 정보전달을 위한 합산금액 1만원 (부가세 포함) 이하 펜·노트는 제공 가능 (회사명 기입)", "의료기기 및 비급여 일반의약품: 1만원 (부가세 포함) 이하 판촉물 제공", "!허용 금액 내라도 회사 승인 없이 담당자가 임의로 기념품(펜, 노트 포함) 제작·제공 금지"]], ["결과보고서 관리", ["SFA 결과보고 등록 (익월 10일까지)", "증빙 — 단일기관 제품설명회: 방명록, 사진*, 강의자료, 영수증 등", "증빙 — 방문디테일/웹: 방명록 (1만원(부가세 포함) 이하 방문디테일 제외), 영수증, 사진*", "* 웹 HCP 4인 이상 시 제품설명회 사진 첨부", "* 단일기관/방문디테일/웹 도시락 인당 5만원 (부가세 포함) 초과 시 도시락 사진 첨부", "※ 관계사별 세부 가이드라인은 \"관계사 가이드라인\" 확인"]]]}, {"id": "multi", "title": "제품설명회 (복수기관)", "date": "2026.08", "dept": "준법경영팀", "pdf": "2. 유한 제품설명회(복수기관) 가이드라인(2026.08).pdf", "tag": "제품설명회", "rows": [["용어 정의", ["\"진행자\": 강연자/좌장 HCP", "\"청중\": 유한/관계사 직원, 진행자를 제외한 참석 HCP + 강연료/좌장료를 지급하지 않는 진행자"]], ["목적", ["의약품 정보 제공 목적으로 실시", "!모임지원 불가, 자사 제품 처방을 유도하기 위한 제품설명회 불가"]], ["장소", ["!사치스러운 장소 및 관광, 오락, 유흥 등을 목적으로 인식되는 곳 제외", "제품설명회를 위한 독립된 공간 확보"]], ["사전준비", ["복수 요양기관 대상 제품설명회 시 제약바이오협회 7일 전 신고, SFA 10일 전 신청", "준비물: 슬라이드, 스크린, 문헌, 방명록 [강연자/좌장, 청중, 참석 직원 전원 서명] 등"]], ["식음료 제공기준", ["금액: 청중 1인당 10만원 (부가세·봉사료 별도) 이하, 제품설명회 완료 후 제공", "주류: \"반주\" 개념으로 1인 1병 & 전체 금액의 20% 이하", "강연자/좌장이 진행자 역할만 수행한 경우 — 기념품/판촉물 제공 불가", "강연자/좌장이 진행자 역할만 수행한 경우 — 식음료·숙박비·교통비는 객관적 필요성이 인정되는 경우 제공 가능 (청탁금지법 대상자는 소속기관에서 식비·교통비·숙박비를 받지 못하는 경우에 한함)", "진행자가 타 강의에 참석한 경우 청중으로 간주 → 식음료, 교통비, 기념품, 숙박 제공 가능"]], ["강연자·좌장 (강연료 미지급)", ["제품 관련 정보를 포함한 강의 시간 최소 20분 이상"]], ["강연료·좌장료 지급", ["강연자/좌장 선정은 강연/좌장료 지급 세부시행 지침에 따라 선정", "강연자 1명: 청중 10명 이상 / 2명: 청중 20명 이상 / 3명 이상: 청중 30명 이상", "좌장: 2개 sessions + 청중 30명 이상 참석 시 1명 선정", "계약서: 행사 개최 전일까지 작성 완료 [청탁금지법 적용 대상자 강의비 확인]", "※ 부득이하게 당일 계약서 작성 시, 강연/좌장 의뢰 사전 소통 내역을 증빙할 수 있는 경우에 한해 인정", "강연료: 1시간 최대 50만원 (세금 포함)", "좌장료: 2개 sessions 청취 + 순수 좌장 역할 (Opening, Q&A/Discussion, Closing 등) 최소 40분 수행 시 최대 50만원 (역할 수행 시간 아젠다에 기록)", "한도: 1일 100만원, 연간 300만원, 연 10회 이내", "청탁금지법: 국공립학교 교직원 1시간 50만원·1일 최대 100만원 / 공무원·공직유관단체 임직원 1시간 40만원·1일 최대 1시간 비용의 1.5배 초과 불가", "※ 좌장이 순수 좌장 역할 외 강연 등을 추가로 할 경우 계약서, 초청장(아젠다), 결과보고서에 내용 명시", "!지급 방법: 행사 전 지급 불가, 현금 지급 불가 / 온라인 입금"]], ["기념품", ["!전문의약품 및 급여 일반의약품: 제공 불가", "※ 원활한 정보전달을 위한 합산금액 5만원 (부가세 포함) 이하 펜·노트는 제공 가능 (회사명 기입)", "의료기기 및 비급여 일반의약품: 5만원 (부가세 포함) 이하 기념품 제공", "!허용 금액 내라도 회사 승인 없이 담당자가 임의로 기념품(펜, 노트 포함) 제작·제공 금지"]], ["결과보고서 관리", ["결과보고서 양식에 작성", "증빙: 방명록, 사진, 강의자료, 아젠다, 계약서, 입금확인서, 기념품 견적서 (단가·수량 포함), 영수증, 기타 비용 등", "※ 관계사별 세부 가이드라인은 \"관계사 가이드라인\" 확인"]]]}, {"id": "stay", "title": "제품설명회 (심포지엄 당일·숙박)", "date": "2026.08", "dept": "준법경영팀", "pdf": "3. 유한 제품설명회(숙박제공) 가이드라인(2026.08).pdf", "tag": "제품설명회", "note": "목적·장소·식음료·강연·기념품·결과보고는 복수기관과 동일 [공통]. 아래는 숙박 심포지엄에만 해당하는 항목 위주.", "rows": [["목적 [공통]", ["의약품 정보 제공 목적으로 실시", "!모임지원 불가, 자사 제품 처방을 유도하기 위한 제품설명회 불가"]], ["장소 [공통]", ["!사치스러운 장소 및 관광, 오락, 유흥 등을 목적으로 인식되는 곳 제외"]], ["사전준비 [공통]", ["숙박제공 제품설명회: 제약바이오협회 60일 전 신고 (행사 후 30일 내 사후보고), SFA 20일 전 신청", "당일 심포지엄: 협회 7일 전 신고, SFA 10일 전 신청", "준비물: 슬라이드, 스크린, 문헌, 방명록 [강연자/좌장, 청중, 참석 직원 전원 서명] 등"]], ["식음료 제공기준 [공통]", ["금액: 청중 1인당 10만원 (부가세·봉사료 별도) 이하, 제품설명회 완료 후 제공", "주류: \"반주\" 개념으로 1인 1병 & 전체 금액의 20% 이하", "진행자 역할만 수행한 강연자/좌장: 기념품/판촉물 불가, 식음료·숙박비·교통비는 객관적 필요성 인정 시 가능 (청탁금지법 대상자는 소속기관 미지급 시에 한함)", "진행자가 타 강의 참석 시 청중으로 간주 → 식음료, 교통비, 기념품, 숙박 제공 가능"]], ["강연료·좌장료 [공통]", ["강연료 미지급 강연자: 제품 관련 정보 포함 강의 최소 20분 이상", "강연자 1명: 청중 10명↑ / 2명: 20명↑ / 3명 이상: 30명↑, 좌장: 2 sessions + 청중 30명↑ 시 1명", "계약서: 행사 전일까지 작성 (당일 작성은 사전 소통 증빙 시에만 인정)", "강연료 1시간 최대 50만원, 좌장료 최대 50만원 (순수 좌장 역할 최소 40분), 1일 100만원·연간 300만원·연 10회 이내", "청탁금지법: 국공립학교 교직원 1시간 50만원·1일 100만원 / 공무원·공직유관단체 1시간 40만원·1일 1시간 비용의 1.5배 이내", "!행사 전 지급 불가, 현금 지급 불가 / 온라인 입금"]], ["기념품 [공통]", ["!전문의약품 및 급여 일반의약품: 제공 불가 (단, 정보전달용 합산 5만원 이하 펜·노트는 회사명 기입 시 가능)", "의료기기 및 비급여 일반의약품: 5만원 (부가세 포함) 이하", "!회사 승인 없이 임의 제작·제공 금지"]], ["결과보고서 [공통]", ["결과보고서 양식에 작성", "증빙: 방명록, 사진, 강의자료, 아젠다, 계약서, 입금확인서, 기념품 견적서 (단가·수량 포함), 영수증, 기타 비용 등"]], ["숙박", ["필수 요건: 청중 30명 이상 참석 (청중 = 강연자/좌장을 제외한 참석 HCP), 실 강연 4시간 이상 (Opening, Closing 제외)", "방명록: 1일차, 2일차 별도 작성", "식권: 방명록 서명 후 당일 식권 배부 원칙 — 커피 등 포함 1일 10만원 이내 & 메뉴명 기재 식권 사용", "!금액이 기재된 식권 사용 금지", "교통비: KTX 일반실, 우등버스, 항공 (이코노미), 톨비, 택시 (요양기관-역/공항-행사장), 유류비 (병원→행사장 네이버 기준과 유류비 영수증 중 낮은 금액)", "숙박비 기준: 30만원 (봉사료 포함, 부가세 별도)", "※ 관계사별 세부 가이드라인은 \"관계사 가이드라인\" 확인"]]]}, {"id": "speaker", "title": "강연료 지급 세부시행 지침", "date": "2026.03.01", "dept": "", "pdf": "강연료 지급 세부시행 지침(2026. 3. 1).pdf", "tag": "강연료", "rows": [["1. 원칙", ["의약학적·전문적 정보 습득 목적에서 필요성이 객관적으로 인정되는 경우에 한해 보건의료전문가에게 강연 의뢰 및 비용 지급 가능", "!의약품 채택·처방유도·거래유지 등 판매촉진 목적의 강연 의뢰 금지", "!동일·유사 내용 강연을 특정인에게 반복 의뢰하거나 과도하게 다수에게 의뢰 금지", "보건의료전문가 = 의사, 치과의사, 약사", "※ 판매촉진 목적: 처방/매출 증대·유도·유지, 의료인과의 관계 개시·유지·강화, 목록 등재 또는 삭제 방어, 경쟁사업자 배제·방어, 시장점유율 증대·유지 등"]], ["2. 강연자 선정 (Speaker Pool)", ["강연자는 사내 Speaker Pool 내에서만 선정 (마케팅이 분야별 명단 작성 → 학술팀 검토·구성)", "아래 중 2가지 이상 충족 시 Speaker Pool 선정 가능:", "· 해당 분야 최소 10년 이상 자격과 경험", "· 최근 10년간 국내외 공인학술지 논문 2개 이상", "· 최근 10년간 다국가·다기관 임상시험 전현직 연구자", "· 최근 10년간 주요 국제학회 또는 의료법·약사법 인정 학회·학술기관 발표자(강연자)", "· 최근 10년간 의과대학·약학대학·학술기관 강의 경험", "· 최근 10년간 인정 학회·학술기관·연구기관 임원 또는 위원 활동", "· 예외적 선정에 대한 학술팀 승인", "Speaker Pool 자격 유효기간 3년, 기준 미충족 사유 발생 시 즉시 제외", "최종 선정 시 SFA에서 좌장료+강연료 합계를 확인해 연간 상한 초과 금지"]], ["3. 강연료", ["상한: 1시간 50만원, 1일 100만원, 연간 300만원 (각 세금 포함)", "신제품·새 적응증 주제, 전문가가 희소한 경우 등 정당한 필요성이 있으면 연간 500만원까지 인정", "청탁금지법 공직자등은 더 낮은 기준 준수 — 국공립학교 교직원 1시간 50만원·1일 100만원 / 공무원·공직유관단체 임직원 1시간 40만원·1일 60만원", "강연료는 1시간 기준으로 지급", "!강연 준비·이동 시간에 대한 별도 보상 불가", "청중 (강연자·좌장·임직원·유한 business partner 임직원 제외) 최소 10명 이상일 때 지급 가능", "강연자가 여럿이면 청중 수 ≥ 강연료 받는 강연자·좌장 수 × 10 (예: 강연자 2 + 좌장 1 → 청중 30명 이상)", "기안 단계: 강연료만 지급 시 최소 필요 청중수의 2배, 강연료+좌장료 지급 시 1.5배 청중 확보 후 기안", "!강연 완료 후 강연자 계좌로 입금 (현금 지급 절대 불가)"]], ["4. 관계사 품목 강연료", ["관계사 품목(상품) 강연료는 관계사 지침에 따르며, 자사 지침과 다르면 더 엄격한 지침을 따른다"]], ["5. 증빙자료", ["강연계약서 (개인정보 이용 동의서, 청탁금지법 대상 확인서 포함) — 제품설명회 개최 전일까지 작성 원칙, 대표이사 직인 필수", "당일 계약서 작성은 강연 의뢰 사전 소통 내역 증빙 시에만 인정", "입금 계좌, 주민등록번호, 서명은 강연자가 직접 작성", "계약서 원본은 결과보고서 제출 시 첨부, 주관부서 최소 5년 보관", "강연자료: 의약품 자료는 마케팅이 제공하되 강연자의 지식·경험이 반영되어야 함", "!마케팅 제공 자료 그대로 강연 불가", "입금확인서: 결과보고서 제출 시 첨부"]], ["6. 협회 보고", ["마케팅 부서가 분기별 강연 내역을 1·4·7·10월 20일까지 협회 신고사이트에 신고"]], ["7. 여비", ["교통비·숙박비·식비 등 여비는 강연자 실비에 준해 지급 가능", "소속기관에 여비 기준이 있으면 그 기준을 따르고, 소속기관에서 여비를 받으면 지급 불가"]], ["8. 시행일", ["2020.1.1 시행 → 2020.8.24 / 2021.12.27 / 2026.3.1 개정 시행"]]]}, {"id": "sample", "title": "견본품 제공", "date": "2021.05", "dept": "CP팀", "pdf": "견본품 제공 가이드라인.pdf", "tag": "견본품", "rows": [["목적", ["의약품의 제형, 색, 맛, 냄새 등 특성을 확인할 수 있도록 최소 포장단위의 의약품을 요양기관에 무상 제공", "※ 최소 포장단위: 여러 포장단위 중 외부포장용기를 개봉하지 않은 상태에서 최소량을 내장한 포장단위"]], ["준비사항", ["\"견본품\" 또는 \"sample\" 문자를 포장 용기 외부에 잘 식별되도록 표시", "!제형 등을 확인하는 데 필요한 최소 수량 초과 금지"]], ["확인사항", ["완제품: 의약품 소개용", "1회에 한하여 최소 포장단위 1개만 제공", "전자 서명 작성: 견본품 제공 확인"]], ["반복 제공", ["효능·효과·적응증 등 중대한 변화로 확인이 필요한 경우에만 반복 제공 가능"]], ["관리사항", ["견본품 제공 시 바로 SFA에 제공내역 등록", "HCP 전자 서명 수령 시 성명과 서명 정확히 기입"]]]}, {"id": "donation", "title": "기부행위", "date": "2022.07", "dept": "", "pdf": "기부행위 가이드라인.pdf", "tag": "기부", "rows": [["정의 (규약 3조 7항)", ["사업자가 요양기관, 학교, 학술·연구 또는 산학협력 기관·단체 등에 무상으로 금품류를 제공하는 행위 (금액 제한 없음)"]], ["허용 가능 — 유형·절차", ["① 사업자가 신청: 협회 양식 작성 → 협회에 기부대상 선정 의뢰 → 협회가 선정한 대상에 직접 기부", "② 요양기관 등이 협회에 모금 요청: 양식·부속서류 제출 → 협회 적정성 평가 → 기부 희망 사업자 모집 → 선정 사업자가 직접 기부 → 협회가 종료 후 3개월 내 결산보고서·영수증 확인", "※ 두 경우 모두 협회에 심의비 또는 수수료 납부 (세부운용기준 4조 4항)", "관련: 규약 7조 1항 2·3호, 세부운용기준 4조 4·6항"]], ["사후 준수사항", ["협회 양식(기부 사실 기재)으로 전달일 기준 30일 내 협회 통보", "기부금품 회계처리 시 구체적 증빙 (일자·대상·목적·규모 등) 첨부", "관련: 규약 7조 1항 5·6호"]], ["허용 불가", ["!의약품 채택·처방·거래와 관련된 이익 약속/영향을 고려한 기부 요청", "!사회통념상 요양기관 등이 부담해야 할 자금에 충당되는 경우", "!정당한 이유 없이 동일 기관에 반복적·지속적 기부", "!기부금품의 영리 목적 사용", "!위 허용 가능 경우를 제외한 요양기관 등 및 HCP에 대한 직접 기부", "관련: 규약 7조 1항 1·4호"]]]}], "rel": {"title": "관계사 가이드라인", "date": "2026.05.01", "pdf": "4. 관계사 가이드라인(2026.05.01).pdf", "note": "BMS 세부사항은 BMS 가이드라인 확인. 붉은 칸 = 유한과 다른 기준.", "rows": [["방문/단일 거리 (웹심포 미적용)", [["수도권·광역시 10km, 그 외 20km", 0], ["유한 규정 준용", 0], ["서울 3km, 그 외 5km", 1], ["방문, 단일: 5km", 1], ["5km", 1]]], ["주류", [["\"반주\" 개념으로 1인 1병, 전체 금액의 20% 이하", 0], ["유한 규정 준용", 0], ["유한 규정 준용", 0], ["유한 규정 준용\n단, 점심에 주류 제공 금지", 1], ["담당자 외 인원이 연자일 경우 주류 제공 금지", 1]]], ["식음료 금액", [["10만원 (세금 및 봉사료 제외)", 0], ["유한 규정 준용", 0], ["유한 규정 준용 (그룹A 포함)", 0], ["유한 규정 준용", 0], ["유한 규정 준용", 0]]], ["기념품/판촉물", [["제공 가능", 0], ["불가\n단, 유한 품목과 함께 진행 시 가능", 0], ["불가", 0], ["불가", 0], ["불가\n단, 숙박제품설명회 시 BMS 품목 50% 미만이면 기념품 제공 가능", 0]]], ["방명록", [["자사 방명록", 0], ["관계사 방명록", 1], ["길리어드 방명록", 1], ["관계사 방명록", 1], ["BMS 방명록, BMS&관계사 방명록", 1]]], ["장소", [["사치스러운 장소 및 관광, 오락, 유흥 등을 목적으로 인식되는 곳 제외", 0], ["KRPIA Venue 규정 준수\n6성급 호텔 및 사치스러운 장소 제외", 0], ["KRPIA Venue 규정 준수\n제외: 조선팰리스호텔(강남), 페어몬트 앰배서더 서울, 반얀트리, 롯데 시그니엘, 여수 소노캄, 인천 파라다이스시티, 그랜드하얏트제주, 인터불고호텔(원주), 사회 통념상 관광·오락·유흥 목적 장소, 리조트\n조건부 허용: 부산그랜드조선, 부산파라다이스, 부산파크하얏트 (해수욕장 미개장 시즌, 7.1 기준)", 0], ["KRPIA Venue 규정 준수\n제외: 반얀트리 클럽 앤 스파 서울, 롯데시그니엘 서울, 페어몬트 앰배서더 서울, 조선 팰리스, 파라스파라 서울, 호텔 인터불고 원주, 씨마크 호텔, 여수 소노캄, 호텔 시그니엘 부산, 아난티 힐튼 부산, 인천 파라다이스시티", 0], ["KRPIA Venue 규정 준수\n호텔 이용 시 허용 가능 리스트 외 불가", 0]]], ["숙박제품설명회", [["KPBMA 규정 준수\n숙박비: 30만원 (부가세 제외, 봉사료 포함)\n객관적으로 숙박 필요성이 인정될 경우 숙박 제공 가능", 0], ["유한 규정 준용", 0], ["참석자 대다수가 근무·거주하는 지역 내 적절한 장소에서 진행\n행사 장소와 동일·인접 지역에서 근무·거주하는 참석자에게 숙박 제공 불가", 0], ["참석자 대다수가 근무·거주하는 지역 내 미팅에 적절한 장소\n행사 장소와 동일·인접 지역 근무·거주 참석자 숙박 제공 불가\n단, 전체 강의 세션 중 유한 품목이 50% 이상이면 유한 숙박 규정 준용\n제주도는 행사 장소에서 제외", 1], ["KRPIA 규정 준수\n숙박비: 25만원 (부가세 제외, 봉사료 포함)\n참석자 대다수가 근무·거주하는 지역 내 적절한 장소에서 진행\n개최지역(특별시·광역시·특별자치시 및 도내 시·군)과 동일 지역 근무·거주 HCP 숙박 제공 불가\n단, 강의 세션 중 BMS 품목 50% 이하이면 유한 숙박 규정 준용 (BMS Venue 규정은 예외 없이 적용)", 0]]], ["강연·좌장", [["강연: 순수 청중 10명 이상, 1시간 50만원 (공직유관단체 40만원)\n좌장: 2세션, 순수 청중 30명 이상 시 가능", 0], ["유한 규정 준용", 0], ["계약 전 필수 작성: Speaker Criteria Checklist(길리어드), CONFLICT OF INTEREST(COI) 길리어드 제품용\n강연자 슬라이드 15장 이내 수정 가능 및 길리어드 리뷰 필수\n계약서, 초대장/CRM 아젠다 등 모든 문서에 좌장 역할 기재 필수", 1], ["유한 규정 준용", 0], ["계약 전 필수 작성: Speaker Criteria Checklist(BMS), CONFLICT OF INTEREST(COI) BMS 제품용\n강연자 교육(SPEAKER BRIEFING) 진행\nBMS 제품용 계약서 사용\n좌장/패널 의뢰 시 결과보고서에 역할 수행 근거 기입\n* 강연 진행 시 준법경영팀 문의 필수", 1]]], ["외부초빙교육", [["사전체크리스트 작성 후 진행\n지점 단위로 진행, 최소 10인 이상", 0], ["유한 규정 준용", 0], ["길리어드 품목 불가", 1], ["마케팅에서만 진행, 적응증별 연 1회 (예외는 준법경영팀 사전 승인)", 1], ["마케팅·학술에서만 진행, 품목당 연 3회 제한", 1]]], ["전시·광고", [["KPBMA 규정 준수", 0], ["유한 규정 준용", 0], ["KRPIA Venue 규정 준수, Venue 불가 장소 개최 시 지원 불가", 1], ["KRPIA Venue 규정 준수, Venue 불가 장소 개최 시 지원 불가\n제주도 지원 불가", 1], ["KRPIA Venue 규정 준수, Venue 불가 장소 개최 시 지원 불가\n대한의학회 소속 회원학회 가능\n비소속 학회 및 회원학회 산하단체는 추가 증빙(회칙, 임원명단, 간행물) 및 준법경영팀 검토 필수\n단독지원 불가", 1]]], ["개최·운영지원", [["KPBMA 규정 준수", 0], ["유한 규정 준용", 0], ["KRPIA Venue 규정 준수, Venue 불가 장소 개최 시 지원 불가\n계약서·체크리스트 등을 포함한 지원 승인서 작성 및 준법경영팀 합의 필수", 0], ["KRPIA Venue 규정 준수, Venue 불가 장소 개최 시 지원 불가\n제주도 지원 불가", 0], ["사전 협의된 학회 및 금액 외 지원 불가\nKRPIA Venue 규정 준수, Venue 불가 장소 개최 시 지원 불가\n단독지원 불가", 0]]], ["문의 (담당자)", [["", 0], ["김영준 02-828-0170\n손호균 02-828-0355", 0], ["백현우 02-828-0454\n김영민 02-828-0541", 0], ["정현석 02-828-0656", 0], ["김영민 02-828-0541\n박동혁 02-828-0571", 0]]]]}, "companies": ["유한", "베링거", "길리어드", "노바티스", "BMS"], "compare": {"cols": ["단일기관", "복수기관", "당일 심포지엄", "숙박 심포지엄"], "rows": [["SFA 신청", ["3일 전 (방문디테일 제외)", "10일 전", "10일 전", "20일 전"]], ["협회 신고", ["-", "7일 전", "7일 전", "60일 전 (행사 후 30일 내 사후보고)"]], ["식음료", ["1인 10만원 이하 (VAT·봉사료 별도)", "1인 10만원 이하 (VAT·봉사료 별도)", "1인 10만원 이하 (VAT·봉사료 별도)", "1인 10만원 이하 (VAT·봉사료 별도)"]], ["주류", ["반주: 1인 1병 & 전체 금액 20% 이하", "반주: 1인 1병 & 전체 금액 20% 이하", "반주: 1인 1병 & 전체 금액 20% 이하", "반주: 1인 1병 & 전체 금액 20% 이하"]], ["거리", ["수도권·광역시 10km / 그 외 20km", "-", "-", "-"]], ["강연료", ["지급 불가 (강의 20분 이상)", "1시간 최대 50만원", "1시간 최대 50만원", "1시간 최대 50만원"]], ["펜·노트 (전문약)", ["합산 1만원 이하", "합산 5만원 이하", "합산 5만원 이하", "합산 5만원 이하"]], ["기념품 (비급여·기기)", ["1만원 이하", "5만원 이하", "5만원 이하", "5만원 이하"]], ["필수 인원", ["-", "강연자 1명당 청중 10명", "강연자 1명당 청중 10명", "청중 30명 이상 + 실강연 4시간 이상"]], ["숙박비", ["-", "-", "-", "30만원 (봉사료 포함, VAT 별도)"]], ["결과보고", ["SFA 익월 10일까지", "결과보고서 양식", "결과보고서 양식", "결과보고서 양식 (방명록 1·2일차 별도)"]]]}, "quick": [["식음료 한도", "1인 10만원", "VAT·봉사료 별도 · 설명회 완료 후 제공", "single"], ["주류", "1인 1병 · 20%", "\"반주\" 개념, 전체 금액의 20% 이하", "single"], ["식사 장소 거리", "10km / 20km", "수도권·광역시 10km, 그 외 20km (SFA 거리계산)", "single"], ["강연료", "시간당 50만원", "1일 100만 · 연 300만 (예외 500만) · 세금 포함", "speaker"], ["강연 청중", "강연자당 10명", "좌장 포함 시 지급인원 × 10명 이상", "speaker"], ["숙박 심포지엄", "협회 60일 전", "SFA 20일 전 · 청중 30명↑ · 실강연 4시간↑", "stay"], ["복수기관 설명회", "협회 7일 전", "SFA 10일 전 신청", "multi"], ["단일기관 결과보고", "익월 10일", "SFA 결과보고 등록 · SFA 신청은 3일 전", "single"], ["숙박비", "30만원", "봉사료 포함, VAT 별도 (BMS 25만원)", "stay"], ["견본품", "1회 1개", "최소 포장단위 · \"견본품\" 표시 · SFA 즉시 등록", "sample"], ["기부 통보", "30일 내", "협회 경유 기부만 허용, 전달일 기준 협회 통보", "donation"], ["공직자 강연료", "시간당 40만원", "공무원·공직유관단체, 1일 60만원", "speaker"]], "syn": {"술": ["주류", "반주"], "음주": ["주류", "반주"], "반주": ["주류"], "밥": ["식음료", "식권", "도시락"], "식사": ["식음료", "식권", "도시락"], "식대": ["식음료", "식권"], "선물": ["기념품", "판촉물"], "판촉물": ["기념품"], "기념품": ["판촉물"], "볼펜": ["펜"], "연자": ["강연"], "강사": ["강연"], "강의료": ["강연료"], "사례비": ["강연료", "좌장료"], "심포지엄": ["심포", "숙박"], "심포": ["심포지엄"], "호텔": ["숙박", "Venue", "장소"], "샘플": ["견본품", "sample"], "견본": ["견본품"], "후원": ["기부", "지원"], "신고": ["협회"], "협회": ["신고"], "마감": ["일 전", "까지"], "기한": ["일 전", "까지"], "거리": ["km"], "킬로": ["km"], "공무원": ["청탁금지법", "공직"], "김영란법": ["청탁금지법"], "교통비": ["교통", "KTX", "택시", "유류비"], "방명록": ["서명"]}, "built": "2026-10-02 09:25"};
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const pdfHref = f => '../CP가이드라인/' + encodeURIComponent(f);
+const LOCAL = location.protocol === 'file:';   // 배포본(웹)에는 원본 PDF 가 없으므로 링크 숨김
+
+/* ── 렌더 ── */
+function build(){
+  const m = $('#main'); let h = '';
+  // 자주 찾는 기준
+  h += '<div class="section" id="s-quick" data-fixed="1"><div class="section-h"><span class="ttl">자주 찾는 기준</span><span class="note">카드를 누르면 해당 가이드라인으로 이동</span></div><div class="quick">'
+     + D.quick.map(q => '<div class="q" data-s="'+esc(q[0]+' '+q[1]+' '+q[2])+'" onclick="go(\'s-'+q[3]+'\')"><div class="l">'+esc(q[0])+'</div><div class="v">'+esc(q[1])+'</div><div class="d">'+esc(q[2])+'</div></div>').join('')
+     + '</div></div>';
+  // 제품설명회 비교
+  h += '<div class="section" id="s-compare"><div class="section-h"><span class="tag">비교</span><span class="ttl">제품설명회 유형별 한눈 비교</span><span class="note">상세는 각 가이드라인 원문 확인</span></div><div class="tw"><table class="c"><thead><tr><th>구분</th>'
+     + D.compare.cols.map(c=>'<th>'+esc(c)+'</th>').join('') + '</tr></thead><tbody>'
+     + D.compare.rows.map(r => '<tr class="sr"><td class="k">'+esc(r[0])+'</td>'+r[1].map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')
+     + '</tbody></table></div></div>';
+  // 각 가이드라인
+  D.guides.forEach(g => {
+    if (g.id === 'rel_slot') return;
+    h += secGuide(g);
+    if (g.id === 'stay') h += secRel();
+  });
+  h += '<div class="empty" id="empty">검색 결과가 없습니다. 다른 단어로 찾아보세요.</div>';
+  h += '<div class="foot">원본: Dropbox › 유한4팀 › CP가이드라인 · 해석이 애매하면 준법경영팀 확인 · 생성 '+esc(D.built)+'</div>';
+  m.innerHTML = h;
+  // 네비
+  let n = '<div class="grp">바로가기</div><a href="#s-quick">자주 찾는 기준</a><a href="#s-compare" data-nav="s-compare">제품설명회 비교<span class="n"></span></a><div class="grp">가이드라인</div>';
+  D.guides.forEach(g => {
+    n += '<a href="#s-'+g.id+'" data-nav="s-'+g.id+'">'+esc(g.title)+'<span class="n"></span></a>';
+    if (g.id === 'stay') n += '<a href="#s-rel" data-nav="s-rel">'+esc(D.rel.title)+'<span class="n"></span></a>';
+  });
+  $('#nav').innerHTML = n;
+  // 칩
+  const chips = ['식음료','주류','거리','강연료','좌장','기념품','숙박','방명록','협회 신고','결과보고','청탁금지법','견본품','기부','BMS','길리어드'];
+  $('#chips').innerHTML = chips.map(c=>'<span>'+c+'</span>').join('');
+  $('#chips').onclick = e => { if(e.target.tagName==='SPAN') setQ($('#q').value.trim()===e.target.textContent ? '' : e.target.textContent); };
+}
+function li(t){
+  let cls = '';
+  if (t[0] === '!') { cls = 'ban'; t = t.slice(1); }
+  else if (t[0] === '※' || t[0] === '*') cls = 'ref';
+  return '<li class="'+cls+'" data-raw="'+esc(t)+'">'+esc(t)+'</li>';
+}
+function secGuide(g){
+  return '<div class="section" id="s-'+g.id+'"><div class="section-h"><span class="tag">'+esc(g.tag)+'</span><span class="ttl">'+esc(g.title)+'</span>'
+    + '<span class="note">'+esc([g.dept, g.date].filter(Boolean).join(' · '))+'</span>'+(LOCAL?'<a class="pdf" href="'+pdfHref(g.pdf)+'" target="_blank">PDF</a>':'')+'</div><div class="section-body">'
+    + (g.note ? '<div class="secnote">'+esc(g.note)+'</div>' : '')
+    + g.rows.map(r => '<div class="row sr"><div class="k" data-raw="'+esc(r[0])+'">'+esc(r[0])+'</div><ul>'+r[1].map(li).join('')+'</ul></div>').join('')
+    + '</div></div>';
+}
+function secRel(){
+  const R = D.rel, C = D.companies;
+  let h = '<div class="section" id="s-rel"><div class="section-h"><span class="tag">관계사</span><span class="ttl">'+esc(R.title)+'</span><span class="note">'+esc(R.date)+'</span>'+(LOCAL?'<a class="pdf" href="'+pdfHref(R.pdf)+'" target="_blank">PDF</a>':'')+'</div>';
+  h += '<div class="co-sel" id="cosel">'+C.map((c,i)=>'<label class="on"><input type="checkbox" checked data-i="'+i+'">'+esc(c)+'</label>').join('')+'</div>';
+  h += '<div class="tw"><table class="c" id="reltbl"><thead><tr><th>구분</th>'+C.map((c,i)=>'<th data-ci="'+i+'">'+esc(c)+'</th>').join('')+'</tr></thead><tbody>';
+  R.rows.forEach(r => {
+    h += '<tr class="sr"><td class="k">'+esc(r[0])+'</td>' + r[1].map((cell,i) => {
+      const t = cell[0], same = i>0 && t === '유한 규정 준용';
+      return '<td data-ci="'+i+'" class="'+(cell[1]?'diff':(same?'same':''))+'">'+esc(t).replace(/\n/g,'<br>')+'</td>';
+    }).join('') + '</tr>';
+  });
+  h += '</tbody></table></div><div class="legend"><i></i>유한과 다른 기준 (원본 붉은 글씨) · 회사 버튼으로 열 숨기기 · '+esc(R.note)+'</div></div>';
+  return h;
+}
+
+/* ── 검색 ── */
+const SYN = D.syn;
+function terms(q){
+  // 띄어쓰기 = AND, 각 단어는 동의어 OR 그룹
+  return q.toLowerCase().split(/\s+/).filter(Boolean).map(w => {
+    const syn = [];
+    Object.keys(SYN).forEach(k => { if (k.toLowerCase() === w) SYN[k].forEach(s => syn.push(s.toLowerCase())); });
+    // 한 글자 동의어 키(술·밥)는 '학술'처럼 엉뚱하게 걸리므로 동의어로만 찾는다
+    return (w.length === 1 && syn.length) ? syn : [w].concat(syn);
+  });
+}
+function hit(text, T){ const t = text.toLowerCase(); return T.every(g => g.some(w => t.indexOf(w) >= 0)); }
+function anyHit(text, T){ const t = text.toLowerCase(); return T.some(g => g.some(w => t.indexOf(w) >= 0)); }
+function markHTML(raw, T){
+  const words = [...new Set(T.flat())].filter(Boolean).sort((a,b)=>b.length-a.length);
+  let s = esc(raw);
+  if (!words.length) return s;
+  const re = new RegExp('(' + words.map(w=>esc(w).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|') + ')', 'gi');
+  return s.replace(re, '<mark>$1</mark>');
+}
+function setQ(v){ $('#q').value = v; run(); $('#q').focus(); }
+let timer;
+$('#q').addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(run, 120); });
+function run(){
+  const q = $('#q').value.trim(); const T = terms(q);
+  document.querySelectorAll('#chips span').forEach(s => s.classList.toggle('on', s.textContent === q));
+  let total = 0;
+  try { history.replaceState(null, '', q ? '#q=' + encodeURIComponent(q) : location.pathname); } catch(e){}
+  document.querySelectorAll('#main .section').forEach(sec => {
+    let n = 0;
+    if (sec.id === 's-quick') {
+      let k = 0;
+      sec.querySelectorAll('.q').forEach(c => { const ok = !q || hit(c.dataset.s, T); c.classList.toggle('hidden', !ok); if (ok) k++; });
+      sec.classList.toggle('hidden', !!q && !k);
+      return;
+    }
+    if (sec.id === 's-rel' || sec.id === 's-compare') {
+      sec.querySelectorAll('tr.sr').forEach(tr => {
+        const ok = !q || hit(tr.textContent, T);
+        tr.classList.toggle('hide', !ok); if (ok) n++;
+        tr.querySelectorAll('td').forEach(td => {
+          if (!td.dataset.raw) td.dataset.raw = td.innerHTML;
+          td.innerHTML = q && ok ? td.dataset.raw.split('<br>').map(x => markHTML(x.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>'), T)).join('<br>') : td.dataset.raw;
+        });
+      });
+    } else {
+      const title = sec.querySelector('.ttl').textContent + ' ' + sec.querySelector('.tag').textContent;
+      sec.querySelectorAll('.row').forEach(row => {
+        const k = row.querySelector('.k');
+        const ctx = title + ' ' + k.dataset.raw;
+        let rn = 0;
+        row.querySelectorAll('li').forEach(l => {
+          // 항목명·문서명 + 본문을 합쳐 AND 판정 → "숙박 신고"처럼 제목+내용 조합도 찾음
+          const ok = !q || (hit(ctx + ' ' + l.dataset.raw, T) && anyHit(l.dataset.raw + ' ' + k.dataset.raw, T));
+          l.classList.toggle('hidden', !ok);
+          l.innerHTML = q && ok ? markHTML(l.dataset.raw, T) : esc(l.dataset.raw);
+          if (ok) rn++;
+        });
+        k.innerHTML = q ? markHTML(k.dataset.raw, T) : esc(k.dataset.raw);
+        row.classList.toggle('hidden', !!q && !rn);
+        n += rn;
+      });
+    }
+    sec.classList.toggle('hidden', !!q && !n);
+    const a = document.querySelector('[data-nav="'+sec.id+'"] .n');
+    if (a) a.textContent = q && n ? n : '';
+    const na = document.querySelector('[data-nav="'+sec.id+'"]');
+    if (na) na.style.opacity = q && !n ? .35 : 1;
+    total += n;
+  });
+  $('#cnt').textContent = q ? total + '건 찾음' : '';
+  $('#empty').style.display = q && !total ? 'block' : 'none';
+}
+function go(id){ setQ(''); const el = document.getElementById(id); if (el) el.scrollIntoView({behavior:'smooth'}); }
+
+build();
+// 관계사 열 토글
+$('#cosel').addEventListener('change', e => {
+  const i = e.target.dataset.i, on = e.target.checked;
+  e.target.parentNode.classList.toggle('on', on);
+  document.querySelectorAll('#reltbl [data-ci="'+i+'"]').forEach(c => c.style.display = on ? '' : 'none');
+});
+// 주소의 #q=검색어 로 바로 검색 (통합분석에서 링크로 열 때)
+const m0 = location.hash.match(/^#q=(.+)/);
+if (m0) { $('#q').value = decodeURIComponent(m0[1]); run(); }
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && document.activeElement !== $('#q')) { e.preventDefault(); $('#q').focus(); }
+  if (e.key === 'Escape') setQ('');
+});
+</script>
+</body></html>

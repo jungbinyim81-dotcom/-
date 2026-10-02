@@ -413,6 +413,12 @@ main.content {
         <span class="lbl">R&amp;P 결과</span>
       </div>
 
+      <div class="nav-section">CP</div>
+      <div class="nav-item" data-src="CP가이드라인.html" data-title="CP 가이드라인" data-cat="CP">
+        <span class="ic">⚖️</span>
+        <span class="lbl">CP 가이드라인</span>
+      </div>
+
     </nav>
     <div class="sb-footer">
       <div class="team">인천일병4팀</div>
@@ -556,6 +562,19 @@ main.content {
                 <span class="tag">드릴다운</span>
               </div>
             </div>
+
+            <div class="card" data-target="CP가이드라인.html" data-title="CP 가이드라인" data-cat="CP">
+              <div class="card-ic">⚖️</div>
+              <div class="cat">CP</div>
+              <div class="ttl">CP 가이드라인</div>
+              <div class="desc">제품설명회(단일·복수·숙박)·강연료·관계사·견본품·기부행위 가이드라인 7종을 검색으로 바로 찾습니다. 유형별 비교표와 관계사별 차이 강조.</div>
+              <div class="tags">
+                <span class="tag">키워드 검색</span>
+                <span class="tag">제품설명회 비교</span>
+                <span class="tag">관계사 5사</span>
+                <span class="tag">자주 찾는 기준</span>
+              </div>
+            </div>
           </div>
 
           <div class="welcome-foot">
@@ -600,7 +619,7 @@ main.content {
     welcome.style.display = 'none';
     loading.classList.add('show');
     frame.style.display = 'block';
-    frame.src = src + (src.includes('?') ? '&' : '?') + 'v=20261002-0920';
+    frame.src = src + (src.includes('?') ? '&' : '?') + 'v=20261002-0925';
     frame.onload = ()=> loading.classList.remove('show');
     // 5초 후 강제 해제 (안전장치)
     setTimeout(()=> loading.classList.remove('show'), 5000);
