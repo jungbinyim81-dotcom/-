@@ -1,4 +1,4 @@
-const CACHE_NAME = "team4-20260930-0937";
+const CACHE_NAME = "team4-20261002-0920";
 const ASSETS = [
   "./",
   "./index.html",
@@ -13,6 +13,7 @@ const ASSETS = [
   "./6월_중점처활동분석.html",
   "./7월_중점처활동분석.html",
   "./8월_중점처활동분석.html",
+  "./4Q_고지혈중점처점검.html",
   "./RnP규정.html",
   "./RnP결과.html",
   "./인센티브_통합대시보드.html",
