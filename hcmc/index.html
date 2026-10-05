@@ -1345,6 +1345,17 @@ header p{font-size:12px;opacity:.85;margin-top:3px}
 .pin.star{background:#B5121B}
 .pin.bib{background:#E07B00}
 .pin.sel{background:#0B7A8A}
+.hpin{width:34px;height:34px;border-radius:9px;background:#1F3B73;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center}
+.hpin svg{width:20px;height:20px}
+.hotels{display:flex;gap:8px;padding:12px 12px 0}
+.hcard{flex:1;background:#1F3B73;color:#fff;border-radius:12px;padding:10px 11px;min-width:0}
+.hcard .t{font-size:11px;opacity:.75}
+.hcard b{display:block;font-size:14px;margin:1px 0 3px}
+.hcard .a{font-size:11px;opacity:.8;line-height:1.4}
+.hcard .hb{display:flex;gap:5px;margin-top:8px}
+.hcard .hb a,.hcard .hb button{flex:1;font-size:11.5px;font-weight:700;border:none;border-radius:7px;padding:6px 0;text-align:center;text-decoration:none;font-family:inherit;background:rgba(255,255,255,.18);color:#fff}
+.dist{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.dist span{font-size:11.5px;background:#eef2f9;color:#1F3B73;border-radius:6px;padding:3px 7px;font-weight:600}
 .pin.big{width:38px;height:38px;border-width:3px}
 .leaflet-popup-content{margin:10px 12px;font-family:inherit}
 .pp b{font-size:14px}
@@ -1384,8 +1395,9 @@ header p{font-size:12px;opacity:.85;margin-top:3px}
   </div>
 </header>
 <div id="map"><button class="locbtn" id="loc">내 위치</button></div>
+<div class="hotels" id="hotels"></div>
 <div class="list" id="list"></div>
-<div class="note">핀 위치는 주소 기준 근사치입니다. 정확한 위치·길찾기는 <b>구글맵</b> 버튼으로.<br>영업시간·휴무는 방문 전 구글맵에서 확인하세요. 로컬 식당은 현금(VND) 준비.</div>
+<div class="note">핀 위치는 주소 기준 근사치, 숙소 거리는 직선거리입니다. 정확한 위치·길찾기는 <b>구글맵</b> 버튼으로.<br>영업시간·휴무는 방문 전 구글맵에서 확인하세요. 로컬 식당은 현금(VND) 준비.</div>
 <script>/* @preserve
  * Leaflet 1.9.4, a JS library for interactive maps. https://leafletjs.com
  * (c) 2010-2023 Vladimir Agafonkin, (c) 2010-2011 CloudMade
@@ -1394,6 +1406,7 @@ header p{font-size:12px;opacity:.85;margin-top:3px}
 //# sourceMappingURL=leaflet.js.map</script>
 <script>
 const S = [{"i": 1, "n": "Anan Saigon", "g": "star", "genre": "모던 베트남", "addr": "89 Tôn Thất Đạm, Quận 1", "lat": 10.7718, "lng": 106.7044, "menu": "테이스팅 코스 · 반미 / 반쎄오 재해석 메뉴", "point": "베트남 길거리 음식을 파인다이닝 코스로 풀어낸 호치민 대표 1스타.", "tip": "저녁 코스는 예약 필수. 같은 건물 루프톱 바도 함께 즐기기 좋음"}, {"i": 2, "n": "Akuna", "g": "star", "genre": "컨템퍼러리", "addr": "Le Méridien 9층, 3C Tôn Đức Thắng, Quận 1", "lat": 10.7808, "lng": 106.7059, "menu": "셰프 테이스팅 코스 (베트남 제철 식재료)", "point": "베트남 식재료를 유럽식 기법으로 낸 코스. 사이공강 뷰.", "tip": "예약 필수 · 스마트 캐주얼 복장 권장"}, {"i": 3, "n": "The Royal Pavilion", "g": "star", "genre": "광둥식 중식", "addr": "The Reverie Saigon 4층, 57-69F Đồng Khởi, Quận 1", "lat": 10.7744, "lng": 106.7046, "menu": "딤섬 · 북경오리 · 광둥식 바비큐", "point": "리버리 호텔 안 정통 광둥요리. 화려한 인테리어.", "tip": "점심 딤섬이 가성비 좋음 · 예약 권장"}, {"i": 4, "n": "Phở Phượng", "g": "bib", "genre": "쌀국수", "addr": "25 Hoàng Sa, Quận 1", "lat": 10.7898, "lng": 106.699, "menu": "퍼 보 (소고기 쌀국수) — 생고기·양지 섞어서", "point": "진하고 깔끔한 소고기 육수. 3년 연속 빕 구르망.", "tip": "아침 식사로 추천 · 현금 준비"}, {"i": 5, "n": "Phở Hương Bình", "g": "bib", "genre": "쌀국수", "addr": "148 Võ Thị Sáu, Quận 3", "lat": 10.7855, "lng": 106.688, "menu": "퍼 보 · 퍼 가 (닭고기 쌀국수)", "point": "3대째 이어온 60년 넘은 노포. 현지인 단골이 많음.", "tip": "대략 06:30~19:00 영업 · 점심 피크는 붐빔"}, {"i": 6, "n": "Bánh Xèo 46A", "g": "bib", "genre": "반쎄오", "addr": "46A Đinh Công Tráng, Tân Định, Quận 1", "lat": 10.7899, "lng": 106.6912, "menu": "반쎄오 (새우·돼지고기 넣은 바삭한 부침개)", "point": "야채에 싸서 느억맘 소스에 찍어 먹는 호치민 명물.", "tip": "여럿이 가면 큰 사이즈 + 짜조(튀김만두) 추가"}, {"i": 7, "n": "Bò Kho Gánh", "g": "bib", "genre": "보코 (소고기 스튜)", "addr": "Lô H 029, Chung cư Ngô Gia Tự, Sư Vạn Hạnh, Quận 10", "lat": 10.762, "lng": 106.67, "menu": "보코 + 바게트 (반미 찍어먹기) / 쌀국수 말이", "point": "아파트 단지 아래 소박한 가게. 향신료 진한 소고기 스튜.", "tip": "아침~점심 위주 영업 · 품절 전 일찍 방문"}, {"i": 8, "n": "Bánh Canh Cua Bà Ba", "g": "bib", "genre": "게살 국수", "addr": "84/6 Nguyễn Biểu, Quận 5", "lat": 10.759, "lng": 106.683, "menu": "반깐 꾸어 — 1인 그릇 또는 뚝배기(나눠먹기)", "point": "주황빛 걸쭉한 게살 국물 + 쫄깃한 굵은 면. 2026 신규 선정.", "tip": "골목 안 가게 · 선정 후 대기 있음"}, {"i": 9, "n": "Bún Riêu Yến", "g": "bib", "genre": "분리우", "addr": "1346 Trường Sa, Tân Bình", "lat": 10.793, "lng": 106.668, "menu": "분리우 (토마토·게살 완자 쌀국수)", "point": "시원새콤한 국물의 서민 국수. 2026 신규 선정.", "tip": "운하(Nhiêu Lộc) 맞은편 길모퉁이 · 시장통 분위기"}, {"i": 10, "n": "Bếp Mẹ Ỉn", "g": "bib", "genre": "베트남 가정식", "addr": "136/9 Lê Thánh Tôn, Quận 1 (벤탄시장 근처 골목)", "lat": 10.7727, "lng": 106.6985, "menu": "반쎄오 · 짜조 · 고이꾸온 · 껌땀 등 가정식 여러 개", "point": "여러 메뉴를 나눠 먹기 좋아 일행과 가기 좋음.", "tip": "벤탄시장 구경과 묶어서 방문"}, {"i": 11, "n": "Ốc Oanh", "g": "bib", "genre": "해산물 (조개·고둥·게)", "addr": "534 Vĩnh Khánh, Quận 4 (빈칸 해산물 거리)", "lat": 10.7608, "lng": 106.703, "menu": "소금칠리 게집게발 구이 · 타이거새우 구이 · 매콤 소스 고둥볶음", "point": "빈칸 해산물 거리의 20년 노포. 2024년부터 빕 구르망. 야외 노천 분위기.", "tip": "오후 1시~자정 · 에어컨 없음 · 저녁 맥주와 함께, 관광객 많아 가격은 조금 높은 편"}, {"i": 12, "n": "Thúy 94 Cũ", "g": "sel", "genre": "게 요리 전문 (해산물)", "addr": "84 Đinh Tiên Hoàng, Đa Kao, Quận 1", "lat": 10.7895, "lng": 106.6975, "menu": "미엔 꾸어 (게살 당면국수) · 게살 짜조 · 소금구이 게 · 게살 볶음밥", "point": "1992년부터 이어온 게 요리 노포. 큼직한 게살이 듬뿍.", "tip": "게 요리는 싯가 — 주문 전 가격 확인 · 점심~저녁 붐빔"}, {"i": 13, "n": "Ốc Đào", "g": "sel", "genre": "해산물 (조개·고둥)", "addr": "212B Nguyễn Trãi, Nguyễn Cư Trinh, Quận 1", "lat": 10.766, "lng": 106.689, "menu": "버터 오징어먹물 볶음 · 소금칠리 고둥구이 · 조개 코코넛볶음", "point": "메뉴 100가지가 넘는 사이공식 \"옥(ốc)\" 해산물 술집. 맥주 안주로 최고.", "tip": "저녁에 일행과 여러 접시 나눠먹기 · 현금 준비"}];
+const H = [{"id": "H1", "ko": "실버랜드 메이 호텔", "en": "Silverland Mây Hotel", "addr": "28-30 Thi Sách, Bến Nghé, Quận 1", "lat": 10.7783, "lng": 106.7048}, {"id": "H2", "ko": "랜드마크 3", "en": "Vinhomes Central Park Landmark 3", "addr": "720A Điện Biên Phủ, Bình Thạnh", "lat": 10.7963, "lng": 106.7205}];
 const gmap = s => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.n + ' ' + s.addr + ' Ho Chi Minh');
 const map = L.map('map', {zoomControl:false, tap:true}).setView([10.778, 106.692], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'&copy; OpenStreetMap'}).addTo(map);
@@ -1409,7 +1422,20 @@ S.forEach(s => {
   m.on('click', () => select(s.i, false));
   M[s.i] = m;
 });
-function fit(list){ map.fitBounds(L.latLngBounds(list.map(s=>[s.lat,s.lng])), {padding:[30,30]}); }
+// 숙소 핀 (필터와 무관하게 항상 표시)
+const HSVG = '<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 3 2 11h3v9h5v-6h4v6h5v-9h3z"/></svg>';
+const HM = {};
+H.forEach(h => {
+  HM[h.id] = L.marker([h.lat, h.lng], {zIndexOffset:2000, icon: L.divIcon({className:'', html:'<div class="hpin">'+HSVG+'</div>', iconSize:[34,34], iconAnchor:[17,17], popupAnchor:[0,-16]})})
+    .addTo(map).bindPopup('<div class="pp"><b>숙소 · '+esc(h.ko)+'</b><div class="g">'+esc(h.addr)+'</div><a href="'+gmap({n:h.en, addr:h.addr})+'" target="_blank">구글맵 열기</a></div>');
+});
+document.getElementById('hotels').innerHTML = H.map(h => `<div class="hcard"><div class="t">숙소</div><b>${esc(h.ko)}</b><div class="a">${esc(h.addr)}</div>
+  <div class="hb"><button onclick="goHotel('${h.id}')">지도</button><a href="${gmap({n:h.en, addr:h.addr})}" target="_blank">구글맵</a></div></div>`).join('');
+function goHotel(id){ const h = H.find(x=>x.id===id); map.flyTo([h.lat, h.lng], 15, {duration:.6}); HM[id].openPopup(); window.scrollTo({top:0, behavior:'smooth'}); }
+// 직선거리(km)
+function km(a, b){ const R=6371, r=Math.PI/180, dLa=(b.lat-a.lat)*r, dLo=(b.lng-a.lng)*r;
+  const x=Math.sin(dLa/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dLo/2)**2; return 2*R*Math.asin(Math.sqrt(x)); }
+function fit(list){ map.fitBounds(L.latLngBounds(list.map(s=>[s.lat,s.lng]).concat(H.map(h=>[h.lat,h.lng]))), {padding:[30,30]}); }
 fit(S);
 
 const show = (s, f) => f==='all' || (f==='sea' ? s.genre.indexOf('해산물') >= 0 : s.g===f);
@@ -1423,6 +1449,7 @@ function render(f){
     <div class="pt">${esc(s.point)}</div>
     <div class="tip">${esc(s.tip)}</div>
     <div class="addr">${esc(s.addr)}</div>
+    <div class="dist">${H.map(h => '<span>'+esc(h.ko)+'에서 '+km(h, s).toFixed(1)+'km</span>').join('')}</div>
     <div class="btns"><button class="mp" onclick="select(${s.i}, true)">지도에서 보기</button>
       <a class="gm" href="${gmap(s)}" target="_blank">구글맵 길찾기</a></div>
   </div>`).join('');
