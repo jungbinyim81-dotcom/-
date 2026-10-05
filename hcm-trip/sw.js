@@ -1,4 +1,4 @@
-const CACHE = "hcm-trip-20261005-1619";
+const CACHE = "hcm-trip-20261005-1634";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./icon.svg", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", e => {
   self.skipWaiting();
