@@ -239,6 +239,21 @@ textarea.inp{resize:none;line-height:1.6}
   color:var(--dim);font-size:26px;font-weight:300}
 .bar{height:5px;border-radius:3px;background:var(--card2);overflow:hidden;margin:10px 0}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,#ff8fa6,#e8547a);transition:width .2s}
+/* 사진에 글씨 넣기 */
+.upgrid .u .tx{position:absolute;left:4px;bottom:4px;height:24px;padding:0 8px;border-radius:12px;
+  background:rgba(0,0,0,.62);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;gap:3px}
+.upgrid .u .tx.on{background:var(--rose2)}
+.uphint{font-size:11.5px;color:var(--dim);margin:-6px 0 12px;text-align:center}
+#mTx{z-index:320}
+.txwrap{display:flex;justify-content:center;margin-bottom:8px}
+#txCv{border-radius:12px;touch-action:none;background:#000;max-width:100%}
+.txbar{display:flex;gap:7px;margin-bottom:12px}
+.txbar button{flex:1;padding:10px 4px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-size:13.5px;font-weight:700}
+.txbar .add{color:var(--rose);border-color:var(--rose)}
+.txcol{display:flex;gap:9px;flex-wrap:wrap}
+.txcol button{width:30px;height:30px;border-radius:50%;border:2px solid var(--line)}
+.txcol button.on{border-color:#fff;box-shadow:0 0 0 2px var(--rose)}
+.txrng{width:100%;accent-color:var(--rose)}
 
 /* 댓글 시트 */
 .clist{padding:4px 0 8px}
@@ -373,6 +388,35 @@ textarea.inp{resize:none;line-height:1.6}
     <button class="btn primary" id="upSave" onclick="savePost()">사진첩에 담기</button>
     <div class="xs mut" style="text-align:center;margin-top:12px;line-height:1.6">
       사진은 이 폰 안에만 저장돼요. 인터넷 어디에도 올라가지 않습니다.</div>
+  </div>
+</div></div>
+
+<!-- ================= 사진에 글씨 넣기 (스토리식) ================= -->
+<div class="modal" id="mTx"><div class="sheet">
+  <div class="grab"></div>
+  <div class="sh-h"><div class="sh-t">사진에 글씨 넣기</div>
+    <button class="sh-x" onclick="closeTx()">&times;</button></div>
+  <div class="sh-b">
+    <div class="txwrap"><canvas id="txCv"></canvas></div>
+    <div class="xs mut" style="text-align:center;margin:0 0 10px">글씨를 눌러 고르고, 끌어서 옮겨요 · 이모지도 돼요 😊</div>
+    <div class="txbar"><button class="add" onclick="txAdd()">+ 글씨 추가</button>
+      <button onclick="txDel()">이 글씨 삭제</button></div>
+    <div class="fld"><textarea class="inp" id="txT" rows="3" placeholder="사진 위에 쓸 말 (줄바꿈 가능)" oninput="txSet('t',this.value)"></textarea></div>
+    <div class="fld"><label>색</label><div class="txcol" id="txCol"></div></div>
+    <div class="fld"><label>크기</label><input type="range" class="txrng" id="txS" min="2.5" max="14" step="0.5" oninput="txSet('s',this.value/100)"></div>
+    <div class="fld"><label>정렬</label><div class="seg" id="txAl">
+      <button data-v="left" onclick="txSeg('al','left')">왼쪽</button>
+      <button data-v="center" onclick="txSeg('al','center')">가운데</button>
+      <button data-v="right" onclick="txSeg('al','right')">오른쪽</button></div></div>
+    <div class="fld"><label>스타일</label><div class="seg" id="txSt">
+      <button data-v="shadow" onclick="txSeg('st','shadow')">그림자</button>
+      <button data-v="outline" onclick="txSeg('st','outline')">테두리</button>
+      <button data-v="box" onclick="txSeg('st','box')">배경상자</button></div></div>
+    <div class="fld"><label>글꼴</label><div class="seg" id="txF">
+      <button data-v="sans" onclick="txSeg('f','sans')">고딕</button>
+      <button data-v="serif" onclick="txSeg('f','serif')">명조</button></div></div>
+    <div class="btn2"><button class="btn" onclick="clearTx()">글씨 모두 지우기</button>
+      <button class="btn primary" id="txOk" onclick="applyTx()">적용</button></div>
   </div>
 </div></div>
 
@@ -1201,8 +1245,9 @@ function pickFiles(){
 function paintUp(){
   const g=$('upGrid');
   g.innerHTML=UP.map((u,i)=>
-    `<div class="u"><img src="${u.url}" alt="">`+
-    (u.vid?`<div class="vplay">${ICO_PLAY}</div><div class="vb">${ICO_PLAY}${dur2(u.dur)}</div>`:'')+
+    `<div class="u"><img src="${u.url}" alt=""${u.vid?'':` onclick="openTx(${i})"`}>`+
+    (u.vid?`<div class="vplay">${ICO_PLAY}</div><div class="vb">${ICO_PLAY}${dur2(u.dur)}</div>`
+          :`<button class="tx${u.tx?' on':''}" onclick="openTx(${i})">Aa${u.tx?' ✓':''}</button>`)+
     `<button class="x" onclick="rmUp(${i})">&times;</button></div>`).join('')
     +(UP.length<MAXUP?`<div class="u add" onclick="pickFiles()">+</div>`:'');
   const nv=UP.filter(u=>u.vid).length, np=UP.length-nv;
@@ -1215,8 +1260,192 @@ function paintUp(){
   }
   $('upSave').textContent=label;
   const c=$('upCnt');if(c)c.textContent=UP.length+' / '+MAXUP;
+  /* 사진이 있으면 글씨 넣기 안내 한 줄 */
+  let h=$('upHint');
+  if(!h){h=document.createElement('div');h.id='upHint';h.className='uphint';g.after(h);}
+  h.textContent=UP.some(u=>!u.vid)?'사진을 누르면 글씨를 넣을 수 있어요 (인스타 스토리처럼)':'';
 }
 function rmUp(i){URL.revokeObjectURL(UP[i].url);UP.splice(i,1);paintUp();}
+
+/* ---------------- 사진에 글씨 넣기 (인스타 스토리식) ----------------
+   - 글씨 여러 개를 사진 아무 데나 놓는다. 누르면 고르고, 끌면 옮긴다.
+   - 글씨는 사진에 '구워 넣는다'(원본·썸네일 jpeg 에 직접 그림) → 동기화·백업은 손댈 것 없음.
+   - 원본 파일(u.src)에서 매번 다시 그리므로 여러 번 고쳐도 화질이 안 깎인다.
+   - 크기 s = 사진 짧은 변 대비 비율, 위치 x,y = 글씨 덩어리 중심의 0~1 상대좌표
+     → 미리보기·원본·썸네일이 같은 모양으로 나온다. */
+const TXCOLS=['#ffffff','#111111','#ffd84d','#ff6f8f','#7aa7ff','#7be0b0'];
+let TXI=-1,TXS=[],TXK=-1,TXB=null,TXBASE=null,TXRAF=0,TXBOX=[];
+function txNew(y){return{t:'',c:'#ffffff',s:.04,st:'shadow',f:'sans',al:'left',x:.5,y:y==null?.5:y};}
+function txCur(){return TXS[TXK]||null;}
+async function openTx(i){
+  const u=UP[i];if(!u||u.vid||!u.src)return;
+  TXI=i;
+  TXS=(u.tx&&u.tx.length)?u.tx.map(o=>Object.assign({},o)):[txNew(.5)];
+  TXK=TXS.length-1;
+  try{TXB=await decode(u.src);}catch(e){return toast('사진을 읽지 못했어요');}
+  /* 미리보기 바탕은 한 번만 축소해 둔다 — 끌 때마다 큰 원본을 다시 그리면 폰이 버벅인다 */
+  const w=TXB.width||TXB.naturalWidth,h=TXB.height||TXB.naturalHeight;
+  const maxW=Math.min(560,window.innerWidth-36),maxH=window.innerHeight*.45;
+  const sc=Math.min(maxW/w,maxH/h),dpr=Math.min(2,window.devicePixelRatio||1);
+  const cw=Math.round(w*sc),ch=Math.round(h*sc);
+  TXBASE=document.createElement('canvas');TXBASE.width=Math.round(cw*dpr);TXBASE.height=Math.round(ch*dpr);
+  TXBASE.getContext('2d').drawImage(TXB,0,0,TXBASE.width,TXBASE.height);
+  const cv=$('txCv');cv.width=TXBASE.width;cv.height=TXBASE.height;cv.style.width=cw+'px';cv.style.height=ch+'px';
+  $('txCol').innerHTML=TXCOLS.map(c=>`<button data-c="${c}" style="background:${c}" onclick="txSet('c','${c}')"></button>`).join('');
+  txPaintCtl();txDraw();
+  $('mTx').classList.add('on');
+  if(!txCur().t)setTimeout(()=>$('txT').focus(),250);
+}
+function closeTx(){
+  $('mTx').classList.remove('on');
+  if(TXB&&TXB.close)TXB.close();
+  TXB=null;TXBASE=null;TXI=-1;TXS=[];TXK=-1;
+}
+function txPaintCtl(){
+  const T=txCur()||txNew();
+  $('txT').value=T.t;$('txS').value=T.s*100;
+  [...$('txCol').children].forEach(b=>b.classList.toggle('on',b.dataset.c===T.c));
+  segPick('txSt',T.st);segPick('txF',T.f);segPick('txAl',T.al);
+}
+function txSet(k,v){const T=txCur();if(!T)return;T[k]=v;if(k!=='t')txPaintCtl();txDraw();}
+function txSeg(k,v){txSet(k,v);buzz(8);}
+function txAdd(){
+  /* 새 글씨는 기존 글씨들과 세로로 가장 멀리 떨어진 자리에 놓는다 */
+  const used=TXS.filter(o=>o.t.trim()).map(o=>o.y);
+  const slots=[.82,.18,.5,.66,.34];
+  const y=used.length?slots.reduce((best,v)=>{
+    const d=Math.min(...used.map(u=>Math.abs(u-v))),bd=Math.min(...used.map(u=>Math.abs(u-best)));
+    return d>bd?v:best;},slots[0]):slots[0];
+  const T=txNew(y);
+  const P=txCur();if(P){T.c=P.c;T.s=P.s;T.st=P.st;T.f=P.f;T.al=P.al;}   /* 직전 글씨 모양 이어받기 */
+  TXS.push(T);TXK=TXS.length-1;txPaintCtl();txDraw();
+  setTimeout(()=>$('txT').focus(),60);buzz(8);
+}
+function txDel(){
+  if(TXK<0)return;
+  TXS.splice(TXK,1);
+  if(!TXS.length)TXS=[txNew(.5)];
+  TXK=TXS.length-1;txPaintCtl();txDraw();buzz(8);
+}
+function txDraw(){
+  cancelAnimationFrame(TXRAF);
+  TXRAF=requestAnimationFrame(()=>{
+    const cv=$('txCv');if(!TXBASE)return;
+    const cx=cv.getContext('2d');
+    cx.clearRect(0,0,cv.width,cv.height);cx.drawImage(TXBASE,0,0);
+    TXBOX=TXS.map(T=>drawTxt(cx,cv.width,cv.height,T));
+    /* 고른 글씨는 점선 테두리로 표시 (미리보기에만, 사진에는 안 들어감) */
+    const b=TXBOX[TXK];
+    if(b){
+      cx.save();cx.setLineDash([6,5]);cx.lineWidth=2;cx.strokeStyle='rgba(255,111,143,.95)';
+      cx.strokeRect(b.x0-4,b.y0-4,b.x1-b.x0+8,b.y1-b.y0+8);cx.restore();
+    }else if(txCur()&&!txCur().t.trim()){
+      /* 아직 빈 글씨면 놓일 자리를 안내 */
+      const T=txCur(),fs=Math.min(cv.width,cv.height)*T.s;
+      cx.save();cx.font=`700 ${fs}px sans-serif`;cx.textAlign='center';cx.textBaseline='middle';
+      cx.fillStyle='rgba(255,255,255,.75)';cx.shadowColor='rgba(0,0,0,.6)';cx.shadowBlur=fs*.3;
+      cx.fillText('여기에 글씨',T.x*cv.width,T.y*cv.height);cx.restore();
+    }
+  });
+}
+/* 글씨 한 덩어리 그리기 — 미리보기/원본/썸네일 공용. 그린 영역(px)을 돌려준다 */
+function drawTxt(cx,w,h,T){
+  const t=(T&&T.t||'').replace(/\s+$/,'');
+  if(!t.trim())return null;
+  const lines=t.split('\n');
+  const fs=Math.max(8,Math.round(Math.min(w,h)*T.s));
+  cx.save();
+  cx.font=(T.f==='serif'
+    ?`700 ${fs}px 'AppleMyungjo','Nanum Myeongjo','NanumMyeongjo','Batang','Noto Serif KR',serif`
+    :`700 ${fs}px 'Pretendard',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif`);
+  cx.textBaseline='middle';cx.lineJoin='round';cx.textAlign=T.al||'left';
+  const lh=fs*1.3,bw=Math.max(...lines.map(l=>cx.measureText(l).width)),bh=lh*lines.length;
+  const pad=T.st==='box'?fs*.45:fs*.15;
+  /* 사진 밖으로 삐져나가지 않게 중심 좌표를 가둔다 */
+  const hw=Math.min(w/2,bw/2+pad),hh=Math.min(h/2,bh/2+pad);
+  const X=Math.min(w-hw,Math.max(hw,T.x*w)),Y=Math.min(h-hh,Math.max(hh,T.y*h));
+  const lx=T.al==='center'?X:(T.al==='right'?X+bw/2:X-bw/2);
+  const light=txLight(T.c);
+  if(T.st==='box'){
+    cx.fillStyle=light?'rgba(0,0,0,.5)':'rgba(255,255,255,.85)';
+    const r=fs*.35,x0=X-bw/2-pad,y0=Y-bh/2-pad*.6,bw2=bw+pad*2,bh2=bh+pad*1.2;
+    cx.beginPath();
+    if(cx.roundRect)cx.roundRect(x0,y0,bw2,bh2,r);else cx.rect(x0,y0,bw2,bh2);
+    cx.fill();
+  }
+  lines.forEach((l,k)=>{
+    const y=Y-bh/2+lh*(k+.5);
+    if(T.st==='outline'){
+      cx.strokeStyle=light?'rgba(0,0,0,.85)':'rgba(255,255,255,.95)';
+      cx.lineWidth=Math.max(2,fs*.16);cx.strokeText(l,lx,y);
+    }else if(T.st==='shadow'){
+      cx.shadowColor=light?'rgba(0,0,0,.55)':'rgba(255,255,255,.7)';
+      cx.shadowBlur=fs*.25;cx.shadowOffsetY=fs*.04;
+    }
+    cx.fillStyle=T.c;cx.fillText(l,lx,y);
+    cx.shadowColor='transparent';
+  });
+  cx.restore();
+  return{x0:X-bw/2-pad,y0:Y-bh/2-pad,x1:X+bw/2+pad,y1:Y+bh/2+pad};
+}
+function txLight(c){const n=parseInt(c.slice(1),16);
+  return ((n>>16)*299+((n>>8)&255)*587+(n&255)*114)/1000>140;}
+/* 손가락: 글씨를 누르면 고르고, 끌면 옮긴다. 빈 곳을 누르면 지금 고른 글씨를 그 자리로 */
+(function bindTxDrag(){
+  let on=false,dx=0,dy=0;
+  function pt(e){const cv=$('txCv'),r=cv.getBoundingClientRect();
+    return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height,px:(e.clientX-r.left)/r.width*cv.width,py:(e.clientY-r.top)/r.height*cv.height};}
+  function init(){
+    const cv=$('txCv');if(!cv)return;
+    cv.addEventListener('pointerdown',e=>{
+      if(!TXS.length)return;
+      const p=pt(e);
+      let hit=-1;
+      for(let k=TXBOX.length-1;k>=0;k--){const b=TXBOX[k];
+        if(b&&p.px>=b.x0-10&&p.px<=b.x1+10&&p.py>=b.y0-10&&p.py<=b.y1+10){hit=k;break;}}
+      if(hit>=0&&hit!==TXK){TXK=hit;txPaintCtl();}
+      const T=txCur();if(!T)return;
+      /* 글씨를 잡았으면 잡은 지점과 중심의 차이를 유지 (손가락 밑으로 순간이동하지 않게) */
+      dx=hit>=0?T.x-p.x:0;dy=hit>=0?T.y-p.y:0;
+      on=true;cv.setPointerCapture(e.pointerId);
+      T.x=Math.min(1,Math.max(0,p.x+dx));T.y=Math.min(1,Math.max(0,p.y+dy));txDraw();
+    });
+    cv.addEventListener('pointermove',e=>{if(!on)return;const T=txCur(),p=pt(e);
+      T.x=Math.min(1,Math.max(0,p.x+dx));T.y=Math.min(1,Math.max(0,p.y+dy));txDraw();});
+    const end=()=>{on=false;};
+    cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+/* 원본(1600px)·썸네일(480px)을 글씨까지 넣어 다시 만든다 */
+function drawWithTxt(bmp,maxEdge,q,L){
+  const w=bmp.width||bmp.naturalWidth,h=bmp.height||bmp.naturalHeight;
+  const sc=Math.min(1,maxEdge/Math.max(w,h));
+  const cw=Math.max(1,Math.round(w*sc)),ch=Math.max(1,Math.round(h*sc));
+  const cv=document.createElement('canvas');cv.width=cw;cv.height=ch;
+  const cx=cv.getContext('2d');
+  cx.fillStyle='#000';cx.fillRect(0,0,cw,ch);
+  cx.drawImage(bmp,0,0,cw,ch);
+  (L||[]).forEach(T=>drawTxt(cx,cw,ch,T));
+  return new Promise(res=>{
+    if(cv.toBlob)cv.toBlob(b=>res(b||dataToBlob(cv,q)),'image/jpeg',q);
+    else res(dataToBlob(cv,q));
+  });
+}
+async function txBake(L){
+  const u=UP[TXI];if(!u||!TXB)return;
+  const btn=$('txOk');btn.disabled=true;btn.innerHTML='<span class="spin"></span>';
+  try{
+    const full=await drawWithTxt(TXB,1600,.82,L),thumb=await drawWithTxt(TXB,480,.75,L);
+    URL.revokeObjectURL(u.url);
+    u.full=full;u.thumb=thumb;u.url=URL.createObjectURL(thumb);
+    u.tx=(L&&L.length)?L.map(o=>Object.assign({},o)):null;
+    paintUp();closeTx();buzz(12);
+  }catch(e){toast('글씨를 넣지 못했어요');}
+  finally{btn.disabled=false;btn.textContent='적용';}
+}
+function applyTx(){txBake(TXS.filter(T=>T.t.trim()));}   /* 빈 글씨는 버린다. 하나도 없으면 원래 사진 */
+function clearTx(){TXS=[];txBake([]);}
 
 /* 이미지 축소 — 원본 1600px q.82 / 썸네일 480px q.75
    동영상이면 원본은 그대로 두고 첫 장면만 뽑아 썸네일을 만든다 */
@@ -1227,7 +1456,7 @@ async function shrink(file){
   const thumb=await draw(bmp,480,.75);
   const w=bmp.width,h=bmp.height;
   if(bmp.close)bmp.close();
-  return{full,thumb,w,h,url:URL.createObjectURL(thumb)};
+  return{full,thumb,w,h,url:URL.createObjectURL(thumb),src:file};
 }
 /* 동영상 — 원본은 손대지 않고 대표 장면 한 컷만 뽑는다.
    맨 앞 프레임은 까맣게 나오는 경우가 많아 0.6초(또는 길이의 10%) 지점을 쓴다.
