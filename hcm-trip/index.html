@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1A2D50">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<title>호치민 3박4일 · 인천 원팀4팀</title>
+<style>
+:root {
+  --navy:#1A2D50; --ink:#222; --sub:#6b7686; --line:#e6eaf1; --bg:#f4f6fa;
+  --red:#c0392b; --cash:#c76a00; --card:#1565c0; --ok:#1e8e4e; --todo:#d35400;
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-text-size-adjust:100%; }
+body { font-family:'맑은 고딕','Malgun Gothic',-apple-system,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; padding-bottom:40px; }
+a { color:inherit; }
+.wrap { max-width:820px; margin:0 auto; padding:0 16px; }
+
+/* 헤더 */
+header { background:var(--navy); color:#fff; padding:22px 0 34px; }
+header h1 { font-size:22px; letter-spacing:-0.4px; }
+header .sub { font-size:13px; color:#a9bcd4; margin-top:4px; }
+header .who { font-size:12px; color:#8aa1be; margin-top:10px; }
+
+/* 핵심 카드 */
+.facts { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin:-20px 0 24px; }
+.fact { background:#fff; border-radius:10px; padding:12px 14px; box-shadow:0 1px 4px rgba(26,45,80,.09); }
+.fact .l { font-size:11px; color:#8794a8; font-weight:700; }
+.fact .v { font-size:15px; font-weight:700; color:var(--navy); margin-top:2px; }
+.fact .n { font-size:11.5px; color:var(--sub); margin-top:2px; }
+
+/* 섹션 */
+section { margin-bottom:28px; }
+h2.sec { font-size:16px; color:var(--navy); margin-bottom:10px; }
+.day-hd { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 10px; padding-bottom:8px; border-bottom:2px solid var(--navy); }
+.day-hd .no { background:var(--navy); color:#fff; font-size:12px; font-weight:700; padding:3px 9px; border-radius:5px; }
+.day-hd .dt { font-size:16px; font-weight:700; color:var(--navy); }
+.day-hd .tag { font-size:12.5px; color:var(--sub); }
+.day-hd .sum { margin-left:auto; font-size:12px; color:var(--sub); }
+.day-intro { font-size:12.5px; color:#4a5568; background:#fff; padding:10px 14px; border-bottom:1px solid var(--line); }
+
+/* 타임라인 */
+.tl { background:#fff; }
+.it { display:grid; grid-template-columns:56px 1fr auto; gap:0 12px; padding:12px 14px; border-bottom:1px solid var(--line); }
+.it:last-child { border-bottom:none; }
+.it.key { background:#fffcf2; }
+.it .tm { font-weight:700; color:var(--navy); font-size:13.5px; }
+.it .tt { font-weight:700; font-size:14px; }
+.it .tt .hi { color:var(--red); }
+.it .ds { font-size:12.5px; color:var(--sub); margin-top:3px; }
+.it .ds b { color:#4a5568; }
+.it .meta { margin-top:5px; display:flex; flex-wrap:wrap; gap:5px; }
+.it .cost { font-size:12px; font-weight:700; text-align:right; white-space:nowrap; }
+.cash { color:var(--cash); } .card { color:var(--card); } .free { color:#a0aab8; font-weight:400; }
+.chip { font-size:11px; padding:1px 7px; border-radius:10px; border:1px solid; white-space:nowrap; text-decoration:none; }
+.chip.map { color:#1565c0; border-color:#b9cdf0; background:#f3f7ff; }
+.chip.ok { color:var(--ok); border-color:#b5dfc6; background:#f1faf4; }
+.chip.todo { color:var(--todo); border-color:#f3c9a8; background:#fff6ef; }
+.chip.rain { color:#5a6880; border-color:#cfd6e2; background:#f6f8fb; }
+
+/* 보류 */
+.hold { background:#fff; border:2px dashed #c3ccda; border-radius:10px; padding:20px 18px; text-align:center; margin-top:10px; }
+.hold .t { font-size:15px; font-weight:700; color:#5a6880; }
+.hold .d { font-size:12.5px; color:#8794a8; margin-top:6px; line-height:1.7; }
+.hold .b { font-size:13px; color:var(--navy); font-weight:700; margin-top:10px; }
+
+/* 표 */
+table.tb { width:100%; border-collapse:collapse; background:#fff; font-size:13px; }
+table.tb th { background:#eef1f7; font-size:11px; color:#5a6880; padding:8px 10px; text-align:left; border-bottom:1px solid #dde3ec; }
+table.tb td { padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+table.tb td.r, table.tb th.r { text-align:right; white-space:nowrap; }
+table.tb td.nt { font-size:12px; color:var(--sub); }
+table.tb tr.sum td { background:#f7f9fc; font-weight:700; color:var(--navy); border-top:1.5px solid #ccd5e2; }
+table.tb tr.hold-row td { color:#a0aab8; font-style:italic; }
+table.tb + table.tb { margin-top:12px; }
+.code { font-family:Consolas,monospace; font-size:12.5px; background:#f1f3f8; padding:1px 5px; border-radius:4px; }
+
+/* 체크리스트 / 노트 */
+.box { background:#fff; border-radius:10px; padding:14px 16px; }
+.box h3 { font-size:13px; color:var(--navy); margin:4px 0 6px; }
+.box h3:not(:first-child) { margin-top:14px; }
+.box ul { list-style:none; }
+.box li { font-size:12.5px; color:#4a5568; padding:4px 0 4px 20px; position:relative; line-height:1.6; }
+.box li:before { content:''; position:absolute; left:2px; top:9px; width:10px; height:10px; border:1.5px solid #9aa7bb; border-radius:3px; }
+.box.notes li:before { width:4px; height:4px; border:none; border-radius:50%; background:var(--navy); top:12px; left:5px; }
+.box li b { color:var(--red); }
+.box li .who { font-size:11px; color:#8794a8; }
+
+/* 상단 섹션 내비 */
+.topnav { position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--line); box-shadow:0 1px 6px rgba(26,45,80,.06); }
+.topnav .in { max-width:820px; margin:0 auto; padding:0 10px; display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; }
+.topnav .in::-webkit-scrollbar { display:none; }
+.topnav a { flex:0 0 auto; padding:12px 12px 10px; font-size:13.5px; font-weight:700; color:#6b7686; text-decoration:none; border-bottom:3px solid transparent; white-space:nowrap; }
+.topnav a.on { color:var(--navy); border-bottom-color:var(--navy); }
+.anchor { scroll-margin-top:52px; }
+html { scroll-behavior:smooth; }
+.wxchip { font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:10px; text-decoration:none; background:#eef3fb; color:#2f5d9e; }
+
+/* 날씨 */
+.wx-sum { background:#fff; border-radius:10px; padding:12px 14px; font-size:13px; color:#4a5568; line-height:1.65; margin-bottom:10px; }
+.wx-sum b { color:var(--navy); }
+.wx-day { background:#fff; border-radius:10px; margin-bottom:10px; overflow:hidden; box-shadow:0 1px 4px rgba(26,45,80,.06); }
+.wx-day .hd { display:flex; align-items:baseline; gap:8px; padding:10px 14px; border-bottom:1px solid var(--line); }
+.wx-day .hd .d { font-weight:800; color:var(--navy); font-size:14.5px; }
+.wx-day .hd .t { font-size:12.5px; color:var(--sub); }
+.wx-day .hd .hi { margin-left:auto; font-size:12.5px; font-weight:700; color:#c0392b; white-space:nowrap; }
+.wx-row { display:grid; grid-template-columns:repeat(3,1fr); }
+.wx-c { padding:10px 12px; border-right:1px solid var(--line); }
+.wx-c:last-child { border-right:none; }
+.wx-c .sl { font-size:11px; font-weight:800; color:#8794a8; }
+.wx-c .ic { font-size:22px; line-height:1.2; margin-top:2px; }
+.wx-c .w { font-size:13px; font-weight:800; margin-top:2px; }
+.wx-c .tp { font-size:12px; color:#4a5568; margin-top:2px; }
+.wx-c .pr { font-size:11.5px; color:#2f5d9e; margin-top:2px; }
+.wx-c .ag { display:inline-block; font-size:10.5px; font-weight:700; padding:1px 6px; border-radius:8px; margin-top:4px; }
+.ag.ok { background:#f1faf4; color:var(--ok); } .ag.mix { background:#fff6ef; color:var(--todo); }
+.wx-c.rain { background:#f3f7ff; } .wx-c.storm { background:#eaf0fb; } .wx-c.off { background:#f7f8fa; color:#a0aab8; }
+.wx-day .ef { padding:9px 14px; font-size:12.5px; color:#4a5568; background:#fffcf2; border-top:1px solid var(--line); line-height:1.6; }
+.wx-day .ef b { color:var(--navy); }
+.wx-src { font-size:11.5px; color:#8794a8; line-height:1.7; padding:4px 2px; }
+@media (max-width:560px) {
+  .wx-c { padding:9px 8px; }
+  .wx-c .ic { font-size:19px; }
+  .wx-c .w { font-size:12px; }
+  .wx-c .tp, .wx-c .pr { font-size:11px; }
+}
+
+/* 지도 */
+#tripmap { height:440px; border-radius:10px; box-shadow:0 1px 4px rgba(26,45,80,.09); background:#e9eef5; }
+.mk { display:inline-block; transform:translate(-50%,-50%); padding:3px 8px; border-radius:12px; color:#fff; font-size:12px; font-weight:800; white-space:nowrap; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.35); cursor:pointer; }
+.pl { background:#fff; border-radius:10px; margin-top:10px; }
+.pl a.row { display:grid; grid-template-columns:62px 1fr auto; gap:0 10px; align-items:center; padding:9px 12px; border-bottom:1px solid var(--line); text-decoration:none; color:inherit; }
+.pl a.row:last-child { border-bottom:none; }
+.pl .num { justify-self:start; padding:2px 8px; border-radius:10px; color:#fff; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer; }
+.pl .nm { font-size:13.5px; font-weight:700; }
+.pl .pn { font-size:12px; color:var(--sub); margin-top:1px; }
+.pl .go { font-size:11.5px; color:#1565c0; font-weight:700; white-space:nowrap; }
+.map-note { font-size:11.5px; color:#8794a8; line-height:1.7; padding:6px 2px 0; }
+@media (max-width:560px) { #tripmap { height:340px; } }
+
+/* 출발 전 체크 */
+.ck-tip { font-size:11.5px; color:#8794a8; margin:-4px 0 8px; }
+.box.ck { margin-bottom:10px; }
+.box.ck li { cursor:pointer; user-select:none; }
+.box.ck li.done { color:#a0aab8; text-decoration:line-through; }
+.box.ck li.done b { color:#a0aab8; }
+.box.ck li.done:before { background:var(--ok); border-color:var(--ok); }
+.box.ck li.done:after { content:''; position:absolute; left:5px; top:10px; width:4px; height:7px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg); }
+.ck-sum { display:grid; grid-template-columns:1fr 1fr; gap:6px 14px; font-size:12.5px; color:#4a5568; }
+.ck-sum span { display:inline-block; min-width:52px; font-size:11px; font-weight:800; color:#8794a8; }
+.ck-sum b { color:var(--navy); }
+@media (max-width:560px) { .ck-sum { grid-template-columns:1fr; } }
+
+footer { text-align:center; font-size:11px; color:#97a3b5; padding:20px 16px 0; }
+
+@media (max-width:560px) {
+  header h1 { font-size:19px; }
+  .it { grid-template-columns:46px 1fr; padding:11px 12px; }
+  .it .tm { font-size:12.5px; }
+  .it .cost { grid-column:2; text-align:left; margin-top:4px; }
+  .day-hd .sum { margin-left:0; width:100%; }
+}
+</style>
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="호치민 여행">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js'); });
+}
+</script>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>호치민 3박4일</h1>
+    <div class="sub">2026.10.08(목) ~ 10.11(일) · 인천 원팀4팀 포상여행</div>
+    <div class="who">임정빈 · 전은성 · 임대현 · 황태영 · 김혜성 (+동반 1) · 총 6명 · 총무 임대현</div>
+  </div>
+</header>
+
+<nav class="topnav"><div class="in">
+  <a href="#plan" class="on">일정</a>
+  <a href="#weather">날씨</a>
+  <a href="#budget">경비</a>
+  <a href="#before">출발 전 체크</a>
+  <a href="#during">여행 중 체크</a>
+  <a href="#map">지도</a>
+</div></nav>
+
+<div class="wrap">
+
+  <div id="plan" class="anchor"></div>
+  <div class="facts">
+    <div class="fact">
+      <div class="l">가는 편 · PNR CX9●●●</div>
+      <div class="v">KE471 09:05</div>
+      <div class="n">인천 T2 → 탄손녓 12:35</div>
+    </div>
+    <div class="fact">
+      <div class="l">오는 편 · PNR CX5●●●</div>
+      <div class="v">KE472 13:55</div>
+      <div class="n">탄손녓 → 인천 T2 21:25</div>
+    </div>
+    <div class="fact">
+      <div class="l">숙소 · 체크인 14:00</div>
+      <div class="v">에어비앤비 3채</div>
+      <div class="n">빈홈 센트럴파크 (랜드마크81 단지)</div>
+    </div>
+    <div class="fact">
+      <div class="l">현지 가용</div>
+      <div class="v">349만원</div>
+      <div class="n">카드 249 · 현금 100 · 일정 반영 275 (카드 초과 26은 현금)</div>
+    </div>
+  </div>
+
+  <!-- DAY 1 -->
+  <section>
+    <div class="day-hd">
+      <span class="no">DAY 1</span><span class="dt">10.08 (목)</span><span class="tag">도착 · 스파 · 해산물 골목</span><a class="wxchip" href="#weather">오후 강한 스콜 · 저녁 비 가능</a>
+      <span class="sum">카드 108만</span>
+    </div>
+    <div class="day-intro">오후 스콜 시간(14~18시)은 전부 실내 일정으로 채웠습니다. 저녁은 이번 여행에서 가장 "로컬"한 한 끼입니다.</div>
+    <div class="tl">
+      <div class="it key">
+        <div class="tm">06:30</div>
+        <div><div class="tt">인천공항 <span class="hi">제2터미널</span> 집결</div>
+          <div class="ds">대한항공 카운터 · 여권(유효기간 2027.04.11 이후) · eSIM 개통 확인</div></div>
+        <div class="cost free">—</div>
+      </div>
+      <div class="it">
+        <div class="tm">09:05</div>
+        <div><div class="tt">KE471 출발</div>
+          <div class="ds">기내식 제공 · 위탁 23kg 1개 + 기내 10kg · 시차 −2시간</div></div>
+        <div class="cost free">—</div>
+      </div>
+      <div class="it">
+        <div class="tm">12:35</div>
+        <div><div class="tt">탄손녓 공항 도착 · 입국</div>
+          <div class="ds">한국인 무비자 45일 · 입국심사+수하물 1시간 안팎 · 도착층에서 그랩 7인승 2대 호출</div></div>
+        <div class="cost free">—</div>
+      </div>
+      <div class="it">
+        <div class="tm">13:40</div>
+        <div><div class="tt">그랩 → 빈홈 센트럴파크</div>
+          <div class="ds">약 8km · 25~35분 · 대당 20~25만 VND(공항 픽업료 포함) · 동·호수는 출발 전 단톡에 공유된 주소 그대로 입력</div></div>
+        <div class="cost card">카드 3만</div>
+      </div>
+      <div class="it">
+        <div class="tm">14:15</div>
+        <div><div class="tt">체크인 (3채 셀프 체크인)</div>
+          <div class="ds">1BR(호스트 Uyên) 김혜성·동반 / 2BR(호스트 Tín) 2채 나머지 4명 · 짐만 풀고 바로 나옵니다</div></div>
+        <div class="cost free">선결제</div>
+      </div>
+      <div class="it">
+        <div class="tm">14:40</div>
+        <div><div class="tt">늦은 점심 · Phở Hồi 쌀국수</div>
+          <div class="ds">랜드마크81에서 도보 6~8분 · 로컬 쌀국수 · 기내식 먹었어도 사이드·음료까지 편하게 · 1인 약 8천원 기준</div>
+          <div class="meta"><a class="chip map" href="https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%9F+H%E1%BB%93i+Vinhomes+Central+Park" target="_blank">지도</a><span class="chip ok">예약 불필요</span></div></div>
+        <div class="cost card">카드 5만</div>
+      </div>
+      <div class="it">
+        <div class="tm">15:30</div>
+        <div><div class="tt">Vincom 랜드마크81 지하 마트 장보기</div>
+          <div class="ds">3박치 한 번에 · 물·맥주·과일·라면·아침거리·안주 · <b>맥주는 3박 2차까지 모자라지 않게</b> · 숙소 3채에 나눠 넣기 · 1인 7.5만원 기준</div>
+          <div class="meta"><a class="chip map" href="https://www.google.com/maps/search/?api=1&query=Vincom+Center+Landmark+81" target="_blank">지도</a></div></div>
+        <div class="cost card">카드 45만</div>
+      </div>
+      <div class="it">
+        <div class="tm">16:30</div>
+        <div><div class="tt">Sawasdee Thai Wellness &amp; Spa</div>
+          <div class="ds">숙소 인근 · 1인 60만 VND · 비행 피로 풀고 저녁 준비</div>
+          <div class="meta"><a class="chip map" href="https://www.google.com/maps/search/?api=1&query=Sawasdee+Thai+Wellness+Spa+Vinhomes+Central+Park" target="_blank">지도</a><span class="chip todo">6인 예약 필요 · 16:30</span></div></div>
+        <div class="cost card">카드 21만</div>
+      </div>
+      <div class="it">
+        <div class="tm">18:30</div>
+        <div><div class="tt">그랩 → 빈카인 해산물 골목</div>
+          <div class="ds">20~25분 (스파 끝나고 바로 출발) · 옷은 편하게(에어컨 없음) · 모기기피제 바르고 출발</div></div>
+        <div class="cost card">카드 2만</div>
+      </div>
+      <div class="it key">
+        <div class="tm">19:00</div>
+        <div><div class="tt"><span class="hi">Ốc Oanh</span> · 534 Vĩnh Khánh</div>
+          <div class="ds">미슐랭 가이드 등재 달팽이·조개 요리 노상식당 · <b>버터 마늘 가리비, 타마린드 소스 게, 옥수수 버터구이</b> · 사이공 맥주는 짝으로 · 1인 5만원 기준(맥주 넉넉히) · 위생 기대는 금지</div>
+          <div class="meta"><a class="chip map" href="https://www.google.com/maps/search/?api=1&query=%E1%BB%90c+Oanh+534+V%C4%A9nh+Kh%C3%A1nh" target="_blank">지도</a><span class="chip ok">예약 불가 · 줄서기</span><span class="chip rain">비 오면 천막 아래 그대로 영업</span></div></div>
+        <div class="cost card">카드 30만</div>
+      </div>
+      <div class="it">
+        <div class="tm">21:00</div>
+        <div><div class="tt">복귀 · 빈홈 강변공원 산책</div>
+          <div class="ds">랜드마크81 발치의 사이공강변 · 밤 조명 · <b>팀 단체사진 1컷</b></div></div>
+        <div class="cost card">카드 2만</div>
+      </div>
+      <div class="it">
+        <div class="tm">22:00</div>
+        <div><div class="tt">숙소 2차</div>
+          <div class="ds">장본 맥주·안주 (장보기에 포함) · 다음날 DAY 2 공지</div></div>
+        <div class="cost free">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section>
+    <div class="day-hd">
+      <span class="no">DAY 2</span><span class="dt">10.09 (금 · 한글날)</span><span class="tag">오전 자유 · 점심 · 오후 자유</span><a class="wxchip" href="#weather">오전 흐림 · 오후 스콜</a>
+      <span class="sum">카드 22만</span>
+    </div>
+    <div class="day-intro">단체 일정은 점심 한 끼뿐입니다. 전날 늦게까지 놀았으니 오전은 푹 쉬고, 12:30 점심 먹고 나면 저녁까지 각자 자유시간입니다.</div>
+    <div class="tl">
+      <div class="it">
+        <div class="tm">~11:30</div>
+        <div><div class="tt">오전 자유시간</div>
+          <div class="ds">늦잠 · 강변공원 산책 · 랜드마크81 몰 구경 · 아침은 장본 것으로 가볍게 (점심이 12:30)</div></div>
+        <div class="cost free">—</div>
+      </div>
+      <div class="it">
+        <div class="tm">11:50</div>
+        <div><div class="tt">숙소 로비 집결 · 그랩 → 레 탄 톤</div>
+          <div class="ds">7인승 2대 · 20~25분 · 대당 10~15만 VND · 벤탄시장 근처</div></div>
+        <div class="cost card">카드 2만</div>
+      </div>
+      <div class="it key">
+        <div class="tm">12:30</div>
+        <div><div class="tt">점심 · <span class="hi">Bếp Mẹ Ỉn</span> 레 탄 톤점</div>
+          <div class="ds">136 Lê Thánh Tôn · 10:30 오픈 · 미슐랭 가이드 등재 베트남 가정식 · <b>반쎄오, 분짜, 짜조, 모닝글로리 볶음</b> 여러 개 시켜 나눠 먹기 · 맥주 곁들여서 · 1인 약 3.3만원(55만 VND) 기준</div>
+          <div class="meta"><a class="chip map" href="https://www.google.com/maps/search/?api=1&query=B%E1%BA%BFp+M%E1%BA%B9+%E1%BB%88n+136+L%C3%AA+Th%C3%A1nh+T%C3%B4n" target="_blank">지도</a><span class="chip ok">예약 완료 · 12:30 · 6인</span></div></div>
+        <div class="cost card">카드 20만</div>
+      </div>
+      <div class="it key">
+        <div class="tm">14:00</div>
+        <div><div class="tt">단체 일정 종료 · <span class="hi">오후 자유시간</span></div>
+          <div class="ds">벤탄시장 바로 앞이라 시내에서 바로 흩어지기 좋음 · 근처 추천: 벤탄시장 · 중앙우체국·노트르담 성당(도보 15분) · 카페 아파트먼트(응우옌후에 거리) · 루프탑 바 · 김혜성 사원은 동반과 별도 일정 · 저녁은 조별 자유, 귀가 시간 단톡 공유</div></div>
+        <div class="cost free">예비비</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section>
+    <div class="day-hd">
+      <span class="no">DAY 3</span><span class="dt">10.10 (토)</span><span class="tag">쇼핑 · 마사지 · 66층 만찬 · 부이비엔</span><a class="wxchip" href="#weather">오전 소나기 · 오후 비</a>
+      <span class="sum">카드 134만</span>
+    </div>
+    <div class="day-intro">낮에 시내(구 1군)에서 쇼핑·마사지로 몸을 풀고, 해질녘에 66층 만찬, 토요일 밤 부이비엔으로 마무리하는 여행의 메인 데이입니다.</div>
+    <div class="tl">
+      <div class="it">
+        <div class="tm">09:00</div>
+        <div><div class="tt">숙소 조식</div>
+          <div class="ds">장본 것으로 · 점심이 12:30이라 가볍게</div></div>
+        <div class="cost free">장보기</div>
+      </div>
+      <div class="it">
+        <div class="tm">10:00</div>
+        <div><div class="tt">그랩 → 사이공스퀘어</div>
+          <div class="ds">20~25분</div></div>
+        <div class="cost card">카드 2만</div>
+      </div>
+      <div class="it key">
+        <div class="tm">10:30</div>
+        <div><div class="tt">사이공스퀘어 쇼핑 (2시간)</div>
+          <div class="ds">골프웨어·가방·운동화 · <b>부르는 값의 40~50%부터 흥정</b> · 흩어졌다가 12:20 정문 집결</div>
+          <div class="meta"><a class="chip map" href="https://www.google.com/maps/search/?api=1&query=Saigon+Square+Nam+Ky+Khoi+Nghia" target="_blank">지도</a><span class="chip ok">각자 부담</span></div></div>
+        <div class="cost free">각자</div>
+      </div>
+      <div class="it">
+        <div class="tm">12:20</div>
+        <div><div class="tt">그랩 → 반미 후인화</div>
+          <div class="ds">사이공스퀘어 정문 집결 후 출발 · 약 1.3km · 5~10분 (쇼핑백 들고 땡볕 도보 15분보다 편함)</div></div>
+        <div class="cost card">카드 2만</div>
+      </div>
+      <div class="it key">
+        <div class="tm">12:30</div>
+        <div><div class="tt">점심 · <span class="hi">Bánh Mì Huỳnh Hoa</span> · 26 Lê Thị Riêng</div>
+          <div class="ds">호치민에서 제일 유명한 반미 · 파테·햄·고기가 두툼하게 들어간 큰 사이즈 · 1개 약 7~8만 VND · <b>포장 전문(매장 좌석 없음)</b> · 줄 10~20분 · 사서 길 건너 <b>9월23일 공원</b> 그늘 벤치에서 먹기 · 음료는 옆 노점 사탕수수·코코넛 · 1인 8천원 기준</div>
+          <div class="meta"><a class="chip map" href="https://www.google.com/maps/search/?api=1&query=B%C3%A1nh+M%C3%AC+Hu%E1%BB%B3nh+Hoa+26+L%C3%AA+Th%E1%BB%8B+Ri%C3%AAng" target="_blank">지도</a><span class="chip ok">예약 불가 · 줄서기</span><span class="chip rain">비 오면 포장해서 마사지샵 가는 길에</span></div></div>
+        <div class="cost card">카드 5만</div>
+      </div>
+      <div class="it">
+        <div class="tm">13:10</div>
+        <div><div class="tt">그랩 → 137 마사지</div>
+          <div class="ds">약 1.3km · 5~10분</div></div>
+        <div class="cost card">카드 2만</div>
+      </div>
+      <div class="it">
+        <div class="tm">13:30</div>
+        <div><div class="tt">137 마사지 90분 · 149 Hàm Nghi</div>
+          <div class="ds">족욕·환복 포함 약 1시간 50분 · 스콜 시간대라 실내가 딱 맞음 · 1인 약 50만 VND(추정)</div>
+          <div class="meta"><a class="chip map" href="https://www.google.com/maps/search/?api=1&query=137+Spa+149+H%C3%A0m+Nghi+Ho+Chi+Minh" target="_blank">지도</a><span class="chip todo">6인 예약 필요 · +84 28 3821 7362</span></div></div>
+        <div class="cost card">카드 17만</div>
+      </div>
+      <div class="it">
+        <div class="tm">15:25</div>
+        <div><div class="tt">카페 · <span class="hi">The Workshop Coffee</span> · 27 Ngô Đức Kế</div>
+          <div class="ds">마사지샵에서 도보 8~10분 · 사이공 스페셜티 커피 대표 주자 · 2층 창고형 공간에 큰 창, 창가 자리에서 거리 구경 · <b>핸드드립, 솔티드 커피</b> 추천 · 1인 약 7천원 기준</div>
+          <div class="meta"><a class="chip map" href="https://www.google.com/maps/search/?api=1&query=The+Workshop+Coffee+27+Ng%C3%B4+%C4%90%E1%BB%A9c+K%E1%BA%BF" target="_blank">지도</a><span class="chip ok">예약 불필요</span></div>
+          <div class="ds" style="margin-top:6px">뷰를 원하면 대안: <b>The Café Apartments</b> (42 Nguyễn Huệ, 도보 10분) · 오래된 아파트 층층이 카페가 들어선 건물 · 위층 카페 발코니에서 응우옌후에 광장이 내려다보임 · 엘리베이터 유료(약 3천 VND)</div>
+          <div class="meta"><a class="chip map" href="https://www.google.com/maps/search/?api=1&query=The+Cafe+Apartments+42+Nguyen+Hue" target="_blank">대안 지도</a></div></div>
+        <div class="cost card">카드 4만</div>
+      </div>
+      <div class="it">
+        <div class="tm">16:20</div>
+        <div><div class="tt">그랩 복귀 · 기념품 · 옷 갈아입기</div>
+          <div class="ds">Vincom 랜드마크81에서 콩카페 원두·G7·건망고·캐슈넛(각자) · 샤워 후 만찬 복장으로</div></div>
+        <div class="cost card">카드 2만</div>
+      </div>
+      <div class="it key">
+        <div class="tm">18:00</div>
+        <div><div class="tt"><span class="hi">Oriental Pearl 66층</span> 디너 뷔페</div>
+          <div class="ds">Vinpearl Landmark 81 호텔 · 1인 130만 VND++ (주류 포함, 토요일 가격은 예약 때 재확인) · 봉사료·세금·추가 주류 여유분 포함 1인 약 9만원 기준 · 뷔페 18:00 오픈 · <b>일몰 17:40 직후라 해 진 뒤 푸른 하늘 → 야경</b>으로 넘어가는 걸 식사하며 봄 · 팀장 건배사 · 반바지·슬리퍼는 피하기</div>
+          <div class="meta"><a class="chip map" href="https://www.google.com/maps/search/?api=1&query=Oriental+Pearl+Vinpearl+Landmark+81" target="_blank">지도</a><span class="chip todo">예약 필요 · 18:00 · 6인 창가</span></div></div>
+        <div class="cost card">카드 55만</div>
+      </div>
+      <div class="it">
+        <div class="tm">20:15</div>
+        <div><div class="tt">그랩 → 부이비엔</div>
+          <div class="ds">25~30분 · 거리 초입(데탐 쪽)에서 하차</div></div>
+        <div class="cost card">카드 2만</div>
+      </div>
+      <div class="it key">
+        <div class="tm">20:45</div>
+        <div><div class="tt">부이비엔 워킹스트리트</div>
+          <div class="ds">주말 저녁 차량통제 · 거리 전체가 노상 테이블 · 피크 21시~자정 · 2~3곳 옮겨 다니며 넉넉히 · 1인 약 6.5만원 기준 · 휴대폰·가방은 앞으로</div>
+          <div class="meta"><a class="chip map" href="https://www.google.com/maps/search/?api=1&query=Bui+Vien+Walking+Street" target="_blank">지도</a><span class="chip rain">비 오면 실내 펍으로</span></div></div>
+        <div class="cost card">카드 40만</div>
+      </div>
+      <div class="it">
+        <div class="tm">23:30</div>
+        <div><div class="tt">철수 · 숙소 복귀</div>
+          <div class="ds">그랩은 거리 초입에서 잡는 게 빠름 · 토요일 심야라 호출이 늦을 수 있음 · 다음날 11:10 체크아웃이라 자정 전후로 끊기</div></div>
+        <div class="cost card">카드 3만</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 4 -->
+  <section>
+    <div class="day-hd">
+      <span class="no">DAY 4</span><span class="dt">10.11 (일)</span><span class="tag">각자 아침 · 귀국</span><a class="wxchip" href="#weather">오전 소나기 가능</a>
+      <span class="sum">카드 11만</span>
+    </div>
+    <div class="day-intro">전날 부이비엔 후라 단체 조식 없이 각자 편하게 먹고 체크아웃합니다. 짐은 전날 밤에 싸둡니다.</div>
+    <div class="tl">
+      <div class="it">
+        <div class="tm">09:00</div>
+        <div><div class="tt">기상 · 짐 마무리 · 캐리어 계량</div>
+          <div class="ds">위탁 23kg 1개 · 쇼핑한 만큼 늘어나니 숙소에서 미리 들어보기</div></div>
+        <div class="cost free">—</div>
+      </div>
+      <div class="it">
+        <div class="tm">~10:00</div>
+        <div><div class="tt">아침 · 각자 편하게</div>
+          <div class="ds">숙소 냉장고 털기 (남은 장본 것 소진) · 단지 안 식당·카페 · 그랩푸드 배달 중 편한 대로 · 11:10 체크아웃에만 맞추기 · 1인 1.3만원 기준</div></div>
+        <div class="cost card">카드 8만</div>
+      </div>
+      <div class="it key">
+        <div class="tm">11:10</div>
+        <div><div class="tt">체크아웃 · 그랩 7인승 2대</div>
+          <div class="ds">냉장고·금고·충전기 확인 · 일요일 공항까지 25~35분 · 체크아웃 기준시간이 11:10보다 이르면 호스트에 레이트 체크아웃 요청</div></div>
+        <div class="cost card">카드 3만</div>
+      </div>
+      <div class="it">
+        <div class="tm">11:50</div>
+        <div><div class="tt">공항 도착 · 체크인 · 출국</div>
+          <div class="ds">출발 2시간 전 · 남은 VND는 면세구역에서 소진(한국 재환전 손해)</div></div>
+        <div class="cost free">—</div>
+      </div>
+      <div class="it">
+        <div class="tm">13:55</div>
+        <div><div class="tt">KE472 출발</div>
+          <div class="ds">기내식 제공</div></div>
+        <div class="cost free">—</div>
+      </div>
+      <div class="it key">
+        <div class="tm">21:25</div>
+        <div><div class="tt">인천 <span class="hi">제2터미널</span> 도착 · 해산</div>
+          <div class="ds">10/12(월) 정상 출근</div></div>
+        <div class="cost free">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 숙소 -->
+  <section>
+    <h2 class="sec">숙소 · 예약번호</h2>
+    <table class="tb">
+      <thead><tr><th>구분</th><th>호스트</th><th>배정</th><th>확인코드</th><th class="r">3박</th></tr></thead>
+      <tbody>
+        <tr><td>1베드룸</td><td>Uyên</td><td>김혜성 · 동반</td><td><span class="code">HM4●●●●●●●</span></td><td class="r">245,246</td></tr>
+        <tr><td>2베드룸 A</td><td>Tín</td><td>2명</td><td><span class="code">HMS●●●●●●●</span></td><td class="r">316,891</td></tr>
+        <tr><td>2베드룸 B</td><td>Tín</td><td>2명</td><td><span class="code">HMS●●●●●●●</span></td><td class="r">303,115</td></tr>
+        <tr class="sum"><td colspan="4">합계 · 체크인 10/8 14:00 · 체크아웃 10/11</td><td class="r">865,252</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+
+  <!-- 날씨 -->
+  <section>
+    <div id="weather" class="anchor"></div>
+    <h2 class="sec">날씨 · 10/8 ~ 10/11</h2>
+    <div class="wx-sum">4일 내내 <b>낮 30~32℃ · 체감 36~38℃ · 습도 75~95%</b>. 오전은 대체로 무난하고, <b>오후(13~18시)는 매일 스콜</b>이라는 데 세 예보가 모두 같습니다. 저녁은 예보끼리 엇갈려서 우산·우비를 늘 들고 다니는 게 맞습니다.</div>
+    <div class="wx-day">
+      <div class="hd"><span class="d">10.08 (목)</span><span class="t">DAY 1 · 도착</span><span class="hi">최고 31℃ · 체감 38℃</span></div>
+      <div class="wx-row"><div class="wx-c off"><div class="sl">오전</div><div class="ic">⛅</div><div class="w">구름 많음</div><div class="tp">25~30℃</div><div class="pr">비 30~60% · 1mm 미만</div><span class="ag ok">비행 중</span></div><div class="wx-c storm"><div class="sl">오후</div><div class="ic">⛈️</div><div class="w">강한 스콜</div><div class="tp">26~31℃</div><div class="pr">비 87~94% · 4~14mm</div><span class="ag ok">3곳 일치</span></div><div class="wx-c rain"><div class="sl">저녁</div><div class="ic">🌧️</div><div class="w">비 남을 수 있음</div><div class="tp">24~27℃</div><div class="pr">비 86~96% · 0~10mm</div><span class="ag mix">양 엇갈림</span></div></div>
+      <div class="ef">오후 스콜 시간은 <b>장보기·스파(실내)</b>라 문제없음. 스콜 직후엔 그랩 호출이 몰려 <b>스파 → 해산물 골목 이동이 늦어질 수 있음</b>. Ốc Oanh는 노상이지만 천막 아래 영업 — <b>우비·모기기피제</b> 챙기기.</div>
+    </div>
+    <div class="wx-day">
+      <div class="hd"><span class="d">10.09 (금)</span><span class="t">DAY 2 · 점심 후 자유</span><span class="hi">최고 31℃ · 체감 38℃</span></div>
+      <div class="wx-row"><div class="wx-c "><div class="sl">오전</div><div class="ic">☁️</div><div class="w">흐림</div><div class="tp">25~30℃</div><div class="pr">비 22~42% · 1mm 미만</div><span class="ag ok">3곳 일치</span></div><div class="wx-c storm"><div class="sl">오후</div><div class="ic">⛈️</div><div class="w">스콜</div><div class="tp">27~31℃</div><div class="pr">비 81~82% · 2~10mm</div><span class="ag ok">3곳 일치</span></div><div class="wx-c rain"><div class="sl">저녁</div><div class="ic">🌧️</div><div class="w">약한 비</div><div class="tp">25~27℃</div><div class="pr">비 74~84% · 1~5mm</div><span class="ag ok">3곳 일치</span></div></div>
+      <div class="ef"><b>점심 이동(11:50)은 스콜 전이라 대체로 무난</b> — 식사 끝날 무렵(14시 전후)부터 비 가능성이 높아지니 우산 챙기기. 자유시간은 오후 스콜에 맞춰 <b>카페·몰·마사지 같은 실내</b>로 잡는 게 좋고, 야외 구경은 오전이나 비 그친 뒤로.</div>
+    </div>
+    <div class="wx-day">
+      <div class="hd"><span class="d">10.10 (토)</span><span class="t">DAY 3 · 메인 데이</span><span class="hi">최고 32℃ · 체감 37℃</span></div>
+      <div class="wx-row"><div class="wx-c rain"><div class="sl">오전</div><div class="ic">🌦️</div><div class="w">소나기 가능</div><div class="tp">24~31℃</div><div class="pr">비 54~58% · 0~7mm</div><span class="ag mix">양 엇갈림</span></div><div class="wx-c rain"><div class="sl">오후</div><div class="ic">🌧️</div><div class="w">비</div><div class="tp">27~32℃</div><div class="pr">비 77~98% · 2~6mm</div><span class="ag ok">3곳 일치</span></div><div class="wx-c "><div class="sl">저녁</div><div class="ic">🌦️</div><div class="w">비 그칠 수도</div><div class="tp">25~27℃</div><div class="pr">비 55~87% · 0~5mm</div><span class="ag mix">엇갈림</span></div></div>
+      <div class="ef">사이공스퀘어·마사지·카페는 실내라 괜찮음. <b>반미는 공원 벤치 대신 포장해서 이동</b>할 가능성 높음. 66층 만찬은 구름이 끼면 야경이 흐릴 수 있음. <b>부이비엔은 우비</b> 챙기고, 비 오면 실내 펍으로.</div>
+    </div>
+    <div class="wx-day">
+      <div class="hd"><span class="d">10.11 (일)</span><span class="t">DAY 4 · 귀국</span><span class="hi">최고 32℃ · 체감 37℃</span></div>
+      <div class="wx-row"><div class="wx-c rain"><div class="sl">오전</div><div class="ic">🌦️</div><div class="w">소나기 가능</div><div class="tp">24~30℃</div><div class="pr">비 52~68% · 0~3mm</div><span class="ag mix">양 엇갈림</span></div><div class="wx-c off"><div class="sl">오후</div><div class="ic">🌧️</div><div class="w">비</div><div class="tp">28~32℃</div><div class="pr">비 86~92% · 1~3mm</div><span class="ag ok">3곳 일치</span></div><div class="wx-c off"><div class="sl">저녁</div><div class="ic">✈️</div><div class="w">인천 도착 21:25</div></div></div>
+      <div class="ef">공항 이동(11:10)은 오전이라 큰 영향 없음. 오후 비는 <b>탑승(13:55) 이후</b>. 위탁 짐 안 젖게 <b>캐리어 커버나 비닐</b> 하나 챙기면 편함.</div>
+    </div>
+    <div id="wx-live" class="wx-src" style="color:#2f5d9e;font-weight:700"></div>
+    <div class="wx-src">10/5 조회 기준 · Open-Meteo(유럽 ECMWF · 미국 GFS 두 모델) + 노르웨이 기상청(MET Norway) 교차검증 · 빈홈 센트럴파크 좌표 · 강수확률은 두 모델의 시간대 최댓값 범위, 강수량은 세 예보의 범위 · "3곳 일치"는 비 여부가 세 예보 모두 같은 경우. 3~6일 뒤 예보라 <b>출발 전날(10/7) 밤에 다시 확인</b>합니다.</div>
+  </section>
+
+  <!-- 경비 -->
+  <section>
+    <div id="budget" class="anchor"></div>
+    <h2 class="sec">경비 정리</h2>
+    <table class="tb">
+      <thead><tr><th>재원</th><th>내역</th><th class="r">금액</th></tr></thead>
+      <tbody>
+        <tr><td>팀 시상금</td><td class="nt">150만 × 5명</td><td class="r">7,500,000</td></tr>
+        <tr><td>수수료 및 보험료</td><td class="nt">시상금에서 공제</td><td class="r">−1,132,200</td></tr>
+        <tr><td>우수팀 시상</td><td class="nt">현금</td><td class="r">+500,000</td></tr>
+        <tr><td>동반자 항공료 납입</td><td class="nt">현금</td><td class="r">+500,000</td></tr>
+        <tr class="sum"><td>총 재원</td><td class="nt">시상금 실수령 6,367,800은 선사용 후 영수증 정산</td><td class="r">7,367,800</td></tr>
+      </tbody>
+    </table>
+    <table class="tb">
+      <thead><tr><th>지출</th><th>내역</th><th class="r">금액</th></tr></thead>
+      <tbody>
+        <tr><td>항공</td><td class="nt">대한항공 KE471/472 · 6명</td><td class="r">3,013,439</td></tr>
+        <tr><td>숙박</td><td class="nt">에어비앤비 3채 × 3박</td><td class="r">865,252</td></tr>
+        <tr class="sum"><td>기결제</td><td class="nt">영수증 확보 완료</td><td class="r">3,878,691</td></tr>
+        <tr><td>DAY 1</td><td class="nt">카드 108 (장보기 45 · 옥오아인 30 포함)</td><td class="r">1,080,000</td></tr>
+        <tr><td>DAY 2</td><td class="nt">카드 22 (점심 20 · 그랩)</td><td class="r">220,000</td></tr>
+        <tr><td>DAY 3</td><td class="nt">카드 134 (만찬 55 · 부이비엔 40 포함)</td><td class="r">1,340,000</td></tr>
+        <tr><td>DAY 4</td><td class="nt">카드 11</td><td class="r">110,000</td></tr>
+        <tr><td>예비</td><td class="nt">현금 74 (카드 몫 249를 넘는 일정비 26은 현금에서) · DAY 2 오후 자유시간 · 추가 술자리 포함</td><td class="r">739,109</td></tr>
+        <tr class="sum"><td>현지 가용 합계</td><td class="nt">카드 249 · 현금 100</td><td class="r">3,489,109</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 출발 전 체크리스트 -->
+  <section>
+    <div id="before" class="anchor"></div>
+    <h2 class="sec">출발 전 체크</h2>
+    <div class="ck-tip">항목을 누르면 체크됩니다 (이 기기에만 저장)</div>
+
+    <div class="box ck">
+      <h3>한눈에 · 10/8(목) 출국</h3>
+      <div class="ck-sum">
+        <div><span>집결</span><b>06:30 인천 T2</b> 대한항공 카운터</div>
+        <div><span>출발</span><b>KE471 09:05</b> → 탄손녓 12:35 (현지)</div>
+        <div><span>예약번호</span><b>CX9●●●</b> 가는 편 · <b>CX5●●●</b> 오는 편</div>
+        <div><span>수하물</span>위탁 <b>23kg 1개</b> + 기내 <b>10kg</b></div>
+        <div><span>시차</span>베트남이 <b>2시간 느림</b> (한국 09:00 = 현지 07:00)</div>
+      </div>
+    </div>
+
+    <div class="box ck">
+      <h3>공항 출국 (인천 T2)</h3>
+      <ul>
+        <li><b>제2터미널</b>인지 확인 — 대한항공은 T2 (T1 아님)</li>
+        <li>여권 원본 지참 · 모바일 탑승권 미리 발급 (대한항공 앱, 출발 24시간 전부터)</li>
+        <li><b>보조배터리·전자담배·라이터는 기내 가방에만</b> (위탁 금지) · 보조배터리 100Wh 이하</li>
+        <li>액체류는 100ml 이하 용기 + 1L 지퍼백 1개 · 면세 주류는 탑승구에서 인도</li>
+        <li>스마트패스(얼굴 인증) 등록해두면 출국장 줄이 짧음</li>
+        <li>08:25 전후 탑승 시작 · 면세점은 탑승구 위치 먼저 확인하고</li>
+      </ul>
+    </div>
+
+    <div class="box ck">
+      <h3>베트남 입국 (호치민)</h3>
+      <ul>
+        <li>한국인 <b>무비자 45일</b> · 입국신고서 없음</li>
+        <li>여권 유효기간 <b>6개월 이상</b> 남아야 함 → 만료일 <b>2027.04.11 이후</b>인지 확인</li>
+        <li>귀국 항공권(e-티켓) 휴대폰에 저장 — 입국심사에서 물어볼 수 있음</li>
+        <li><b>전자담배·가열담배(아이코스 등) 가져가지 말 것</b> — 2025년부터 반입·사용 금지, 공항에서 압수 + 벌금</li>
+        <li>입국심사 + 짐 찾기 1시간 안팎 · 도착층에서 <b>그랩 7인승 2대</b> (공항 택시 호객은 거절)</li>
+      </ul>
+    </div>
+
+    <div class="box ck">
+      <h3>날씨 · 옷차림</h3>
+      <ul>
+        <li>낮 30~32℃ · 체감 36~38℃ · <b>매일 오후 스콜</b> — 자세한 건 <a href="#weather" style="color:#1565c0">날씨</a></li>
+        <li>반팔·반바지 위주 + <b>얇은 긴팔 1벌</b> (실내 에어컨 · 66층 만찬)</li>
+        <li><b>만찬(10/10) 복장</b>: 셔츠·긴바지 등 단정하게 — 반바지·슬리퍼는 피하기</li>
+        <li>신발은 젖어도 되는 샌들 + 편한 운동화 1켤레</li>
+        <li><b>접이식 우산 + 우비</b> · 모자 · 선크림 · 모기기피제</li>
+        <li>캐리어 커버나 큰 비닐 1장 (귀국날 오후 비)</li>
+      </ul>
+    </div>
+
+    <div class="box ck">
+      <h3>환전 · 결제</h3>
+      <ul>
+        <li><b>결제는 카드가 원칙</b> — 영수증 정산이 쉬움. 카드사 앱에서 <b>해외 원화결제(DCC) 차단</b> (수수료 3~8%는 정산 안 됨)</li>
+        <li>회비 현금 100만원 → 동(VND)으로 환전 · 노상식당·부이비엔·팁용 (26만은 일정비로 이미 배정)</li>
+        <li>개인 용돈은 트래블카드(트래블월렛·트래블로그 등) 또는 소액 현금</li>
+        <li>공항 환전소는 환율이 나쁨 — 그랩·첫 식사 정도만 바꾸기</li>
+        <li>환율 <b>1만 동 ≈ 570원</b> · 지폐 0이 많아 헷갈림: <b>1만↔10만, 2만↔50만</b> 색이 비슷하니 낼 때 확인</li>
+        <li>마사지 팁은 관행상 1인 5~10만 동 정도 (선택)</li>
+      </ul>
+    </div>
+
+    <div class="box ck">
+      <h3>쇼핑 · 귀국 면세</h3>
+      <ul>
+        <li>쇼핑은 <b>각자 부담</b> (회비 제외) · 사이공스퀘어는 <b>부른 값의 40~50%부터 흥정</b></li>
+        <li>추천 기념품: 콩카페 원두 · G7 커피 · 건망고 · 캐슈넛 · 라탄 소품</li>
+        <li>귀국 면세 <b>1인 800달러</b> (현지·면세점 구매 합산) · 술은 별도 <b>2병·2L·400달러 이하</b>, 담배 1보루, 향수 100ml</li>
+        <li>초과하면 입국장에서 <b>자진신고</b> (관세 30% 감면) — 미신고 적발 시 가산세 40%</li>
+        <li><b>생과일·육류 가공품(소시지·육포 등)은 한국 반입 금지</b> · 건망고·커피는 가능</li>
+      </ul>
+    </div>
+
+    <div class="box ck">
+      <h3>현지 유의사항</h3>
+      <ul>
+        <li>길 건널 땐 <b>일정한 속도로 천천히</b> — 뛰거나 멈추면 오토바이가 피하기 어려움</li>
+        <li>길가 쪽 손에 휴대폰 들지 않기 (오토바이 날치기) · 부이비엔에선 가방은 앞으로</li>
+        <li>물은 생수만 · 길거리 얼음은 피하고 식당 얼음은 대체로 괜찮음</li>
+        <li>콘센트 220V — 한국 플러그 대부분 그대로 사용</li>
+        <li>호치민은 2025년 행정개편으로 "군(District)"이 없어짐 → 그랩·구글맵엔 <b>가게 이름이나 번지</b>로 검색</li>
+        <li>여행자보험 증권·긴급연락처 휴대폰에 저장 · 영사콜센터 +82-2-3210-0404</li>
+      </ul>
+    </div>
+
+    <div class="box ck">
+      <h3>예약 확인</h3>
+      <ul>
+        <li class="done-fixed"><b>Bếp Mẹ Ỉn 레 탄 톤점</b> 10/9(금) <b>12:30 · 6인 예약 완료</b></li>
+        <li><b>Oriental Pearl</b> 10/10(토) 18:00 · 6인 창가 · 디너 뷔페 (토요일 가격 확인)</li>
+        <li><b>137 마사지</b> 10/10(토) 13:30 · 6인 90분 · 주소·가격 재확인</li>
+        <li><b>Sawasdee 스파</b> 10/8(목) 16:30 · 6인 — <b>호치민 매장 확인 안 됨</b>, 예약 안 되면 단지 내 Trường Sinh Spa(SH11-P6)로 대체 검토</li>
+      </ul>
+    </div>
+
+    <div class="box ck">
+      <h3>숙소</h3>
+      <ul>
+        <li>호스트 2명(Uyên · Tín)에게 <b>동·호수, 셀프 체크인 코드</b> 받아서 10/7까지 단톡 공유</li>
+        <li>빈홈 단지 출입카드 세대당 몇 장인지 확인 (수영장은 이용 불가)</li>
+        <li>체크아웃 기준시간 확인 · 11:10보다 이르면 <b>11:10까지 레이트 체크아웃</b> 요청</li>
+      </ul>
+    </div>
+
+    <div class="box ck">
+      <h3>휴대폰 · 앱</h3>
+      <ul>
+        <li><b>그랩 앱</b> 설치 + 카드 등록 (카드 결제해야 이메일 영수증이 남음)</li>
+        <li>베트남 eSIM 또는 로밍 · 구글맵 오프라인 지도 받아두기</li>
+        <li>파파고/구글 번역 · 단톡방 알림 켜두기</li>
+      </ul>
+    </div>
+
+    <div class="box ck">
+      <h3>짐 싸기 (개인)</h3>
+      <ul>
+        <li>여권 · 휴대폰 · 충전기 · 보조배터리 · 신용카드 2장(다른 브랜드)</li>
+        <li>상비약: 소화제 · 지사제 · 진통제 · 밴드 · 개인 복용약</li>
+        <li>선글라스 · 물티슈 · 손소독제 · 작은 크로스백</li>
+        <li><b>10/7(수) 밤 날씨 다시 확인</b> · 알람 맞추기 (06:30 T2 집결)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 알아두실 것 -->
+  <section>
+    <div id="during" class="anchor"></div>
+    <h2 class="sec">여행 중 체크</h2>
+    <div class="box">
+      <h3>매일</h3>
+      <ul>
+        <li>오후 1시 이후엔 <b>우산·우비 지참</b> — 스콜은 1~2시간이면 그침, 그동안 실내에서 대기</li>
+        <li>카드 결제하면 <b>결제 알림을 단톡에</b> · 현금 쓰면 금액·가게를 단톡에 메모 (총무 임대현)</li>
+        <li>물은 생수만 · 체감 36℃ 넘으니 자주 마시기</li>
+      </ul>
+      <h3>이동</h3>
+      <ul>
+        <li>그랩 7인승 2대 · 목적지는 <b>가게 이름이나 번지로 검색</b> · 결제는 등록한 카드로</li>
+        <li>스콜 직후·퇴근시간·토요일 심야엔 호출이 늦음 — 10분 일찍 부르기</li>
+      </ul>
+      <h3>안전</h3>
+      <ul>
+        <li>길가 쪽 손에 휴대폰 들지 않기 (오토바이 날치기) · 부이비엔에선 <b>가방은 앞으로</b></li>
+        <li>여권은 숙소 금고, 외출 땐 사진으로 지참</li>
+        <li>비상연락: <b>영사콜센터 +82-2-3210-0404</b>(24시간) · 베트남 경찰 113 · 구급 115 · 화재 114</li>
+      </ul>
+      <h3>마지막 날 (10/11)</h3>
+      <ul>
+        <li>냉장고·금고·충전기·출입카드 확인 후 11:10 체크아웃</li>
+        <li>남은 동(VND)은 면세구역에서 소진</li>
+      </ul>
+    </div>
+    <h2 class="sec" style="margin-top:18px">알아두실 것</h2>
+    <div class="box notes">
+      <ul>
+        <li>회사 경비는 <b>선사용 후 영수증 정산</b>입니다. 카드 결제 알림을 단톡방에 올려주세요. 총무 임대현 대리.</li>
+        <li>쇼핑(사이공스퀘어·기념품)은 <b>각자 부담</b>입니다. 회비는 이동·식사·스파·만찬·장보기만.</li>
+        <li>여행 기간 날씨는 <a href="#weather" style="color:#1565c0">날씨 섹션</a> 참고 — 낮 30~32℃, 매일 오후 스콜.</li>
+        <li>호치민은 2025년 7월 행정개편으로 <b>"군(District)" 단위가 없어졌습니다.</b> 그랩·구글맵에는 가게 이름이나 번지로 검색하세요.</li>
+        <li>그랩은 7인승 2대 기준. 시내 5~8km 이동은 대당 10~15만 VND(2대 약 1.5만원), 공항은 대당 20~25만 VND. 비·퇴근시간·토요일 심야엔 1.5~2배까지 오르니 예산에 여유분 포함.</li>
+        <li>환율 1만 VND ≈ 570원. <b>결제는 카드가 원칙</b>(영수증 정산이 쉬움). 수수료·보험료 공제로 카드 몫(시상금)이 249만이라 일정비 275만 중 26만은 현금 100만에서 충당, 남는 현금 74만이 예비비. 카드를 안 받는 노상식당·부이비엔 가게도 현금으로 쓰고 쓴 곳은 단톡에 메모.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 지도 -->
+  <section>
+    <div id="map" class="anchor"></div>
+    <h2 class="sec">지도 · 일정 속 장소</h2>
+    <div id="tripmap"></div>
+    <div class="pl">
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=Tan%20Son%20Nhat%20International%20Airport" target="_blank" rel="noopener" data-n="1"><span class="num" style="background:#5a6880">공항</span>
+        <span><div class="nm">탄손녓 국제공항</div><div class="pn">공항 · DAY 1 12:35 도착 · DAY 4 11:50 출국</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=Vinhomes%20Central%20Park" target="_blank" rel="noopener" data-n="2"><span class="num" style="background:#1A2D50">숙소</span>
+        <span><div class="nm">빈홈 센트럴파크 (숙소)</div><div class="pn">숙소 · 3박 · 에어비앤비 3채</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=Vinpearl%20Landmark%2081%20Autograph%20Collection" target="_blank" rel="noopener" data-n="3"><span class="num" style="background:#c0392b">식당</span>
+        <span><div class="nm">랜드마크81 · Vincom · 66층</div><div class="pn">식당 · DAY 1 장보기 · DAY 3 18:00 Oriental Pearl</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=%E1%BB%90c%20Oanh%20534%20V%C4%A9nh%20Kh%C3%A1nh" target="_blank" rel="noopener" data-n="4"><span class="num" style="background:#c0392b">식당</span>
+        <span><div class="nm">Ốc Oanh 해산물</div><div class="pn">식당 · DAY 1 19:00</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=B%E1%BA%BFp%20M%E1%BA%B9%20%E1%BB%88n%20136%20L%C3%AA%20Th%C3%A1nh%20T%C3%B4n" target="_blank" rel="noopener" data-n="5"><span class="num" style="background:#c0392b">식당·빕</span>
+        <span><div class="nm">Bếp Mẹ Ỉn 레 탄 톤점</div><div class="pn">식당 · DAY 2 12:30 점심 (예약 완료)</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=Saigon%20Square%20Nam%20Ky%20Khoi%20Nghia" target="_blank" rel="noopener" data-n="6"><span class="num" style="background:#8e44ad">쇼핑</span>
+        <span><div class="nm">사이공스퀘어</div><div class="pn">쇼핑 · DAY 3 10:30</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=B%C3%A1nh%20M%C3%AC%20Hu%E1%BB%B3nh%20Hoa%2026%20L%C3%AA%20Th%E1%BB%8B%20Ri%C3%AAng" target="_blank" rel="noopener" data-n="7"><span class="num" style="background:#c0392b">식당</span>
+        <span><div class="nm">Bánh Mì Huỳnh Hoa</div><div class="pn">식당 · DAY 3 12:30</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=C%C3%B4ng%20vi%C3%AAn%2023%20th%C3%A1ng%209" target="_blank" rel="noopener" data-n="8"><span class="num" style="background:#2f5d9e">공원</span>
+        <span><div class="nm">9월23일 공원</div><div class="pn">기타 · DAY 3 반미 먹는 곳</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=137%20Spa%20149%20H%C3%A0m%20Nghi" target="_blank" rel="noopener" data-n="9"><span class="num" style="background:#1e8e4e">마사지</span>
+        <span><div class="nm">137 마사지 <span style="font-size:11px;color:#a0aab8;font-weight:400">(대략 위치)</span></div><div class="pn">마사지 · DAY 3 13:30</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=The%20Workshop%20Coffee%2027%20Ng%C3%B4%20%C4%90%E1%BB%A9c%20K%E1%BA%BF" target="_blank" rel="noopener" data-n="10"><span class="num" style="background:#b9770e">카페</span>
+        <span><div class="nm">The Workshop Coffee</div><div class="pn">카페 · DAY 3 15:25</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=The%20Cafe%20Apartments%2042%20Nguyen%20Hue" target="_blank" rel="noopener" data-n="11"><span class="num" style="background:#b9770e">카페</span>
+        <span><div class="nm">The Café Apartments</div><div class="pn">카페 · DAY 3 카페 대안</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=Bui%20Vien%20Walking%20Street" target="_blank" rel="noopener" data-n="12"><span class="num" style="background:#d35400">부이비엔</span>
+        <span><div class="nm">부이비엔 워킹스트리트</div><div class="pn">야간 · DAY 3 20:45</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=Ben%20Thanh%20Market" target="_blank" rel="noopener" data-n="13"><span class="num" style="background:#2f5d9e">시장</span>
+        <span><div class="nm">벤탄시장</div><div class="pn">기타 · DAY 2 자유시간 근처</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%9F%20H%E1%BB%93i%20Park%201%20Vinhomes%20Central%20Park" target="_blank" rel="noopener" data-n="14"><span class="num" style="background:#c0392b">식당</span>
+        <span><div class="nm">Phở Hồi 쌀국수</div><div class="pn">식당 · DAY 1 14:40 · 빈홈 Park 1 상가 SH10 (07:00~21:00)</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=Sawasdee%20Thai%20Wellness%20Spa%20Vinhomes%20Central%20Park" target="_blank" rel="noopener"><span class="num" style="background:#a0aab8">마사지</span>
+        <span><div class="nm">Sawasdee Thai Wellness & Spa</div><div class="pn" style="color:#d35400">DAY 1 16:30 · 호치민 매장을 찾지 못함 — 예약 전 실재 여부 확인 필요</div></span><span class="go">구글맵 ›</span></a>
+      <div style="padding:9px 12px 4px;font-size:12px;font-weight:800;color:#b3600a;border-top:2px solid #f3d3a8">빕구르망 추천 · 일정 외 (항공권 요약 맛집 리스트 1~7번, 6번 벱메인은 DAY 2 일정)</div>
+      <a class="row" href="https://maps.app.goo.gl/hSeAFPe6utF8EHMv7" target="_blank" rel="noopener" data-n="21"><span class="num" style="background:#e08214">빕 1</span>
+        <span><div class="nm">Bánh Canh Cua Bà Ba</div><div class="pn">게살 반칸</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=B%C3%A1nh%20Cu%E1%BB%91n%20T%C3%A2y%20H%E1%BB%93%20127%20%C4%90inh%20Ti%C3%AAn%20Ho%C3%A0ng" target="_blank" rel="noopener" data-n="22"><span class="num" style="background:#e08214">빕 2</span>
+        <span><div class="nm">Bánh Cuốn Tây Hồ 127</div><div class="pn">반꾸온 · 127 Đinh Tiên Hoàng</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://maps.app.goo.gl/5JCHhXpoGbMtN1u17" target="_blank" rel="noopener" data-n="23"><span class="num" style="background:#e08214">빕 3</span>
+        <span><div class="nm">La Lola Saigon</div><div class="pn">지중해 요리</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=B%C3%A1nh%20X%C3%A8o%2046A%20%C4%90inh%20C%C3%B4ng%20Tr%C3%A1ng" target="_blank" rel="noopener" data-n="24"><span class="num" style="background:#e08214">빕 4</span>
+        <span><div class="nm">Bánh Xèo 46A</div><div class="pn">반쎄오 · 46A Đinh Công Tráng</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=H%E1%BB%A7%20Ti%E1%BA%BFu%20H%E1%BB%93ng%20Ph%C3%A1t%20Ho%20Chi%20Minh" target="_blank" rel="noopener" data-n="25"><span class="num" style="background:#e08214">빕 5</span>
+        <span><div class="nm">Hủ Tiếu Hồng Phát</div><div class="pn">후띠에우</div></span><span class="go">구글맵 ›</span></a>
+      <a class="row" href="https://www.google.com/maps/search/?api=1&query=B%C3%B2%20Kho%20G%C3%A1nh%20S%C6%B0%20V%E1%BA%A1n%20H%E1%BA%A1nh" target="_blank" rel="noopener" data-n="27"><span class="num" style="background:#e08214">빕 7</span>
+        <span><div class="nm">Bò Kho Gánh</div><div class="pn">보코 · Sư Vạn Hạnh</div></span><span class="go">구글맵 ›</span></a>
+    </div>
+    <div class="map-note">마우스 휠·두 손가락으로 확대/축소, 핀을 누르면 이름·일정이 뜨고, 목록을 누르면 <b>구글맵</b>에서 바로 길찾기가 되고, 목록 왼쪽 이름표를 누르면 지도에서 그 위치로 이동합니다. 지도는 Esri 지도(좌표는 OpenStreetMap 주소 검색으로 확인). 137 마사지는 거리 이름까지만 확인돼 대략 위치입니다. 주황색 <b>빕구르망</b> 핀은 항공권 요약의 맛집 리스트(1·3번은 구글맵 공유 링크 좌표, 나머지는 이름·번지 기준)입니다. Sawasdee 스파는 온라인에서 호치민 매장 정보를 찾지 못해 핀을 넣지 않았습니다.</div>
+  </section>
+
+</div>
+
+<footer>앱 버전은 예약번호·확인코드 일부를 가렸습니다 (전체는 단톡방 확인) · 인천 원팀4팀 · 2026.10.08 ~ 10.11 · 최종본 (10.05 수정)</footer>
+
+<script>
+(function () {
+  var links = document.querySelectorAll('.topnav a');
+  var ids = Array.prototype.map.call(links, function (a) { return a.getAttribute('href').slice(1); });
+  function onScroll() {
+    var cur = ids[0];
+    ids.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top < 120) cur = id;
+    });
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) cur = ids[ids.length - 1];
+    links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + cur); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+(function () {
+  if (!window.L) { document.getElementById('tripmap').innerHTML = '<div style="padding:20px;font-size:13px;color:#6b7686">지도를 불러오지 못했습니다. 아래 목록의 구글맵 링크를 이용하세요.</div>'; return; }
+  var P = [{"n": 1, "name": "탄손녓 국제공항", "cat": "공항", "plan": "DAY 1 12:35 도착 · DAY 4 11:50 출국", "lat": 10.81798, "lon": 106.65626, "url": "https://www.google.com/maps/search/?api=1&query=Tan%20Son%20Nhat%20International%20Airport", "approx": false, "color": "#5a6880", "lab": "공항"}, {"n": 2, "name": "빈홈 센트럴파크 (숙소)", "cat": "숙소", "plan": "3박 · 에어비앤비 3채", "lat": 10.79353, "lon": 106.72286, "url": "https://www.google.com/maps/search/?api=1&query=Vinhomes%20Central%20Park", "approx": false, "color": "#1A2D50", "lab": "숙소"}, {"n": 3, "name": "랜드마크81 · Vincom · 66층", "cat": "식당", "plan": "DAY 1 장보기 · DAY 3 18:00 Oriental Pearl", "lat": 10.79504, "lon": 106.72183, "url": "https://www.google.com/maps/search/?api=1&query=Vinpearl%20Landmark%2081%20Autograph%20Collection", "approx": false, "color": "#c0392b", "lab": "식당"}, {"n": 4, "name": "Ốc Oanh 해산물", "cat": "식당", "plan": "DAY 1 19:00", "lat": 10.76142, "lon": 106.70282, "url": "https://www.google.com/maps/search/?api=1&query=%E1%BB%90c%20Oanh%20534%20V%C4%A9nh%20Kh%C3%A1nh", "approx": false, "color": "#c0392b", "lab": "식당"}, {"n": 5, "name": "Bếp Mẹ Ỉn 레 탄 톤점", "cat": "식당", "plan": "DAY 2 12:30 점심(예약 완료) · 빕구르망 6번", "lat": 10.77388, "lon": 106.69813, "url": "https://www.google.com/maps/search/?api=1&query=B%E1%BA%BFp%20M%E1%BA%B9%20%E1%BB%88n%20136%20L%C3%AA%20Th%C3%A1nh%20T%C3%B4n", "approx": false, "color": "#c0392b", "lab": "식당·빕구르망"}, {"n": 6, "name": "사이공스퀘어", "cat": "쇼핑", "plan": "DAY 3 10:30", "lat": 10.7728, "lon": 106.70019, "url": "https://www.google.com/maps/search/?api=1&query=Saigon%20Square%20Nam%20Ky%20Khoi%20Nghia", "approx": false, "color": "#8e44ad", "lab": "쇼핑"}, {"n": 7, "name": "Bánh Mì Huỳnh Hoa", "cat": "식당", "plan": "DAY 3 12:30", "lat": 10.77139, "lon": 106.69272, "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A1nh%20M%C3%AC%20Hu%E1%BB%B3nh%20Hoa%2026%20L%C3%AA%20Th%E1%BB%8B%20Ri%C3%AAng", "approx": false, "color": "#c0392b", "lab": "식당"}, {"n": 8, "name": "9월23일 공원", "cat": "기타", "plan": "DAY 3 반미 먹는 곳", "lat": 10.76896, "lon": 106.69259, "url": "https://www.google.com/maps/search/?api=1&query=C%C3%B4ng%20vi%C3%AAn%2023%20th%C3%A1ng%209", "approx": false, "color": "#2f5d9e", "lab": "공원"}, {"n": 9, "name": "137 마사지", "cat": "마사지", "plan": "DAY 3 13:30", "lat": 10.77078, "lon": 106.7019, "url": "https://www.google.com/maps/search/?api=1&query=137%20Spa%20149%20H%C3%A0m%20Nghi", "approx": true, "color": "#1e8e4e", "lab": "마사지"}, {"n": 10, "name": "The Workshop Coffee", "cat": "카페", "plan": "DAY 3 15:25", "lat": 10.77341, "lon": 106.70554, "url": "https://www.google.com/maps/search/?api=1&query=The%20Workshop%20Coffee%2027%20Ng%C3%B4%20%C4%90%E1%BB%A9c%20K%E1%BA%BF", "approx": false, "color": "#b9770e", "lab": "카페"}, {"n": 11, "name": "The Café Apartments", "cat": "카페", "plan": "DAY 3 카페 대안", "lat": 10.77409, "lon": 106.70426, "url": "https://www.google.com/maps/search/?api=1&query=The%20Cafe%20Apartments%2042%20Nguyen%20Hue", "approx": false, "color": "#b9770e", "lab": "카페"}, {"n": 12, "name": "부이비엔 워킹스트리트", "cat": "야간", "plan": "DAY 3 20:45", "lat": 10.76574, "lon": 106.69076, "url": "https://www.google.com/maps/search/?api=1&query=Bui%20Vien%20Walking%20Street", "approx": false, "color": "#d35400", "lab": "부이비엔"}, {"n": 13, "name": "벤탄시장", "cat": "기타", "plan": "DAY 2 자유시간 근처", "lat": 10.77253, "lon": 106.69804, "url": "https://www.google.com/maps/search/?api=1&query=Ben%20Thanh%20Market", "approx": false, "color": "#2f5d9e", "lab": "시장"}, {"n": 14, "name": "Phở Hồi 쌀국수", "cat": "식당", "plan": "DAY 1 14:40 · Park 1 상가 SH10", "lat": 10.79106, "lon": 106.72225, "url": "https://www.google.com/maps/search/?api=1&query=Ph%E1%BB%9F%20H%E1%BB%93i%20Park%201%20Vinhomes%20Central%20Park", "approx": false, "color": "#c0392b", "lab": "식당"}, {"n": 21, "name": "빕구르망 1. Bánh Canh Cua Bà Ba", "cat": "빕구르망", "plan": "게살 반칸 · 일정 외 추천", "lat": 10.7551678, "lon": 106.684582, "url": "https://maps.app.goo.gl/hSeAFPe6utF8EHMv7", "approx": false, "color": "#e08214", "lab": "빕구르망"}, {"n": 22, "name": "빕구르망 2. Bánh Cuốn Tây Hồ 127", "cat": "빕구르망", "plan": "반꾸온 · 127 Đinh Tiên Hoàng · 일정 외 추천", "lat": 10.790746, "lon": 106.696988, "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A1nh%20Cu%E1%BB%91n%20T%C3%A2y%20H%E1%BB%93%20127%20%C4%90inh%20Ti%C3%AAn%20Ho%C3%A0ng", "approx": false, "color": "#e08214", "lab": "빕구르망"}, {"n": 23, "name": "빕구르망 3. La Lola Saigon", "cat": "빕구르망", "plan": "지중해 요리 · 일정 외 추천", "lat": 10.7744589, "lon": 106.6976235, "url": "https://maps.app.goo.gl/5JCHhXpoGbMtN1u17", "approx": false, "color": "#e08214", "lab": "빕구르망"}, {"n": 24, "name": "빕구르망 4. Bánh Xèo 46A", "cat": "빕구르망", "plan": "반쎄오 · 46A Đinh Công Tráng · 일정 외 추천", "lat": 10.789605, "lon": 106.691299, "url": "https://www.google.com/maps/search/?api=1&query=B%C3%A1nh%20X%C3%A8o%2046A%20%C4%90inh%20C%C3%B4ng%20Tr%C3%A1ng", "approx": false, "color": "#e08214", "lab": "빕구르망"}, {"n": 25, "name": "빕구르망 5. Hủ Tiếu Hồng Phát", "cat": "빕구르망", "plan": "후띠에우 · 일정 외 추천", "lat": 10.770509, "lon": 106.684836, "url": "https://www.google.com/maps/search/?api=1&query=H%E1%BB%A7%20Ti%E1%BA%BFu%20H%E1%BB%93ng%20Ph%C3%A1t%20Ho%20Chi%20Minh", "approx": false, "color": "#e08214", "lab": "빕구르망"}, {"n": 27, "name": "빕구르망 7. Bò Kho Gánh", "cat": "빕구르망", "plan": "보코 · Sư Vạn Hạnh · 일정 외 추천", "lat": 10.761785, "lon": 106.672999, "url": "https://www.google.com/maps/search/?api=1&query=B%C3%B2%20Kho%20G%C3%A1nh%20S%C6%B0%20V%E1%BA%A1n%20H%E1%BA%A1nh", "approx": false, "color": "#e08214", "lab": "빕구르망"}];
+  var map = L.map('tripmap', { scrollWheelZoom: true, zoomControl: true, tap: true });   // 마우스 휠·핀치 확대 허용
+  // 바탕 지도: Esri (키 불필요). OSM 공식 타일은 로컬 파일에서 차단, CARTO는 API 키 필요로 바뀌어 사용 안 함
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+    { maxZoom: 19, maxNativeZoom: 18, attribution: 'Tiles &copy; Esri' }).addTo(map);
+  var marks = {}, bounds = [];
+  P.forEach(function (p) {
+    var ic = L.divIcon({ className: '', html: '<div class="mk" style="background:' + p.color + '">' + p.lab + '</div>', iconSize: null });
+    var m = L.marker([p.lat, p.lon], { icon: ic }).addTo(map)
+      .bindPopup('<b>' + p.name + '</b><br><span style="color:#6b7686">' + p.plan + '</span><br><a href="' + p.url + '" target="_blank" rel="noopener">구글맵에서 열기</a>');
+    marks[p.n] = m; bounds.push([p.lat, p.lon]);
+  });
+  map.fitBounds(bounds, { padding: [24, 24] });
+  // 목록에서 길게 보지 않고 핀 위치만 보고 싶을 때: 번호 원을 누르면 지도에서 열기
+  document.querySelectorAll('.pl a.row[data-n] .num').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+      var n = el.parentNode.getAttribute('data-n');
+      document.getElementById('map').scrollIntoView();
+      map.setView(marks[n].getLatLng(), 16); marks[n].openPopup();
+    });
+  });
+})();
+</script>
+<script>
+(function () {
+  // 체크 상태는 이 기기 브라우저에만 저장 (저장이 막혀 있으면 화면에서만 동작)
+  var KEY = 'hcm-before-check-v1', st = {};
+  try { st = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { st = {}; }
+  document.querySelectorAll('.box.ck li').forEach(function (li, i) {
+    if (st[i] || li.classList.contains('done-fixed')) li.classList.add('done');
+    li.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') return;
+      li.classList.toggle('done'); st[i] = li.classList.contains('done');
+      try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (err) {}
+    });
+  });
+})();
+</script>
+<script>
+(function () {
+  // 10/8(출발일) 0시부터 자동 갱신. 그 전에는 전날 교차검증한 고정 표를 그대로 보여준다.
+  var START = new Date('2026-10-08T00:00:00+09:00');
+  var st = document.getElementById('wx-live');
+  if (new Date() < START) {
+    st.textContent = '10/8(출발일)부터는 페이지를 열 때마다 최신 예보로 자동 갱신됩니다.';
+    return;
+  }
+  var url = 'https://api.open-meteo.com/v1/forecast?latitude=10.7946&longitude=106.7218'
+    + '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code'
+    + '&models=ecmwf_ifs025,gfs_seamless&timezone=Asia%2FHo_Chi_Minh&start_date=2026-10-08&end_date=2026-10-11';
+  var DAYS = ['2026-10-08', '2026-10-09', '2026-10-10', '2026-10-11'];
+  var SLOTS = [[6, 12], [12, 18], [18, 24]];
+  st.textContent = '최신 예보 불러오는 중...';
+  fetch(url).then(function (r) { return r.json(); }).then(function (d) {
+    var h = d.hourly, M = ['ecmwf_ifs025', 'gfs_seamless'];
+    function agg(day, a, b) {
+      var out = {};
+      M.forEach(function (m) {
+        var t = [], p = [], r = 0, c = 0;
+        h.time.forEach(function (tm, i) {
+          var hr = +tm.slice(11, 13);
+          if (tm.slice(0, 10) !== day || hr < a || hr >= b) return;
+          var v = h['temperature_2m_' + m][i]; if (v == null) return;
+          t.push(v); p.push(h['precipitation_probability_' + m][i] || 0);
+          r += h['precipitation_' + m][i] || 0; c = Math.max(c, h['weather_code_' + m][i] || 0);
+        });
+        if (t.length) out[m] = { tmin: Math.min.apply(0, t), tmax: Math.max.apply(0, t), p: Math.max.apply(0, p), r: r, c: c };
+      });
+      return out;
+    }
+    function look(P, R, C) {
+      if (P >= 80 && R >= 5) return ['⛈️', '스콜', 'storm'];
+      if (P >= 70) return ['🌧️', '비', 'rain'];
+      if (P >= 50) return ['🌦️', '소나기 가능', 'rain'];
+      if (P >= 30) return ['☁️', '흐림 · 약한 비 가능', ''];
+      if (C <= 1) return ['☀️', '맑음', ''];
+      return C === 2 ? ['⛅', '구름 조금', ''] : ['☁️', '흐림', ''];
+    }
+    var n = 0;
+    document.querySelectorAll('.wx-day').forEach(function (box, di) {
+      box.querySelectorAll('.wx-c').forEach(function (cell, si) {
+        if (cell.classList.contains('off') || !DAYS[di]) return;
+        var g = agg(DAYS[di], SLOTS[si][0], SLOTS[si][1]), ks = Object.keys(g);
+        if (!ks.length) return;
+        var tmin = Math.min.apply(0, ks.map(function (k) { return g[k].tmin; }));
+        var tmax = Math.max.apply(0, ks.map(function (k) { return g[k].tmax; }));
+        var ps = ks.map(function (k) { return g[k].p; }), rs = ks.map(function (k) { return g[k].r; });
+        var L = look(Math.max.apply(0, ps), Math.max.apply(0, rs), Math.max.apply(0, ks.map(function (k) { return g[k].c; })));
+        var agree = ps.every(function (p) { return p >= 60; }) || ps.every(function (p) { return p < 60; });
+        var rng = function (a, unit, f) { var lo = Math.min.apply(0, a), hi = Math.max.apply(0, a); lo = f(lo); hi = f(hi); return (lo === hi ? hi : lo + '~' + hi) + unit; };
+        cell.className = 'wx-c ' + L[2];
+        cell.querySelector('.ic').textContent = L[0];
+        cell.querySelector('.w').textContent = L[1];
+        var tp = cell.querySelector('.tp'); if (tp) tp.textContent = Math.round(tmin) + '~' + Math.round(tmax) + '℃';
+        var pr = cell.querySelector('.pr'); if (pr) pr.textContent = '비 ' + rng(ps, '%', Math.round) + ' · ' + rng(rs, 'mm', function (x) { return Math.round(x); });
+        var ag = cell.querySelector('.ag');
+        if (ag) { ag.className = 'ag ' + (agree ? 'ok' : 'mix'); ag.textContent = agree ? '두 모델 일치' : '엇갈림'; }
+        n++;
+      });
+    });
+    var now = new Date();
+    st.textContent = '자동 갱신됨 · ' + (now.getMonth() + 1) + '/' + now.getDate() + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0')
+      + ' 기준 Open-Meteo(ECMWF·GFS) 최신 예보 · ' + n + '칸 반영. 아래 일정 영향 문장은 전날 기준입니다.';
+  }).catch(function () {
+    st.textContent = '최신 예보를 불러오지 못해 전날 기준 표를 보여줍니다 (인터넷 연결 확인).';
+  });
+})();
+</script>
+</body>
+</html>
