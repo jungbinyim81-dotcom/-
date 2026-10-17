@@ -151,6 +151,42 @@ tr.grand-row td.total { background:#0d1c38; }
   .legend, .wrap { padding-left:12px; padding-right:12px; }
   table.pivot { font-size:11px; }
 }
+/* ── 월별 업데이트 배너 ── */
+#upd { display:none; position:fixed; inset:0; background:rgba(15,25,45,0.55); z-index:10000;
+        align-items:center; justify-content:center; padding:16px; }
+#upd.show { display:flex; }
+#updBox { background:#fff; border-radius:14px; width:min(640px, 100%); max-height:88vh;
+           display:flex; flex-direction:column; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.25); }
+#updHead { background:#1A2D50; color:#fff; padding:16px 22px; }
+#updHead .tag { display:inline-block; background:#4a90d9; color:#fff; font-size:11px; font-weight:700;
+                 padding:2px 9px; border-radius:10px; margin-bottom:6px; }
+#updHead h3 { font-size:17px; font-weight:700; }
+#updHead .sub { font-size:12px; color:#9ab; margin-top:3px; }
+#updChips { display:flex; gap:8px; padding:14px 22px 6px; flex-wrap:wrap; }
+.chip { border-radius:10px; padding:8px 14px; font-size:13px; font-weight:700; }
+.chip.new { background:#e8f2fc; color:#1f5fa8; }
+.chip.closed { background:#f1f2f4; color:#5a6577; }
+.chip b { font-size:18px; margin-left:4px; }
+#updPer { padding:0 22px; font-size:12px; color:#5a6577; }
+#updBody { overflow-y:auto; padding:4px 22px 10px; }
+.updSec { margin-top:12px; }
+.updSec h4 { font-size:13px; color:#1A2D50; margin-bottom:6px; }
+.updRow { display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid #eef1f6; font-size:13px; }
+.updRow .who { min-width:60px; font-weight:700; font-size:12px; }
+.updRow .dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:4px; }
+.updRow .nm { flex:1; }
+.updRow .loc { font-size:11px; color:#888; white-space:nowrap; }
+.updRow.closed .nm { color:#999; text-decoration:line-through; }
+#updFoot { display:flex; gap:8px; padding:12px 22px; border-top:1px solid #eef1f6; align-items:center; }
+#updFoot label { font-size:12px; color:#5a6577; display:flex; align-items:center; gap:5px; cursor:pointer; }
+#updFoot button { margin-left:auto; background:#1A2D50; color:#fff; border:none; border-radius:8px;
+                   padding:9px 22px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; }
+.topbar .updBtn { background:#4a90d9; color:#fff; border:none; border-radius:14px; padding:4px 12px;
+                   font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
+@media (max-width:600px) {
+  #updHead h3 { font-size:15px; }
+  .updRow .loc { display:none; }
+}
 </style>
 </head>
 <body>
@@ -158,8 +194,11 @@ tr.grand-row td.total { background:#0d1c38; }
 <div class="topbar">
   <h1>팀 개원처 현황</h1>
   <span class="meta">기준일: 2026-10-17 · 4팀</span>
+  <button class="updBtn" onclick="openUpd()">업데이트 +11 / -3</button>
   <span class="stat">총 713개소</span>
 </div>
+
+<div id="upd" onclick="if(event.target===this)closeUpd()"><div id="updBox"><div id="updHead"><span class="tag">월별 업데이트</span><h3>이번 달 개원처 변동 안내</h3><div class="sub">기준일 2026-10-17 · 전월(2026-08-04) 대비 · 담당자 배정 반영</div></div><div id="updChips"><span class="chip new">신규<b>+11</b></span><span class="chip closed">폐업·제외<b>-3</b></span></div><div id="updPer">임대현 +4 · 황태영 +2 · 박준상 +3 · 김혜성 +2</div><div id="updBody"><div class="updSec"><h4>신규 개원 11곳</h4><div class="updRow "><span class="who" style="color:#e84040"><span class="dot" style="background:#e84040"></span>임대현</span><span class="nm">닥터에버스의원</span><span class="loc">경기 시흥시 · 배곧동 · 의원</span></div><div class="updRow "><span class="who" style="color:#e84040"><span class="dot" style="background:#e84040"></span>임대현</span><span class="nm">비발디365의원</span><span class="loc">경기 시흥시 · 배곧동 · 의원</span></div><div class="updRow "><span class="who" style="color:#e84040"><span class="dot" style="background:#e84040"></span>임대현</span><span class="nm">뷰티온의원</span><span class="loc">경기 시흥시 · 은행동 · 의원</span></div><div class="updRow "><span class="who" style="color:#e84040"><span class="dot" style="background:#e84040"></span>임대현</span><span class="nm">고려척척신경외과의원</span><span class="loc">인천 제물포구 · 송림동 · 의원</span></div><div class="updRow "><span class="who" style="color:#2ca02c"><span class="dot" style="background:#2ca02c"></span>황태영</span><span class="nm">삼거리탑정형외과의원</span><span class="loc">경기 시흥시 · 거모동 · 의원</span></div><div class="updRow "><span class="who" style="color:#2ca02c"><span class="dot" style="background:#2ca02c"></span>황태영</span><span class="nm">정왕365정형외과의원</span><span class="loc">경기 시흥시 · 정왕동 · 의원</span></div><div class="updRow "><span class="who" style="color:#ff7f0e"><span class="dot" style="background:#ff7f0e"></span>박준상</span><span class="nm">메이퓨어의원</span><span class="loc">경기 시흥시 · 대야동 · 의원</span></div><div class="updRow "><span class="who" style="color:#ff7f0e"><span class="dot" style="background:#ff7f0e"></span>박준상</span><span class="nm">365동암탑마취통증의학과의원</span><span class="loc">인천 부평구 · 십정동 · 의원</span></div><div class="updRow "><span class="who" style="color:#ff7f0e"><span class="dot" style="background:#ff7f0e"></span>박준상</span><span class="nm">동암웰스병원</span><span class="loc">인천 부평구 · 십정동 · 병원</span></div><div class="updRow "><span class="who" style="color:#9467bd"><span class="dot" style="background:#9467bd"></span>김혜성</span><span class="nm">모모의원</span><span class="loc">인천 부평구 · 부평동 · 의원</span></div><div class="updRow "><span class="who" style="color:#9467bd"><span class="dot" style="background:#9467bd"></span>김혜성</span><span class="nm">부평시티메디컬의원</span><span class="loc">인천 부평구 · 부평동 · 의원</span></div></div><div class="updSec"><h4>폐업·목록 제외 3곳</h4><div class="updRow closed"><span class="who" style="color:#3388ff"><span class="dot" style="background:#3388ff"></span>전은성</span><span class="nm">나우리신경외과의원</span><span class="loc">인천 부평구 · 청천동 · 의원</span></div><div class="updRow closed"><span class="who" style="color:#e84040"><span class="dot" style="background:#e84040"></span>임대현</span><span class="nm">서울튼튼정형외과의원</span><span class="loc">인천 제물포구 · 송림동 · 의원</span></div><div class="updRow closed"><span class="who" style="color:#9467bd"><span class="dot" style="background:#9467bd"></span>김혜성</span><span class="nm">부평베스트튼튼의원</span><span class="loc">인천 부평구 · 부평동 · 의원</span></div></div><div class="updSec"><h4>재등록 2곳 <span style="font-weight:400;color:#888;font-size:11px">— 같은 이름·같은 동, 심평원 기관코드만 변경 (재개설·대표자 변경 등)</span></h4><div class="updRow "><span class="who" style="color:#3388ff"><span class="dot" style="background:#3388ff"></span>전은성</span><span class="nm">다시봄날의원</span><span class="loc">인천 부평구 · 삼산동 · 의원</span></div><div class="updRow "><span class="who" style="color:#2ca02c"><span class="dot" style="background:#2ca02c"></span>황태영</span><span class="nm">시흥고려튼튼의원</span><span class="loc">경기 시흥시 · 정왕동 · 의원</span></div></div></div><div id="updFoot"><label><input type="checkbox" id="updHide"> 이번 업데이트 다시 보지 않기</label><button onclick="closeUpd()">확인</button></div></div></div>
 
 <div class="legend">
   <b>담당자</b>
@@ -1186,6 +1225,22 @@ function closeModal() {
   document.getElementById('modal').classList.remove('show');
 }
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+// ── 월별 업데이트 배너: 기준일별 1회 자동 표시 (다시 보지 않기는 브라우저별 저장) ──
+const UPD_KEY = 'gaewon_upd_seen_2026-10-17';
+function openUpd() { const m = document.getElementById('upd'); if (m) m.classList.add('show'); }
+function closeUpd() {
+  const m = document.getElementById('upd'); if (!m) return;
+  m.classList.remove('show');
+  const cb = document.getElementById('updHide');
+  if (cb && cb.checked) { try { localStorage.setItem(UPD_KEY, '1'); } catch (e) {} }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  let seen = false;
+  try { seen = localStorage.getItem(UPD_KEY) === '1'; } catch (e) {}
+  if (!seen) openUpd();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeUpd(); });
 
 // 초기: 모두 펼침
 document.addEventListener('DOMContentLoaded', expandAll);
