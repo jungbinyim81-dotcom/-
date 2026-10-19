@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>리알트리스 9~11월 인센티브</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Malgun Gothic", Arial, sans-serif; background: #f0f4f8; color: #222; font-size: 13px; }
+.header { background: linear-gradient(135deg, #1a5276, #2e86c1); color: white; padding: 18px 24px; }
+.header h1 { font-size: 20px; font-weight: 700; }
+.header p { font-size: 12px; margin-top: 5px; opacity: 0.88; }
+.info-box { display: flex; gap: 12px; padding: 14px 24px; background: #fff; border-bottom: 1px solid #dde; flex-wrap: wrap; }
+.info-card { background: #f7f9fc; border: 1px solid #d0d8e8; border-radius: 8px; padding: 10px 16px; flex: 1; min-width: 160px; }
+.info-card .label { font-size: 11px; color: #666; margin-bottom: 3px; }
+.info-card .value { font-size: 13px; font-weight: 600; color: #1a5276; }
+.award-box { display: flex; gap: 12px; padding: 10px 24px 12px; background: #fff; border-bottom: 2px solid #dde; flex-wrap: wrap; }
+.award-card { border-radius: 8px; padding: 10px 18px; }
+.award-card.gold { background: linear-gradient(135deg, #fef9e7, #fdebd0); border: 2px solid #f9a825; }
+.award-card.silver { background: linear-gradient(135deg, #eaf4fb, #d6eaf8); border: 2px solid #5dade2; }
+.award-card.bronze { background: linear-gradient(135deg, #f4fbf6, #dcf2e3); border: 2px solid #52be80; }
+.award-card.plain { background: #f7f7f7; border: 2px solid #bbb; }
+.award-rank { font-size: 16px; font-weight: 700; }
+.award-card.gold .award-rank { color: #b7770d; }
+.award-card.silver .award-rank { color: #1a6fa8; }
+.award-card.bronze .award-rank { color: #1e8449; }
+.award-card.plain .award-rank { color: #555; }
+.award-amount { font-size: 14px; font-weight: 600; margin-top: 2px; }
+.award-cond { font-size: 11px; color: #555; margin-top: 3px; }
+.controls { padding: 10px 24px; background: #fff; border-bottom: 1px solid #dde; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.controls button { padding: 7px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: background 0.2s; }
+.btn-calc { background: #2e86c1; color: white; }
+.btn-calc:hover { background: #1a5276; }
+.btn-reset { background: #e74c3c; color: white; }
+.btn-reset:hover { background: #c0392b; }
+.status-bar { background: #eaf4fb; border-left: 4px solid #2e86c1; padding: 8px 16px; margin: 10px 24px; border-radius: 4px; font-size: 12px; color: #1a5276; }
+.table-wrap { padding: 0 24px 30px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+thead tr.main-head { background: #1a5276; color: white; }
+thead tr.sub-head { background: #21618c; color: white; }
+thead th { padding: 9px 8px; text-align: center; font-size: 12px; white-space: nowrap; border-right: 1px solid rgba(255,255,255,0.15); }
+thead th:last-child { border-right: none; }
+.th-input { background: #1a6094 !important; }
+.th-growth { background: #1a7a4a !important; }
+.th-total { background: #7d3c98 !important; }
+.th-award { background: #922b21 !important; }
+tbody tr { border-bottom: 1px solid #e8ecf0; }
+tbody tr:hover { filter: brightness(0.96); }
+tbody tr.rank1-10 { background: #fffde7; }
+tbody tr.rank11-50 { background: #f0fff4; }
+tbody tr.no-award { background: #fafafa; }
+td { padding: 7px 8px; text-align: center; font-size: 12px; vertical-align: middle; }
+td.name-col { text-align: left; font-weight: 600; padding-left: 12px; min-width: 65px; }
+td.team-col { color: #777; font-size: 11px; }
+td.rank-col { font-weight: 700; font-size: 14px; min-width: 48px; }
+td.rank-col.r1-10 { color: #d35400; }
+td.rank-col.r11-50 { color: #1e8449; }
+td.base-col { background: #eaf3fb; color: #1a5276; font-weight: 500; }
+td.total-col { background: #f5eef8; font-weight: 700; }
+input[type=number] { width: 105px; padding: 5px 6px; border: 1px solid #b0c4de; border-radius: 4px; text-align: right; font-size: 12px; color: #222; background: #f8fbff; }
+input[type=number]:focus { outline: none; border-color: #2e86c1; background: #fff; box-shadow: 0 0 0 2px rgba(46,134,193,0.2); }
+input.est { background: #ecf0f1 !important; color: #7f8c8d; font-style: italic; }
+.gp { color: #1e8449; font-weight: 600; }
+.gn { color: #c0392b; font-weight: 600; }
+.gz { color: #aaa; }
+.award-badge { display: inline-block; padding: 4px 9px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.badge-gold { background: #f9a825; color: #fff; }
+.badge-silver { background: #5dade2; color: #fff; }
+.badge-bronze { background: #52be80; color: #fff; }
+.badge-plain { background: #95a5a6; color: #fff; }
+.badge-none { background: #ddd; color: #888; }
+.num { font-family: "Courier New", monospace; }
+td.name-col.my-team { background: #e67e22 !important; color: white !important; font-weight: 700; border-radius: 4px; padding-left: 10px; }
+tr.my-team-row { outline: 2px solid #e67e22; }
+.sim-toggle-bar { margin: 12px 24px; padding: 14px 20px; background: linear-gradient(135deg, #fef9e7, #fde9c8); border: 2px solid #f9a825; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
+.sim-toggle-bar h3 { color: #b9770e; font-size: 14px; margin: 0; }
+.sim-toggle-bar .sim-status { font-size: 12px; color: #7d6608; flex: 1; }
+.btn-sim-large { background: #c0392b; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; transition: all 0.2s; }
+.btn-sim-large:hover { background: #a93226; }
+.btn-sim-large.active { background: #16a085; }
+.btn-sim-large:disabled { background: #bdc3c7; cursor: not-allowed; }
+.sim-panel { margin: 0 24px 12px; padding: 16px 20px; background: #fffbef; border: 2px solid #f1c40f; border-radius: 10px; }
+.sim-panel-title { color: #7d6608; font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.sim-panel-note { font-size: 11px; color: #666; margin-bottom: 12px; }
+.sim-guide { background: white; border-radius: 8px; padding: 12px 16px; }
+.sim-guide-row { padding: 10px 0; border-bottom: 1px dashed #eee; }
+.sim-guide-row:last-child { border-bottom: none; }
+.sim-guide-name { font-weight: 700; color: #1a2d50; font-size: 15px; }
+.sim-guide-status { color: #666; font-size: 12px; margin-left: 10px; }
+.sim-guide-target { padding: 4px 0 4px 20px; font-size: 12px; color: #117864; }
+.sim-guide-target b { color: #c0392b; font-size: 13px; }
+.sim-guide-ok { color: #16a085; font-weight: 700; padding: 4px 0 4px 20px; font-size: 13px; }
+.sim-guide-no { color: #aaa; padding: 4px 0 4px 20px; font-size: 12px; }
+@media (max-width: 600px) {
+  .header, .info-box, .award-box, .controls { padding-left: 16px; padding-right: 16px; }
+  .table-wrap { padding: 0 16px 24px; }
+  .status-bar, .sim-toggle-bar, .sim-panel { margin-left: 16px; margin-right: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>&#x1F4CA; 제 104기 9~11월 리알트리스 인센티브 대시보드 (일반병원사업부)</h1>
+  <p>평가기간: 2026년 9~11월 &nbsp;|&nbsp; 성장기준: 2025년 1~12월 월평균 실적(고정) &nbsp;|&nbsp; 평가: 9~11월 합산 성장액 순위 &nbsp;|&nbsp; 반영: 9월 (2026-10-20)</p>
+</div>
+
+<div class="info-box">
+  <div class="info-card"><div class="label">평가품목</div><div class="value">리알트리스</div></div>
+  <div class="info-card"><div class="label">평가기간</div><div class="value">2026년 9월 ~ 11월</div></div>
+  <div class="info-card"><div class="label">성장기준 (고정)</div><div class="value">2025년 1~12월 월평균 실적</div></div>
+  <div class="info-card"><div class="label">성장액 계산</div><div class="value">각 월 (실적 - 기준) 합산</div></div>
+</div>
+
+<div class="award-box">
+  <div class="award-card gold">
+    <div class="award-rank">&#x1F947; 1~10위</div>
+    <div class="award-amount">100만원 물품시상</div>
+    <div class="award-cond">&#9888; 시상조건: 합산 성장액 100만원 이상</div>
+  </div>
+  <div class="award-card silver">
+    <div class="award-rank">&#x1F948; 11~50위</div>
+    <div class="award-amount">50만원 물품시상</div>
+    <div class="award-cond">&#9888; 시상조건: 합산 성장액 50만원 이상</div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn-calc" onclick="calcAll()">&#x1F4CA; 순위 계산</button>
+  <button class="btn-reset" onclick="resetInputs()">&#x1F504; 입력값 초기화</button>
+  <span style="font-size:12px;color:#666;">9월 확정 반영 | 나머지 월 입력 후 [순위 계산] 클릭 &nbsp;|&nbsp; 단위: 원 (예: 5000000)</span>
+</div>
+
+<div class="sim-toggle-bar">
+  <h3>&#x1F3AF; 남은 달 시뮬레이션 모드</h3>
+  <div class="sim-status">켜면 우리팀 외 담당자의 빈 달을 <b>가용월 평균</b>으로 채움 → 우리팀 빈 달만 직접 입력해서 순위·시상 확인</div>
+  <button id="btnSim" class="btn-sim-large" onclick="toggleSim()">&#x1F3AF; 시뮬레이션 모드 시작</button>
+</div>
+
+<div class="sim-panel" id="simPanel">
+  <div class="sim-panel-title">&#x1F3AF; 우리팀 시상권 진입 가이드 (실시간)</div>
+  <div class="sim-panel-note">현재 입력 상태 기준 순위 · 컷. "필요 월실적" = 남은(빈) 달에 매달 이만큼 팔면 컷 통과</div>
+  <div class="sim-guide" id="simGuide"></div>
+</div>
+
+<div class="status-bar" id="statusBar">&#x1F4A1; 9월 확정 실적 자동 반영 (2026-10-20, 평가실적RAW 기준). 10월·11월 실적 입력 후 [순위 계산] 클릭.</div>
+
+<div class="table-wrap">
+<table id="mainTable">
+<thead>
+  <tr class="main-head">
+    <th rowspan="2" style="width:48px;">순위</th>
+    <th rowspan="2" style="width:70px;">담당자</th>
+    <th rowspan="2" style="width:70px;">팀장</th>
+    <th rowspan="2" style="width:105px;">기준실적<br><small style="font-weight:400">(25년 월평균)</small></th>
+    <th colspan="3" class="th-input">2026년 실적 입력</th>
+    <th colspan="3" class="th-growth">월별 성장액</th>
+    <th rowspan="2" class="th-total" style="width:115px;">합산 성장액<br><small style="font-weight:400">(9+10+11월)</small></th>
+    <th rowspan="2" class="th-award" style="width:100px;">시상</th>
+  </tr>
+  <tr class="sub-head">
+    <th class="th-input" style="width:115px;">9월</th><th class="th-input" style="width:115px;">10월</th><th class="th-input" style="width:115px;">11월</th>
+    <th class="th-growth" style="width:105px;">9월 성장액</th><th class="th-growth" style="width:105px;">10월 성장액</th><th class="th-growth" style="width:105px;">11월 성장액</th>
+  </tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+
+<script>
+const rawData = [{"name": "이태환", "branch": "충남.충북지점", "tl": "윤준기", "base": 2474172, "m9": 9929530, "m10": null, "m11": null, "total": 7455358, "rank": 8}, {"name": "서민우", "branch": "서부지점", "tl": "윤현식", "base": 673211, "m9": 1670440, "m10": null, "m11": null, "total": 997229, "rank": 167}, {"name": "유종우", "branch": "서부지점", "tl": "권오훈", "base": 2143803, "m9": 8567710, "m10": null, "m11": null, "total": 6423907, "rank": 13}, {"name": "신진범", "branch": "충남.충북지점", "tl": "이재홍", "base": 573828, "m9": 8476120, "m10": null, "m11": null, "total": 7902292, "rank": 4}, {"name": "김영우", "branch": "강남.강원지점", "tl": "추재현", "base": 1162116, "m9": 2612400, "m10": null, "m11": null, "total": 1450284, "rank": 131}, {"name": "최한수", "branch": "서부지점", "tl": "양준영", "base": 1135201, "m9": 2464910, "m10": null, "m11": null, "total": 1329709, "rank": 141}, {"name": "박승호", "branch": "충남.전북지점", "tl": "김종범", "base": 436680, "m9": 1680940, "m10": null, "m11": null, "total": 1244260, "rank": 144}, {"name": "전은성", "branch": "인천지점", "tl": "임정빈", "base": 2450525, "m9": 5231160, "m10": null, "m11": null, "total": 2780635, "rank": 68}, {"name": "김희성", "branch": "충남.충북지점", "tl": "여정현", "base": 639290, "m9": 1920060, "m10": null, "m11": null, "total": 1280770, "rank": 142}, {"name": "송봉건", "branch": "북부지점", "tl": "박성현", "base": 667492, "m9": 3778270, "m10": null, "m11": null, "total": 3110778, "rank": 57}, {"name": "김희창", "branch": "경기지점", "tl": "이영준", "base": 1681468, "m9": 5658420, "m10": null, "m11": null, "total": 3976952, "rank": 38}, {"name": "박경순", "branch": "충남.충북지점", "tl": "윤준기", "base": 280518, "m9": 2637130, "m10": null, "m11": null, "total": 2356612, "rank": 79}, {"name": "권원근", "branch": "강남.강원지점", "tl": "추재현", "base": 645218, "m9": 2062790, "m10": null, "m11": null, "total": 1417572, "rank": 133}, {"name": "임광수", "branch": "강남.강원지점", "tl": "전효택", "base": 1410397, "m9": 3422520, "m10": null, "m11": null, "total": 2012123, "rank": 94}, {"name": "조치호", "branch": "강남.강원지점", "tl": "정민재", "base": 1154928, "m9": 3743930, "m10": null, "m11": null, "total": 2589002, "rank": 73}, {"name": "강정모", "branch": "서부지점", "tl": "양준영", "base": 849862, "m9": 2032400, "m10": null, "m11": null, "total": 1182538, "rank": 148}, {"name": "이용준", "branch": "북부지점", "tl": "이수현", "base": 343362, "m9": 1823600, "m10": null, "m11": null, "total": 1480238, "rank": 128}, {"name": "원창식", "branch": "충남.충북지점", "tl": "윤준기", "base": 882338, "m9": 5323330, "m10": null, "m11": null, "total": 4440992, "rank": 31}, {"name": "양영빈", "branch": "경기지점", "tl": "이영준", "base": 1261658, "m9": 10147210, "m10": null, "m11": null, "total": 8885552, "rank": 3}, {"name": "박성열", "branch": "충남.충북지점", "tl": "이홍주", "base": 2713867, "m9": 3673210, "m10": null, "m11": null, "total": 959343, "rank": 170}, {"name": "이진욱", "branch": "서부지점", "tl": "윤현식", "base": 2432555, "m9": 3530250, "m10": null, "m11": null, "total": 1097695, "rank": 153}, {"name": "황유석", "branch": "강남.강원지점", "tl": "전효택", "base": 80638, "m9": 239390, "m10": null, "m11": null, "total": 158752, "rank": 233}, {"name": "최태영", "branch": "경기지점", "tl": "임찬규", "base": 1718501, "m9": 7473520, "m10": null, "m11": null, "total": 5755019, "rank": 19}, {"name": "임현묵", "branch": "강남.강원지점", "tl": "차환준", "base": 5405562, "m9": 11813320, "m10": null, "m11": null, "total": 6407758, "rank": 14}, {"name": "최경원", "branch": "충남.충북지점", "tl": "이재홍", "base": 1943009, "m9": 8909770, "m10": null, "m11": null, "total": 6966761, "rank": 10}, {"name": "고재백", "branch": "서부지점", "tl": "장형수", "base": 1007040, "m9": 2867250, "m10": null, "m11": null, "total": 1860210, "rank": 102}, {"name": "신승환", "branch": "남부지점", "tl": "이봉열", "base": 879243, "m9": 1905460, "m10": null, "m11": null, "total": 1026217, "rank": 163}, {"name": "박기홍", "branch": "부산지점", "tl": "김현덕", "base": 1724456, "m9": 6061150, "m10": null, "m11": null, "total": 4336694, "rank": 34}, {"name": "이하림", "branch": "부산지점", "tl": "이재열", "base": 644285, "m9": 1640340, "m10": null, "m11": null, "total": 996055, "rank": 168}, {"name": "한대성", "branch": "부산지점", "tl": "정용주", "base": 1718904, "m9": 1920670, "m10": null, "m11": null, "total": 201766, "rank": 232}, {"name": "김상돈", "branch": "부산지점", "tl": "김현덕", "base": 769879, "m9": 1207050, "m10": null, "m11": null, "total": 437171, "rank": 213}, {"name": "홍상식", "branch": "인천지점", "tl": "정재헌", "base": 619298, "m9": 2144080, "m10": null, "m11": null, "total": 1524782, "rank": 120}, {"name": "박성기", "branch": "충남.전북지점", "tl": "김종범", "base": 1562107, "m9": 3728510, "m10": null, "m11": null, "total": 2166403, "rank": 88}, {"name": "추승우", "branch": "서부지점", "tl": "양준영", "base": 254629, "m9": 7817750, "m10": null, "m11": null, "total": 7563121, "rank": 7}, {"name": "장효집", "branch": "남부지점", "tl": "이봉열", "base": 687294, "m9": 1451690, "m10": null, "m11": null, "total": 764396, "rank": 177}, {"name": "김창현", "branch": "강남.강원지점", "tl": "정민재", "base": 3371892, "m9": 9308170, "m10": null, "m11": null, "total": 5936278, "rank": 17}, {"name": "김우진", "branch": "부산지점", "tl": "이재열", "base": 171902, "m9": 300410, "m10": null, "m11": null, "total": 128508, "rank": 239}, {"name": "최희성", "branch": "북부지점", "tl": "박성현", "base": 1265129, "m9": 7630910, "m10": null, "m11": null, "total": 6365781, "rank": 15}, {"name": "김윤섭", "branch": "부산지점", "tl": "홍상길", "base": 806879, "m9": 1415910, "m10": null, "m11": null, "total": 609031, "rank": 196}, {"name": "김종영", "branch": "경남지점", "tl": "김중곤", "base": 757453, "m9": 1782950, "m10": null, "m11": null, "total": 1025497, "rank": 164}, {"name": "이윤실", "branch": "충남.전북지점", "tl": "최진수", "base": 1977948, "m9": 3010720, "m10": null, "m11": null, "total": 1032772, "rank": 162}, {"name": "김홍기", "branch": "부산지점", "tl": "홍상길", "base": 708072, "m9": 636670, "m10": null, "m11": null, "total": -71402, "rank": 256}, {"name": "상윤철", "branch": "충남.충북지점", "tl": "이재홍", "base": 1916765, "m9": 6998910, "m10": null, "m11": null, "total": 5082145, "rank": 24}, {"name": "권대업", "branch": "경북지점", "tl": "정석희", "base": 407710, "m9": 3237370, "m10": null, "m11": null, "total": 2829660, "rank": 66}, {"name": "유석만", "branch": "남부지점", "tl": "박중연", "base": 2973029, "m9": 6735120, "m10": null, "m11": null, "total": 3762091, "rank": 42}, {"name": "김경훈", "branch": "제주지점", "tl": "문호재", "base": 1216406, "m9": 1288090, "m10": null, "m11": null, "total": 71684, "rank": 242}, {"name": "이병훈", "branch": "경북지점", "tl": "김영포", "base": 1502672, "m9": 3564850, "m10": null, "m11": null, "total": 2062178, "rank": 92}, {"name": "강철진", "branch": "제주지점", "tl": "문호재", "base": 997912, "m9": 2332090, "m10": null, "m11": null, "total": 1334178, "rank": 139}, {"name": "김철현", "branch": "강남.강원지점", "tl": "차환준", "base": 3712292, "m9": 8124120, "m10": null, "m11": null, "total": 4411828, "rank": 32}, {"name": "최유미", "branch": "강남.강원지점", "tl": "차환준", "base": 1771118, "m9": 6631910, "m10": null, "m11": null, "total": 4860792, "rank": 28}, {"name": "심재완", "branch": "충남.전북지점", "tl": "안형준", "base": 401148, "m9": 1191810, "m10": null, "m11": null, "total": 790662, "rank": 174}, {"name": "조태익", "branch": "남부지점", "tl": "강희준", "base": 1217391, "m9": 4043780, "m10": null, "m11": null, "total": 2826389, "rank": 67}, {"name": "유혁기", "branch": "북부지점", "tl": "이수현", "base": 682298, "m9": 2480010, "m10": null, "m11": null, "total": 1797712, "rank": 105}, {"name": "채윤조", "branch": "경기지점", "tl": "박진우", "base": 1222056, "m9": 3962810, "m10": null, "m11": null, "total": 2740754, "rank": 69}, {"name": "최원진", "branch": "경기지점", "tl": "조용성", "base": 689630, "m9": 1690580, "m10": null, "m11": null, "total": 1000950, "rank": 166}, {"name": "김우현", "branch": "서부지점", "tl": "장형수", "base": 1390026, "m9": 6392640, "m10": null, "m11": null, "total": 5002614, "rank": 26}, {"name": "강성민", "branch": "강남.강원지점", "tl": "차환준", "base": 3183588, "m9": 10905800, "m10": null, "m11": null, "total": 7722212, "rank": 5}, {"name": "전상욱", "branch": "남부지점", "tl": "박중연", "base": 2147008, "m9": 3881760, "m10": null, "m11": null, "total": 1734752, "rank": 108}, {"name": "정의형", "branch": "강남.강원지점", "tl": "전효택", "base": 220243, "m9": 2165010, "m10": null, "m11": null, "total": 1944767, "rank": 98}, {"name": "이든솔", "branch": "경기지점", "tl": "박진우", "base": 701174, "m9": 2241180, "m10": null, "m11": null, "total": 1540006, "rank": 118}, {"name": "유승호", "branch": "전남지점", "tl": "강민구", "base": 887292, "m9": 1492380, "m10": null, "m11": null, "total": 605088, "rank": 197}, {"name": "문지환", "branch": "강남.강원지점", "tl": "차환준", "base": 1820099, "m9": 4910170, "m10": null, "m11": null, "total": 3090071, "rank": 58}, {"name": "김진율", "branch": "경남지점", "tl": "구본치", "base": 1585758, "m9": 2215810, "m10": null, "m11": null, "total": 630052, "rank": 191}, {"name": "이채혁", "branch": "부산지점", "tl": "김현덕", "base": 214340, "m9": 952490, "m10": null, "m11": null, "total": 738150, "rank": 180}, {"name": "최병호", "branch": "강남.강원지점", "tl": "추재현", "base": 1646477, "m9": 5393420, "m10": null, "m11": null, "total": 3746943, "rank": 43}, {"name": "김판섭", "branch": "경북지점", "tl": "최재덕", "base": 720556, "m9": 2856670, "m10": null, "m11": null, "total": 2136114, "rank": 89}, {"name": "문병선", "branch": "전남지점", "tl": "조재윤", "base": 2802411, "m9": 4416250, "m10": null, "m11": null, "total": 1613839, "rank": 113}, {"name": "강예닮", "branch": "충남.전북지점", "tl": "안형준", "base": 883861, "m9": 2369030, "m10": null, "m11": null, "total": 1485169, "rank": 125}, {"name": "방희현", "branch": "충남.전북지점", "tl": "최진수", "base": 1215510, "m9": 4575000, "m10": null, "m11": null, "total": 3359490, "rank": 49}, {"name": "최우영", "branch": "인천지점", "tl": "김준환", "base": 457260, "m9": 601150, "m10": null, "m11": null, "total": 143890, "rank": 238}, {"name": "박수호", "branch": "충남.전북지점", "tl": "최병률", "base": 790398, "m9": 1937190, "m10": null, "m11": null, "total": 1146792, "rank": 151}, {"name": "이재균", "branch": "인천지점", "tl": "김준환", "base": 2088132, "m9": 8618220, "m10": null, "m11": null, "total": 6530088, "rank": 11}, {"name": "구동현", "branch": "인천지점", "tl": "장정호", "base": 1002717, "m9": 3968440, "m10": null, "m11": null, "total": 2965723, "rank": 61}, {"name": "임태오", "branch": "서부지점", "tl": "권오훈", "base": 2365105, "m9": 8592710, "m10": null, "m11": null, "total": 6227605, "rank": 16}, {"name": "염승철", "branch": "남부지점", "tl": "박종성", "base": 1707038, "m9": 3396470, "m10": null, "m11": null, "total": 1689432, "rank": 109}, {"name": "최인호", "branch": "북부지점", "tl": "오광선", "base": 1096985, "m9": 3707700, "m10": null, "m11": null, "total": 2610715, "rank": 71}, {"name": "조세호", "branch": "인천지점", "tl": "장정호", "base": 1307139, "m9": 2868110, "m10": null, "m11": null, "total": 1560971, "rank": 117}, {"name": "박옥호", "branch": "부산지점", "tl": "홍상길", "base": 3111334, "m9": 4444240, "m10": null, "m11": null, "total": 1332906, "rank": 140}, {"name": "박교준", "branch": "충남.충북지점", "tl": "이홍주", "base": 875052, "m9": 2231300, "m10": null, "m11": null, "total": 1356248, "rank": 137}, {"name": "김병국", "branch": "전남지점", "tl": "조재윤", "base": 203284, "m9": 713170, "m10": null, "m11": null, "total": 509886, "rank": 208}, {"name": "남석진", "branch": "경기지점", "tl": "임찬규", "base": 1418822, "m9": 5193830, "m10": null, "m11": null, "total": 3775008, "rank": 41}, {"name": "이동민", "branch": "경기지점", "tl": "김명선", "base": 771340, "m9": 3696520, "m10": null, "m11": null, "total": 2925180, "rank": 63}, {"name": "강대언", "branch": "전남지점", "tl": "심기운", "base": 1301815, "m9": 2821220, "m10": null, "m11": null, "total": 1519405, "rank": 122}, {"name": "이종훈", "branch": "서부지점", "tl": "장형수", "base": 1248289, "m9": 3223740, "m10": null, "m11": null, "total": 1975451, "rank": 96}, {"name": "김국일", "branch": "강남.강원지점", "tl": "박철환", "base": 265222, "m9": 789090, "m10": null, "m11": null, "total": 523868, "rank": 205}, {"name": "이연호", "branch": "북부지점", "tl": "박성현", "base": 731640, "m9": 2616960, "m10": null, "m11": null, "total": 1885320, "rank": 100}, {"name": "정재련", "branch": "충남.전북지점", "tl": "박희철", "base": 1416957, "m9": 6026440, "m10": null, "m11": null, "total": 4609483, "rank": 29}, {"name": "오현록", "branch": "전남지점", "tl": "심기운", "base": 773456, "m9": 1492380, "m10": null, "m11": null, "total": 718924, "rank": 181}, {"name": "이승현", "branch": "경기지점", "tl": "조용성", "base": 2642938, "m9": 4167500, "m10": null, "m11": null, "total": 1524562, "rank": 121}, {"name": "조재우", "branch": "경북지점", "tl": "윤규식", "base": 1310123, "m9": 2465300, "m10": null, "m11": null, "total": 1155177, "rank": 150}, {"name": "김태한", "branch": "강남.강원지점", "tl": "전효택", "base": 941868, "m9": 3386430, "m10": null, "m11": null, "total": 2444562, "rank": 76}, {"name": "함성보", "branch": "강남.강원지점", "tl": "박철환", "base": 207937, "m9": 137530, "m10": null, "m11": null, "total": -70407, "rank": 255}, {"name": "서민영", "branch": "남부지점", "tl": "박종성", "base": 2753879, "m9": 4615150, "m10": null, "m11": null, "total": 1861271, "rank": 101}, {"name": "강태욱", "branch": "부산지점", "tl": "정용주", "base": 1437058, "m9": 2226300, "m10": null, "m11": null, "total": 789242, "rank": 175}, {"name": "금덕훈", "branch": "남부지점", "tl": "박중연", "base": 3820601, "m9": 7371590, "m10": null, "m11": null, "total": 3550989, "rank": 46}, {"name": "오정현", "branch": "남부지점", "tl": "박중연", "base": 1070186, "m9": 2674470, "m10": null, "m11": null, "total": 1604284, "rank": 114}, {"name": "이승언", "branch": "인천지점", "tl": "장정호", "base": 806194, "m9": 4089640, "m10": null, "m11": null, "total": 3283446, "rank": 51}, {"name": "이성우", "branch": "북부지점", "tl": "장현석", "base": 1035108, "m9": 2663450, "m10": null, "m11": null, "total": 1628342, "rank": 112}, {"name": "이재선", "branch": "남부지점", "tl": "박종성", "base": 1810116, "m9": 3991880, "m10": null, "m11": null, "total": 2181764, "rank": 87}, {"name": "정재학", "branch": "경기지점", "tl": "김명선", "base": 344883, "m9": 957080, "m10": null, "m11": null, "total": 612197, "rank": 194}, {"name": "박형호", "branch": "전남지점", "tl": "최규삼", "base": 1058573, "m9": 1746750, "m10": null, "m11": null, "total": 688177, "rank": 187}, {"name": "이세현", "branch": "경기지점", "tl": "장진수", "base": 1678173, "m9": 9327780, "m10": null, "m11": null, "total": 7649607, "rank": 6}, {"name": "홍정우", "branch": "경남지점", "tl": "김중곤", "base": 3007195, "m9": 3880200, "m10": null, "m11": null, "total": 873005, "rank": 172}, {"name": "임병수", "branch": "전남지점", "tl": "최규삼", "base": 777601, "m9": 1820610, "m10": null, "m11": null, "total": 1043009, "rank": 158}, {"name": "장원석", "branch": "경북지점", "tl": "최재덕", "base": 168082, "m9": 600900, "m10": null, "m11": null, "total": 432818, "rank": 214}, {"name": "임영식", "branch": "인천지점", "tl": "정재헌", "base": 771132, "m9": 3126800, "m10": null, "m11": null, "total": 2355668, "rank": 80}, {"name": "황성묵", "branch": "강남.강원지점", "tl": "박철환", "base": 1057832, "m9": 1477060, "m10": null, "m11": null, "total": 419228, "rank": 215}, {"name": "김태헌", "branch": "경기지점", "tl": "장진수", "base": 0, "m9": 0, "m10": null, "m11": null, "total": 0, "rank": 245}, {"name": "이승재", "branch": "인천지점", "tl": "김준환", "base": 1177307, "m9": 2695130, "m10": null, "m11": null, "total": 1517823, "rank": 123}, {"name": "홍창회", "branch": "경북지점", "tl": "김영포", "base": 1361468, "m9": 2101190, "m10": null, "m11": null, "total": 739722, "rank": 179}, {"name": "류현욱", "branch": "경남지점", "tl": "구본치", "base": 355520, "m9": 835230, "m10": null, "m11": null, "total": 479710, "rank": 211}, {"name": "길성진", "branch": "서부지점", "tl": "권오훈", "base": 2302805, "m9": 3747420, "m10": null, "m11": null, "total": 1444615, "rank": 132}, {"name": "임대현", "branch": "인천지점", "tl": "임정빈", "base": 617439, "m9": 773810, "m10": null, "m11": null, "total": 156371, "rank": 234}, {"name": "원혁빈", "branch": "북부지점", "tl": "김윤석", "base": 887605, "m9": 1996680, "m10": null, "m11": null, "total": 1109075, "rank": 152}, {"name": "김준현", "branch": "충남.충북지점", "tl": "이재홍", "base": 1879005, "m9": 5017380, "m10": null, "m11": null, "total": 3138375, "rank": 54}, {"name": "기창완", "branch": "전남지점", "tl": "심기운", "base": 1171791, "m9": 2195370, "m10": null, "m11": null, "total": 1023579, "rank": 165}, {"name": "이재익", "branch": "경기지점", "tl": "임찬규", "base": 1140212, "m9": 2954570, "m10": null, "m11": null, "total": 1814358, "rank": 104}, {"name": "차동현", "branch": "경기지점", "tl": "박진우", "base": 1290682, "m9": 2373330, "m10": null, "m11": null, "total": 1082648, "rank": 155}, {"name": "진영빈", "branch": "부산지점", "tl": "정용주", "base": 347841, "m9": 356360, "m10": null, "m11": null, "total": 8519, "rank": 244}, {"name": "이은호", "branch": "북부지점", "tl": "이종찬", "base": 3520954, "m9": 9037650, "m10": null, "m11": null, "total": 5516696, "rank": 20}, {"name": "박재민", "branch": "경북지점", "tl": "김영포", "base": 872022, "m9": 2129230, "m10": null, "m11": null, "total": 1257208, "rank": 143}, {"name": "왕경표", "branch": "북부지점", "tl": "장현석", "base": 1096732, "m9": 3941940, "m10": null, "m11": null, "total": 2845208, "rank": 65}, {"name": "권종협", "branch": "북부지점", "tl": "장현석", "base": 285632, "m9": 371760, "m10": null, "m11": null, "total": 86128, "rank": 241}, {"name": "신상용", "branch": "전남지점", "tl": "강민구", "base": 1596538, "m9": 2633200, "m10": null, "m11": null, "total": 1036662, "rank": 161}, {"name": "이정범", "branch": "인천지점", "tl": "정재헌", "base": 1385669, "m9": 4615030, "m10": null, "m11": null, "total": 3229361, "rank": 52}, {"name": "양태환", "branch": "경북지점", "tl": "예명규", "base": 106084, "m9": 600850, "m10": null, "m11": null, "total": 494766, "rank": 209}, {"name": "김충만", "branch": "서부지점", "tl": "장형수", "base": 1867310, "m9": 6393090, "m10": null, "m11": null, "total": 4525780, "rank": 30}, {"name": "임태양", "branch": "충남.충북지점", "tl": "윤준기", "base": 148589, "m9": 473670, "m10": null, "m11": null, "total": 325081, "rank": 225}, {"name": "김형일", "branch": "강남.강원지점", "tl": "전효택", "base": 315232, "m9": 896270, "m10": null, "m11": null, "total": 581038, "rank": 199}, {"name": "김재성", "branch": "충남.전북지점", "tl": "김종범", "base": 1498732, "m9": 2979570, "m10": null, "m11": null, "total": 1480838, "rank": 127}, {"name": "강언필", "branch": "제주지점", "tl": "문호재", "base": 1737329, "m9": 2347070, "m10": null, "m11": null, "total": 609741, "rank": 195}, {"name": "임재열", "branch": "부산지점", "tl": "성우진", "base": 1122801, "m9": 1268480, "m10": null, "m11": null, "total": 145679, "rank": 237}, {"name": "김승덕", "branch": "충남.전북지점", "tl": "박희철", "base": 1304561, "m9": 3391710, "m10": null, "m11": null, "total": 2087149, "rank": 91}, {"name": "서윤", "branch": "서부지점", "tl": "양준영", "base": 631111, "m9": 3952780, "m10": null, "m11": null, "total": 3321669, "rank": 50}, {"name": "이상준", "branch": "충남.전북지점", "tl": "최병률", "base": 360405, "m9": 1064440, "m10": null, "m11": null, "total": 704035, "rank": 184}, {"name": "박성호", "branch": "남부지점", "tl": "강희준", "base": 1017704, "m9": 3238240, "m10": null, "m11": null, "total": 2220536, "rank": 85}, {"name": "배상아", "branch": "경남지점", "tl": "구본치", "base": 819152, "m9": 1334430, "m10": null, "m11": null, "total": 515278, "rank": 206}, {"name": "서상철", "branch": "경북지점", "tl": "예명규", "base": 81051, "m9": 188410, "m10": null, "m11": null, "total": 107359, "rank": 240}, {"name": "박규태", "branch": "부산지점", "tl": "이재열", "base": 418623, "m9": 570540, "m10": null, "m11": null, "total": 151917, "rank": 235}, {"name": "오승호", "branch": "경기지점", "tl": "조용성", "base": 1869328, "m9": 7738200, "m10": null, "m11": null, "total": 5868872, "rank": 18}, {"name": "최영준", "branch": "충남.전북지점", "tl": "박희철", "base": 366951, "m9": 2052070, "m10": null, "m11": null, "total": 1685119, "rank": 110}, {"name": "김시우", "branch": "충남.전북지점", "tl": "안형준", "base": 1767184, "m9": 5613760, "m10": null, "m11": null, "total": 3846576, "rank": 39}, {"name": "이지황", "branch": "경남지점", "tl": "구본치", "base": 1026519, "m9": 769140, "m10": null, "m11": null, "total": -257379, "rank": 259}, {"name": "손영진", "branch": "북부지점", "tl": "김윤석", "base": 861735, "m9": 2272100, "m10": null, "m11": null, "total": 1410365, "rank": 135}, {"name": "조우진", "branch": "경북지점", "tl": "최재덕", "base": 247048, "m9": 290370, "m10": null, "m11": null, "total": 43322, "rank": 243}, {"name": "남동희", "branch": "경기지점", "tl": "장진수", "base": 358669, "m9": 1023510, "m10": null, "m11": null, "total": 664841, "rank": 189}, {"name": "안경호", "branch": "경기지점", "tl": "이영준", "base": 435531, "m9": 3015370, "m10": null, "m11": null, "total": 2579839, "rank": 74}, {"name": "이태희", "branch": "부산지점", "tl": "성우진", "base": 749343, "m9": 626220, "m10": null, "m11": null, "total": -123123, "rank": 257}, {"name": "장경환", "branch": "북부지점", "tl": "장현석", "base": 1758342, "m9": 2628150, "m10": null, "m11": null, "total": 869808, "rank": 173}, {"name": "이동익", "branch": "전남지점", "tl": "강민구", "base": 601272, "m9": 885820, "m10": null, "m11": null, "total": 284548, "rank": 228}, {"name": "안호선", "branch": "인천지점", "tl": "장정호", "base": 1507679, "m9": 8613230, "m10": null, "m11": null, "total": 7105551, "rank": 9}, {"name": "박성훈", "branch": "경북지점", "tl": "정석희", "base": 330992, "m9": 1293520, "m10": null, "m11": null, "total": 962528, "rank": 169}, {"name": "이운오", "branch": "북부지점", "tl": "오광선", "base": 812372, "m9": 3529320, "m10": null, "m11": null, "total": 2716948, "rank": 70}, {"name": "황지호", "branch": "경기지점", "tl": "김명선", "base": 461188, "m9": 1945230, "m10": null, "m11": null, "total": 1484042, "rank": 126}, {"name": "이가야", "branch": "충남.충북지점", "tl": "이홍주", "base": 720447, "m9": 2567560, "m10": null, "m11": null, "total": 1847113, "rank": 103}, {"name": "여종호", "branch": "경기지점", "tl": "김명선", "base": 1865654, "m9": 5262610, "m10": null, "m11": null, "total": 3396956, "rank": 48}, {"name": "김경민", "branch": "충남.전북지점", "tl": "박희철", "base": 0, "m9": 0, "m10": null, "m11": null, "total": 0, "rank": 246}, {"name": "이용목", "branch": "북부지점", "tl": "이종찬", "base": 1345421, "m9": 5676860, "m10": null, "m11": null, "total": 4331439, "rank": 35}, {"name": "정다운", "branch": "북부지점", "tl": "박성현", "base": 1383913, "m9": 2775840, "m10": null, "m11": null, "total": 1391927, "rank": 136}, {"name": "최문규", "branch": "부산지점", "tl": "정용주", "base": 840692, "m9": 1405890, "m10": null, "m11": null, "total": 565198, "rank": 201}, {"name": "김혜성", "branch": "인천지점", "tl": "임정빈", "base": 797954, "m9": 1848850, "m10": null, "m11": null, "total": 1050896, "rank": 157}, {"name": "강현도", "branch": "남부지점", "tl": "박중연", "base": 241064, "m9": 606010, "m10": null, "m11": null, "total": 364946, "rank": 220}, {"name": "이창희", "branch": "북부지점", "tl": "이종찬", "base": 798423, "m9": 1140430, "m10": null, "m11": null, "total": 342007, "rank": 223}, {"name": "홍윤영", "branch": "강남.강원지점", "tl": "정민재", "base": 1436212, "m9": 6879640, "m10": null, "m11": null, "total": 5443428, "rank": 21}, {"name": "주영광", "branch": "경북지점", "tl": "예명규", "base": 589265, "m9": 1216760, "m10": null, "m11": null, "total": 627495, "rank": 192}, {"name": "이종현", "branch": "인천지점", "tl": "장정호", "base": 643368, "m9": 2973340, "m10": null, "m11": null, "total": 2329972, "rank": 81}, {"name": "정의진", "branch": "경기지점", "tl": "조용성", "base": 2525348, "m9": 6777210, "m10": null, "m11": null, "total": 4251862, "rank": 36}, {"name": "권경욱", "branch": "충남.전북지점", "tl": "최병률", "base": 1879111, "m9": 2219070, "m10": null, "m11": null, "total": 339959, "rank": 224}, {"name": "강재구", "branch": "경북지점", "tl": "윤규식", "base": 497005, "m9": 1995880, "m10": null, "m11": null, "total": 1498875, "rank": 124}, {"name": "성동현", "branch": "북부지점", "tl": "오광선", "base": 2117578, "m9": 5923050, "m10": null, "m11": null, "total": 3805472, "rank": 40}, {"name": "민소희", "branch": "남부지점", "tl": "이봉열", "base": 1021141, "m9": 2081980, "m10": null, "m11": null, "total": 1060839, "rank": 156}, {"name": "박은엽", "branch": "경북지점", "tl": "정석희", "base": 525787, "m9": 2652860, "m10": null, "m11": null, "total": 2127073, "rank": 90}, {"name": "이정수", "branch": "북부지점", "tl": "오광선", "base": 1616093, "m9": 4151630, "m10": null, "m11": null, "total": 2535537, "rank": 75}, {"name": "이영진1", "branch": "경남지점", "tl": "김중곤", "base": 1652582, "m9": 3106010, "m10": null, "m11": null, "total": 1453428, "rank": 130}, {"name": "부혁훈", "branch": "서부지점", "tl": "장형수", "base": 0, "m9": 0, "m10": null, "m11": null, "total": 0, "rank": 247}, {"name": "나홍주", "branch": "인천지점", "tl": "정재헌", "base": 275766, "m9": 621130, "m10": null, "m11": null, "total": 345364, "rank": 222}, {"name": "최동현", "branch": "경북지점", "tl": "윤규식", "base": 1538382, "m9": 5121940, "m10": null, "m11": null, "total": 3583558, "rank": 44}, {"name": "김상연", "branch": "경남지점", "tl": "박환성", "base": 570898, "m9": 1120430, "m10": null, "m11": null, "total": 549532, "rank": 203}, {"name": "김강희", "branch": "전남지점", "tl": "조재윤", "base": 1469709, "m9": 2367390, "m10": null, "m11": null, "total": 897681, "rank": 171}, {"name": "하정식", "branch": "북부지점", "tl": "이종찬", "base": 431820, "m9": 5574270, "m10": null, "m11": null, "total": 5142450, "rank": 22}, {"name": "강민기", "branch": "충남.전북지점", "tl": "최진수", "base": 179069, "m9": 641430, "m10": null, "m11": null, "total": 462361, "rank": 212}, {"name": "주민규", "branch": "남부지점", "tl": "이봉열", "base": 265645, "m9": 667120, "m10": null, "m11": null, "total": 401475, "rank": 217}, {"name": "김재욱", "branch": "서부지점", "tl": "양준영", "base": 622592, "m9": 5703560, "m10": null, "m11": null, "total": 5080968, "rank": 25}, {"name": "이광규", "branch": "북부지점", "tl": "오광선", "base": 432923, "m9": 3351710, "m10": null, "m11": null, "total": 2918787, "rank": 64}, {"name": "문명규", "branch": "충남.충북지점", "tl": "여정현", "base": 411541, "m9": 3381630, "m10": null, "m11": null, "total": 2970089, "rank": 59}, {"name": "진형진", "branch": "경북지점", "tl": "최재덕", "base": 644160, "m9": 1680890, "m10": null, "m11": null, "total": 1036730, "rank": 160}, {"name": "장현승", "branch": "경남지점", "tl": "박환성", "base": 371801, "m9": 1089860, "m10": null, "m11": null, "total": 718059, "rank": 182}, {"name": "한진", "branch": "충남.전북지점", "tl": "최병률", "base": 684438, "m9": 4135480, "m10": null, "m11": null, "total": 3451042, "rank": 47}, {"name": "김현식", "branch": "북부지점", "tl": "오광선", "base": 564632, "m9": 142450, "m10": null, "m11": null, "total": -422182, "rank": 260}, {"name": "최성욱", "branch": "충남.전북지점", "tl": "최병률", "base": 586799, "m9": 1680020, "m10": null, "m11": null, "total": 1093221, "rank": 154}, {"name": "김준영", "branch": "남부지점", "tl": "강희준", "base": 863820, "m9": 2389010, "m10": null, "m11": null, "total": 1525190, "rank": 119}, {"name": "이지우", "branch": "남부지점", "tl": "박종성", "base": 436668, "m9": 1216570, "m10": null, "m11": null, "total": 779902, "rank": 176}, {"name": "오재용", "branch": "경기지점", "tl": "장진수", "base": 1506271, "m9": 5549740, "m10": null, "m11": null, "total": 4043469, "rank": 37}, {"name": "곽기호", "branch": "전남지점", "tl": "최규삼", "base": 54737, "m9": 565460, "m10": null, "m11": null, "total": 510723, "rank": 207}, {"name": "전민규", "branch": "북부지점", "tl": "이수현", "base": 3077047, "m9": 3222930, "m10": null, "m11": null, "total": 145883, "rank": 236}, {"name": "김기찬", "branch": "충남.전북지점", "tl": "안형준", "base": 377227, "m9": 6839210, "m10": null, "m11": null, "total": 6461983, "rank": 12}, {"name": "이석우", "branch": "경남지점", "tl": "박환성", "base": 294849, "m9": 687420, "m10": null, "m11": null, "total": 392571, "rank": 219}, {"name": "천성빈", "branch": "서부지점", "tl": "권오훈", "base": 1843418, "m9": 11118540, "m10": null, "m11": null, "total": 9275122, "rank": 2}, {"name": "정상균", "branch": "전남지점", "tl": "최규삼", "base": 759789, "m9": 2174730, "m10": null, "m11": null, "total": 1414941, "rank": 134}, {"name": "이강", "branch": "경북지점", "tl": "예명규", "base": 2310231, "m9": 3070830, "m10": null, "m11": null, "total": 760599, "rank": 178}, {"name": "정재인", "branch": "북부지점", "tl": "이수현", "base": 704334, "m9": 1400540, "m10": null, "m11": null, "total": 696206, "rank": 186}, {"name": "곽승훈", "branch": "충남.전북지점", "tl": "김종범", "base": 491977, "m9": 3422160, "m10": null, "m11": null, "total": 2930183, "rank": 62}, {"name": "이솔", "branch": "충남.전북지점", "tl": "김종범", "base": 339588, "m9": 1568980, "m10": null, "m11": null, "total": 1229392, "rank": 146}, {"name": "문희민", "branch": "경기지점", "tl": "이영준", "base": 1708548, "m9": 3051260, "m10": null, "m11": null, "total": 1342712, "rank": 138}, {"name": "김동엽", "branch": "부산지점", "tl": "성우진", "base": 119250, "m9": 519230, "m10": null, "m11": null, "total": 399980, "rank": 218}, {"name": "황태영", "branch": "인천지점", "tl": "임정빈", "base": 1279831, "m9": 2949180, "m10": null, "m11": null, "total": 1669349, "rank": 111}, {"name": "최재혁2", "branch": "경북지점", "tl": "김영포", "base": 486505, "m9": 967920, "m10": null, "m11": null, "total": 481415, "rank": 210}, {"name": "이하늘", "branch": "북부지점", "tl": "김윤석", "base": 199090, "m9": 1660160, "m10": null, "m11": null, "total": 1461070, "rank": 129}, {"name": "김정현1", "branch": "강남.강원지점", "tl": "전효택", "base": 101845, "m9": 743610, "m10": null, "m11": null, "total": 641765, "rank": 190}, {"name": "견봉기", "branch": "경남지점", "tl": "김중곤", "base": 932667, "m9": 1507270, "m10": null, "m11": null, "total": 574603, "rank": 200}, {"name": "최선아", "branch": "부산지점", "tl": "김현덕", "base": 1024644, "m9": 1583920, "m10": null, "m11": null, "total": 559276, "rank": 202}, {"name": "소재호", "branch": "경기지점", "tl": "박진우", "base": 708044, "m9": 2978780, "m10": null, "m11": null, "total": 2270736, "rank": 84}, {"name": "안성용", "branch": "경남지점", "tl": "박환성", "base": 1671300, "m9": 1873250, "m10": null, "m11": null, "total": 201950, "rank": 231}, {"name": "김선욱", "branch": "북부지점", "tl": "이종찬", "base": 631634, "m9": 3743210, "m10": null, "m11": null, "total": 3111576, "rank": 56}, {"name": "홍인기", "branch": "부산지점", "tl": "성우진", "base": 217230, "m9": 422600, "m10": null, "m11": null, "total": 205370, "rank": 230}, {"name": "오승훈", "branch": "부산지점", "tl": "성우진", "base": 333465, "m9": 870950, "m10": null, "m11": null, "total": 537485, "rank": 204}, {"name": "이재성", "branch": "서부지점", "tl": "윤현식", "base": 1470655, "m9": 3387190, "m10": null, "m11": null, "total": 1916535, "rank": 99}, {"name": "구도윤", "branch": "경기지점", "tl": "장진수", "base": 978924, "m9": 3948260, "m10": null, "m11": null, "total": 2969336, "rank": 60}, {"name": "전승윤", "branch": "인천지점", "tl": "김준환", "base": 919202, "m9": 2480230, "m10": null, "m11": null, "total": 1561028, "rank": 116}, {"name": "박상은", "branch": "부산지점", "tl": "정용주", "base": 780282, "m9": 779390, "m10": null, "m11": null, "total": -892, "rank": 253}, {"name": "곽호룡", "branch": "남부지점", "tl": "강희준", "base": 1078858, "m9": 2246170, "m10": null, "m11": null, "total": 1167312, "rank": 149}, {"name": "이상현", "branch": "경북지점", "tl": "윤규식", "base": 571132, "m9": 1802550, "m10": null, "m11": null, "total": 1231418, "rank": 145}, {"name": "이호중", "branch": "경북지점", "tl": "정석희", "base": 1936569, "m9": 1791970, "m10": null, "m11": null, "total": -144599, "rank": 258}, {"name": "박순봉", "branch": "강남.강원지점", "tl": "추재현", "base": 0, "m9": 0, "m10": null, "m11": null, "total": 0, "rank": 248}, {"name": "임주영", "branch": "북부지점", "tl": "김윤석", "base": 1469031, "m9": 4649500, "m10": null, "m11": null, "total": 3180469, "rank": 53}, {"name": "박재원", "branch": "강남.강원지점", "tl": "추재현", "base": 1401746, "m9": 2444340, "m10": null, "m11": null, "total": 1042594, "rank": 159}, {"name": "한수봉", "branch": "경남지점", "tl": "김중곤", "base": 985759, "m9": 931810, "m10": null, "m11": null, "total": -53949, "rank": 254}, {"name": "이영진2", "branch": "인천지점", "tl": "김준환", "base": 313152, "m9": 906400, "m10": null, "m11": null, "total": 593248, "rank": 198}, {"name": "김동수", "branch": "강남.강원지점", "tl": "추재현", "base": 1631829, "m9": 5190290, "m10": null, "m11": null, "total": 3558461, "rank": 45}, {"name": "최제현", "branch": "인천지점", "tl": "정재헌", "base": 587899, "m9": 2597500, "m10": null, "m11": null, "total": 2009601, "rank": 95}, {"name": "임종환", "branch": "충남.전북지점", "tl": "안형준", "base": 128138, "m9": 1899480, "m10": null, "m11": null, "total": 1771342, "rank": 107}, {"name": "정승욱", "branch": "부산지점", "tl": "김현덕", "base": 678547, "m9": 1375290, "m10": null, "m11": null, "total": 696743, "rank": 185}, {"name": "정의호", "branch": "전남지점", "tl": "심기운", "base": 255838, "m9": 1833460, "m10": null, "m11": null, "total": 1577622, "rank": 115}, {"name": "이상협", "branch": "경북지점", "tl": "윤규식", "base": 2091622, "m9": 4150430, "m10": null, "m11": null, "total": 2058808, "rank": 93}, {"name": "김주호", "branch": "경남지점", "tl": "구본치", "base": 0, "m9": 0, "m10": null, "m11": null, "total": 0, "rank": 249}, {"name": "김한주", "branch": "강남.강원지점", "tl": "정민재", "base": 306010, "m9": 931610, "m10": null, "m11": null, "total": 625600, "rank": 193}, {"name": "노찬열", "branch": "전남지점", "tl": "조재윤", "base": 1155539, "m9": 3474200, "m10": null, "m11": null, "total": 2318661, "rank": 82}, {"name": "안재환", "branch": "충남.전북지점", "tl": "최진수", "base": 2030228, "m9": 11716360, "m10": null, "m11": null, "total": 9686132, "rank": 1}, {"name": "박근우", "branch": "경북지점", "tl": "김영포", "base": 426988, "m9": 748770, "m10": null, "m11": null, "total": 321782, "rank": 226}, {"name": "박진운", "branch": "부산지점", "tl": "홍상길", "base": 217778, "m9": 453250, "m10": null, "m11": null, "total": 235472, "rank": 229}, {"name": "유다현", "branch": "충남.충북지점", "tl": "이홍주", "base": 415622, "m9": 708060, "m10": null, "m11": null, "total": 292438, "rank": 227}, {"name": "이상명", "branch": "경남지점", "tl": "박환성", "base": 754710, "m9": 1471640, "m10": null, "m11": null, "total": 716930, "rank": 183}, {"name": "염경민", "branch": "경기지점", "tl": "김명선", "base": 1089022, "m9": 6185290, "m10": null, "m11": null, "total": 5096268, "rank": 23}, {"name": "이동훈", "branch": "경기지점", "tl": "임찬규", "base": 349796, "m9": 2664260, "m10": null, "m11": null, "total": 2314464, "rank": 83}, {"name": "이현빈", "branch": "충남.충북지점", "tl": "여정현", "base": 509478, "m9": 2720330, "m10": null, "m11": null, "total": 2210852, "rank": 86}, {"name": "김윤욱", "branch": "경북지점", "tl": "김영포", "base": 317557, "m9": 733520, "m10": null, "m11": null, "total": 415963, "rank": 216}, {"name": "김성준", "branch": "충남.충북지점", "tl": "여정현", "base": 218581, "m9": 2811880, "m10": null, "m11": null, "total": 2593299, "rank": 72}, {"name": "이신영", "branch": "경북지점", "tl": "정석희", "base": 241842, "m9": 595770, "m10": null, "m11": null, "total": 353928, "rank": 221}, {"name": "김의영", "branch": "남부지점", "tl": "이봉열", "base": 547262, "m9": 1741130, "m10": null, "m11": null, "total": 1193868, "rank": 147}, {"name": "김수민", "branch": "경기지점", "tl": "임찬규", "base": 1007937, "m9": 2952900, "m10": null, "m11": null, "total": 1944963, "rank": 97}, {"name": "김다영", "branch": "경기지점", "tl": "이영준", "base": 1409892, "m9": 6412100, "m10": null, "m11": null, "total": 5002208, "rank": 27}, {"name": "소성진", "branch": "경북지점", "tl": "예명규", "base": 0, "m9": 0, "m10": null, "m11": null, "total": 0, "rank": 250}, {"name": "박민지", "branch": "경기지점", "tl": "박진우", "base": 89152, "m9": 769080, "m10": null, "m11": null, "total": 679928, "rank": 188}, {"name": "윤도현", "branch": "전남지점", "tl": "강민구", "base": 353834, "m9": 2770830, "m10": null, "m11": null, "total": 2416996, "rank": 77}, {"name": "김정현2", "branch": "서부지점", "tl": "권오훈", "base": 1257849, "m9": 3666490, "m10": null, "m11": null, "total": 2408641, "rank": 78}, {"name": "김태균", "branch": "부산지점", "tl": "이재열", "base": 0, "m9": 0, "m10": null, "m11": null, "total": 0, "rank": 251}, {"name": "김도연", "branch": "서부지점", "tl": "윤현식", "base": 771240, "m9": 3890070, "m10": null, "m11": null, "total": 3118830, "rank": 55}, {"name": "김현정", "branch": "서부지점", "tl": "양준영", "base": 708965, "m9": 2494350, "m10": null, "m11": null, "total": 1785385, "rank": 106}, {"name": "김정민", "branch": "부산지점", "tl": "정용주", "base": 0, "m9": 0, "m10": null, "m11": null, "total": 0, "rank": 252}, {"name": "박준상", "branch": "인천지점", "tl": "임정빈", "base": 665562, "m9": 5017750, "m10": null, "m11": null, "total": 4352188, "rank": 33}];
+const MONTHS = [9,10,11];
+const myTeam = ["전은성", "임대현", "황태영", "박준상", "김혜성"];
+const CUT_A = 10, CUT_B = 50, COND_A = 1000000, COND_B = 500000;
+let simMode = false;
+
+function fmt(n){ if(n===null||n===undefined||isNaN(n)) return '-'; return Math.round(n).toLocaleString('ko-KR'); }
+function fmtG(n){
+  if(n===null||n===undefined||isNaN(n)) return '<span class="gz">-</span>';
+  var s=Math.abs(Math.round(n)).toLocaleString('ko-KR');
+  if(n>0) return '<span class="gp">+'+s+'</span>';
+  if(n<0) return '<span class="gn">-'+s+'</span>';
+  return '<span class="gz">0</span>';
+}
+
+function iid(name,m){ return 'i_'+name+'_'+m; }
+function avgAvail(item){
+  var v = MONTHS.map(function(m){return item['m'+m];}).filter(function(x){return x!==null&&x!==undefined;});
+  return v.length ? Math.round(v.reduce(function(a,b){return a+b;},0)/v.length) : null;
+}
+function readVals(){
+  // 화면 입력값 → {name: {9:v,10:v,11:v}} (빈칸=null)
+  var res = {};
+  rawData.forEach(function(item){
+    res[item.name] = {};
+    MONTHS.forEach(function(m){
+      var el = document.getElementById(iid(item.name,m));
+      var v = el ? el.value : (item['m'+m]!==null&&item['m'+m]!==undefined ? String(item['m'+m]) : '');
+      res[item.name][m] = (v!=='' && v!==undefined) ? parseFloat(v) : null;
+    });
+  });
+  return res;
+}
+function activeMonths(vals){
+  // 한 명이라도 입력된 달 = 평가 반영 달 (그 달 빈칸은 0원 실적으로 계산)
+  return MONTHS.filter(function(m){ return Object.keys(vals).some(function(n){ return vals[n][m]!==null; }); });
+}
+function compute(vals){
+  var act = activeMonths(vals);
+  var data = rawData.map(function(item){
+    var mv = vals[item.name], g = {}, any = false, total = 0, empty = 0;
+    MONTHS.forEach(function(m){
+      var v = mv[m];
+      if (v===null && act.indexOf(m)>=0 && myTeam.indexOf(item.name)<0) v = 0;
+      if (v!==null) { g[m] = v-item.base; total += g[m]; any = true; } else { g[m] = null; empty++; }
+    });
+    return {name:item.name, tl:item.tl, base:item.base, mv:mv, g:g, total: any?total:null, empty:empty};
+  });
+  var w = data.filter(function(d){return d.total!==null;}).sort(function(a,b){return b.total-a.total;});
+  var wo = data.filter(function(d){return d.total===null;});
+  w.forEach(function(d,i){d.rank=i+1;});
+  wo.forEach(function(d,i){d.rank=w.length+i+1;});
+  return {rows: w.concat(wo), ranked: w};
+}
+function award(d){
+  if (d.total===null) return 0;
+  if (d.rank<=CUT_A && d.total>=COND_A) return 1000000;
+  if (d.rank<=CUT_B && d.total>=COND_B) return 500000;
+  return 0;
+}
+function renderTable(res){
+  var tbody = document.getElementById('tableBody');
+  var html = '';
+  res.rows.forEach(function(d){
+    var a = award(d), rowClass='no-award', rankClass='', badge='<span class="award-badge badge-none">-</span>';
+    if (a===1000000) { rowClass='rank1-10'; rankClass='r1-10'; badge='<span class="award-badge badge-gold">&#x1F947; 100만원</span>'; }
+    else if (a===500000) { rowClass='rank11-50'; rankClass='r11-50'; badge='<span class="award-badge badge-silver">&#x1F948; 50만원</span>'; }
+    var mine = myTeam.indexOf(d.name)>=0;
+    var item = rawData.find(function(x){return x.name===d.name;});
+    html += '<tr class="'+rowClass+(mine?' my-team-row':'')+'">'
+      + '<td class="rank-col '+rankClass+'">'+(d.total!==null?d.rank+'위':'-')+'</td>'
+      + '<td class="name-col'+(mine?' my-team':'')+'">'+d.name+'</td>'
+      + '<td class="team-col">'+(d.tl||'')+'</td>'
+      + '<td class="base-col num">'+fmt(d.base)+'</td>';
+    MONTHS.forEach(function(m){
+      var v = d.mv[m], fixed = item['m'+m]!==null&&item['m'+m]!==undefined;
+      var est = !fixed && v!==null && simMode && !mine;
+      html += '<td><input type="number" id="'+iid(d.name,m)+'" placeholder="'+(mine&&simMode&&!fixed?'입력':'')+'" class="'+(est?'est':'')+'" value="'+(v!==null?v:'')+'" onchange="calcAll()" /></td>';
+    });
+    MONTHS.forEach(function(m){ html += '<td class="num">'+(d.g[m]!==null?fmtG(d.g[m]):'-')+'</td>'; });
+    html += '<td class="total-col num">'+(d.total!==null?fmtG(d.total):'-')+'</td><td>'+badge+'</td></tr>';
+  });
+  tbody.innerHTML = html;
+}
+function guide(res){
+  var r = res.ranked, html = '';
+  var cutA = r[CUT_A-1], cutB = r[CUT_B-1];
+  myTeam.forEach(function(name){
+    var d = res.rows.find(function(x){return x.name===name;});
+    if (!d) return;
+    var s = '';
+    var a = award(d);
+    if (a) s += '<div class="sim-guide-ok">&#9733; '+(a===1000000?'1~10위 100만원':'11~50위 50만원')+' 시상권</div>';
+    function need(cut, cond, label){
+      if (!cut) return;
+      var tgt = Math.max((cut.name===d.name ? cut.total : cut.total+1), cond);
+      var gap = tgt - (d.total||0);
+      if (gap <= 0) return;
+      if (d.empty>0) {
+        var perM = d.base + gap/d.empty;
+        s += '<div class="sim-guide-target">&#11157; '+label+' 진입 필요 월실적(남은 '+d.empty+'개월): <b>'+fmt(perM)+'원</b> (성장 '+fmt(gap)+'원 더)</div>';
+      } else {
+        s += '<div class="sim-guide-no">&#11157; '+label+'까지 '+fmt(gap)+'원 부족 (남은 달 없음)</div>';
+      }
+    }
+    if (a!==1000000) need(cutA, COND_A, '1~10위 100만원');
+    if (!a) need(cutB, COND_B, '11~50위 50만원');
+    html += '<div class="sim-guide-row"><span class="sim-guide-name">'+name+'</span>'
+      + '<span class="sim-guide-status">현재 '+(d.total!==null?d.rank+'위 / '+r.length+'명':'실적 없음')
+      + ' (합산성장 '+fmt(d.total)+'원, base '+fmt(d.base)+'원/월)</span>'+s+'</div>';
+  });
+  document.getElementById('simGuide').innerHTML = html
+    + '<div class="sim-panel-note" style="margin-top:8px;">10위 컷 '+(cutA?fmt(cutA.total):'-')+'원 · 50위 컷 '+(cutB?fmt(cutB.total):'-')+'원 (합산 성장액)</div>';
+}
+function calcAll(){
+  var res = compute(readVals());
+  renderTable(res); guide(res);
+  var c100 = res.ranked.filter(function(d){return award(d)===1000000;}).length;
+  var c50 = res.ranked.filter(function(d){return award(d)===500000;}).length;
+  document.getElementById('statusBar').innerHTML = '&#x1F4CA; 계산 완료 | 실적 보유 '+res.ranked.length+'명 | &#x1F947; 100만원: '+c100+'명 | &#x1F948; 50만원: '+c50+'명'+(simMode?' | &#x1F3AF; 시뮬레이션 중 (회색=추정값)':'');
+}
+function baseVals(){
+  var v = {};
+  rawData.forEach(function(item){ v[item.name] = {}; MONTHS.forEach(function(m){ v[item.name][m] = (item['m'+m]!==null&&item['m'+m]!==undefined)?item['m'+m]:null; }); });
+  return v;
+}
+function toggleSim(){
+  simMode = !simMode;
+  var btn = document.getElementById('btnSim');
+  btn.classList.toggle('active', simMode);
+  btn.innerHTML = simMode ? '&#x1F6D1; 시뮬레이션 모드 종료' : '&#x1F3AF; 시뮬레이션 모드 시작';
+  var v = simMode ? readVals() : baseVals();
+  if (simMode) rawData.forEach(function(item){
+    if (myTeam.indexOf(item.name)>=0) return;
+    var a = avgAvail(item);
+    MONTHS.forEach(function(m){ if (v[item.name][m]===null && a!==null) v[item.name][m] = a; });
+  });
+  var res = compute(v); renderTable(res); calcAll();
+}
+function resetInputs(){
+  if (!confirm('입력값을 RAW 확정 실적 상태로 되돌릴까요?')) return;
+  simMode = false;
+  var btn = document.getElementById('btnSim'); btn.classList.remove('active'); btn.innerHTML = '&#x1F3AF; 시뮬레이션 모드 시작';
+  var res = compute(baseVals()); renderTable(res); calcAll();
+}
+(function init(){ var res = compute(baseVals()); renderTable(res); calcAll(); })();
+</script>
+</body>
+</html>
