@@ -1,4 +1,4 @@
-const CACHE_NAME = "team4-20261109-0944";
+const CACHE_NAME = "team4-20261109-0955";
 const ASSETS = [
   "./",
   "./index.html",
@@ -22,6 +22,7 @@ const ASSETS = [
   "./전은성_연간인센상세.html",
   "./임대현_연간인센상세.html",
   "./황태영_연간인센상세.html",
+  "./박준상_연간인센상세.html",
   "./김혜성_연간인센상세.html",
   "./104기_2Q_팀여행인센티브.html",
   "./베믈리디_인센티브_대시보드.html",
