@@ -476,7 +476,7 @@ function cfgDefault(){return{
      sync 안에 넣으면 기존 사용자(이미 sync 객체가 있는 폰)에게 기본값이 안 들어간다 */
   notify:true, seenAt:0, seen:null,
   /* 동기화: url·pass 는 기기별로 직접 입력(공개 페이지에 비밀이 안 남게) */
-  sync:{url:'',secret:'',pass:'',auto:true,cursor:0,dev:'',at:0,posts:{},photos:[],dels:[]}
+  sync:{url:'',secret:'',pass:'',auto:true,cursor:0,dev:'',at:0,posts:{},photos:[],dels:[],vparts:{}}
 };}
 let CFG=loadCfg();
 function loadCfg(){
@@ -668,7 +668,8 @@ document.addEventListener('visibilitychange',()=>{
   if(hidAt){
     const away=(Date.now()-hidAt)/1000;
     hidAt=0;
-    if(CFG.lockOnHide&&away>=(CFG.autolock||0)){lockNow();return;}
+    /* 업로드 창이 열려 있으면 = 아이폰 사진 선택 화면에 다녀온 것. 잠그면 고른 사진이 날아간다 (2026-11-12) */
+    if(CFG.lockOnHide&&away>=(CFG.autolock||0)&&!isOn('mUp')){lockNow();return;}
   }
   snapSeen();
   seenSoon();
@@ -932,6 +933,7 @@ async function refresh(force){
   await loadPosts();
   paintDday();
   paintNews();                          /* 다시 안 그리는 경우에도 배지는 갱신한다 */
+  if(isOn('mUp'))return;                /* 사진 고르는 중 — 내려놓은 사진을 다시 띄우지 않는다 (2026-11-12) */
   const sig=VIEW+'|'+viewSig();
   if(!force&&sig===LASTSIG)return;      /* 그대로면 손대지 않음 */
   LASTSIG=sig;
@@ -1198,11 +1200,19 @@ function openUpload(){
     `<button data-w="${w}" class="${w===CFG.me?'on':''}" onclick="pickWho('${w}')">${esc(nameOf(w))}</button>`).join('');
   paintUp();
   $('mUp').classList.add('on');
+  releaseViews();
   setTimeout(pickFiles,180);
 }
-function closeUpload(){
+/* 아이폰은 사진 선택 화면이 떠 있는 동안 메모리가 모자라면 앱을 강제로 새로 띄운다 → "리셋" (2026-11-12).
+   업로드 창 뒤에 깔린 피드·사진첩 사진(원본 1600px 포함)을 내려놓고, 창을 닫을 때 다시 그린다 */
+function releaseViews(){
+  ['vFeed','vGrid','vMem'].forEach(id=>{const e=$(id);if(e)e.innerHTML='';});
+  dropAllURL();LASTSIG='';
+}
+function closeUpload(noRender){
   UP.forEach(u=>URL.revokeObjectURL(u.url));UP=[];
   $('mUp').classList.remove('on');
+  if(!noRender&&UNLOCKED&&!LASTSIG)refresh(true).catch(()=>{});
 }
 function pickWho(w){CFG.me=w;saveCfg();
   [...$('upWho').children].forEach(b=>b.classList.toggle('on',b.dataset.w===w));}
@@ -1657,8 +1667,8 @@ async function savePost(){
       created:Date.now(),by:CFG.me,caption:$('upCap').value.trim(),
       place:$('upPlace').value.trim(),photos:ids,dims,meta,likes:{},comments:[]};
     await iput('posts',post);
-    closeUpload();
-    go('feed');await refresh();
+    closeUpload(true);              /* 그리기는 아래에서 한 번만 */
+    go('feed');await refresh(true);
     toast('사진첩에 담았어요');
     buzz([16,40,16]);
     syncSoon();
@@ -2477,7 +2487,8 @@ async function syncPull(){
       need.push({pid,dim:(p.dims&&p.dims[pid])||{w:0,h:0},meta:(p.meta&&p.meta[pid])||null});
     }
   }
-  const done=await pool(need,2,async o=>{     /* 사진은 크니 2장씩만 */
+  /* 사진은 크니 2장씩만, 영상이 끼어 있으면 1개씩 (아이폰 메모리 — 2026-11-12) */
+  const done=await pool(need,need.some(o=>o.meta&&o.meta.v)?1:2,async o=>{
     /* 영상은 조각으로 나뉘어 올라와 있다 — n 개를 순서대로 받아 다시 붙인다 (2026-09-16) */
     if(o.meta&&o.meta.v){
       /* n 을 아는 기록이면 그만큼만 받고, 모르면 조각이 끊길 때까지 받는다.
@@ -2490,7 +2501,7 @@ async function syncPull(){
           if(n)throw new Error('조각 없음');   /* 개수를 아는데 빈다 = 아직 다 안 올라옴 */
           break;                                /* 개수를 모르면 여기까지가 끝 */
         }
-        parts.push(await decU8(b64ToU8(r.data)));
+        parts.push(new Blob([await decU8(b64ToU8(r.data))]));   /* 조각은 바로 Blob 으로 — 큰 배열을 쌓아두지 않는다 */
       }
       if(!parts.length)throw new Error('조각 없음');
       const rt=await sreq('get',{name:'ph_'+o.pid+'_t'});
@@ -2527,10 +2538,15 @@ async function syncPush(){
     s.posts[id]='DEL';sent++;saveCfg();
   }
 
-  /* 2) 새로 만들었거나 바뀐 기록 */
-  for(const p of POSTS){
+  /* 2) 새로 만들었거나 바뀐 기록 (2026-11-12 개편)
+     - 최근에 올린 것부터 보낸다 (예전엔 사진 날짜순이라 옛 날짜로 올린 새 기록이 뒤로 밀렸다)
+     - 한 건이 실패해도 다음 건은 계속 보낸다. 예전엔 큰 영상 하나가 실패하면 그 뒤 기록이 전부 멈췄다 */
+  if(!s.vparts||typeof s.vparts!=='object')s.vparts={};
+  const fails=[];
+  for(const p of feedPosts()){
     const sig=postSig(p);
     if(s.posts[p.id]===sig)continue;
+    try{
 
     /* 사진 먼저 (한 번 올리면 끝) */
     const dims={};
@@ -2545,10 +2561,14 @@ async function syncPush(){
       if(f.v){
         /* 영상은 한 번에 올리면 앱스스크립트가 못 받는다 — VCHUNK 로 잘라 순서대로 올린다.
            조각 개수는 담을 때 post.meta 에 적어 두었으므로 받는 쪽이 그대로 읽어 붙인다 */
-        const u8=await blobToU8(f.full);
-        const n=Math.max(1,Math.ceil(u8.length/VCHUNK));
-        for(let i=0;i<n;i++)
-          await spush('ph_'+pid+'_v'+i,await encU8(u8.subarray(i*VCHUNK,Math.min(u8.length,(i+1)*VCHUNK))));
+        /* 영상 전체를 메모리에 올리지 않는다 — 3MB 조각만 잘라 읽는다 (아이폰 강제 재시작 원인, 2026-11-12).
+           끊겼다 다시 하면 올린 조각 다음부터 이어 올린다 (vparts) */
+        const vb=f.full, size=vb.size||0;
+        const n=Math.max(1,Math.ceil(size/VCHUNK));
+        for(let i=Math.min(s.vparts[pid]||0,n);i<n;i++){
+          await spush('ph_'+pid+'_v'+i,await encU8(await blobToU8(vb.slice(i*VCHUNK,Math.min(size,(i+1)*VCHUNK)))));
+          s.vparts[pid]=i+1;saveCfg();
+        }
         await spush('ph_'+pid+'_t',await encU8(await blobToU8(f.thumb)));
         /* 담을 때 계산한 조각 수와 실제가 어긋나면 받는 쪽이 못 붙인다 — 실제 값으로 맞춰 둔다 */
         if(p.meta&&p.meta[pid]&&p.meta[pid].n!==n){p.meta[pid].n=n;await iput('posts',p);}
@@ -2556,15 +2576,17 @@ async function syncPush(){
         await spush('ph_'+pid+'_f',await encU8(await blobToU8(f.full)));
         await spush('ph_'+pid+'_t',await encU8(await blobToU8(f.thumb)));
       }
-      s.photos.push(pid);photos++;saveCfg();
+      s.photos.push(pid);delete s.vparts[pid];photos++;saveCfg();
     }
 
     const post=Object.assign({},p,{dims});
     const body=new TextEncoder().encode(JSON.stringify({t:'post',post}));
     await spush('ev_'+Date.now()+'_'+s.dev+'_'+Math.random().toString(36).slice(2,7),await encU8(body));
     s.posts[p.id]=sig;sent++;saveCfg();
+    }catch(e){fails.push(String(e&&e.message||e));}
   }
-  return {sent,photos};
+  /* 보낸 건 이미 기록됐다. 못 보낸 건 알려서 배지에 남기고 다음 동기화에서 다시 시도 */
+  return {sent,photos,fails};
 }
 
 /* --- 한 번 동기화 --- */
@@ -2574,6 +2596,9 @@ async function syncPush(){
    보내기를 먼저 하는 이유 — 내 것이 빨리 나가야 상대가 다음 확인 때 바로 본다. */
 async function syncNow(loud){
   if(!syncOn()){if(loud)toast('설정에서 동기화 주소와 공유 암호를 먼저 넣어주세요',3000);return;}
+  /* 사진 고르는 중(업로드 창)에는 자동 동기화를 쉰다 — 영상 송수신이 메모리를 잡아 아이폰이 앱을 재시작시킨다.
+     담기를 누르면 savePost 가 창을 닫고 syncSoon 으로 바로 보낸다 (2026-11-12) */
+  if(!loud&&isOn('mUp'))return;
   kickSync();
   if(SYNCING)return;
   SYNCING=true;SYNCING_AT=Date.now();
@@ -2585,7 +2610,8 @@ async function syncNow(loud){
   let push={sent:0,photos:0}, pull={got:0,photos:0,bad:0};
   let errs=[];
   try{
-    try{ push=await syncPush(); }
+    try{ push=await syncPush();
+      if(push.fails&&push.fails.length)errs.push('보내기: '+push.fails.length+'건 못 보냄 ('+push.fails[0]+')'); }
     catch(e){ errs.push('보내기: '+String(e.message||e)); }
     try{ pull=await syncPull(); }
     catch(e){ errs.push('받기: '+String(e.message||e)); }
@@ -2650,9 +2676,11 @@ function syncFlush(){
 /* --- 설정 화면 동작 --- */
 function syncSave(){
   const s=sy();
+  const oldKey=s.url+'|'+s.pass;
   s.url=$('syUrl').value.trim();
   s.secret=$('sySec').value.trim();
   s.pass=$('syPass').value;
+  if(oldKey!==s.url+'|'+s.pass)s.vparts={};   /* 다른 열쇠로 이어 올리면 조각이 섞인다 */
   s.auto=$('swSync').classList.contains('on');
   KEYC=null;saveCfg();
   if(s.pass&&s.pass.length<8)return toast('공유 암호는 8자 이상을 권해요',3000);
@@ -2674,7 +2702,7 @@ async function syncTest(){
 async function syncManual(){syncSave();await syncNow(true);}
 function syncReset(){
   if(!confirm('받은 기록 표시를 지우고 처음부터 다시 주고받을까요? (사진이 사라지진 않아요)'))return;
-  const s=sy();s.cursor=0;s.posts={};s.photos=[];saveCfg();
+  const s=sy();s.cursor=0;s.posts={};s.photos=[];s.vparts={};saveCfg();
   toast('다음 동기화에서 전부 다시 맞춰요');
 }
 
@@ -2721,7 +2749,7 @@ window.addEventListener('popstate',function(){
 });
 
 /* ---------------- 시작 ---------------- */
-const BUILD='2026-08-30a';
+const BUILD='2026-11-12a';
 (async function boot(){
   /* 예전엔 이 안에서 한 군데라도 실패하면 나머지가 통째로 건너뛰어졌다.
      특히 loadPosts() 가 실패하면 아래 동기화 타이머가 아예 등록되지 않아서
