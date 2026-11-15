@@ -1,0 +1,37 @@
+{
+  "name": "30분 운동",
+  "short_name": "30분 운동",
+  "description": "기록 · 시간 체크 · 몸의 변화",
+  "id": "/-/fit/",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f5f2",
+  "theme_color": "#f5f5f2",
+  "lang": "ko",
+  "categories": [
+    "health",
+    "fitness"
+  ],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
