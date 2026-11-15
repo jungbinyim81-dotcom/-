@@ -9,7 +9,7 @@
 <meta http-equiv="Expires" content="0">
 <script>
 // 통합 포털 iframe(self!==top) 안에서는 자동 리로드 비활성화 (무한 깜박임 방지)
-const VER = '20261116075954';
+const VER = '20261116081440';
 if (window.self === window.top) {
   const prev = localStorage.getItem('api_ver');
   if (prev && prev !== VER) { localStorage.setItem('api_ver', VER); location.reload(true); }
@@ -174,8 +174,8 @@ table.dt tfoot td.name { background: #f0f3f5!important; }
 </head>
 <body>
 <header>
-  <h1>API 실적분석 · 2026년 10월 1차</h1>
-  <div class="sub">인천일병2팀 · 자료: 2610월 API 실적분석 1차(4팀).xlsx · 단위: 원</div>
+  <h1>API 실적분석 · 2026년 10월 2차</h1>
+  <div class="sub">인천일병2팀 · 자료: 2610월 API 실적분석 2차(4팀).xlsx · 단위: 원</div>
 </header>
 
 <button id="searchFab" onclick="openSearch()">병원/약국 찾기</button>
@@ -814,7 +814,7 @@ if (sectionEntries.length > 0) showSection(sectionEntries[0][0]);
 
 // ── Service Worker 등록 + 즉시 업데이트 (단독 앱일 때만, iframe 포털에선 스킵) ──
 if ('serviceWorker' in navigator && window.self === window.top) {
-  navigator.serviceWorker.register('./sw.js?v=20261116075954').then(reg => {
+  navigator.serviceWorker.register('./sw.js?v=20261116081440').then(reg => {
     reg.update();
     reg.addEventListener('updatefound', () => {
       const nw = reg.installing;
