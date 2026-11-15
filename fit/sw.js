@@ -1,5 +1,5 @@
 // 30분 운동 서비스워커 — 화면(index)은 네트워크 우선(새 버전 즉시), 나머지는 캐시
-const CACHE = "fit30-20261115-1943";
+const CACHE = "fit30-20261115-1947";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {}))); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });

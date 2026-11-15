@@ -175,7 +175,7 @@ textarea{resize:vertical;min-height:60px}
    ========================================================= */
 const $=id=>document.getElementById(id);
 const LS='fit30.v1';
-const VER='2026-11-15a';
+const VER='2026-11-15b';
 
 const DEF_PLAN=[
   {id:'warm',kind:'timer',name:'워밍업',sec:300,on:true},
@@ -456,7 +456,8 @@ function idleHTML(){
     ${weekDots(w.days)}
     <div class="card">${ST.plan.filter(b=>b.on).map(b=>`<div class="pl"><b>${esc(b.name)}</b><span>${blockSummary(b)}</span></div>`).join('')
       ||'<div class="empty">루틴 탭에서 운동을 켜주세요</div>'}
-      <div class="sub" style="margin-top:8px">예상 약 ${Math.round(estSec()/60)}분</div></div>
+      <div class="row" style="margin-top:8px"><span class="sub">예상 약 ${Math.round(estSec()/60)}분</span><span class="sp"></span>
+      <button class="addi" style="padding:4px 0" onclick="go('Plan')">개수 · 세트 바꾸기 →</button></div></div>
     <button class="btn" onclick="startRun()">${today?'한 번 더 하기':'운동 시작'}</button>
     ${installHint()}`;
 }
@@ -688,7 +689,7 @@ function blockEdit(b,bi){
     if(b.kind==='sets')rows+=`<div class="er"><span>세트</span>${stp(b.sets+'세트',`adj(${bi},-1,'sets',-1)`,`adj(${bi},-1,'sets',1)`)}</div>
       <div class="er"><span>세트 사이 휴식</span>${stp(b.rest+'초',`adj(${bi},-1,'rest',-15)`,`adj(${bi},-1,'rest',15)`)}</div>`;
     if(b.kind==='slow')rows+=`<div class="er"><span>내려오는 시간</span>${stp(b.slow+'초',`adj(${bi},-1,'slow',-1)`,`adj(${bi},-1,'slow',1)`)}</div>`;
-    rows+=b.items.map((it,ii)=>`<div class="er"><span>${esc(it.name)}</span>${stp(it.reps+'개',`adj(${bi},${ii},'reps',-1)`,`adj(${bi},${ii},'reps',1)`)}
+    rows+=b.items.map((it,ii)=>`<div class="er"><span>${esc(it.name)}<br><span class="sub">${b.kind==='slow'?'횟수':'세트당 개수'}</span></span>${stp(it.reps+'개',`adj(${bi},${ii},'reps',-1)`,`adj(${bi},${ii},'reps',1)`)}
       <button class="del" onclick="delItem(${bi},${ii})" aria-label="종목 빼기">×</button></div>`).join('');
     if(b.kind==='sets')rows+=`<button class="addi" onclick="addItem(${bi})">＋ 종목 추가</button>`;
   }
