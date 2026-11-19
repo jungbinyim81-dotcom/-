@@ -2451,8 +2451,12 @@ async function pool(items,n,fn){
 }
 async function syncPull(){
   const s=sy();
+  let got=0,bad=0;
+  /* 서버는 한 번에 300건까지만 준다 — 앱을 새로 깔면 쌓인 기록이 많아 한 번에 다 못 받았다.
+     300건이 꽉 차서 오면 커서를 옮겨 이어서 받는다 (2026-11-19) */
+  for(let page=0;page<100;page++){
   const {files}=await sreq('list',{since:s.cursor||0});
-  let got=0,maxTs=s.cursor||0,bad=0,stopAt=null;
+  let maxTs=s.cursor||0,stopAt=null;
 
   files.forEach(f=>{if(f.ts>maxTs)maxTs=f.ts;});
   /* 서버도 ts 순으로 주지만, 순서가 어긋나면 커서를 엉뚱한 데 놓게 되므로 여기서도 한 번 세운다 */
@@ -2476,6 +2480,8 @@ async function syncPull(){
   /* 실패한 지점 앞까지만 커서를 옮긴다 — 나중에 암호를 고치면 놓친 것도 들어온다 */
   s.cursor=(stopAt!==null)?Math.max(0,stopAt-1):maxTs;
   saveCfg();
+  if(files.length<300||stopAt!==null)break;
+  }
 
   /* 글은 왔는데 사진이 없는 것들 채워넣기 */
   await loadPosts();
@@ -2749,7 +2755,7 @@ window.addEventListener('popstate',function(){
 });
 
 /* ---------------- 시작 ---------------- */
-const BUILD='2026-11-12a';
+const BUILD='2026-11-19a';
 (async function boot(){
   /* 예전엔 이 안에서 한 군데라도 실패하면 나머지가 통째로 건너뛰어졌다.
      특히 loadPosts() 가 실패하면 아래 동기화 타이머가 아예 등록되지 않아서
