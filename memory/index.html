@@ -533,8 +533,15 @@ function ist(store,mode){
     }
   });
 }
+/* 저장은 트랜잭션 커밋(oncomplete)까지 기다린다 (2026-11-19) — 아이폰에서 put 은 성공했는데
+   커밋이 중단(abort)되면 사진이 실제로는 안 남았는데도 '담았어요'가 떴다 */
 function iput(store,val,key){return ist(store,'readwrite').then(s=>new Promise((res,rej)=>{
-  const r=(key===undefined)?s.put(val):s.put(val,key);r.onsuccess=()=>res(true);r.onerror=()=>rej(r.error);}));}
+  const tx=s.transaction;
+  const r=(key===undefined)?s.put(val):s.put(val,key);
+  r.onerror=()=>rej(r.error);
+  tx.oncomplete=()=>res(true);
+  tx.onabort=()=>rej(tx.error||r.error||new Error('저장 중단'));
+  tx.onerror=()=>rej(tx.error||r.error);}));}
 function iget(store,key){return ist(store,'readonly').then(s=>new Promise((res,rej)=>{
   const r=s.get(key);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}));}
 function idel(store,key){return ist(store,'readwrite').then(s=>new Promise((res,rej)=>{
@@ -1201,7 +1208,9 @@ function openUpload(){
   paintUp();
   $('mUp').classList.add('on');
   releaseViews();
-  setTimeout(pickFiles,180);
+  /* 아이폰은 '누른 그 순간'에만 사진 선택창을 열어준다 — 예전처럼 setTimeout 으로 미루면
+     선택창이 안 뜨거나 늦게 뜰 수 있어 바로 연다 (2026-11-19) */
+  pickFiles();
 }
 /* 아이폰은 사진 선택 화면이 떠 있는 동안 메모리가 모자라면 앱을 강제로 새로 띄운다 → "리셋" (2026-11-12).
    업로드 창 뒤에 깔린 피드·사진첩 사진(원본 1600px 포함)을 내려놓고, 창을 닫을 때 다시 그린다 */
@@ -1216,11 +1225,30 @@ function closeUpload(noRender){
 }
 function pickWho(w){CFG.me=w;saveCfg();
   [...$('upWho').children].forEach(b=>b.classList.toggle('on',b.dataset.w===w));}
+/* 사진 선택 input 은 한 개를 문서에 붙여두고 계속 쓴다 (2026-11-19 아이폰 대응).
+   예전엔 매번 만들고 문서에 붙이지 않았는데, 아이폰은 선택창이 떠 있는 동안 그 input 을
+   치워버려서(가비지 정리) 사진을 골라도 onchange 가 안 와 '아무 일도 안 일어나는' 경우가 있었다 */
+function upInput(){
+  let inp=$('upFile');
+  if(!inp){
+    inp=document.createElement('input');
+    inp.id='upFile';inp.type='file';inp.accept='image/*,video/*';inp.multiple=true;
+    inp.style.cssText='position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none';
+    inp.addEventListener('change',onPicked);
+    document.body.appendChild(inp);
+  }
+  return inp;
+}
 function pickFiles(){
-  const inp=document.createElement('input');
-  inp.type='file';inp.accept='image/*,video/*';inp.multiple=true;
-  inp.onchange=async()=>{
+  const inp=upInput();
+  inp.value='';                  /* 같은 사진을 다시 골라도 change 가 오도록 */
+  inp.click();
+}
+async function onPicked(){
+  const inp=upInput();
+  {
     const picked=[...inp.files];
+    inp.value='';
     const room=MAXUP-UP.length;
     const fs=picked.slice(0,Math.max(0,room));
     if(!fs.length){
@@ -1241,7 +1269,8 @@ function pickFiles(){
         const r=await shrink(f);
         if(r.vid&&r.size>VIDWARN)big++;
         UP.push(r);
-      }catch(e){toast(isVideoFile(f)?'영상 하나를 읽지 못했어요':'사진 하나를 읽지 못했어요');}
+      }catch(e){toast((isVideoFile(f)?'영상 하나를 읽지 못했어요':'사진 하나를 읽지 못했어요')+
+        ' ('+esc(String(e&&e.message||e||'').slice(0,60))+')',3500);}
       done++;
       $('upBar').querySelector('i').style.width=Math.round(done/fs.length*100)+'%';
       paintUp();
@@ -1249,8 +1278,7 @@ function pickFiles(){
     if(isFinite(oldest))$('upDate').value=ymd(oldest);
     if(big)toast('큰 영상이 있어요. 상대 폰으로 넘어가는 데 시간이 걸릴 수 있어요',3600);
     setTimeout(()=>{$('upBar').classList.add('hide');$('upBar').querySelector('i').style.width='0%';},400);
-  };
-  inp.click();
+  }
 }
 function paintUp(){
   const g=$('upGrid');
@@ -1437,10 +1465,7 @@ function drawWithTxt(bmp,maxEdge,q,L){
   cx.fillStyle='#000';cx.fillRect(0,0,cw,ch);
   cx.drawImage(bmp,0,0,cw,ch);
   (L||[]).forEach(T=>drawTxt(cx,cw,ch,T));
-  return new Promise(res=>{
-    if(cv.toBlob)cv.toBlob(b=>res(b||dataToBlob(cv,q)),'image/jpeg',q);
-    else res(dataToBlob(cv,q));
-  });
+  return cvToJpeg(cv,q);
 }
 async function txBake(L){
   const u=UP[TXI];if(!u||!TXB)return;
@@ -1597,10 +1622,7 @@ function grayPoster(w,h){
   cx.fillStyle='#2a252c';cx.fillRect(0,0,cw,ch);
   cx.fillStyle='#6b616d';cx.beginPath();
   cx.moveTo(cw/2-16,ch/2-20);cx.lineTo(cw/2+22,ch/2);cx.lineTo(cw/2-16,ch/2+20);cx.closePath();cx.fill();
-  return new Promise(res=>{
-    if(cv.toBlob)cv.toBlob(b=>res(b||dataToBlob(cv,.75)),'image/jpeg',.75);
-    else res(dataToBlob(cv,.75));
-  });
+  return cvToJpeg(cv,.75);
 }
 function decode(file){
   if(window.createImageBitmap){
@@ -1612,7 +1634,7 @@ function decode(file){
 function decodeImg(file){
   return new Promise((res,rej)=>{
     const u=URL.createObjectURL(file),im=new Image();
-    im.onload=()=>{res(im);};
+    im.onload=()=>{URL.revokeObjectURL(u);res(im);};
     im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('decode'));};
     im.src=u;
   });
@@ -1625,9 +1647,26 @@ function draw(bmp,maxEdge,q){
   const cx=cv.getContext('2d');
   cx.fillStyle='#000';cx.fillRect(0,0,cw,ch);
   cx.drawImage(bmp,0,0,cw,ch);
-  return new Promise(res=>{
-    if(cv.toBlob)cv.toBlob(b=>res(b||dataToBlob(cv,q)),'image/jpeg',q);
-    else res(dataToBlob(cv,q));
+  return cvToJpeg(cv,q);
+}
+/* 캔버스 → jpeg (2026-11-19 아이폰 대응)
+   - 아이폰 사파리는 캔버스 메모리 총량 한도가 있어, 다 쓴 캔버스를 0x0 으로 줄여 바로 놓아준다
+     (GC 를 기다리면 사진 여러 장 고를 때 한도를 넘겨 toBlob 이 null → 빈 사진이 저장됐다)
+   - 결과가 비었으면(한도 초과 등) 빈 사진을 저장하지 말고 실패로 알린다 */
+function cvToJpeg(cv,q){
+  return new Promise((res,rej)=>{
+    const fin=b=>{
+      try{cv.width=0;cv.height=0;}catch(e){}
+      if(!b||b.size<200)return rej(new Error('사진 변환 실패(메모리 부족)'));
+      res(b);
+    };
+    try{
+      if(cv.toBlob)cv.toBlob(b=>{
+        if(b&&b.size>=200)return fin(b);
+        try{fin(dataToBlob(cv,q));}catch(e){fin(null);}
+      },'image/jpeg',q);
+      else fin(dataToBlob(cv,q));
+    }catch(e){fin(null);}
   });
 }
 function dataToBlob(cv,q){
@@ -1673,7 +1712,7 @@ async function savePost(){
     buzz([16,40,16]);
     syncSoon();
   }catch(e){
-    toast('저장에 실패했어요. 저장 공간을 확인해주세요');
+    toast('저장에 실패했어요 ('+esc(String(e&&e.message||e||'').slice(0,60))+') — 저장 공간을 확인해주세요',4500);
   }finally{btn.disabled=false;paintUp();}
 }
 
@@ -2385,9 +2424,15 @@ async function sreq(action,params){
   const q=new URLSearchParams(Object.assign({action,secret:s.secret},params||{}));
   const ms=(action==='get')?45000:20000;      /* 사진 받기는 크니 넉넉히 */
   const r=await ftimeout(s.url+'?'+q.toString(),{redirect:'follow'},ms);
-  const j=await r.json();
+  const j=await readJson(r);
   if(j.error)throw new Error(j.error);
   return j;
+}
+/* 서버가 JSON 대신 오류 페이지(HTML)를 주면 r.json() 이 엉뚱한 문구로 터진다 → 상태코드로 알린다 */
+async function readJson(r){
+  const t=await r.text();
+  try{return JSON.parse(t);}
+  catch(e){throw new Error('서버 응답 오류 ('+r.status+(/<html/i.test(t)?' · HTML':'')+')');}
 }
 async function spush(name,u8){
   const s=sy();
@@ -2395,7 +2440,7 @@ async function spush(name,u8){
   const r=await ftimeout(s.url,{method:'POST',redirect:'follow',
     headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify({action:'push',secret:s.secret,name,data:u8ToB64(u8)})},60000);
-  const j=await r.json();
+  const j=await readJson(r);
   if(j.error)throw new Error(j.error);
   return j;
 }
@@ -2668,6 +2713,11 @@ async function syncNow(loud){
     }
     /* 새로 받은 게 있으면 알린다 (조용한 동기화일 때만)
        — 보고 있으면 화면 배너, 다른 앱에 가 있으면 시스템 알림 */
+    /* 자동 동기화에서 내 사진을 못 보냈으면 조용히 넘기지 않는다 (2026-11-19) —
+       예전엔 설정 화면 상태 글씨에만 남아 '올렸는데 상대가 못 본다'를 아무도 몰랐다 */
+    if(!loud&&push.fails&&push.fails.length&&document.visibilityState==='visible'){
+      toast('사진을 상대에게 아직 못 보냈어요 ('+esc(push.fails[0]).slice(0,60)+') — 설정 > 지금 동기화',5000);
+    }
     const news=paintNews();
     if(!loud&&!errs.length&&(pull.got||pull.photos)){
       if(document.visibilityState==='visible'){
@@ -2772,7 +2822,7 @@ window.addEventListener('popstate',function(){
 });
 
 /* ---------------- 시작 ---------------- */
-const BUILD='2026-11-19b';
+const BUILD='2026-11-19c';
 (async function boot(){
   /* 예전엔 이 안에서 한 군데라도 실패하면 나머지가 통째로 건너뛰어졌다.
      특히 loadPosts() 가 실패하면 아래 동기화 타이머가 아예 등록되지 않아서
