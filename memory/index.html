@@ -2318,6 +2318,12 @@ function shouldPoll(now,vis){
    이때 회차 번호를 올려서, 나중에 뒤늦게 깨어난 옛 동기화가 새 동기화의
    잠금을 대신 풀어버리거나 옛 결과를 화면에 덮어쓰지 못하게 한다 (2026-08-15) */
 let SYNCRUN=0;
+/* 동기화 진행상황을 설정 화면 상태줄에 보여주고, 살아 있다는 표시(SYNCING_AT)를 갱신한다 (2026-11-19)
+   — 재설치 후 수백 건을 받는 동안 화면에 아무 변화가 없어 멈춘 것처럼 보였다 */
+function syncProg(m){
+  if(SYNCING)SYNCING_AT=Date.now();
+  try{const b=$('syncState');if(b)b.textContent=m;}catch(e){}
+}
 function kickSync(){
   if(SYNCING&&SYNCING_AT&&Date.now()-SYNCING_AT>SYNC_MAX){SYNCING=false;SYNCRUN++;}
 }
@@ -2455,6 +2461,7 @@ async function syncPull(){
   /* 서버는 한 번에 300건까지만 준다 — 앱을 새로 깔면 쌓인 기록이 많아 한 번에 다 못 받았다.
      300건이 꽉 차서 오면 커서를 옮겨 이어서 받는다 (2026-11-19) */
   for(let page=0;page<100;page++){
+  syncProg('기록 목록 받는 중...');
   const {files}=await sreq('list',{since:s.cursor||0});
   let maxTs=s.cursor||0,stopAt=null;
 
@@ -2464,8 +2471,10 @@ async function syncPull(){
   const evs=files.filter(f=>f.name.indexOf('_'+s.dev+'_')<0);   /* 내가 올린 건 건너뜀 */
 
   /* 내려받기는 동시에(4개), 반영은 순서대로 */
+  let evDone=0;
   const fetched=await pool(evs,4,async f=>{
     const r=await sreq('get',{id:f.id});
+    evDone++;if(evDone%10===0||evDone===evs.length)syncProg('기록 받는 중 '+(got+evDone)+'건');
     return JSON.parse(new TextDecoder().decode(await decU8(b64ToU8(r.data))));
   });
   for(let k=0;k<evs.length;k++){
@@ -2494,7 +2503,12 @@ async function syncPull(){
     }
   }
   /* 사진은 크니 2장씩만, 영상이 끼어 있으면 1개씩 (아이폰 메모리 — 2026-11-12) */
+  let phDone=0;
+  if(need.length)syncProg('사진 받는 중 0 / '+need.length);
   const done=await pool(need,need.some(o=>o.meta&&o.meta.v)?1:2,async o=>{
+    try{return await fillOne(o);}finally{phDone++;syncProg('사진 받는 중 '+phDone+' / '+need.length);}
+  });
+  async function fillOne(o){
     /* 영상은 조각으로 나뉘어 올라와 있다 — n 개를 순서대로 받아 다시 붙인다 (2026-09-16) */
     if(o.meta&&o.meta.v){
       /* n 을 아는 기록이면 그만큼만 받고, 모르면 조각이 끊길 때까지 받는다.
@@ -2526,9 +2540,9 @@ async function syncPull(){
     await iput('files',{full,thumb,w:o.dim.w,h:o.dim.h},o.pid);
     await iput('thumbs',thumb,o.pid);
     return true;
-  });
-  let photos=0;done.forEach(r=>{if(r&&r.v)photos++;});
-  return {got,photos,bad};
+  }
+  let photos=0,pfail=0,perr='';done.forEach(r=>{if(r&&r.v)photos++;else if(r&&r.e){pfail++;if(!perr)perr=String(r.e.message||r.e);}});
+  return {got,photos,bad,pfail,perr};
 }
 
 /* --- 올리기 --- */
@@ -2606,7 +2620,7 @@ async function syncNow(loud){
      담기를 누르면 savePost 가 창을 닫고 syncSoon 으로 바로 보낸다 (2026-11-12) */
   if(!loud&&isOn('mUp'))return;
   kickSync();
-  if(SYNCING)return;
+  if(SYNCING){if(loud)toast('이미 받는 중이에요 — 설정 화면 상태 글씨에 진행이 보여요',3500);return;}
   SYNCING=true;SYNCING_AT=Date.now();
   const run=++SYNCRUN;                 /* 내 회차 — 도중에 강제해제되면 번호가 바뀐다 */
   const badge=$('syncState');
@@ -2641,13 +2655,14 @@ async function syncNow(loud){
       if(badge)badge.textContent=w;
       if(loud)toast(w,4500);
     }else{
-      if(badge)badge.textContent='방금 동기화됨';
+      if(badge)badge.textContent=pull.pfail?('방금 동기화됨 · 못 받은 사진 '+pull.pfail+'장 ('+pull.perr+')'):'방금 동기화됨';
       if(loud){
         const bits=[];
         if(pull.got)bits.push('받은 기록 '+pull.got+'개');
         if(pull.photos)bits.push('받은 사진 '+pull.photos+'장');
         if(push.sent)bits.push('보낸 기록 '+push.sent+'개');
         if(push.photos)bits.push('보낸 사진 '+push.photos+'장');
+        if(pull.pfail)bits.push('못 받은 사진 '+pull.pfail+'장 ('+esc(pull.perr)+') — 다시 누르면 이어 받아요');
         toast(bits.length?bits.join(' · '):'이미 최신이에요');
       }
     }
@@ -2695,6 +2710,8 @@ function syncSave(){
 async function syncTest(){
   syncSave();
   if(!syncOn())return toast('주소·접속열쇠·공유 암호를 모두 넣어주세요',3000);
+  toast('<span class="spin"></span> 연결 확인 중...',25000);
+  try{const b=$('syncState');if(b)b.textContent='연결 확인 중...';}catch(e){}
   try{
     await sreq('ping',{});
     const st=await sreq('stat',{});
@@ -2755,7 +2772,7 @@ window.addEventListener('popstate',function(){
 });
 
 /* ---------------- 시작 ---------------- */
-const BUILD='2026-11-19a';
+const BUILD='2026-11-19b';
 (async function boot(){
   /* 예전엔 이 안에서 한 군데라도 실패하면 나머지가 통째로 건너뛰어졌다.
      특히 loadPosts() 가 실패하면 아래 동기화 타이머가 아예 등록되지 않아서
