@@ -1,0 +1,3326 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제104기 10~12월 순환기 품목 인센티브</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', 'Malgun Gothic', sans-serif; background: #f5f6fa; color: #2c3e50; line-height: 1.5; padding: 20px; }
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  .header { background: linear-gradient(135deg, #1A2D50 0%, #2c4373 100%); color: #fff; padding: 32px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(26,45,80,0.2); }
+  .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .header .subtitle { font-size: 14px; opacity: 0.85; }
+  .header .meta { display: flex; gap: 24px; margin-top: 16px; font-size: 13px; }
+  .header .meta span { background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 16px; }
+
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid #1A2D50; }
+  .card .label { font-size: 12px; color: #7f8c8d; margin-bottom: 6px; font-weight: 500; }
+  .card .value { font-size: 22px; font-weight: 700; color: #1A2D50; }
+  .card .sub { font-size: 11px; color: #95a5a6; margin-top: 4px; }
+  .card.highlight { border-left-color: #e74c3c; background: #fff5f5; }
+  .card.highlight .value { color: #c0392b; }
+  .card.success { border-left-color: #27ae60; }
+  .card.success .value { color: #27ae60; }
+
+  .tabs { background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 24px; overflow: hidden; }
+  .tab-bar { display: flex; border-bottom: 1px solid #e1e4e8; background: #fafbfc; }
+  .tab-btn { flex: 1; padding: 14px 16px; background: transparent; border: none; cursor: pointer; font-size: 14px; font-weight: 600; color: #6c757d; transition: all .2s; }
+  .tab-btn.active { color: #1A2D50; background: #fff; border-bottom: 3px solid #1A2D50; }
+  .tab-btn:hover:not(.active) { background: #eef0f3; }
+  .tab-panel { display: none; padding: 24px; }
+  .tab-panel.active { display: block; }
+
+  h2.section { font-size: 18px; color: #1A2D50; margin-bottom: 16px; font-weight: 700; padding-bottom: 8px; border-bottom: 2px solid #1A2D50; }
+  h3.sub { font-size: 14px; color: #555; margin: 20px 0 10px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #ecf0f1; }
+  th { background: #1A2D50; color: #fff; font-weight: 600; font-size: 12px; text-align: center; position: sticky; top: 0; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.center { text-align: center; }
+  tr:hover { background: #f8f9fa; }
+  tr.shijang { background: #fff8e1; }
+  tr.shijang:hover { background: #ffecb3; }
+  tr.imjeongbin { background: #ffebee !important; font-weight: 700; color: #c0392b; }
+  tr.imjeongbin:hover { background: #ffcdd2 !important; }
+  .rank-medal { font-weight: 700; color: #d4af37; }
+  .rank-medal.first { color: #ffd700; }
+  .rank-medal.second { color: #c0c0c0; }
+  .rank-medal.third { color: #cd7f32; }
+
+  .summary-box { background: #f0f7ff; border-left: 4px solid #1A2D50; padding: 16px; border-radius: 6px; margin-bottom: 20px; font-size: 13px; line-height: 1.7; }
+  .summary-box strong { color: #1A2D50; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .badge-win { background: #27ae60; color: #fff; }
+  .badge-near { background: #f39c12; color: #fff; }
+
+  .scroll { max-height: 600px; overflow-y: auto; border: 1px solid #ecf0f1; border-radius: 6px; }
+
+  .filter-bar { display: flex; gap: 12px; margin-bottom: 12px; align-items: center; }
+  .filter-bar input, .filter-bar select { padding: 6px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; }
+  .filter-bar input { flex: 1; min-width: 180px; }
+
+  .footer { text-align: center; color: #95a5a6; font-size: 11px; padding: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>제104기 10~12월 순환기 품목 인센티브</h1>
+  <div class="subtitle">일반병원사업부 — 트루셋저용량(20/2.5/6.25mg) + 트윈로우 + 미카클로</div>
+  <div class="meta">
+    <span>평가기간: 2026년 10~12월</span>
+    <span>평가방식: 판매액 순위</span>
+    <span>시상: 부지점장 10명 / 담당자 48명 / 지점장 2명 (물품 50만원)</span>
+    <span>데이터 기준: 10월 마감 (8/12월 미입력)</span>
+    <span>11~12월 실적 미입력 상태</span>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="card highlight">
+    <div class="label">★ 임정빈 부지점장 순위</div>
+    <div class="value">19위 / 56명</div>
+    <div class="sub">시상권(1~10위) 진입 시상권까지 314,831원 부족</div>
+  </div>
+  <div class="card">
+    <div class="label">임정빈팀 평균 판매액</div>
+    <div class="value">1,617,696원</div>
+    <div class="sub">트루셋저용량 + 트윈로우 + 미카클로 합산 / T.O 5.2143</div>
+  </div>
+  <div class="card success">
+    <div class="label">10위 시상선</div>
+    <div class="value">1,932,527원</div>
+    <div class="sub">시상권 진입 라인 (평균 판매액)</div>
+  </div>
+  <div class="card">
+    <div class="label">시상권까지 격차</div>
+    <div class="value">314,831원</div>
+    <div class="sub">임정빈팀 vs 10위</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="t1">📊 부지점장 순위 (시상 10명)</button>
+    <button class="tab-btn" data-tab="t2">👤 담당자 순위 (시상 48명)</button>
+    <button class="tab-btn" data-tab="t3">🏥 지점장 순위 (시상 2명)</button>
+    <button class="tab-btn" data-tab="t4">★ 임정빈팀 상세</button>
+  </div>
+
+  <div id="t1" class="tab-panel active">
+    <h2 class="section">일반병원사업부 부지점장 순위 (평균 판매액 = 합산 ÷ 팀T.O)</h2>
+    <div class="summary-box">
+      ✦ <strong>시상 인원: 10명</strong> · 시상 라인: <strong id="cut10-text">—</strong>원<br>
+      ✦ 평가 방식: <strong>팀원 합산(트루셋저용량·트윈로우 10~12월 + 미카클로 10~12월) ÷ 팀T.O = 평균 판매액</strong><br>
+      ✦ 평가기간 10~12월 (3품목 모두 같은 기간, 소급 없음)
+    </div>
+    <div class="filter-bar">
+      <input type="text" id="search-bujijeom" placeholder="부지점장/지점 검색...">
+    </div>
+    <div class="scroll">
+    <table id="tbl-bujijeom">
+      <thead>
+      <tr><th>순위</th><th>부지점장</th><th>지점</th><th>T.O</th><th>담당자수</th><th>트루셋저용량<br>(10월)</th><th>트윈로우<br>(10월)</th><th>미카클로<br>(10월)</th><th>합산</th><th>평균 판매액<br>(합산÷T.O)</th></tr>
+      </thead>
+      <tbody><tr class="shijang">
+      <td class="center">1</td>
+      <td>구본치</td>
+      <td>경남지점</td>
+      <td class="num">4.5598</td>
+      <td class="center">4</td>
+      <td class="num">6,544,450</td>
+      <td class="num">6,776,420</td>
+      <td class="num">34,770</td>
+      <td class="num">13,355,640</td>
+      <td class="num"><strong>2,929,024</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">2</td>
+      <td>박진우</td>
+      <td>경기지점</td>
+      <td class="num">4.0966</td>
+      <td class="center">5</td>
+      <td class="num">5,845,180</td>
+      <td class="num">5,377,680</td>
+      <td class="num">466,480</td>
+      <td class="num">11,689,340</td>
+      <td class="num"><strong>2,853,415</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">3</td>
+      <td>문호재</td>
+      <td>제주지점</td>
+      <td class="num">3.1105</td>
+      <td class="center">3</td>
+      <td class="num">3,747,370</td>
+      <td class="num">4,209,800</td>
+      <td class="num">324,520</td>
+      <td class="num">8,281,690</td>
+      <td class="num"><strong>2,662,497</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">4</td>
+      <td>전효택</td>
+      <td>강남.강원지점</td>
+      <td class="num">6.1470</td>
+      <td class="center">6</td>
+      <td class="num">3,931,385</td>
+      <td class="num">11,284,532</td>
+      <td class="num">292,630</td>
+      <td class="num">15,508,547</td>
+      <td class="num"><strong>2,522,947</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">5</td>
+      <td>조용성</td>
+      <td>경기지점</td>
+      <td class="num">4.2506</td>
+      <td class="center">4</td>
+      <td class="num">7,978,850</td>
+      <td class="num">2,525,880</td>
+      <td class="num">139,080</td>
+      <td class="num">10,643,810</td>
+      <td class="num"><strong>2,504,049</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">6</td>
+      <td>이봉열</td>
+      <td>남부지점</td>
+      <td class="num">4.5762</td>
+      <td class="center">5</td>
+      <td class="num">2,528,130</td>
+      <td class="num">7,645,540</td>
+      <td class="num">59,750</td>
+      <td class="num">10,233,420</td>
+      <td class="num"><strong>2,236,227</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">7</td>
+      <td>홍상길</td>
+      <td>부산지점</td>
+      <td class="num">4.6403</td>
+      <td class="center">4</td>
+      <td class="num">5,916,900</td>
+      <td class="num">4,399,920</td>
+      <td class="num">—</td>
+      <td class="num">10,316,820</td>
+      <td class="num"><strong>2,223,304</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">8</td>
+      <td>최병률</td>
+      <td>충남.전북지점</td>
+      <td class="num">4.8889</td>
+      <td class="center">5</td>
+      <td class="num">4,720,320</td>
+      <td class="num">4,568,220</td>
+      <td class="num">742,770</td>
+      <td class="num">10,031,310</td>
+      <td class="num"><strong>2,051,862</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">9</td>
+      <td>정석희</td>
+      <td>경북지점</td>
+      <td class="num">4.7057</td>
+      <td class="center">5</td>
+      <td class="num">3,460,490</td>
+      <td class="num">6,165,320</td>
+      <td class="num">—</td>
+      <td class="num">9,625,810</td>
+      <td class="num"><strong>2,045,570</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">10</td>
+      <td>성우진</td>
+      <td>부산지점</td>
+      <td class="num">4.6444</td>
+      <td class="center">5</td>
+      <td class="num">2,850,870</td>
+      <td class="num">6,124,580</td>
+      <td class="num">—</td>
+      <td class="num">8,975,450</td>
+      <td class="num"><strong>1,932,527</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">11</td>
+      <td>최진수</td>
+      <td>충남.전북지점</td>
+      <td class="num">3.8778</td>
+      <td class="center">4</td>
+      <td class="num">3,532,210</td>
+      <td class="num">3,435,740</td>
+      <td class="num">257,860</td>
+      <td class="num">7,225,810</td>
+      <td class="num"><strong>1,863,358</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">12</td>
+      <td>윤현식</td>
+      <td>서부지점</td>
+      <td class="num">3.8171</td>
+      <td class="center">4</td>
+      <td class="num">1,882,650</td>
+      <td class="num">4,820,900</td>
+      <td class="num">176,370</td>
+      <td class="num">6,879,920</td>
+      <td class="num"><strong>1,802,402</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">13</td>
+      <td>이수현</td>
+      <td>북부지점</td>
+      <td class="num">4.0891</td>
+      <td class="center">4</td>
+      <td class="num">1,972,300</td>
+      <td class="num">5,187,560</td>
+      <td class="num">69,540</td>
+      <td class="num">7,229,400</td>
+      <td class="num"><strong>1,767,951</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">14</td>
+      <td>강민구</td>
+      <td>전남지점</td>
+      <td class="num">3.8274</td>
+      <td class="center">4</td>
+      <td class="num">4,034,250</td>
+      <td class="num">2,607,360</td>
+      <td class="num">—</td>
+      <td class="num">6,641,610</td>
+      <td class="num"><strong>1,735,269</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">15</td>
+      <td>박철환</td>
+      <td>강남.강원지점</td>
+      <td class="num">3.1388</td>
+      <td class="center">3</td>
+      <td class="num">2,337,550</td>
+      <td class="num">2,906,120</td>
+      <td class="num">94,880</td>
+      <td class="num">5,338,550</td>
+      <td class="num"><strong>1,700,851</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">16</td>
+      <td>박종성</td>
+      <td>남부지점</td>
+      <td class="num">4.1527</td>
+      <td class="center">4</td>
+      <td class="num">2,922,590</td>
+      <td class="num">4,033,260</td>
+      <td class="num">—</td>
+      <td class="num">6,955,850</td>
+      <td class="num"><strong>1,675,030</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">17</td>
+      <td>이재홍</td>
+      <td>충남.충북지점</td>
+      <td class="num">4.4830</td>
+      <td class="center">4</td>
+      <td class="num">2,241,250</td>
+      <td class="num">5,106,080</td>
+      <td class="num">59,030</td>
+      <td class="num">7,406,360</td>
+      <td class="num"><strong>1,652,116</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">18</td>
+      <td>장정호</td>
+      <td>인천지점</td>
+      <td class="num">5.5999</td>
+      <td class="center">5</td>
+      <td class="num">3,460,490</td>
+      <td class="num">5,757,920</td>
+      <td class="num">11,950</td>
+      <td class="num">9,230,360</td>
+      <td class="num"><strong>1,648,294</strong></td>
+    </tr>
+<tr class="imjeongbin">
+      <td class="center">19</td>
+      <td>★ 임정빈</td>
+      <td>인천지점</td>
+      <td class="num">5.2143</td>
+      <td class="center">5</td>
+      <td class="num">5,235,560</td>
+      <td class="num">3,164,140</td>
+      <td class="num">35,490</td>
+      <td class="num">8,435,190</td>
+      <td class="num"><strong>1,617,696</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">20</td>
+      <td>추재현</td>
+      <td>강남.강원지점</td>
+      <td class="num">5.0610</td>
+      <td class="center">5</td>
+      <td class="num">1,882,650</td>
+      <td class="num">6,301,120</td>
+      <td class="num">—</td>
+      <td class="num">8,183,770</td>
+      <td class="num"><strong>1,617,024</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">21</td>
+      <td>박중연</td>
+      <td>남부지점</td>
+      <td class="num">4.8665</td>
+      <td class="center">5</td>
+      <td class="num">1,488,190</td>
+      <td class="num">6,246,800</td>
+      <td class="num">23,900</td>
+      <td class="num">7,758,890</td>
+      <td class="num"><strong>1,594,344</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">22</td>
+      <td>김윤석</td>
+      <td>북부지점</td>
+      <td class="num">3.9958</td>
+      <td class="center">4</td>
+      <td class="num">1,775,070</td>
+      <td class="num">4,549,300</td>
+      <td class="num">—</td>
+      <td class="num">6,324,370</td>
+      <td class="num"><strong>1,582,766</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">23</td>
+      <td>양준영</td>
+      <td>서부지점</td>
+      <td class="num">5.9148</td>
+      <td class="center">5</td>
+      <td class="num">2,420,550</td>
+      <td class="num">6,572,720</td>
+      <td class="num">47,800</td>
+      <td class="num">9,041,070</td>
+      <td class="num"><strong>1,528,542</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">24</td>
+      <td>김현덕</td>
+      <td>부산지점</td>
+      <td class="num">5.2329</td>
+      <td class="center">5</td>
+      <td class="num">3,729,440</td>
+      <td class="num">4,218,520</td>
+      <td class="num">-23,180</td>
+      <td class="num">7,924,780</td>
+      <td class="num"><strong>1,514,420</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">25</td>
+      <td>김명선</td>
+      <td>경기지점</td>
+      <td class="num">4.7973</td>
+      <td class="center">5</td>
+      <td class="num">3,155,680</td>
+      <td class="num">3,883,880</td>
+      <td class="num">83,650</td>
+      <td class="num">7,123,210</td>
+      <td class="num"><strong>1,484,852</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">26</td>
+      <td>이종찬</td>
+      <td>북부지점</td>
+      <td class="num">5.1327</td>
+      <td class="center">5</td>
+      <td class="num">2,714,080</td>
+      <td class="num">4,785,920</td>
+      <td class="num">35,130</td>
+      <td class="num">7,535,130</td>
+      <td class="num"><strong>1,468,069</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">27</td>
+      <td>장현석</td>
+      <td>북부지점</td>
+      <td class="num">3.6333</td>
+      <td class="center">4</td>
+      <td class="num">1,918,510</td>
+      <td class="num">3,367,840</td>
+      <td class="num">35,850</td>
+      <td class="num">5,322,200</td>
+      <td class="num"><strong>1,464,828</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">28</td>
+      <td>정민재</td>
+      <td>강남.강원지점</td>
+      <td class="num">3.7648</td>
+      <td class="center">4</td>
+      <td class="num">1,864,720</td>
+      <td class="num">3,615,444</td>
+      <td class="num">—</td>
+      <td class="num">5,480,164</td>
+      <td class="num"><strong>1,455,622</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">29</td>
+      <td>차환준</td>
+      <td>강남.강원지점</td>
+      <td class="num">5.6839</td>
+      <td class="center">6</td>
+      <td class="num">2,241,250</td>
+      <td class="num">5,907,300</td>
+      <td class="num">81,130</td>
+      <td class="num">8,229,680</td>
+      <td class="num"><strong>1,447,885</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">30</td>
+      <td>박성현</td>
+      <td>북부지점</td>
+      <td class="num">4.2175</td>
+      <td class="center">4</td>
+      <td class="num">1,864,720</td>
+      <td class="num">4,033,260</td>
+      <td class="num">198,110</td>
+      <td class="num">6,096,090</td>
+      <td class="num"><strong>1,445,418</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">31</td>
+      <td>오광선</td>
+      <td>북부지점</td>
+      <td class="num">5.7279</td>
+      <td class="center">6</td>
+      <td class="num">2,961,444</td>
+      <td class="num">5,146,820</td>
+      <td class="num">70,980</td>
+      <td class="num">8,179,244</td>
+      <td class="num"><strong>1,427,977</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">32</td>
+      <td>이홍주</td>
+      <td>충남.충북지점</td>
+      <td class="num">4.0426</td>
+      <td class="center">4</td>
+      <td class="num">3,442,560</td>
+      <td class="num">2,186,380</td>
+      <td class="num">93,800</td>
+      <td class="num">5,722,740</td>
+      <td class="num"><strong>1,415,616</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">33</td>
+      <td>임찬규</td>
+      <td>경기지점</td>
+      <td class="num">4.2140</td>
+      <td class="center">5</td>
+      <td class="num">2,241,250</td>
+      <td class="num">3,503,640</td>
+      <td class="num">—</td>
+      <td class="num">5,744,890</td>
+      <td class="num"><strong>1,363,274</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">34</td>
+      <td>권오훈</td>
+      <td>서부지점</td>
+      <td class="num">4.9946</td>
+      <td class="center">4</td>
+      <td class="num">1,775,070</td>
+      <td class="num">4,956,700</td>
+      <td class="num">56,870</td>
+      <td class="num">6,788,640</td>
+      <td class="num"><strong>1,359,207</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">35</td>
+      <td>김종범</td>
+      <td>충남.전북지점</td>
+      <td class="num">5.5003</td>
+      <td class="center">5</td>
+      <td class="num">2,510,200</td>
+      <td class="num">4,753,000</td>
+      <td class="num">210,060</td>
+      <td class="num">7,473,260</td>
+      <td class="num"><strong>1,358,699</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">36</td>
+      <td>윤준기</td>
+      <td>충남.충북지점</td>
+      <td class="num">4.6392</td>
+      <td class="center">4</td>
+      <td class="num">2,348,830</td>
+      <td class="num">3,461,660</td>
+      <td class="num">399,100</td>
+      <td class="num">6,209,590</td>
+      <td class="num"><strong>1,338,510</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">37</td>
+      <td>박희철</td>
+      <td>충남.전북지점</td>
+      <td class="num">4.0794</td>
+      <td class="center">3</td>
+      <td class="num">2,080,830</td>
+      <td class="num">3,340,680</td>
+      <td class="num">-34,770</td>
+      <td class="num">5,386,740</td>
+      <td class="num"><strong>1,320,477</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">38</td>
+      <td>심기운</td>
+      <td>전남지점</td>
+      <td class="num">4.3266</td>
+      <td class="center">4</td>
+      <td class="num">3,675,650</td>
+      <td class="num">2,023,420</td>
+      <td class="num">—</td>
+      <td class="num">5,699,070</td>
+      <td class="num"><strong>1,317,202</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">39</td>
+      <td>이영준</td>
+      <td>경기지점</td>
+      <td class="num">5.2181</td>
+      <td class="center">5</td>
+      <td class="num">1,972,300</td>
+      <td class="num">4,807,320</td>
+      <td class="num">11,950</td>
+      <td class="num">6,791,570</td>
+      <td class="num"><strong>1,301,545</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">40</td>
+      <td>이재열</td>
+      <td>부산지점</td>
+      <td class="num">3.8652</td>
+      <td class="center">3</td>
+      <td class="num">2,600,820</td>
+      <td class="num">2,186,380</td>
+      <td class="num">—</td>
+      <td class="num">4,787,200</td>
+      <td class="num"><strong>1,238,549</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">41</td>
+      <td>정재헌</td>
+      <td>인천지점</td>
+      <td class="num">5.2099</td>
+      <td class="center">5</td>
+      <td class="num">2,904,660</td>
+      <td class="num">3,367,840</td>
+      <td class="num">166,220</td>
+      <td class="num">6,438,720</td>
+      <td class="num"><strong>1,235,862</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">42</td>
+      <td>정용주</td>
+      <td>부산지점</td>
+      <td class="num">5.4134</td>
+      <td class="center">5</td>
+      <td class="num">2,546,060</td>
+      <td class="num">3,856,720</td>
+      <td class="num">154,990</td>
+      <td class="num">6,557,770</td>
+      <td class="num"><strong>1,211,407</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">43</td>
+      <td>최재덕</td>
+      <td>경북지점</td>
+      <td class="num">4.3022</td>
+      <td class="center">4</td>
+      <td class="num">2,205,390</td>
+      <td class="num">2,960,440</td>
+      <td class="num">45,280</td>
+      <td class="num">5,211,110</td>
+      <td class="num"><strong>1,211,274</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">44</td>
+      <td>안형준</td>
+      <td>충남.전북지점</td>
+      <td class="num">4.6397</td>
+      <td class="center">5</td>
+      <td class="num">3,030,170</td>
+      <td class="num">2,580,200</td>
+      <td class="num">—</td>
+      <td class="num">5,610,370</td>
+      <td class="num"><strong>1,209,220</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">45</td>
+      <td>장진수</td>
+      <td>경기지점</td>
+      <td class="num">4.9104</td>
+      <td class="center">4</td>
+      <td class="num">2,510,200</td>
+      <td class="num">2,892,540</td>
+      <td class="num">296,230</td>
+      <td class="num">5,698,970</td>
+      <td class="num"><strong>1,160,581</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">46</td>
+      <td>박환성</td>
+      <td>경남지점</td>
+      <td class="num">4.1669</td>
+      <td class="center">4</td>
+      <td class="num">1,703,350</td>
+      <td class="num">3,055,500</td>
+      <td class="num">—</td>
+      <td class="num">4,758,850</td>
+      <td class="num"><strong>1,142,064</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">47</td>
+      <td>김준환</td>
+      <td>인천지점</td>
+      <td class="num">5.9553</td>
+      <td class="center">5</td>
+      <td class="num">4,109,556</td>
+      <td class="num">2,593,780</td>
+      <td class="num">—</td>
+      <td class="num">6,703,336</td>
+      <td class="num"><strong>1,125,604</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">48</td>
+      <td>예명규</td>
+      <td>경북지점</td>
+      <td class="num">4.6103</td>
+      <td class="center">4</td>
+      <td class="num">2,241,250</td>
+      <td class="num">2,838,220</td>
+      <td class="num">58,670</td>
+      <td class="num">5,138,140</td>
+      <td class="num"><strong>1,114,493</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">49</td>
+      <td>김영포</td>
+      <td>경북지점</td>
+      <td class="num">6.1253</td>
+      <td class="center">6</td>
+      <td class="num">2,510,200</td>
+      <td class="num">3,829,560</td>
+      <td class="num">244,110</td>
+      <td class="num">6,583,870</td>
+      <td class="num"><strong>1,074,859</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">50</td>
+      <td>장형수</td>
+      <td>서부지점</td>
+      <td class="num">5.3623</td>
+      <td class="center">4</td>
+      <td class="num">3,155,680</td>
+      <td class="num">2,498,720</td>
+      <td class="num">94,880</td>
+      <td class="num">5,749,280</td>
+      <td class="num"><strong>1,072,168</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">51</td>
+      <td>여정현</td>
+      <td>충남.충북지점</td>
+      <td class="num">3.5152</td>
+      <td class="center">4</td>
+      <td class="num">843,660</td>
+      <td class="num">2,607,360</td>
+      <td class="num">179,970</td>
+      <td class="num">3,630,990</td>
+      <td class="num"><strong>1,032,943</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">52</td>
+      <td>김중곤</td>
+      <td>경남지점</td>
+      <td class="num">5.6835</td>
+      <td class="center">4</td>
+      <td class="num">2,372,418</td>
+      <td class="num">3,256,996</td>
+      <td class="num">—</td>
+      <td class="num">5,629,414</td>
+      <td class="num"><strong>990,486</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">53</td>
+      <td>윤규식</td>
+      <td>경북지점</td>
+      <td class="num">5.1187</td>
+      <td class="center">5</td>
+      <td class="num">735,130</td>
+      <td class="num">3,775,240</td>
+      <td class="num">314,730</td>
+      <td class="num">4,825,100</td>
+      <td class="num"><strong>942,642</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">54</td>
+      <td>강희준</td>
+      <td>남부지점</td>
+      <td class="num">3.9029</td>
+      <td class="center">4</td>
+      <td class="num">1,664,496</td>
+      <td class="num">1,575,280</td>
+      <td class="num">72,420</td>
+      <td class="num">3,312,196</td>
+      <td class="num"><strong>848,653</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">55</td>
+      <td>조재윤</td>
+      <td>전남지점</td>
+      <td class="num">4.2375</td>
+      <td class="center">4</td>
+      <td class="num">1,488,190</td>
+      <td class="num">1,860,460</td>
+      <td class="num">—</td>
+      <td class="num">3,348,650</td>
+      <td class="num"><strong>790,247</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">56</td>
+      <td>최규삼</td>
+      <td>전남지점</td>
+      <td class="num">4.1181</td>
+      <td class="center">4</td>
+      <td class="num">1,286,173</td>
+      <td class="num">1,493,800</td>
+      <td class="num">131,450</td>
+      <td class="num">2,911,423</td>
+      <td class="num"><strong>706,980</strong></td>
+    </tr></tbody>
+    </table>
+    </div>
+  </div>
+
+  <div id="t2" class="tab-panel">
+    <h2 class="section">일반병원사업부 담당자 순위 (절대 판매액)</h2>
+    <div class="summary-box">
+      ✦ <strong>시상 인원: 48명</strong> · 시상 라인: <strong id="cut48-text">—</strong>원<br>
+      ✦ 평가 방식: <strong>담당자 본인의 (트루셋저용량·트윈로우 10~12월 + 미카클로 10~12월) 합산 판매액</strong>
+    </div>
+    <div class="filter-bar">
+      <input type="text" id="search-damdang" placeholder="담당자/부지점장/지점 검색...">
+    </div>
+    <div class="scroll">
+    <table id="tbl-damdang">
+      <thead>
+      <tr><th>순위</th><th>담당자</th><th>부지점장</th><th>지점</th><th>영업부</th><th>트루셋저용량<br>(10월)</th><th>트윈로우<br>(10월)</th><th>미카클로<br>(10월)</th><th>합산</th></tr>
+      </thead>
+      <tbody><tr class="shijang">
+      <td class="center">1</td>
+      <td>오승호</td>
+      <td>조용성</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">4,285,270</td>
+      <td class="num">1,602,440</td>
+      <td class="num">—</td>
+      <td class="num"><strong>5,887,710</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">2</td>
+      <td>박진운</td>
+      <td>홍상길</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">3,478,420</td>
+      <td class="num">1,833,300</td>
+      <td class="num">—</td>
+      <td class="num"><strong>5,311,720</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">3</td>
+      <td>이지황</td>
+      <td>구본치</td>
+      <td>경남지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">3,066,030</td>
+      <td class="num">2,064,160</td>
+      <td class="num">34,770</td>
+      <td class="num"><strong>5,164,960</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">4</td>
+      <td>황유석</td>
+      <td>전효택</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,470,260</td>
+      <td class="num">3,408,580</td>
+      <td class="num">—</td>
+      <td class="num"><strong>4,878,840</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">5</td>
+      <td>임광수</td>
+      <td>전효택</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,577,840</td>
+      <td class="num">2,702,420</td>
+      <td class="num">162,260</td>
+      <td class="num"><strong>4,442,520</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">6</td>
+      <td>서민우</td>
+      <td>윤현식</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">1,380,610</td>
+      <td class="num">2,838,220</td>
+      <td class="num">-23,900</td>
+      <td class="num"><strong>4,194,930</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">7</td>
+      <td>차동현</td>
+      <td>박진우</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,165,450</td>
+      <td class="num">2,199,960</td>
+      <td class="num">466,480</td>
+      <td class="num"><strong>3,831,890</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">8</td>
+      <td>김경훈</td>
+      <td>문호재</td>
+      <td>제주지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">2,635,710</td>
+      <td class="num">1,127,140</td>
+      <td class="num">11,590</td>
+      <td class="num"><strong>3,774,440</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">9</td>
+      <td>박수호</td>
+      <td>최병률</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,201,310</td>
+      <td class="num">2,463,320</td>
+      <td class="num">46,360</td>
+      <td class="num"><strong>3,710,990</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">10</td>
+      <td>이은호</td>
+      <td>이종찬</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,978,950</td>
+      <td class="num">1,635,360</td>
+      <td class="num">11,590</td>
+      <td class="num"><strong>3,625,900</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">11</td>
+      <td>이승언</td>
+      <td>장정호</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">394,460</td>
+      <td class="num">3,150,560</td>
+      <td class="num">—</td>
+      <td class="num"><strong>3,545,020</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">12</td>
+      <td>이용준</td>
+      <td>이수현</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,308,890</td>
+      <td class="num">2,159,220</td>
+      <td class="num">—</td>
+      <td class="num"><strong>3,468,110</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">13</td>
+      <td>김진율</td>
+      <td>구본치</td>
+      <td>경남지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">1,488,190</td>
+      <td class="num">1,928,360</td>
+      <td class="num">—</td>
+      <td class="num"><strong>3,416,550</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">14</td>
+      <td>김승덕</td>
+      <td>박희철</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,398,540</td>
+      <td class="num">1,914,780</td>
+      <td class="num">59,750</td>
+      <td class="num"><strong>3,373,070</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">15</td>
+      <td>이채혁</td>
+      <td>김현덕</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">1,326,820</td>
+      <td class="num">1,806,140</td>
+      <td class="num">11,590</td>
+      <td class="num"><strong>3,144,550</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">16</td>
+      <td>강철진</td>
+      <td>문호재</td>
+      <td>제주지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">842,710</td>
+      <td class="num">1,941,940</td>
+      <td class="num">289,750</td>
+      <td class="num"><strong>3,074,400</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">17</td>
+      <td>심재완</td>
+      <td>전효택</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">89,650</td>
+      <td class="num">2,878,512</td>
+      <td class="num">94,520</td>
+      <td class="num"><strong>3,062,682</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">18</td>
+      <td>상윤철</td>
+      <td>이재홍</td>
+      <td>충남.충북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">681,340</td>
+      <td class="num">2,362,920</td>
+      <td class="num">—</td>
+      <td class="num"><strong>3,044,260</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">19</td>
+      <td>임현묵</td>
+      <td>차환준</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">627,550</td>
+      <td class="num">2,390,080</td>
+      <td class="num">—</td>
+      <td class="num"><strong>3,017,630</strong></td>
+    </tr>
+<tr class="imjeongbin">
+      <td class="center">20</td>
+      <td>★ 전은성</td>
+      <td>임정빈</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,900,580</td>
+      <td class="num">1,018,500</td>
+      <td class="num">35,490</td>
+      <td class="num"><strong>2,954,570</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">21</td>
+      <td>최병호</td>
+      <td>추재현</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">860,640</td>
+      <td class="num">2,091,320</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,951,960</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">22</td>
+      <td>이영진</td>
+      <td>김준환</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">2,259,180</td>
+      <td class="num">679,000</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,938,180</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">23</td>
+      <td>민소희</td>
+      <td>이봉열</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">645,480</td>
+      <td class="num">2,254,280</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,899,760</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">24</td>
+      <td>최희성</td>
+      <td>박성현</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">573,760</td>
+      <td class="num">2,118,480</td>
+      <td class="num">162,260</td>
+      <td class="num"><strong>2,854,500</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">25</td>
+      <td>오정현</td>
+      <td>박중연</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">591,690</td>
+      <td class="num">2,254,280</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,845,970</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">26</td>
+      <td>박승호</td>
+      <td>김종범</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,201,310</td>
+      <td class="num">1,507,380</td>
+      <td class="num">94,160</td>
+      <td class="num"><strong>2,802,850</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">27</td>
+      <td>이가야</td>
+      <td>이홍주</td>
+      <td>충남.충북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">2,348,830</td>
+      <td class="num">366,660</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,715,490</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">28</td>
+      <td>이하림</td>
+      <td>이재열</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">1,489,160</td>
+      <td class="num">1,222,200</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,711,360</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">29</td>
+      <td>류현욱</td>
+      <td>구본치</td>
+      <td>경남지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">466,180</td>
+      <td class="num">2,199,960</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,666,140</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">30</td>
+      <td>김종영</td>
+      <td>김중곤</td>
+      <td>경남지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">842,710</td>
+      <td class="num">1,792,560</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,635,270</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">31</td>
+      <td>유승호</td>
+      <td>강민구</td>
+      <td>전남지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,434,400</td>
+      <td class="num">1,195,040</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,629,440</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">32</td>
+      <td>서민영</td>
+      <td>박종성</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">842,710</td>
+      <td class="num">1,778,980</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,621,690</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">33</td>
+      <td>강정모</td>
+      <td>양준영</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">376,530</td>
+      <td class="num">2,240,700</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,617,230</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">34</td>
+      <td>고재백</td>
+      <td>장형수</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">1,721,280</td>
+      <td class="num">814,800</td>
+      <td class="num">47,800</td>
+      <td class="num"><strong>2,583,880</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">35</td>
+      <td>안재환</td>
+      <td>최진수</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,398,540</td>
+      <td class="num">1,113,560</td>
+      <td class="num">71,700</td>
+      <td class="num"><strong>2,583,800</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">36</td>
+      <td>신승환</td>
+      <td>이봉열</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">376,530</td>
+      <td class="num">2,145,640</td>
+      <td class="num">59,750</td>
+      <td class="num"><strong>2,581,920</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">37</td>
+      <td>이든솔</td>
+      <td>박진우</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,488,190</td>
+      <td class="num">1,045,660</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,533,850</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">38</td>
+      <td>천성빈</td>
+      <td>권오훈</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">681,340</td>
+      <td class="num">1,887,620</td>
+      <td class="num">-70,620</td>
+      <td class="num"><strong>2,498,340</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">39</td>
+      <td>이호중</td>
+      <td>정석희</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">1,004,080</td>
+      <td class="num">1,493,800</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,497,880</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">40</td>
+      <td>한대성</td>
+      <td>정용주</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">448,250</td>
+      <td class="num">2,023,420</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,471,670</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">41</td>
+      <td>소재호</td>
+      <td>박진우</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,201,310</td>
+      <td class="num">1,208,620</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,409,930</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">42</td>
+      <td>장효집</td>
+      <td>이봉열</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">537,900</td>
+      <td class="num">1,819,720</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,357,620</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">43</td>
+      <td>조치호</td>
+      <td>정민재</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">645,480</td>
+      <td class="num">1,602,440</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,247,920</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">44</td>
+      <td>신진범</td>
+      <td>이재홍</td>
+      <td>충남.충북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">645,480</td>
+      <td class="num">1,588,860</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,234,340</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">45</td>
+      <td>정의진</td>
+      <td>조용성</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,864,720</td>
+      <td class="num">353,080</td>
+      <td class="num">11,590</td>
+      <td class="num"><strong>2,229,390</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">46</td>
+      <td>박재민</td>
+      <td>김영포</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">1,201,310</td>
+      <td class="num">841,960</td>
+      <td class="num">185,440</td>
+      <td class="num"><strong>2,228,710</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">47</td>
+      <td>김재성</td>
+      <td>김종범</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">735,130</td>
+      <td class="num">1,425,900</td>
+      <td class="num">57,950</td>
+      <td class="num"><strong>2,218,980</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">48</td>
+      <td>박성훈</td>
+      <td>정석희</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">430,320</td>
+      <td class="num">1,778,980</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,209,300</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">49</td>
+      <td>권대업</td>
+      <td>정석희</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">645,480</td>
+      <td class="num">1,561,700</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,207,180</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">50</td>
+      <td>최한수</td>
+      <td>양준영</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">412,390</td>
+      <td class="num">1,738,240</td>
+      <td class="num">47,800</td>
+      <td class="num"><strong>2,198,430</strong></td>
+    </tr>
+<tr class="imjeongbin">
+      <td class="center">51</td>
+      <td>★ 임대현</td>
+      <td>임정빈</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,380,610</td>
+      <td class="num">814,800</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,195,410</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">52</td>
+      <td>이강</td>
+      <td>예명규</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">1,255,100</td>
+      <td class="num">923,440</td>
+      <td class="num">11,590</td>
+      <td class="num"><strong>2,190,130</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">53</td>
+      <td>전상욱</td>
+      <td>박중연</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">179,300</td>
+      <td class="num">2,009,840</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,189,140</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">54</td>
+      <td>오승훈</td>
+      <td>성우진</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">448,250</td>
+      <td class="num">1,738,240</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,186,490</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">55</td>
+      <td>오재용</td>
+      <td>장진수</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,631,630</td>
+      <td class="num">339,500</td>
+      <td class="num">202,070</td>
+      <td class="num"><strong>2,173,200</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">56</td>
+      <td>기창완</td>
+      <td>심기운</td>
+      <td>전남지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">591,690</td>
+      <td class="num">1,561,700</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,153,390</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">57</td>
+      <td>김재욱</td>
+      <td>양준영</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">932,360</td>
+      <td class="num">1,208,620</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,140,980</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">58</td>
+      <td>이석우</td>
+      <td>윤규식</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">430,320</td>
+      <td class="num">1,466,640</td>
+      <td class="num">243,390</td>
+      <td class="num"><strong>2,140,350</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">59</td>
+      <td>문희민</td>
+      <td>이영준</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">824,780</td>
+      <td class="num">1,290,100</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,114,880</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">60</td>
+      <td>문병선</td>
+      <td>조재윤</td>
+      <td>전남지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">986,150</td>
+      <td class="num">1,127,140</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,113,290</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">61</td>
+      <td>배상아</td>
+      <td>구본치</td>
+      <td>경남지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">1,524,050</td>
+      <td class="num">583,940</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,107,990</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">62</td>
+      <td>이동민</td>
+      <td>김명선</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,004,080</td>
+      <td class="num">1,086,400</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,090,480</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">63</td>
+      <td>임태양</td>
+      <td>윤준기</td>
+      <td>충남.충북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">842,710</td>
+      <td class="num">1,222,200</td>
+      <td class="num">23,180</td>
+      <td class="num"><strong>2,088,090</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">64</td>
+      <td>채윤조</td>
+      <td>박진우</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,255,100</td>
+      <td class="num">814,800</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,069,900</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">65</td>
+      <td>임주영</td>
+      <td>김윤석</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">197,230</td>
+      <td class="num">1,860,460</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,057,690</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">66</td>
+      <td>이정범</td>
+      <td>정재헌</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,452,330</td>
+      <td class="num">556,780</td>
+      <td class="num">35,850</td>
+      <td class="num"><strong>2,044,960</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">67</td>
+      <td>장진수</td>
+      <td>미매칭</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,344,750</td>
+      <td class="num">692,580</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,037,330</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">68</td>
+      <td>강대언</td>
+      <td>심기운</td>
+      <td>전남지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,649,560</td>
+      <td class="num">380,240</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,029,800</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">69</td>
+      <td>추승우</td>
+      <td>양준영</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">681,340</td>
+      <td class="num">1,344,420</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,025,760</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">70</td>
+      <td>이윤실</td>
+      <td>최진수</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">699,270</td>
+      <td class="num">1,235,780</td>
+      <td class="num">69,540</td>
+      <td class="num"><strong>2,004,590</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">71</td>
+      <td>최태영</td>
+      <td>임찬규</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">394,460</td>
+      <td class="num">1,602,440</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,996,900</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">72</td>
+      <td>황성묵</td>
+      <td>박철환</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,530,700</td>
+      <td class="num">461,720</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,992,420</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">73</td>
+      <td>이태희</td>
+      <td>성우진</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">537,900</td>
+      <td class="num">1,453,060</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,990,960</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">74</td>
+      <td>이종훈</td>
+      <td>장형수</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">645,480</td>
+      <td class="num">1,317,260</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,962,740</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">75</td>
+      <td>김국일</td>
+      <td>박철환</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">286,880</td>
+      <td class="num">1,670,340</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,957,220</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">76</td>
+      <td>유종우</td>
+      <td>권오훈</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">1,039,940</td>
+      <td class="num">896,280</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,936,220</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">77</td>
+      <td>김윤섭</td>
+      <td>홍상길</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">286,880</td>
+      <td class="num">1,643,180</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,930,060</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">78</td>
+      <td>이동익</td>
+      <td>강민구</td>
+      <td>전남지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,290,960</td>
+      <td class="num">638,260</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,929,220</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">79</td>
+      <td>구동현</td>
+      <td>장정호</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">681,340</td>
+      <td class="num">1,235,780</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,917,120</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">80</td>
+      <td>김태한</td>
+      <td>안형준</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">681,340</td>
+      <td class="num">1,222,200</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,903,540</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">81</td>
+      <td>김현식</td>
+      <td>오광선</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">35,860</td>
+      <td class="num">1,846,880</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,882,740</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">82</td>
+      <td>정재학</td>
+      <td>김명선</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">842,710</td>
+      <td class="num">977,760</td>
+      <td class="num">59,750</td>
+      <td class="num"><strong>1,880,220</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">83</td>
+      <td>박경순</td>
+      <td>윤준기</td>
+      <td>충남.충북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,093,730</td>
+      <td class="num">786,400</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,880,130</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">84</td>
+      <td>홍상식</td>
+      <td>정재헌</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">735,130</td>
+      <td class="num">1,140,720</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,875,850</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">85</td>
+      <td>최성욱</td>
+      <td>최병률</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,178,670</td>
+      <td class="num">393,820</td>
+      <td class="num">293,710</td>
+      <td class="num"><strong>1,866,200</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">86</td>
+      <td>이성우</td>
+      <td>장현석</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">555,830</td>
+      <td class="num">1,262,940</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,818,770</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">87</td>
+      <td>김창현</td>
+      <td>박성현</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">555,830</td>
+      <td class="num">1,249,360</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,805,190</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">88</td>
+      <td>손영진</td>
+      <td>김윤석</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">717,200</td>
+      <td class="num">1,086,400</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,803,600</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">89</td>
+      <td>권원근</td>
+      <td>추재현</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">215,160</td>
+      <td class="num">1,575,280</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,790,440</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">90</td>
+      <td>안호선</td>
+      <td>장정호</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,380,610</td>
+      <td class="num">393,820</td>
+      <td class="num">11,950</td>
+      <td class="num"><strong>1,786,380</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">91</td>
+      <td>김상연</td>
+      <td>박환성</td>
+      <td>경남지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">358,600</td>
+      <td class="num">1,425,900</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,784,500</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">92</td>
+      <td>이상준</td>
+      <td>최병률</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">888,010</td>
+      <td class="num">692,580</td>
+      <td class="num">203,150</td>
+      <td class="num"><strong>1,783,740</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">93</td>
+      <td>홍정우</td>
+      <td>김중곤</td>
+      <td>경남지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">758,718</td>
+      <td class="num">1,002,716</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,761,434</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">94</td>
+      <td>김희창</td>
+      <td>이영준</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">304,810</td>
+      <td class="num">1,412,320</td>
+      <td class="num">11,950</td>
+      <td class="num"><strong>1,729,080</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">95</td>
+      <td>남동희</td>
+      <td>장진수</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">448,250</td>
+      <td class="num">1,262,940</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,711,190</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">96</td>
+      <td>이지우</td>
+      <td>박종성</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">251,020</td>
+      <td class="num">1,453,060</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,704,080</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">97</td>
+      <td>김동엽</td>
+      <td>성우진</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">806,850</td>
+      <td class="num">882,700</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,689,550</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">98</td>
+      <td>정재인</td>
+      <td>이수현</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">322,740</td>
+      <td class="num">1,249,360</td>
+      <td class="num">115,900</td>
+      <td class="num"><strong>1,688,000</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">99</td>
+      <td>정승욱</td>
+      <td>김현덕</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">788,920</td>
+      <td class="num">896,280</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,685,200</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">100</td>
+      <td>이태환</td>
+      <td>윤준기</td>
+      <td>충남.충북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">251,020</td>
+      <td class="num">1,059,240</td>
+      <td class="num">364,330</td>
+      <td class="num"><strong>1,674,590</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">101</td>
+      <td>홍인기</td>
+      <td>성우진</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">215,160</td>
+      <td class="num">1,453,060</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,668,220</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">102</td>
+      <td>류혁기</td>
+      <td>이수현</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">340,670</td>
+      <td class="num">1,371,580</td>
+      <td class="num">-46,360</td>
+      <td class="num"><strong>1,665,890</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">103</td>
+      <td>진형진</td>
+      <td>최재덕</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">806,850</td>
+      <td class="num">855,540</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,662,390</strong></td>
+    </tr>
+<tr class="imjeongbin">
+      <td class="center">104</td>
+      <td>★ 김혜성</td>
+      <td>임정빈</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">842,710</td>
+      <td class="num">814,800</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,657,510</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">105</td>
+      <td>원혁빈</td>
+      <td>김윤석</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">806,850</td>
+      <td class="num">787,640</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,594,490</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">106</td>
+      <td>김영우</td>
+      <td>추재현</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">340,670</td>
+      <td class="num">1,235,780</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,576,450</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">107</td>
+      <td>홍윤영</td>
+      <td>정민재</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">484,110</td>
+      <td class="num">1,086,400</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,570,510</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">108</td>
+      <td>김홍기</td>
+      <td>홍상길</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">1,290,960</td>
+      <td class="num">258,020</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,548,980</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">109</td>
+      <td>최인호</td>
+      <td>오광선</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">824,780</td>
+      <td class="num">665,420</td>
+      <td class="num">47,800</td>
+      <td class="num"><strong>1,538,000</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">110</td>
+      <td>이승재</td>
+      <td>김준환</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,290,960</td>
+      <td class="num">244,440</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,535,400</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">111</td>
+      <td>황지호</td>
+      <td>김명선</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">340,670</td>
+      <td class="num">1,167,880</td>
+      <td class="num">23,900</td>
+      <td class="num"><strong>1,532,450</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">112</td>
+      <td>박옥호</td>
+      <td>홍상길</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">860,640</td>
+      <td class="num">665,420</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,526,060</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">113</td>
+      <td>방희현</td>
+      <td>최진수</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">555,830</td>
+      <td class="num">950,600</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,506,430</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">114</td>
+      <td>성동현</td>
+      <td>오광선</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,273,030</td>
+      <td class="num">203,700</td>
+      <td class="num">23,180</td>
+      <td class="num"><strong>1,499,910</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">115</td>
+      <td>김선욱</td>
+      <td>이종찬</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">322,740</td>
+      <td class="num">1,167,880</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,490,620</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">116</td>
+      <td>임종환</td>
+      <td>안형준</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,039,940</td>
+      <td class="num">434,560</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,474,500</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">117</td>
+      <td>양영빈</td>
+      <td>이영준</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">555,830</td>
+      <td class="num">909,860</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,465,690</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">118</td>
+      <td>권경욱</td>
+      <td>최병률</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">717,200</td>
+      <td class="num">583,940</td>
+      <td class="num">163,700</td>
+      <td class="num"><strong>1,464,840</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">119</td>
+      <td>정재련</td>
+      <td>박희철</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">610,570</td>
+      <td class="num">841,960</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,452,530</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">120</td>
+      <td>임재열</td>
+      <td>성우진</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">842,710</td>
+      <td class="num">597,520</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,440,230</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">121</td>
+      <td>최선아</td>
+      <td>김현덕</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">537,900</td>
+      <td class="num">896,280</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,434,180</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">122</td>
+      <td>강언필</td>
+      <td>문호재</td>
+      <td>제주지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">268,950</td>
+      <td class="num">1,140,720</td>
+      <td class="num">23,180</td>
+      <td class="num"><strong>1,432,850</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">123</td>
+      <td>주민규</td>
+      <td>이봉열</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">717,200</td>
+      <td class="num">692,580</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,409,780</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">124</td>
+      <td>장원석</td>
+      <td>최재덕</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">609,620</td>
+      <td class="num">746,900</td>
+      <td class="num">34,770</td>
+      <td class="num"><strong>1,391,290</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">125</td>
+      <td>함성보</td>
+      <td>박철환</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">519,970</td>
+      <td class="num">774,060</td>
+      <td class="num">94,880</td>
+      <td class="num"><strong>1,388,910</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">126</td>
+      <td>임태오</td>
+      <td>권오훈</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">—</td>
+      <td class="num">1,385,160</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,385,160</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">127</td>
+      <td>이연호</td>
+      <td>조용성</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">986,150</td>
+      <td class="num">298,760</td>
+      <td class="num">92,720</td>
+      <td class="num"><strong>1,377,630</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">128</td>
+      <td>박은엽</td>
+      <td>정석희</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">806,850</td>
+      <td class="num">570,360</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,377,210</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">129</td>
+      <td>김철현</td>
+      <td>차환준</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">197,230</td>
+      <td class="num">1,167,880</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,365,110</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">130</td>
+      <td>이신영</td>
+      <td>정석희</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">573,760</td>
+      <td class="num">760,480</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,334,240</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">131</td>
+      <td>유다현</td>
+      <td>이홍주</td>
+      <td>충남.충북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">179,300</td>
+      <td class="num">1,059,240</td>
+      <td class="num">93,800</td>
+      <td class="num"><strong>1,332,340</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">132</td>
+      <td>안성용</td>
+      <td>박환성</td>
+      <td>경남지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">986,150</td>
+      <td class="num">339,500</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,325,650</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">133</td>
+      <td>이재선</td>
+      <td>박종성</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">1,093,730</td>
+      <td class="num">230,860</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,324,590</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">134</td>
+      <td>박기홍</td>
+      <td>정민재</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">502,040</td>
+      <td class="num">817,964</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,320,004</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">135</td>
+      <td>신상용</td>
+      <td>강민구</td>
+      <td>전남지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">1,057,870</td>
+      <td class="num">258,020</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,315,890</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">136</td>
+      <td>염승철</td>
+      <td>박종성</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">735,130</td>
+      <td class="num">570,360</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,305,490</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">137</td>
+      <td>박규태</td>
+      <td>이재열</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">788,920</td>
+      <td class="num">516,040</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,304,960</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">138</td>
+      <td>이정수</td>
+      <td>오광선</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">143,440</td>
+      <td class="num">1,154,300</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,297,740</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">139</td>
+      <td>김희성</td>
+      <td>여정현</td>
+      <td>충남.충북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">304,810</td>
+      <td class="num">1,004,920</td>
+      <td class="num">-23,180</td>
+      <td class="num"><strong>1,286,550</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">140</td>
+      <td>유석만</td>
+      <td>박중연</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">663,410</td>
+      <td class="num">570,360</td>
+      <td class="num">23,900</td>
+      <td class="num"><strong>1,257,670</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">141</td>
+      <td>문지환</td>
+      <td>차환준</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">89,650</td>
+      <td class="num">1,167,880</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,257,530</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">142</td>
+      <td>이병훈</td>
+      <td>김영포</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">322,740</td>
+      <td class="num">909,860</td>
+      <td class="num">23,180</td>
+      <td class="num"><strong>1,255,780</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">143</td>
+      <td>장경환</td>
+      <td>장현석</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">591,690</td>
+      <td class="num">706,160</td>
+      <td class="num">-47,080</td>
+      <td class="num"><strong>1,250,770</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">144</td>
+      <td>김준현</td>
+      <td>이재홍</td>
+      <td>충남.충북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">412,390</td>
+      <td class="num">774,060</td>
+      <td class="num">59,030</td>
+      <td class="num"><strong>1,245,480</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">145</td>
+      <td>박성열</td>
+      <td>이홍주</td>
+      <td>충남.충북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">573,760</td>
+      <td class="num">665,420</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,239,180</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">146</td>
+      <td>장현승</td>
+      <td>박환성</td>
+      <td>경남지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">179,300</td>
+      <td class="num">1,059,240</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,238,540</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">147</td>
+      <td>남석진</td>
+      <td>임찬규</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">788,920</td>
+      <td class="num">448,140</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,237,060</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">148</td>
+      <td>여종호</td>
+      <td>김명선</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">699,270</td>
+      <td class="num">529,620</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,228,890</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">149</td>
+      <td>양태환</td>
+      <td>예명규</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">502,040</td>
+      <td class="num">706,160</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,208,200</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">150</td>
+      <td>한진</td>
+      <td>최병률</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">735,130</td>
+      <td class="num">434,560</td>
+      <td class="num">35,850</td>
+      <td class="num"><strong>1,205,540</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">151</td>
+      <td>왕경표</td>
+      <td>장현석</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">519,970</td>
+      <td class="num">597,520</td>
+      <td class="num">82,930</td>
+      <td class="num"><strong>1,200,420</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">152</td>
+      <td>조우진</td>
+      <td>최재덕</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">663,410</td>
+      <td class="num">529,620</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,193,030</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">153</td>
+      <td>박재원</td>
+      <td>추재현</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">143,440</td>
+      <td class="num">1,045,660</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,189,100</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">154</td>
+      <td>임영식</td>
+      <td>정재헌</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">412,390</td>
+      <td class="num">651,840</td>
+      <td class="num">118,420</td>
+      <td class="num"><strong>1,182,650</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">155</td>
+      <td>정의형</td>
+      <td>전효택</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">394,460</td>
+      <td class="num">760,480</td>
+      <td class="num">23,900</td>
+      <td class="num"><strong>1,178,840</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">156</td>
+      <td>김정현</td>
+      <td>전효택</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">399,175</td>
+      <td class="num">746,900</td>
+      <td class="num">11,950</td>
+      <td class="num"><strong>1,158,025</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">157</td>
+      <td>곽승훈</td>
+      <td>김종범</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">340,670</td>
+      <td class="num">814,800</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,155,470</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">158</td>
+      <td>박상은</td>
+      <td>정용주</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">340,670</td>
+      <td class="num">814,800</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,155,470</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">159</td>
+      <td>주영광</td>
+      <td>예명규</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">358,600</td>
+      <td class="num">746,900</td>
+      <td class="num">47,080</td>
+      <td class="num"><strong>1,152,580</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">160</td>
+      <td>최원진</td>
+      <td>조용성</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">842,710</td>
+      <td class="num">271,600</td>
+      <td class="num">34,770</td>
+      <td class="num"><strong>1,149,080</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">161</td>
+      <td>김기찬</td>
+      <td>안형준</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">591,690</td>
+      <td class="num">556,780</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,148,470</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">162</td>
+      <td>예명규</td>
+      <td>미매칭</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">143,440</td>
+      <td class="num">1,004,920</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,148,360</strong></td>
+    </tr>
+<tr class="imjeongbin">
+      <td class="center">163</td>
+      <td>★ 황태영</td>
+      <td>임정빈</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">770,990</td>
+      <td class="num">366,660</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,137,650</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">164</td>
+      <td>문명규</td>
+      <td>여정현</td>
+      <td>충남.충북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">53,790</td>
+      <td class="num">1,045,660</td>
+      <td class="num">35,850</td>
+      <td class="num"><strong>1,135,300</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">165</td>
+      <td>최유미</td>
+      <td>차환준</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">537,900</td>
+      <td class="num">516,040</td>
+      <td class="num">81,130</td>
+      <td class="num"><strong>1,135,070</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">166</td>
+      <td>강민기</td>
+      <td>최진수</td>
+      <td>충남.전북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">878,570</td>
+      <td class="num">135,800</td>
+      <td class="num">116,620</td>
+      <td class="num"><strong>1,130,990</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">167</td>
+      <td>이진욱</td>
+      <td>윤현식</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">430,320</td>
+      <td class="num">570,360</td>
+      <td class="num">107,550</td>
+      <td class="num"><strong>1,108,230</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">168</td>
+      <td>홍창회</td>
+      <td>김영포</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">645,480</td>
+      <td class="num">420,980</td>
+      <td class="num">23,900</td>
+      <td class="num"><strong>1,090,360</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">169</td>
+      <td>김수민</td>
+      <td>임찬규</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">573,760</td>
+      <td class="num">516,040</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,089,800</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">170</td>
+      <td>이용목</td>
+      <td>이종찬</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">322,740</td>
+      <td class="num">760,480</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,083,220</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">171</td>
+      <td>곽호룡</td>
+      <td>강희준</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">824,780</td>
+      <td class="num">258,020</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,082,800</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">172</td>
+      <td>조재우</td>
+      <td>윤규식</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">-322,740</td>
+      <td class="num">1,344,420</td>
+      <td class="num">59,750</td>
+      <td class="num"><strong>1,081,430</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">173</td>
+      <td>박성호</td>
+      <td>오광선</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">-14,936</td>
+      <td class="num">1,086,400</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,071,464</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">174</td>
+      <td>송봉건</td>
+      <td>박성현</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">466,180</td>
+      <td class="num">556,780</td>
+      <td class="num">35,850</td>
+      <td class="num"><strong>1,058,810</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">175</td>
+      <td>이세현</td>
+      <td>장진수</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">143,440</td>
+      <td class="num">814,800</td>
+      <td class="num">94,160</td>
+      <td class="num"><strong>1,052,400</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">176</td>
+      <td>권종협</td>
+      <td>장현석</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">251,020</td>
+      <td class="num">801,220</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,052,240</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">177</td>
+      <td>나홍주</td>
+      <td>정재헌</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">358,600</td>
+      <td class="num">679,000</td>
+      <td class="num">11,950</td>
+      <td class="num"><strong>1,049,550</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">178</td>
+      <td>임병수</td>
+      <td>최규삼</td>
+      <td>전남지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">304,810</td>
+      <td class="num">719,740</td>
+      <td class="num">23,900</td>
+      <td class="num"><strong>1,048,450</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">179</td>
+      <td>강태욱</td>
+      <td>정용주</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">770,990</td>
+      <td class="num">271,600</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,042,590</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">180</td>
+      <td>김충만</td>
+      <td>장형수</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">376,530</td>
+      <td class="num">611,100</td>
+      <td class="num">47,080</td>
+      <td class="num"><strong>1,034,710</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">181</td>
+      <td>조세호</td>
+      <td>장정호</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">842,710</td>
+      <td class="num">190,120</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,032,830</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">182</td>
+      <td>김상돈</td>
+      <td>김현덕</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">519,970</td>
+      <td class="num">511,180</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,031,150</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">183</td>
+      <td>곽기호</td>
+      <td>최규삼</td>
+      <td>전남지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">304,810</td>
+      <td class="num">611,100</td>
+      <td class="num">107,550</td>
+      <td class="num"><strong>1,023,460</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">184</td>
+      <td>최문규</td>
+      <td>정용주</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">699,270</td>
+      <td class="num">298,760</td>
+      <td class="num">—</td>
+      <td class="num"><strong>998,030</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">185</td>
+      <td>김의영</td>
+      <td>이봉열</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">251,020</td>
+      <td class="num">733,320</td>
+      <td class="num">—</td>
+      <td class="num"><strong>984,340</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">186</td>
+      <td>강성민</td>
+      <td>차환준</td>
+      <td>강남.강원지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">502,040</td>
+      <td class="num">475,300</td>
+      <td class="num">—</td>
+      <td class="num"><strong>977,340</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">187</td>
+      <td>길성진</td>
+      <td>권오훈</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">53,790</td>
+      <td class="num">787,640</td>
+      <td class="num">127,490</td>
+      <td class="num"><strong>968,920</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">188</td>
+      <td>김판섭</td>
+      <td>최재덕</td>
+      <td>경북지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">125,510</td>
+      <td class="num">828,380</td>
+      <td class="num">10,510</td>
+      <td class="num"><strong>964,400</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">189</td>
+      <td>이종현</td>
+      <td>장정호</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">161,370</td>
+      <td class="num">787,640</td>
+      <td class="num">—</td>
+      <td class="num"><strong>949,010</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">190</td>
+      <td>안경호</td>
+      <td>이영준</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">286,880</td>
+      <td class="num">624,680</td>
+      <td class="num">—</td>
+      <td class="num"><strong>911,560</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">191</td>
+      <td>오현록</td>
+      <td>심기운</td>
+      <td>전남지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">842,710</td>
+      <td class="num">67,900</td>
+      <td class="num">—</td>
+      <td class="num"><strong>910,610</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">192</td>
+      <td>금덕훈</td>
+      <td>박중연</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">35,860</td>
+      <td class="num">855,540</td>
+      <td class="num">—</td>
+      <td class="num"><strong>891,400</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">193</td>
+      <td>진영빈</td>
+      <td>정용주</td>
+      <td>부산지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">286,880</td>
+      <td class="num">448,140</td>
+      <td class="num">154,990</td>
+      <td class="num"><strong>890,010</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">194</td>
+      <td>이광규</td>
+      <td>오광선</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">699,270</td>
+      <td class="num">190,120</td>
+      <td class="num">—</td>
+      <td class="num"><strong>889,390</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">195</td>
+      <td>최경원</td>
+      <td>이재홍</td>
+      <td>충남.충북지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">502,040</td>
+      <td class="num">380,240</td>
+      <td class="num">—</td>
+      <td class="num"><strong>882,280</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">196</td>
+      <td>이하늘</td>
+      <td>김윤석</td>
+      <td>북부지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">53,790</td>
+      <td class="num">814,800</td>
+      <td class="num">—</td>
+      <td class="num"><strong>868,590</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">197</td>
+      <td>조태익</td>
+      <td>강희준</td>
+      <td>남부지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">107,580</td>
+      <td class="num">760,480</td>
+      <td class="num">—</td>
+      <td class="num"><strong>868,060</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">198</td>
+      <td>박민지</td>
+      <td>박진우</td>
+      <td>경기지점</td>
+      <td class="center">Clinic 3부</td>
+      <td class="num">735,130</td>
+      <td class="num">108,640</td>
+      <td class="num">—</td>
+      <td class="num"><strong>843,770</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">199</td>
+      <td>최우영</td>
+      <td>김준환</td>
+      <td>인천지점</td>
+      <td class="center">Clinic 2부</td>
+      <td class="num">93,236</td>
+      <td class="num">733,320</td>
+      <td class="num">—</td>
+      <td class="num"><strong>826,556</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">200</td>
+      <td>김도연</td>
+      <td>윤현식</td>
+      <td>서부지점</td>
+      <td class="center">Clinic 1부</td>
+      <td class="num">71,720</td>
+      <td class="num">733,320</td>
+      <td class="num">11,590</td>
+      <td class="num"><strong>816,630</strong></td>
+    </tr></tbody>
+    </table>
+    </div>
+  </div>
+
+  <div id="t3" class="tab-panel">
+    <h2 class="section">지점장 순위 (지점 평균 판매액)</h2>
+    <div class="summary-box">
+      ✦ <strong>시상 인원: 2명</strong> · 평가: 지점원 평균 실적 (지점 T.O 합 적용)
+    </div>
+    <table id="tbl-jijeom">
+      <thead>
+      <tr><th>순위</th><th>지점</th><th>T.O 합</th><th>담당자수</th><th>트루셋저용량<br>(10월)</th><th>트윈로우<br>(10월)</th><th>미카클로<br>(10월)</th><th>합산</th><th>평균 판매액</th></tr>
+      </thead>
+      <tbody><tr class="shijang">
+      <td class="center">1</td>
+      <td>제주지점</td>
+      <td class="num">3.1105</td>
+      <td class="center">3</td>
+      <td class="num">3,747,370</td>
+      <td class="num">4,209,800</td>
+      <td class="num">324,520</td>
+      <td class="num">8,281,690</td>
+      <td class="num"><strong>2,662,497</strong></td>
+    </tr>
+<tr class="shijang">
+      <td class="center">2</td>
+      <td>강남.강원지점</td>
+      <td class="num">23.7955</td>
+      <td class="center">24</td>
+      <td class="num">12,257,555</td>
+      <td class="num">30,014,516</td>
+      <td class="num">468,640</td>
+      <td class="num">42,740,711</td>
+      <td class="num"><strong>1,796,166</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">3</td>
+      <td>경기지점</td>
+      <td class="num">27.4871</td>
+      <td class="center">28</td>
+      <td class="num">23,703,460</td>
+      <td class="num">22,990,940</td>
+      <td class="num">997,390</td>
+      <td class="num">47,691,790</td>
+      <td class="num"><strong>1,735,062</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">4</td>
+      <td>경남지점</td>
+      <td class="num">14.4101</td>
+      <td class="center">12</td>
+      <td class="num">10,620,218</td>
+      <td class="num">13,088,916</td>
+      <td class="num">34,770</td>
+      <td class="num">23,743,904</td>
+      <td class="num"><strong>1,647,723</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">5</td>
+      <td>부산지점</td>
+      <td class="num">23.7961</td>
+      <td class="center">22</td>
+      <td class="num">17,644,090</td>
+      <td class="num">20,786,120</td>
+      <td class="num">131,810</td>
+      <td class="num">38,562,020</td>
+      <td class="num"><strong>1,620,517</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">6</td>
+      <td>남부지점</td>
+      <td class="num">17.4983</td>
+      <td class="center">18</td>
+      <td class="num">8,603,406</td>
+      <td class="num">19,500,880</td>
+      <td class="num">156,070</td>
+      <td class="num">28,260,356</td>
+      <td class="num"><strong>1,615,037</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">7</td>
+      <td>충남.전북지점</td>
+      <td class="num">22.9861</td>
+      <td class="center">22</td>
+      <td class="num">15,873,730</td>
+      <td class="num">18,677,840</td>
+      <td class="num">1,175,920</td>
+      <td class="num">35,727,490</td>
+      <td class="num"><strong>1,554,310</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">8</td>
+      <td>북부지점</td>
+      <td class="num">26.7963</td>
+      <td class="center">27</td>
+      <td class="num">13,206,124</td>
+      <td class="num">27,070,700</td>
+      <td class="num">409,610</td>
+      <td class="num">40,686,434</td>
+      <td class="num"><strong>1,518,360</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">9</td>
+      <td>서부지점</td>
+      <td class="num">20.0888</td>
+      <td class="center">17</td>
+      <td class="num">9,233,950</td>
+      <td class="num">18,849,040</td>
+      <td class="num">375,920</td>
+      <td class="num">28,458,910</td>
+      <td class="num"><strong>1,416,658</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">10</td>
+      <td>인천지점</td>
+      <td class="num">21.9795</td>
+      <td class="center">20</td>
+      <td class="num">15,710,266</td>
+      <td class="num">14,883,680</td>
+      <td class="num">213,660</td>
+      <td class="num">30,807,606</td>
+      <td class="num"><strong>1,401,652</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">11</td>
+      <td>충남.충북지점</td>
+      <td class="num">16.6799</td>
+      <td class="center">16</td>
+      <td class="num">8,876,300</td>
+      <td class="num">13,361,480</td>
+      <td class="num">731,900</td>
+      <td class="num">22,969,680</td>
+      <td class="num"><strong>1,377,087</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">12</td>
+      <td>경북지점</td>
+      <td class="num">24.8622</td>
+      <td class="center">24</td>
+      <td class="num">11,152,460</td>
+      <td class="num">19,568,780</td>
+      <td class="num">662,790</td>
+      <td class="num">31,384,030</td>
+      <td class="num"><strong>1,262,320</strong></td>
+    </tr>
+<tr class="">
+      <td class="center">13</td>
+      <td>전남지점</td>
+      <td class="num">16.5097</td>
+      <td class="center">16</td>
+      <td class="num">10,484,263</td>
+      <td class="num">7,985,040</td>
+      <td class="num">131,450</td>
+      <td class="num">18,600,753</td>
+      <td class="num"><strong>1,126,659</strong></td>
+    </tr></tbody>
+    </table>
+  </div>
+
+  <div id="t4" class="tab-panel">
+    <h2 class="section">★ 임정빈팀 상세 분석</h2>
+    <div class="summary-box">
+      <strong>임정빈 부지점장</strong> | 인천지점 | T.O <strong>5.2143</strong> | 담당자 <strong>5명</strong><br>
+      <strong>부지점장 순위: 19위 / 56명</strong> · 평균 판매액: <strong>1,617,696원</strong><br>
+      <strong>합산: 8,435,190원</strong> = 트루셋저용량 5,235,560 + 트윈로우 누적 3,164,140 + 미카클로 누적 35,490
+    </div>
+
+    <h3 class="sub">담당자별 상세 (전국 일반병원 담당자 순위 표시)</h3>
+    <table>
+      <thead>
+      <tr><th>담당자</th><th>전국 담당자<br>순위</th><th>트루셋저용량<br>(10월)</th><th>트윈로우<br>(10월)</th><th>미카클로<br>(10월)</th><th>미카클로<br>(11월)</th><th>미카클로<br>(12월)</th><th>미카클로 누적</th><th>합산</th></tr>
+      </thead>
+      <tbody><tr>
+      <td><strong>전은성</strong></td>
+      <td class="center">20위</td>
+      <td class="num">1,900,580</td>
+      <td class="num">1,018,500</td>
+      <td class="num">35,490</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num">35,490</td>
+      <td class="num"><strong>2,954,570</strong></td>
+    </tr>
+<tr>
+      <td><strong>임대현</strong></td>
+      <td class="center">51위</td>
+      <td class="num">1,380,610</td>
+      <td class="num">814,800</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num"><strong>2,195,410</strong></td>
+    </tr>
+<tr>
+      <td><strong>황태영</strong></td>
+      <td class="center">163위</td>
+      <td class="num">770,990</td>
+      <td class="num">366,660</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,137,650</strong></td>
+    </tr>
+<tr>
+      <td><strong>박준상</strong></td>
+      <td class="center">238위</td>
+      <td class="num">340,670</td>
+      <td class="num">149,380</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num"><strong>490,050</strong></td>
+    </tr>
+<tr>
+      <td><strong>김혜성</strong></td>
+      <td class="center">104위</td>
+      <td class="num">842,710</td>
+      <td class="num">814,800</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num">—</td>
+      <td class="num"><strong>1,657,510</strong></td>
+    </tr></tbody>
+    </table>
+
+    <h3 class="sub">인천지점 부지점장 비교</h3>
+    <table>
+      <thead>
+      <tr><th>순위</th><th>부지점장</th><th>T.O</th><th>합산</th><th>평균 판매액</th><th>시상권 격차</th></tr>
+      </thead>
+      <tbody><tr class="">
+      <td class="center">18</td>
+      <td>장정호</td>
+      <td class="num">5.5999</td>
+      <td class="num">9,230,360</td>
+      <td class="num"><strong>1,648,294</strong></td>
+      <td class="num"><span style="color:#e74c3c">+284,233원</span></td>
+    </tr>
+<tr class="imjeongbin">
+      <td class="center">19</td>
+      <td>★ 임정빈</td>
+      <td class="num">5.2143</td>
+      <td class="num">8,435,190</td>
+      <td class="num"><strong>1,617,696</strong></td>
+      <td class="num"><span style="color:#e74c3c">+314,831원</span></td>
+    </tr>
+<tr class="">
+      <td class="center">41</td>
+      <td>정재헌</td>
+      <td class="num">5.2099</td>
+      <td class="num">6,438,720</td>
+      <td class="num"><strong>1,235,862</strong></td>
+      <td class="num"><span style="color:#e74c3c">+696,665원</span></td>
+    </tr>
+<tr class="">
+      <td class="center">47</td>
+      <td>김준환</td>
+      <td class="num">5.9553</td>
+      <td class="num">6,703,336</td>
+      <td class="num"><strong>1,125,604</strong></td>
+      <td class="num"><span style="color:#e74c3c">+806,923원</span></td>
+    </tr></tbody>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer">
+  📊 데이터 출처: !11번파일(`26년10월)_약정가반영후.xlsx + 팀T.O 마스터 (팀-Simul.) | 생성: 2026-11-23 15:11:58
+</div>
+
+</div>
+
+<script>
+const DATA = {"부지점장": [{"부지점장": "구본치", "지점": "경남지점", "팀명": "경남/일병2팀", "T.O": 4.559758215514888, "담당자수": 4, "트루셋저용량_4월": 6544450, "트윈로우_누적": 6776420, "미카클로_누적": 34770, "합산": 13355640, "평균_판매액": 2929023.7264240296, "부지점장순위": 1}, {"부지점장": "박진우", "지점": "경기지점", "팀명": "경기/일병1팀", "T.O": 4.0966144351580835, "담당자수": 5, "트루셋저용량_4월": 5845180, "트윈로우_누적": 5377680, "미카클로_누적": 466480, "합산": 11689340, "평균_판매액": 2853414.7367346575, "부지점장순위": 2}, {"부지점장": "문호재", "지점": "제주지점", "팀명": "제주/일병1팀", "T.O": 3.1104968762182907, "담당자수": 3, "트루셋저용량_4월": 3747370, "트윈로우_누적": 4209800, "미카클로_누적": 324520, "합산": 8281690, "평균_판매액": 2662497.4496257305, "부지점장순위": 3}, {"부지점장": "전효택", "지점": "강남.강원지점", "팀명": "강원/일병2팀", "T.O": 6.146997685366893, "담당자수": 6, "트루셋저용량_4월": 3931385, "트윈로우_누적": 11284532, "미카클로_누적": 292630, "합산": 15508547, "평균_판매액": 2522946.6145592583, "부지점장순위": 4}, {"부지점장": "조용성", "지점": "경기지점", "팀명": "경기/일병2팀", "T.O": 4.250639482171394, "담당자수": 4, "트루셋저용량_4월": 7978850, "트윈로우_누적": 2525880, "미카클로_누적": 139080, "합산": 10643810, "평균_판매액": 2504049.1071152245, "부지점장순위": 5}, {"부지점장": "이봉열", "지점": "남부지점", "팀명": "남부/일병4팀", "T.O": 4.576199977995656, "담당자수": 5, "트루셋저용량_4월": 2528130, "트윈로우_누적": 7645540, "미카클로_누적": 59750, "합산": 10233420, "평균_판매액": 2236226.574277064, "부지점장순위": 6}, {"부지점장": "홍상길", "지점": "부산지점", "팀명": "부산/일병4팀", "T.O": 4.640310624542277, "담당자수": 4, "트루셋저용량_4월": 5916900, "트윈로우_누적": 4399920, "미카클로_누적": 0, "합산": 10316820, "평균_판매액": 2223303.747261027, "부지점장순위": 7}, {"부지점장": "최병률", "지점": "충남.전북지점", "팀명": "전북/일병2팀", "T.O": 4.888882099101341, "담당자수": 5, "트루셋저용량_4월": 4720320, "트윈로우_누적": 4568220, "미카클로_누적": 742770, "합산": 10031310, "평균_판매액": 2051861.713303318, "부지점장순위": 8}, {"부지점장": "정석희", "지점": "경북지점", "팀명": "경북/일병1팀", "T.O": 4.705686200982358, "담당자수": 5, "트루셋저용량_4월": 3460490, "트윈로우_누적": 6165320, "미카클로_누적": 0, "합산": 9625810, "평균_판매액": 2045569.889039885, "부지점장순위": 9}, {"부지점장": "성우진", "지점": "부산지점", "팀명": "부산/일병2팀", "T.O": 4.644411182785174, "담당자수": 5, "트루셋저용량_4월": 2850870, "트윈로우_누적": 6124580, "미카클로_누적": 0, "합산": 8975450, "평균_판매액": 1932526.997882555, "부지점장순위": 10}, {"부지점장": "최진수", "지점": "충남.전북지점", "팀명": "충남/일병3팀", "T.O": 3.877842999721081, "담당자수": 4, "트루셋저용량_4월": 3532210, "트윈로우_누적": 3435740, "미카클로_누적": 257860, "합산": 7225810, "평균_판매액": 1863358.057693343, "부지점장순위": 11}, {"부지점장": "윤현식", "지점": "서부지점", "팀명": "서부/일병1팀", "T.O": 3.8170837215222706, "담당자수": 4, "트루셋저용량_4월": 1882650, "트윈로우_누적": 4820900, "미카클로_누적": 176370, "합산": 6879920, "평균_판매액": 1802402.1745208816, "부지점장순위": 12}, {"부지점장": "이수현", "지점": "북부지점", "팀명": "북부/일병3팀", "T.O": 4.089140993440585, "담당자수": 4, "트루셋저용량_4월": 1972300, "트윈로우_누적": 5187560, "미카클로_누적": 69540, "합산": 7229400, "평균_판매액": 1767950.7778275982, "부지점장순위": 13}, {"부지점장": "강민구", "지점": "전남지점", "팀명": "전남/일병2팀", "T.O": 3.8274231879667338, "담당자수": 4, "트루셋저용량_4월": 4034250, "트윈로우_누적": 2607360, "미카클로_누적": 0, "합산": 6641610, "평균_판매액": 1735269.3114471787, "부지점장순위": 14}, {"부지점장": "박철환", "지점": "강남.강원지점", "팀명": "강원/일병1팀", "T.O": 3.138752816180058, "담당자수": 3, "트루셋저용량_4월": 2337550, "트윈로우_누적": 2906120, "미카클로_누적": 94880, "합산": 5338550, "평균_판매액": 1700850.7240455945, "부지점장순위": 15}, {"부지점장": "박종성", "지점": "남부지점", "팀명": "남부/일병1팀", "T.O": 4.152671137927328, "담당자수": 4, "트루셋저용량_4월": 2922590, "트윈로우_누적": 4033260, "미카클로_누적": 0, "합산": 6955850, "평균_판매액": 1675030.3043432878, "부지점장순위": 16}, {"부지점장": "이재홍", "지점": "충남.충북지점", "팀명": "천안/일병1팀", "T.O": 4.482953681322008, "담당자수": 4, "트루셋저용량_4월": 2241250, "트윈로우_누적": 5106080, "미카클로_누적": 59030, "합산": 7406360, "평균_판매액": 1652116.110603197, "부지점장순위": 17}, {"부지점장": "장정호", "지점": "인천지점", "팀명": "인천/일병4팀", "T.O": 5.599946510469324, "담당자수": 5, "트루셋저용량_4월": 3460490, "트윈로우_누적": 5757920, "미카클로_누적": 11950, "합산": 9230360, "평균_판매액": 1648294.3154445267, "부지점장순위": 18}, {"부지점장": "임정빈", "지점": "인천지점", "팀명": "인천/일병2팀", "T.O": 5.214322114635569, "담당자수": 5, "트루셋저용량_4월": 5235560, "트윈로우_누적": 3164140, "미카클로_누적": 35490, "합산": 8435190, "평균_판매액": 1617696.378274003, "부지점장순위": 19}, {"부지점장": "추재현", "지점": "강남.강원지점", "팀명": "강남/일병1팀", "T.O": 5.061008014021886, "담당자수": 5, "트루셋저용량_4월": 1882650, "트윈로우_누적": 6301120, "미카클로_누적": 0, "합산": 8183770, "평균_판매액": 1617023.718857247, "부지점장순위": 20}, {"부지점장": "박중연", "지점": "남부지점", "팀명": "남부/일병2팀", "T.O": 4.8665096414246785, "담당자수": 5, "트루셋저용량_4월": 1488190, "트윈로우_누적": 6246800, "미카클로_누적": 23900, "합산": 7758890, "평균_판매액": 1594343.9079941025, "부지점장순위": 21}, {"부지점장": "김윤석", "지점": "북부지점", "팀명": "북부/일병6팀", "T.O": 3.995769523096954, "담당자수": 4, "트루셋저용량_4월": 1775070, "트윈로우_누적": 4549300, "미카클로_누적": 0, "합산": 6324370, "평균_판매액": 1582766.4642424735, "부지점장순위": 22}, {"부지점장": "양준영", "지점": "서부지점", "팀명": "서부/일병5팀", "T.O": 5.9148339027919175, "담당자수": 5, "트루셋저용량_4월": 2420550, "트윈로우_누적": 6572720, "미카클로_누적": 47800, "합산": 9041070, "평균_판매액": 1528541.6545226127, "부지점장순위": 23}, {"부지점장": "김현덕", "지점": "부산지점", "팀명": "부산/일병1팀", "T.O": 5.232880221437464, "담당자수": 5, "트루셋저용량_4월": 3729440, "트윈로우_누적": 4218520, "미카클로_누적": -23180, "합산": 7924780, "평균_판매액": 1514420.2933471838, "부지점장순위": 24}, {"부지점장": "김명선", "지점": "경기지점", "팀명": "경기/일병4팀", "T.O": 4.797251448883467, "담당자수": 5, "트루셋저용량_4월": 3155680, "트윈로우_누적": 3883880, "미카클로_누적": 83650, "합산": 7123210, "평균_판매액": 1484852.331777999, "부지점장순위": 25}, {"부지점장": "이종찬", "지점": "북부지점", "팀명": "북부/일병2팀", "T.O": 5.132680889563985, "담당자수": 5, "트루셋저용량_4월": 2714080, "트윈로우_누적": 4785920, "미카클로_누적": 35130, "합산": 7535130, "평균_판매액": 1468069.0582811784, "부지점장순위": 26}, {"부지점장": "장현석", "지점": "북부지점", "팀명": "북부/일병4팀", "T.O": 3.6333276215281116, "담당자수": 4, "트루셋저용량_4월": 1918510, "트윈로우_누적": 3367840, "미카클로_누적": 35850, "합산": 5322200, "평균_판매액": 1464827.9908657342, "부지점장순위": 27}, {"부지점장": "정민재", "지점": "강남.강원지점", "팀명": "강남/일병3팀", "T.O": 3.764827248776884, "담당자수": 4, "트루셋저용량_4월": 1864720, "트윈로우_누적": 3615444, "미카클로_누적": 0, "합산": 5480164, "평균_판매액": 1455621.6362332148, "부지점장순위": 28}, {"부지점장": "차환준", "지점": "강남.강원지점", "팀명": "강남/일병4팀", "T.O": 5.683933337856679, "담당자수": 6, "트루셋저용량_4월": 2241250, "트윈로우_누적": 5907300, "미카클로_누적": 81130, "합산": 8229680, "평균_판매액": 1447884.6796439174, "부지점장순위": 29}, {"부지점장": "박성현", "지점": "북부지점", "팀명": "북부/일병5팀", "T.O": 4.217526321629364, "담당자수": 4, "트루셋저용량_4월": 1864720, "트윈로우_누적": 4033260, "미카클로_누적": 198110, "합산": 6096090, "평균_판매액": 1445418.3649634905, "부지점장순위": 30}, {"부지점장": "오광선", "지점": "북부지점", "팀명": "북부/일병1팀", "T.O": 5.727852339207788, "담당자수": 6, "트루셋저용량_4월": 2961444, "트윈로우_누적": 5146820, "미카클로_누적": 70980, "합산": 8179244, "평균_판매액": 1427977.4539598662, "부지점장순위": 31}, {"부지점장": "이홍주", "지점": "충남.충북지점", "팀명": "충북/일병1팀", "T.O": 4.042580645867542, "담당자수": 4, "트루셋저용량_4월": 3442560, "트윈로우_누적": 2186380, "미카클로_누적": 93800, "합산": 5722740, "평균_판매액": 1415615.543959518, "부지점장순위": 32}, {"부지점장": "임찬규", "지점": "경기지점", "팀명": "경기/일병5팀", "T.O": 4.214040084140803, "담당자수": 5, "트루셋저용량_4월": 2241250, "트윈로우_누적": 3503640, "미카클로_누적": 0, "합산": 5744890, "평균_판매액": 1363273.6958579074, "부지점장순위": 33}, {"부지점장": "권오훈", "지점": "서부지점", "팀명": "서부/일병2팀", "T.O": 4.994560642116171, "담당자수": 4, "트루셋저용량_4월": 1775070, "트윈로우_누적": 4956700, "미카클로_누적": 56870, "합산": 6788640, "평균_판매액": 1359206.6422730803, "부지점장순위": 34}, {"부지점장": "김종범", "지점": "충남.전북지점", "팀명": "전북/일병1팀", "T.O": 5.500305244648291, "담당자수": 5, "트루셋저용량_4월": 2510200, "트윈로우_누적": 4753000, "미카클로_누적": 210060, "합산": 7473260, "평균_판매액": 1358699.1389743984, "부지점장순위": 35}, {"부지점장": "윤준기", "지점": "충남.충북지점", "팀명": "천안/일병2팀", "T.O": 4.639181460681887, "담당자수": 4, "트루셋저용량_4월": 2348830, "트윈로우_누적": 3461660, "미카클로_누적": 399100, "합산": 6209590, "평균_판매액": 1338509.8325270698, "부지점장순위": 36}, {"부지점장": "박희철", "지점": "충남.전북지점", "팀명": "충남/일병2팀", "T.O": 4.079388445261141, "담당자수": 3, "트루셋저용량_4월": 2080830, "트윈로우_누적": 3340680, "미카클로_누적": -34770, "합산": 5386740, "평균_판매액": 1320477.3392584263, "부지점장순위": 37}, {"부지점장": "심기운", "지점": "전남지점", "팀명": "전남/일병1팀", "T.O": 4.326649182203904, "담당자수": 4, "트루셋저용량_4월": 3675650, "트윈로우_누적": 2023420, "미카클로_누적": 0, "합산": 5699070, "평균_판매액": 1317201.7790212918, "부지점장순위": 38}, {"부지점장": "이영준", "지점": "경기지점", "팀명": "경기/일병3팀", "T.O": 5.218084527935668, "담당자수": 5, "트루셋저용량_4월": 1972300, "트윈로우_누적": 4807320, "미카클로_누적": 11950, "합산": 6791570, "평균_판매액": 1301544.6498883797, "부지점장순위": 39}, {"부지점장": "이재열", "지점": "부산지점", "팀명": "부산/일병5팀", "T.O": 3.8651676509734476, "담당자수": 3, "트루셋저용량_4월": 2600820, "트윈로우_누적": 2186380, "미카클로_누적": 0, "합산": 4787200, "평균_판매액": 1238549.1218716833, "부지점장순위": 40}, {"부지점장": "정재헌", "지점": "인천지점", "팀명": "인천/일병3팀", "T.O": 5.209900235911485, "담당자수": 5, "트루셋저용량_4월": 2904660, "트윈로우_누적": 3367840, "미카클로_누적": 166220, "합산": 6438720, "평균_판매액": 1235862.436600675, "부지점장순위": 41}, {"부지점장": "정용주", "지점": "부산지점", "팀명": "부산/일병3팀", "T.O": 5.41335140098424, "담당자수": 5, "트루셋저용량_4월": 2546060, "트윈로우_누적": 3856720, "미카클로_누적": 154990, "합산": 6557770, "평균_판매액": 1211406.6710702884, "부지점장순위": 42}, {"부지점장": "최재덕", "지점": "경북지점", "팀명": "경북/일병5팀", "T.O": 4.302173574946841, "담당자수": 4, "트루셋저용량_4월": 2205390, "트윈로우_누적": 2960440, "미카클로_누적": 45280, "합산": 5211110, "평균_판매액": 1211273.7687633606, "부지점장순위": 43}, {"부지점장": "안형준", "지점": "충남.전북지점", "팀명": "충남/일병1팀", "T.O": 4.639661173483276, "담당자수": 5, "트루셋저용량_4월": 3030170, "트윈로우_누적": 2580200, "미카클로_누적": 0, "합산": 5610370, "평균_판매액": 1209219.766319262, "부지점장순위": 44}, {"부지점장": "장진수", "지점": "경기지점", "팀명": "경기/일병6팀", "T.O": 4.9104445221278885, "담당자수": 4, "트루셋저용량_4월": 2510200, "트윈로우_누적": 2892540, "미카클로_누적": 296230, "합산": 5698970, "평균_판매액": 1160581.2822685984, "부지점장순위": 45}, {"부지점장": "박환성", "지점": "경남지점", "팀명": "경남/일병1팀", "T.O": 4.166886100949318, "담당자수": 4, "트루셋저용량_4월": 1703350, "트윈로우_누적": 3055500, "미카클로_누적": 0, "합산": 4758850, "평균_판매액": 1142063.8540889847, "부지점장순위": 46}, {"부지점장": "김준환", "지점": "인천지점", "팀명": "인천/일병1팀", "T.O": 5.95532474640972, "담당자수": 5, "트루셋저용량_4월": 4109556, "트윈로우_누적": 2593780, "미카클로_누적": 0, "합산": 6703336, "평균_판매액": 1125603.7723284918, "부지점장순위": 47}, {"부지점장": "예명규", "지점": "경북지점", "팀명": "경북/일병3팀", "T.O": 4.610291925549707, "담당자수": 4, "트루셋저용량_4월": 2241250, "트윈로우_누적": 2838220, "미카클로_누적": 58670, "합산": 5138140, "평균_판매액": 1114493.41668041, "부지점장순위": 48}, {"부지점장": "김영포", "지점": "경북지점", "팀명": "경북/일병2팀", "T.O": 6.125334385148979, "담당자수": 6, "트루셋저용량_4월": 2510200, "트윈로우_누적": 3829560, "미카클로_누적": 244110, "합산": 6583870, "평균_판매액": 1074858.8707194095, "부지점장순위": 49}, {"부지점장": "장형수", "지점": "서부지점", "팀명": "서부/일병4팀", "T.O": 5.362293747429077, "담당자수": 4, "트루셋저용량_4월": 3155680, "트윈로우_누적": 2498720, "미카클로_누적": 94880, "합산": 5749280, "평균_판매액": 1072168.044273304, "부지점장순위": 50}, {"부지점장": "여정현", "지점": "충남.충북지점", "팀명": "충북/일병2팀", "T.O": 3.515187708280189, "담당자수": 4, "트루셋저용량_4월": 843660, "트윈로우_누적": 2607360, "미카클로_누적": 179970, "합산": 3630990, "평균_판매액": 1032943.4162070587, "부지점장순위": 51}, {"부지점장": "김중곤", "지점": "경남지점", "팀명": "경남/일병3팀", "T.O": 5.683488085031778, "담당자수": 4, "트루셋저용량_4월": 2372418, "트윈로우_누적": 3256996, "미카클로_누적": 0, "합산": 5629414, "평균_판매액": 990485.7572985524, "부지점장순위": 52}, {"부지점장": "윤규식", "지점": "경북지점", "팀명": "경북/일병6팀", "T.O": 5.118699128592932, "담당자수": 5, "트루셋저용량_4월": 735130, "트윈로우_누적": 3775240, "미카클로_누적": 314730, "합산": 4825100, "평균_판매액": 942641.8468409494, "부지점장순위": 53}, {"부지점장": "강희준", "지점": "남부지점", "팀명": "남부/일병3팀", "T.O": 3.902887916524847, "담당자수": 4, "트루셋저용량_4월": 1664496, "트윈로우_누적": 1575280, "미카클로_누적": 72420, "합산": 3312196, "평균_판매액": 848652.6056708279, "부지점장순위": 54}, {"부지점장": "조재윤", "지점": "전남지점", "팀명": "전남/일병4팀", "T.O": 4.237470275534904, "담당자수": 4, "트루셋저용량_4월": 1488190, "트윈로우_누적": 1860460, "미카클로_누적": 0, "합산": 3348650, "평균_판매액": 790247.4311934361, "부지점장순위": 55}, {"부지점장": "최규삼", "지점": "전남지점", "팀명": "전남/일병3팀", "T.O": 4.118112736025487, "담당자수": 4, "트루셋저용량_4월": 1286173, "트윈로우_누적": 1493800, "미카클로_누적": 131450, "합산": 2911423, "평균_판매액": 706979.9169242514, "부지점장순위": 56}], "담당자": [{"담당": "오승호", "부지점장": "조용성", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병2팀", "트루셋저용량_4월": 4285270, "트윈로우_누적": 1602440, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 5887710, "담당자순위": 1}, {"담당": "박진운", "부지점장": "홍상길", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병4팀", "트루셋저용량_4월": 3478420, "트윈로우_누적": 1833300, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 5311720, "담당자순위": 2}, {"담당": "이지황", "부지점장": "구본치", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병2팀", "트루셋저용량_4월": 3066030, "트윈로우_누적": 2064160, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 34770, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 34770, "총합": 5164960, "담당자순위": 3}, {"담당": "황유석", "부지점장": "전효택", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강원/일병2팀", "트루셋저용량_4월": 1470260, "트윈로우_누적": 3408580, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 4878840, "담당자순위": 4}, {"담당": "임광수", "부지점장": "전효택", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강원/일병2팀", "트루셋저용량_4월": 1577840, "트윈로우_누적": 2702420, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 162260, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 162260, "총합": 4442520, "담당자순위": 5}, {"담당": "서민우", "부지점장": "윤현식", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병1팀", "트루셋저용량_4월": 1380610, "트윈로우_누적": 2838220, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": -23900, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": -23900, "총합": 4194930, "담당자순위": 6}, {"담당": "차동현", "부지점장": "박진우", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병1팀", "트루셋저용량_4월": 1165450, "트윈로우_누적": 2199960, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 466480, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 466480, "총합": 3831890, "담당자순위": 7}, {"담당": "김경훈", "부지점장": "문호재", "지점": "제주지점", "영업부명": "Clinic 1부", "팀명": "제주/일병1팀", "트루셋저용량_4월": 2635710, "트윈로우_누적": 1127140, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11590, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11590, "총합": 3774440, "담당자순위": 8}, {"담당": "박수호", "부지점장": "최병률", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "전북/일병2팀", "트루셋저용량_4월": 1201310, "트윈로우_누적": 2463320, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 46360, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 46360, "총합": 3710990, "담당자순위": 9}, {"담당": "이은호", "부지점장": "이종찬", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병2팀", "트루셋저용량_4월": 1978950, "트윈로우_누적": 1635360, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11590, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11590, "총합": 3625900, "담당자순위": 10}, {"담당": "이승언", "부지점장": "장정호", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병4팀", "트루셋저용량_4월": 394460, "트윈로우_누적": 3150560, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 3545020, "담당자순위": 11}, {"담당": "이용준", "부지점장": "이수현", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병3팀", "트루셋저용량_4월": 1308890, "트윈로우_누적": 2159220, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 3468110, "담당자순위": 12}, {"담당": "김진율", "부지점장": "구본치", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병2팀", "트루셋저용량_4월": 1488190, "트윈로우_누적": 1928360, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 3416550, "담당자순위": 13}, {"담당": "김승덕", "부지점장": "박희철", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "충남/일병2팀", "트루셋저용량_4월": 1398540, "트윈로우_누적": 1914780, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 59750, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 59750, "총합": 3373070, "담당자순위": 14}, {"담당": "이채혁", "부지점장": "김현덕", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병1팀", "트루셋저용량_4월": 1326820, "트윈로우_누적": 1806140, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11590, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11590, "총합": 3144550, "담당자순위": 15}, {"담당": "강철진", "부지점장": "문호재", "지점": "제주지점", "영업부명": "Clinic 1부", "팀명": "제주/일병1팀", "트루셋저용량_4월": 842710, "트윈로우_누적": 1941940, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 289750, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 289750, "총합": 3074400, "담당자순위": 16}, {"담당": "심재완", "부지점장": "전효택", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강원/일병2팀", "트루셋저용량_4월": 89650, "트윈로우_누적": 2878512, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 94520, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 94520, "총합": 3062682, "담당자순위": 17}, {"담당": "상윤철", "부지점장": "이재홍", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "천안/일병1팀", "트루셋저용량_4월": 681340, "트윈로우_누적": 2362920, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 3044260, "담당자순위": 18}, {"담당": "임현묵", "부지점장": "차환준", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병4팀", "트루셋저용량_4월": 627550, "트윈로우_누적": 2390080, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 3017630, "담당자순위": 19}, {"담당": "전은성", "부지점장": "임정빈", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병2팀", "트루셋저용량_4월": 1900580, "트윈로우_누적": 1018500, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 35490, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 35490, "총합": 2954570, "담당자순위": 20}, {"담당": "최병호", "부지점장": "추재현", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병1팀", "트루셋저용량_4월": 860640, "트윈로우_누적": 2091320, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2951960, "담당자순위": 21}, {"담당": "이영진", "부지점장": "김준환", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병1팀", "트루셋저용량_4월": 2259180, "트윈로우_누적": 679000, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2938180, "담당자순위": 22}, {"담당": "민소희", "부지점장": "이봉열", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병4팀", "트루셋저용량_4월": 645480, "트윈로우_누적": 2254280, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2899760, "담당자순위": 23}, {"담당": "최희성", "부지점장": "박성현", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병5팀", "트루셋저용량_4월": 573760, "트윈로우_누적": 2118480, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 162260, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 162260, "총합": 2854500, "담당자순위": 24}, {"담당": "오정현", "부지점장": "박중연", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병2팀", "트루셋저용량_4월": 591690, "트윈로우_누적": 2254280, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2845970, "담당자순위": 25}, {"담당": "박승호", "부지점장": "김종범", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "전북/일병1팀", "트루셋저용량_4월": 1201310, "트윈로우_누적": 1507380, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 94160, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 94160, "총합": 2802850, "담당자순위": 26}, {"담당": "이가야", "부지점장": "이홍주", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "충북/일병1팀", "트루셋저용량_4월": 2348830, "트윈로우_누적": 366660, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2715490, "담당자순위": 27}, {"담당": "이하림", "부지점장": "이재열", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병5팀", "트루셋저용량_4월": 1489160, "트윈로우_누적": 1222200, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2711360, "담당자순위": 28}, {"담당": "류현욱", "부지점장": "구본치", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병2팀", "트루셋저용량_4월": 466180, "트윈로우_누적": 2199960, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2666140, "담당자순위": 29}, {"담당": "김종영", "부지점장": "김중곤", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병3팀", "트루셋저용량_4월": 842710, "트윈로우_누적": 1792560, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2635270, "담당자순위": 30}, {"담당": "유승호", "부지점장": "강민구", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병2팀", "트루셋저용량_4월": 1434400, "트윈로우_누적": 1195040, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2629440, "담당자순위": 31}, {"담당": "서민영", "부지점장": "박종성", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병1팀", "트루셋저용량_4월": 842710, "트윈로우_누적": 1778980, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2621690, "담당자순위": 32}, {"담당": "강정모", "부지점장": "양준영", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병5팀", "트루셋저용량_4월": 376530, "트윈로우_누적": 2240700, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2617230, "담당자순위": 33}, {"담당": "고재백", "부지점장": "장형수", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병4팀", "트루셋저용량_4월": 1721280, "트윈로우_누적": 814800, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 47800, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 47800, "총합": 2583880, "담당자순위": 34}, {"담당": "안재환", "부지점장": "최진수", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "충남/일병3팀", "트루셋저용량_4월": 1398540, "트윈로우_누적": 1113560, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 71700, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 71700, "총합": 2583800, "담당자순위": 35}, {"담당": "신승환", "부지점장": "이봉열", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병4팀", "트루셋저용량_4월": 376530, "트윈로우_누적": 2145640, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 59750, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 59750, "총합": 2581920, "담당자순위": 36}, {"담당": "이든솔", "부지점장": "박진우", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병1팀", "트루셋저용량_4월": 1488190, "트윈로우_누적": 1045660, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2533850, "담당자순위": 37}, {"담당": "천성빈", "부지점장": "권오훈", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병2팀", "트루셋저용량_4월": 681340, "트윈로우_누적": 1887620, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": -70620, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": -70620, "총합": 2498340, "담당자순위": 38}, {"담당": "이호중", "부지점장": "정석희", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병1팀", "트루셋저용량_4월": 1004080, "트윈로우_누적": 1493800, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2497880, "담당자순위": 39}, {"담당": "한대성", "부지점장": "정용주", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병3팀", "트루셋저용량_4월": 448250, "트윈로우_누적": 2023420, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2471670, "담당자순위": 40}, {"담당": "소재호", "부지점장": "박진우", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병1팀", "트루셋저용량_4월": 1201310, "트윈로우_누적": 1208620, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2409930, "담당자순위": 41}, {"담당": "장효집", "부지점장": "이봉열", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병4팀", "트루셋저용량_4월": 537900, "트윈로우_누적": 1819720, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2357620, "담당자순위": 42}, {"담당": "조치호", "부지점장": "정민재", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병3팀", "트루셋저용량_4월": 645480, "트윈로우_누적": 1602440, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2247920, "담당자순위": 43}, {"담당": "신진범", "부지점장": "이재홍", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "천안/일병1팀", "트루셋저용량_4월": 645480, "트윈로우_누적": 1588860, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2234340, "담당자순위": 44}, {"담당": "정의진", "부지점장": "조용성", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병2팀", "트루셋저용량_4월": 1864720, "트윈로우_누적": 353080, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11590, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11590, "총합": 2229390, "담당자순위": 45}, {"담당": "박재민", "부지점장": "김영포", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병2팀", "트루셋저용량_4월": 1201310, "트윈로우_누적": 841960, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 185440, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 185440, "총합": 2228710, "담당자순위": 46}, {"담당": "김재성", "부지점장": "김종범", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "전북/일병1팀", "트루셋저용량_4월": 735130, "트윈로우_누적": 1425900, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 57950, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 57950, "총합": 2218980, "담당자순위": 47}, {"담당": "박성훈", "부지점장": "정석희", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병1팀", "트루셋저용량_4월": 430320, "트윈로우_누적": 1778980, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2209300, "담당자순위": 48}, {"담당": "권대업", "부지점장": "정석희", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병1팀", "트루셋저용량_4월": 645480, "트윈로우_누적": 1561700, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2207180, "담당자순위": 49}, {"담당": "최한수", "부지점장": "양준영", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병5팀", "트루셋저용량_4월": 412390, "트윈로우_누적": 1738240, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 47800, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 47800, "총합": 2198430, "담당자순위": 50}, {"담당": "임대현", "부지점장": "임정빈", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병2팀", "트루셋저용량_4월": 1380610, "트윈로우_누적": 814800, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2195410, "담당자순위": 51}, {"담당": "이강", "부지점장": "예명규", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병3팀", "트루셋저용량_4월": 1255100, "트윈로우_누적": 923440, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11590, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11590, "총합": 2190130, "담당자순위": 52}, {"담당": "전상욱", "부지점장": "박중연", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병2팀", "트루셋저용량_4월": 179300, "트윈로우_누적": 2009840, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2189140, "담당자순위": 53}, {"담당": "오승훈", "부지점장": "성우진", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병2팀", "트루셋저용량_4월": 448250, "트윈로우_누적": 1738240, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2186490, "담당자순위": 54}, {"담당": "오재용", "부지점장": "장진수", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병6팀", "트루셋저용량_4월": 1631630, "트윈로우_누적": 339500, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 202070, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 202070, "총합": 2173200, "담당자순위": 55}, {"담당": "기창완", "부지점장": "심기운", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병1팀", "트루셋저용량_4월": 591690, "트윈로우_누적": 1561700, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2153390, "담당자순위": 56}, {"담당": "김재욱", "부지점장": "양준영", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병5팀", "트루셋저용량_4월": 932360, "트윈로우_누적": 1208620, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2140980, "담당자순위": 57}, {"담당": "이석우", "부지점장": "윤규식", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병6팀", "트루셋저용량_4월": 430320, "트윈로우_누적": 1466640, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 243390, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 243390, "총합": 2140350, "담당자순위": 58}, {"담당": "문희민", "부지점장": "이영준", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병3팀", "트루셋저용량_4월": 824780, "트윈로우_누적": 1290100, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2114880, "담당자순위": 59}, {"담당": "문병선", "부지점장": "조재윤", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병4팀", "트루셋저용량_4월": 986150, "트윈로우_누적": 1127140, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2113290, "담당자순위": 60}, {"담당": "배상아", "부지점장": "구본치", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병2팀", "트루셋저용량_4월": 1524050, "트윈로우_누적": 583940, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2107990, "담당자순위": 61}, {"담당": "이동민", "부지점장": "김명선", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병4팀", "트루셋저용량_4월": 1004080, "트윈로우_누적": 1086400, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2090480, "담당자순위": 62}, {"담당": "임태양", "부지점장": "윤준기", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "천안/일병2팀", "트루셋저용량_4월": 842710, "트윈로우_누적": 1222200, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 23180, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 23180, "총합": 2088090, "담당자순위": 63}, {"담당": "채윤조", "부지점장": "박진우", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병1팀", "트루셋저용량_4월": 1255100, "트윈로우_누적": 814800, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2069900, "담당자순위": 64}, {"담당": "임주영", "부지점장": "김윤석", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병6팀", "트루셋저용량_4월": 197230, "트윈로우_누적": 1860460, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2057690, "담당자순위": 65}, {"담당": "이정범", "부지점장": "정재헌", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병3팀", "트루셋저용량_4월": 1452330, "트윈로우_누적": 556780, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 35850, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 35850, "총합": 2044960, "담당자순위": 66}, {"담당": "장진수", "부지점장": "미매칭", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병6팀", "트루셋저용량_4월": 1344750, "트윈로우_누적": 692580, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2037330, "담당자순위": 67}, {"담당": "강대언", "부지점장": "심기운", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병1팀", "트루셋저용량_4월": 1649560, "트윈로우_누적": 380240, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2029800, "담당자순위": 68}, {"담당": "추승우", "부지점장": "양준영", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병5팀", "트루셋저용량_4월": 681340, "트윈로우_누적": 1344420, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2025760, "담당자순위": 69}, {"담당": "이윤실", "부지점장": "최진수", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "충남/일병3팀", "트루셋저용량_4월": 699270, "트윈로우_누적": 1235780, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 69540, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 69540, "총합": 2004590, "담당자순위": 70}, {"담당": "최태영", "부지점장": "임찬규", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병5팀", "트루셋저용량_4월": 394460, "트윈로우_누적": 1602440, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1996900, "담당자순위": 71}, {"담당": "황성묵", "부지점장": "박철환", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강원/일병1팀", "트루셋저용량_4월": 1530700, "트윈로우_누적": 461720, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1992420, "담당자순위": 72}, {"담당": "이태희", "부지점장": "성우진", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병2팀", "트루셋저용량_4월": 537900, "트윈로우_누적": 1453060, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1990960, "담당자순위": 73}, {"담당": "이종훈", "부지점장": "장형수", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병4팀", "트루셋저용량_4월": 645480, "트윈로우_누적": 1317260, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1962740, "담당자순위": 74}, {"담당": "김국일", "부지점장": "박철환", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강원/일병1팀", "트루셋저용량_4월": 286880, "트윈로우_누적": 1670340, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1957220, "담당자순위": 75}, {"담당": "유종우", "부지점장": "권오훈", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병2팀", "트루셋저용량_4월": 1039940, "트윈로우_누적": 896280, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1936220, "담당자순위": 76}, {"담당": "김윤섭", "부지점장": "홍상길", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병4팀", "트루셋저용량_4월": 286880, "트윈로우_누적": 1643180, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1930060, "담당자순위": 77}, {"담당": "이동익", "부지점장": "강민구", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병2팀", "트루셋저용량_4월": 1290960, "트윈로우_누적": 638260, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1929220, "담당자순위": 78}, {"담당": "구동현", "부지점장": "장정호", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병4팀", "트루셋저용량_4월": 681340, "트윈로우_누적": 1235780, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1917120, "담당자순위": 79}, {"담당": "김태한", "부지점장": "안형준", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "충남/일병1팀", "트루셋저용량_4월": 681340, "트윈로우_누적": 1222200, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1903540, "담당자순위": 80}, {"담당": "김현식", "부지점장": "오광선", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병1팀", "트루셋저용량_4월": 35860, "트윈로우_누적": 1846880, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1882740, "담당자순위": 81}, {"담당": "정재학", "부지점장": "김명선", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병4팀", "트루셋저용량_4월": 842710, "트윈로우_누적": 977760, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 59750, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 59750, "총합": 1880220, "담당자순위": 82}, {"담당": "박경순", "부지점장": "윤준기", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "천안/일병2팀", "트루셋저용량_4월": 1093730, "트윈로우_누적": 786400, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1880130, "담당자순위": 83}, {"담당": "홍상식", "부지점장": "정재헌", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병3팀", "트루셋저용량_4월": 735130, "트윈로우_누적": 1140720, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1875850, "담당자순위": 84}, {"담당": "최성욱", "부지점장": "최병률", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "전북/일병2팀", "트루셋저용량_4월": 1178670, "트윈로우_누적": 393820, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 293710, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 293710, "총합": 1866200, "담당자순위": 85}, {"담당": "이성우", "부지점장": "장현석", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병4팀", "트루셋저용량_4월": 555830, "트윈로우_누적": 1262940, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1818770, "담당자순위": 86}, {"담당": "김창현", "부지점장": "박성현", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병5팀", "트루셋저용량_4월": 555830, "트윈로우_누적": 1249360, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1805190, "담당자순위": 87}, {"담당": "손영진", "부지점장": "김윤석", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병6팀", "트루셋저용량_4월": 717200, "트윈로우_누적": 1086400, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1803600, "담당자순위": 88}, {"담당": "권원근", "부지점장": "추재현", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병1팀", "트루셋저용량_4월": 215160, "트윈로우_누적": 1575280, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1790440, "담당자순위": 89}, {"담당": "안호선", "부지점장": "장정호", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병4팀", "트루셋저용량_4월": 1380610, "트윈로우_누적": 393820, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11950, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11950, "총합": 1786380, "담당자순위": 90}, {"담당": "김상연", "부지점장": "박환성", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병1팀", "트루셋저용량_4월": 358600, "트윈로우_누적": 1425900, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1784500, "담당자순위": 91}, {"담당": "이상준", "부지점장": "최병률", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "전북/일병2팀", "트루셋저용량_4월": 888010, "트윈로우_누적": 692580, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 203150, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 203150, "총합": 1783740, "담당자순위": 92}, {"담당": "홍정우", "부지점장": "김중곤", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병3팀", "트루셋저용량_4월": 758718, "트윈로우_누적": 1002716, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1761434, "담당자순위": 93}, {"담당": "김희창", "부지점장": "이영준", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병3팀", "트루셋저용량_4월": 304810, "트윈로우_누적": 1412320, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11950, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11950, "총합": 1729080, "담당자순위": 94}, {"담당": "남동희", "부지점장": "장진수", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병6팀", "트루셋저용량_4월": 448250, "트윈로우_누적": 1262940, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1711190, "담당자순위": 95}, {"담당": "이지우", "부지점장": "박종성", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병1팀", "트루셋저용량_4월": 251020, "트윈로우_누적": 1453060, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1704080, "담당자순위": 96}, {"담당": "김동엽", "부지점장": "성우진", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병2팀", "트루셋저용량_4월": 806850, "트윈로우_누적": 882700, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1689550, "담당자순위": 97}, {"담당": "정재인", "부지점장": "이수현", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병3팀", "트루셋저용량_4월": 322740, "트윈로우_누적": 1249360, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 115900, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 115900, "총합": 1688000, "담당자순위": 98}, {"담당": "정승욱", "부지점장": "김현덕", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병1팀", "트루셋저용량_4월": 788920, "트윈로우_누적": 896280, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1685200, "담당자순위": 99}, {"담당": "이태환", "부지점장": "윤준기", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "천안/일병2팀", "트루셋저용량_4월": 251020, "트윈로우_누적": 1059240, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 364330, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 364330, "총합": 1674590, "담당자순위": 100}, {"담당": "홍인기", "부지점장": "성우진", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병2팀", "트루셋저용량_4월": 215160, "트윈로우_누적": 1453060, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1668220, "담당자순위": 101}, {"담당": "류혁기", "부지점장": "이수현", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병3팀", "트루셋저용량_4월": 340670, "트윈로우_누적": 1371580, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": -46360, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": -46360, "총합": 1665890, "담당자순위": 102}, {"담당": "진형진", "부지점장": "최재덕", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병5팀", "트루셋저용량_4월": 806850, "트윈로우_누적": 855540, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1662390, "담당자순위": 103}, {"담당": "김혜성", "부지점장": "임정빈", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병2팀", "트루셋저용량_4월": 842710, "트윈로우_누적": 814800, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1657510, "담당자순위": 104}, {"담당": "원혁빈", "부지점장": "김윤석", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병6팀", "트루셋저용량_4월": 806850, "트윈로우_누적": 787640, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1594490, "담당자순위": 105}, {"담당": "김영우", "부지점장": "추재현", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병1팀", "트루셋저용량_4월": 340670, "트윈로우_누적": 1235780, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1576450, "담당자순위": 106}, {"담당": "홍윤영", "부지점장": "정민재", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병3팀", "트루셋저용량_4월": 484110, "트윈로우_누적": 1086400, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1570510, "담당자순위": 107}, {"담당": "김홍기", "부지점장": "홍상길", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병4팀", "트루셋저용량_4월": 1290960, "트윈로우_누적": 258020, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1548980, "담당자순위": 108}, {"담당": "최인호", "부지점장": "오광선", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병1팀", "트루셋저용량_4월": 824780, "트윈로우_누적": 665420, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 47800, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 47800, "총합": 1538000, "담당자순위": 109}, {"담당": "이승재", "부지점장": "김준환", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병1팀", "트루셋저용량_4월": 1290960, "트윈로우_누적": 244440, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1535400, "담당자순위": 110}, {"담당": "황지호", "부지점장": "김명선", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병4팀", "트루셋저용량_4월": 340670, "트윈로우_누적": 1167880, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 23900, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 23900, "총합": 1532450, "담당자순위": 111}, {"담당": "박옥호", "부지점장": "홍상길", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병4팀", "트루셋저용량_4월": 860640, "트윈로우_누적": 665420, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1526060, "담당자순위": 112}, {"담당": "방희현", "부지점장": "최진수", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "충남/일병3팀", "트루셋저용량_4월": 555830, "트윈로우_누적": 950600, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1506430, "담당자순위": 113}, {"담당": "성동현", "부지점장": "오광선", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병1팀", "트루셋저용량_4월": 1273030, "트윈로우_누적": 203700, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 23180, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 23180, "총합": 1499910, "담당자순위": 114}, {"담당": "김선욱", "부지점장": "이종찬", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병2팀", "트루셋저용량_4월": 322740, "트윈로우_누적": 1167880, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1490620, "담당자순위": 115}, {"담당": "임종환", "부지점장": "안형준", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "충남/일병1팀", "트루셋저용량_4월": 1039940, "트윈로우_누적": 434560, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1474500, "담당자순위": 116}, {"담당": "양영빈", "부지점장": "이영준", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병3팀", "트루셋저용량_4월": 555830, "트윈로우_누적": 909860, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1465690, "담당자순위": 117}, {"담당": "권경욱", "부지점장": "최병률", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "전북/일병2팀", "트루셋저용량_4월": 717200, "트윈로우_누적": 583940, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 163700, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 163700, "총합": 1464840, "담당자순위": 118}, {"담당": "정재련", "부지점장": "박희철", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "충남/일병2팀", "트루셋저용량_4월": 610570, "트윈로우_누적": 841960, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1452530, "담당자순위": 119}, {"담당": "임재열", "부지점장": "성우진", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병2팀", "트루셋저용량_4월": 842710, "트윈로우_누적": 597520, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1440230, "담당자순위": 120}, {"담당": "최선아", "부지점장": "김현덕", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병1팀", "트루셋저용량_4월": 537900, "트윈로우_누적": 896280, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1434180, "담당자순위": 121}, {"담당": "강언필", "부지점장": "문호재", "지점": "제주지점", "영업부명": "Clinic 1부", "팀명": "제주/일병1팀", "트루셋저용량_4월": 268950, "트윈로우_누적": 1140720, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 23180, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 23180, "총합": 1432850, "담당자순위": 122}, {"담당": "주민규", "부지점장": "이봉열", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병4팀", "트루셋저용량_4월": 717200, "트윈로우_누적": 692580, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1409780, "담당자순위": 123}, {"담당": "장원석", "부지점장": "최재덕", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병5팀", "트루셋저용량_4월": 609620, "트윈로우_누적": 746900, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 34770, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 34770, "총합": 1391290, "담당자순위": 124}, {"담당": "함성보", "부지점장": "박철환", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강원/일병1팀", "트루셋저용량_4월": 519970, "트윈로우_누적": 774060, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 94880, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 94880, "총합": 1388910, "담당자순위": 125}, {"담당": "임태오", "부지점장": "권오훈", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병2팀", "트루셋저용량_4월": 0, "트윈로우_누적": 1385160, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1385160, "담당자순위": 126}, {"담당": "이연호", "부지점장": "조용성", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병2팀", "트루셋저용량_4월": 986150, "트윈로우_누적": 298760, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 92720, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 92720, "총합": 1377630, "담당자순위": 127}, {"담당": "박은엽", "부지점장": "정석희", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병1팀", "트루셋저용량_4월": 806850, "트윈로우_누적": 570360, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1377210, "담당자순위": 128}, {"담당": "김철현", "부지점장": "차환준", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병4팀", "트루셋저용량_4월": 197230, "트윈로우_누적": 1167880, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1365110, "담당자순위": 129}, {"담당": "이신영", "부지점장": "정석희", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병1팀", "트루셋저용량_4월": 573760, "트윈로우_누적": 760480, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1334240, "담당자순위": 130}, {"담당": "유다현", "부지점장": "이홍주", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "충북/일병1팀", "트루셋저용량_4월": 179300, "트윈로우_누적": 1059240, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 93800, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 93800, "총합": 1332340, "담당자순위": 131}, {"담당": "안성용", "부지점장": "박환성", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병1팀", "트루셋저용량_4월": 986150, "트윈로우_누적": 339500, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1325650, "담당자순위": 132}, {"담당": "이재선", "부지점장": "박종성", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병1팀", "트루셋저용량_4월": 1093730, "트윈로우_누적": 230860, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1324590, "담당자순위": 133}, {"담당": "박기홍", "부지점장": "정민재", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병3팀", "트루셋저용량_4월": 502040, "트윈로우_누적": 817964, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1320004, "담당자순위": 134}, {"담당": "신상용", "부지점장": "강민구", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병2팀", "트루셋저용량_4월": 1057870, "트윈로우_누적": 258020, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1315890, "담당자순위": 135}, {"담당": "염승철", "부지점장": "박종성", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병1팀", "트루셋저용량_4월": 735130, "트윈로우_누적": 570360, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1305490, "담당자순위": 136}, {"담당": "박규태", "부지점장": "이재열", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병5팀", "트루셋저용량_4월": 788920, "트윈로우_누적": 516040, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1304960, "담당자순위": 137}, {"담당": "이정수", "부지점장": "오광선", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병1팀", "트루셋저용량_4월": 143440, "트윈로우_누적": 1154300, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1297740, "담당자순위": 138}, {"담당": "김희성", "부지점장": "여정현", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "충북/일병2팀", "트루셋저용량_4월": 304810, "트윈로우_누적": 1004920, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": -23180, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": -23180, "총합": 1286550, "담당자순위": 139}, {"담당": "유석만", "부지점장": "박중연", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병2팀", "트루셋저용량_4월": 663410, "트윈로우_누적": 570360, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 23900, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 23900, "총합": 1257670, "담당자순위": 140}, {"담당": "문지환", "부지점장": "차환준", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병4팀", "트루셋저용량_4월": 89650, "트윈로우_누적": 1167880, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1257530, "담당자순위": 141}, {"담당": "이병훈", "부지점장": "김영포", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병2팀", "트루셋저용량_4월": 322740, "트윈로우_누적": 909860, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 23180, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 23180, "총합": 1255780, "담당자순위": 142}, {"담당": "장경환", "부지점장": "장현석", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병4팀", "트루셋저용량_4월": 591690, "트윈로우_누적": 706160, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": -47080, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": -47080, "총합": 1250770, "담당자순위": 143}, {"담당": "김준현", "부지점장": "이재홍", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "천안/일병1팀", "트루셋저용량_4월": 412390, "트윈로우_누적": 774060, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 59030, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 59030, "총합": 1245480, "담당자순위": 144}, {"담당": "박성열", "부지점장": "이홍주", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "충북/일병1팀", "트루셋저용량_4월": 573760, "트윈로우_누적": 665420, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1239180, "담당자순위": 145}, {"담당": "장현승", "부지점장": "박환성", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병1팀", "트루셋저용량_4월": 179300, "트윈로우_누적": 1059240, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1238540, "담당자순위": 146}, {"담당": "남석진", "부지점장": "임찬규", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병5팀", "트루셋저용량_4월": 788920, "트윈로우_누적": 448140, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1237060, "담당자순위": 147}, {"담당": "여종호", "부지점장": "김명선", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병4팀", "트루셋저용량_4월": 699270, "트윈로우_누적": 529620, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1228890, "담당자순위": 148}, {"담당": "양태환", "부지점장": "예명규", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병3팀", "트루셋저용량_4월": 502040, "트윈로우_누적": 706160, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1208200, "담당자순위": 149}, {"담당": "한진", "부지점장": "최병률", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "전북/일병2팀", "트루셋저용량_4월": 735130, "트윈로우_누적": 434560, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 35850, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 35850, "총합": 1205540, "담당자순위": 150}, {"담당": "왕경표", "부지점장": "장현석", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병4팀", "트루셋저용량_4월": 519970, "트윈로우_누적": 597520, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 82930, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 82930, "총합": 1200420, "담당자순위": 151}, {"담당": "조우진", "부지점장": "최재덕", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병5팀", "트루셋저용량_4월": 663410, "트윈로우_누적": 529620, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1193030, "담당자순위": 152}, {"담당": "박재원", "부지점장": "추재현", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병1팀", "트루셋저용량_4월": 143440, "트윈로우_누적": 1045660, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1189100, "담당자순위": 153}, {"담당": "임영식", "부지점장": "정재헌", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병3팀", "트루셋저용량_4월": 412390, "트윈로우_누적": 651840, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 118420, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 118420, "총합": 1182650, "담당자순위": 154}, {"담당": "정의형", "부지점장": "전효택", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강원/일병2팀", "트루셋저용량_4월": 394460, "트윈로우_누적": 760480, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 23900, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 23900, "총합": 1178840, "담당자순위": 155}, {"담당": "김정현", "부지점장": "전효택", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강원/일병2팀", "트루셋저용량_4월": 399175, "트윈로우_누적": 746900, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11950, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11950, "총합": 1158025, "담당자순위": 156}, {"담당": "곽승훈", "부지점장": "김종범", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "전북/일병1팀", "트루셋저용량_4월": 340670, "트윈로우_누적": 814800, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1155470, "담당자순위": 157}, {"담당": "박상은", "부지점장": "정용주", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병3팀", "트루셋저용량_4월": 340670, "트윈로우_누적": 814800, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1155470, "담당자순위": 158}, {"담당": "주영광", "부지점장": "예명규", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병3팀", "트루셋저용량_4월": 358600, "트윈로우_누적": 746900, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 47080, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 47080, "총합": 1152580, "담당자순위": 159}, {"담당": "최원진", "부지점장": "조용성", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병2팀", "트루셋저용량_4월": 842710, "트윈로우_누적": 271600, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 34770, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 34770, "총합": 1149080, "담당자순위": 160}, {"담당": "김기찬", "부지점장": "안형준", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "충남/일병1팀", "트루셋저용량_4월": 591690, "트윈로우_누적": 556780, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1148470, "담당자순위": 161}, {"담당": "예명규", "부지점장": "미매칭", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병3팀", "트루셋저용량_4월": 143440, "트윈로우_누적": 1004920, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1148360, "담당자순위": 162}, {"담당": "황태영", "부지점장": "임정빈", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병2팀", "트루셋저용량_4월": 770990, "트윈로우_누적": 366660, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1137650, "담당자순위": 163}, {"담당": "문명규", "부지점장": "여정현", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "충북/일병2팀", "트루셋저용량_4월": 53790, "트윈로우_누적": 1045660, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 35850, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 35850, "총합": 1135300, "담당자순위": 164}, {"담당": "최유미", "부지점장": "차환준", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병4팀", "트루셋저용량_4월": 537900, "트윈로우_누적": 516040, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 81130, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 81130, "총합": 1135070, "담당자순위": 165}, {"담당": "강민기", "부지점장": "최진수", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "충남/일병3팀", "트루셋저용량_4월": 878570, "트윈로우_누적": 135800, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 116620, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 116620, "총합": 1130990, "담당자순위": 166}, {"담당": "이진욱", "부지점장": "윤현식", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병1팀", "트루셋저용량_4월": 430320, "트윈로우_누적": 570360, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 107550, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 107550, "총합": 1108230, "담당자순위": 167}, {"담당": "홍창회", "부지점장": "김영포", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병2팀", "트루셋저용량_4월": 645480, "트윈로우_누적": 420980, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 23900, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 23900, "총합": 1090360, "담당자순위": 168}, {"담당": "김수민", "부지점장": "임찬규", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병5팀", "트루셋저용량_4월": 573760, "트윈로우_누적": 516040, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1089800, "담당자순위": 169}, {"담당": "이용목", "부지점장": "이종찬", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병2팀", "트루셋저용량_4월": 322740, "트윈로우_누적": 760480, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1083220, "담당자순위": 170}, {"담당": "곽호룡", "부지점장": "강희준", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병3팀", "트루셋저용량_4월": 824780, "트윈로우_누적": 258020, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1082800, "담당자순위": 171}, {"담당": "조재우", "부지점장": "윤규식", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병6팀", "트루셋저용량_4월": -322740, "트윈로우_누적": 1344420, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 59750, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 59750, "총합": 1081430, "담당자순위": 172}, {"담당": "박성호", "부지점장": "오광선", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병1팀", "트루셋저용량_4월": -14936, "트윈로우_누적": 1086400, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1071464, "담당자순위": 173}, {"담당": "송봉건", "부지점장": "박성현", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병5팀", "트루셋저용량_4월": 466180, "트윈로우_누적": 556780, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 35850, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 35850, "총합": 1058810, "담당자순위": 174}, {"담당": "이세현", "부지점장": "장진수", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병6팀", "트루셋저용량_4월": 143440, "트윈로우_누적": 814800, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 94160, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 94160, "총합": 1052400, "담당자순위": 175}, {"담당": "권종협", "부지점장": "장현석", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병4팀", "트루셋저용량_4월": 251020, "트윈로우_누적": 801220, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1052240, "담당자순위": 176}, {"담당": "나홍주", "부지점장": "정재헌", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병3팀", "트루셋저용량_4월": 358600, "트윈로우_누적": 679000, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11950, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11950, "총합": 1049550, "담당자순위": 177}, {"담당": "임병수", "부지점장": "최규삼", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병3팀", "트루셋저용량_4월": 304810, "트윈로우_누적": 719740, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 23900, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 23900, "총합": 1048450, "담당자순위": 178}, {"담당": "강태욱", "부지점장": "정용주", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병3팀", "트루셋저용량_4월": 770990, "트윈로우_누적": 271600, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1042590, "담당자순위": 179}, {"담당": "김충만", "부지점장": "장형수", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병4팀", "트루셋저용량_4월": 376530, "트윈로우_누적": 611100, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 47080, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 47080, "총합": 1034710, "담당자순위": 180}, {"담당": "조세호", "부지점장": "장정호", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병4팀", "트루셋저용량_4월": 842710, "트윈로우_누적": 190120, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1032830, "담당자순위": 181}, {"담당": "김상돈", "부지점장": "김현덕", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병1팀", "트루셋저용량_4월": 519970, "트윈로우_누적": 511180, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1031150, "담당자순위": 182}, {"담당": "곽기호", "부지점장": "최규삼", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병3팀", "트루셋저용량_4월": 304810, "트윈로우_누적": 611100, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 107550, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 107550, "총합": 1023460, "담당자순위": 183}, {"담당": "최문규", "부지점장": "정용주", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병3팀", "트루셋저용량_4월": 699270, "트윈로우_누적": 298760, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 998030, "담당자순위": 184}, {"담당": "김의영", "부지점장": "이봉열", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병4팀", "트루셋저용량_4월": 251020, "트윈로우_누적": 733320, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 984340, "담당자순위": 185}, {"담당": "강성민", "부지점장": "차환준", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병4팀", "트루셋저용량_4월": 502040, "트윈로우_누적": 475300, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 977340, "담당자순위": 186}, {"담당": "길성진", "부지점장": "권오훈", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병2팀", "트루셋저용량_4월": 53790, "트윈로우_누적": 787640, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 127490, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 127490, "총합": 968920, "담당자순위": 187}, {"담당": "김판섭", "부지점장": "최재덕", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병5팀", "트루셋저용량_4월": 125510, "트윈로우_누적": 828380, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 10510, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 10510, "총합": 964400, "담당자순위": 188}, {"담당": "이종현", "부지점장": "장정호", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병4팀", "트루셋저용량_4월": 161370, "트윈로우_누적": 787640, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 949010, "담당자순위": 189}, {"담당": "안경호", "부지점장": "이영준", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병3팀", "트루셋저용량_4월": 286880, "트윈로우_누적": 624680, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 911560, "담당자순위": 190}, {"담당": "오현록", "부지점장": "심기운", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병1팀", "트루셋저용량_4월": 842710, "트윈로우_누적": 67900, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 910610, "담당자순위": 191}, {"담당": "금덕훈", "부지점장": "박중연", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병2팀", "트루셋저용량_4월": 35860, "트윈로우_누적": 855540, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 891400, "담당자순위": 192}, {"담당": "진영빈", "부지점장": "정용주", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병3팀", "트루셋저용량_4월": 286880, "트윈로우_누적": 448140, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 154990, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 154990, "총합": 890010, "담당자순위": 193}, {"담당": "이광규", "부지점장": "오광선", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병1팀", "트루셋저용량_4월": 699270, "트윈로우_누적": 190120, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 889390, "담당자순위": 194}, {"담당": "최경원", "부지점장": "이재홍", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "천안/일병1팀", "트루셋저용량_4월": 502040, "트윈로우_누적": 380240, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 882280, "담당자순위": 195}, {"담당": "이하늘", "부지점장": "김윤석", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병6팀", "트루셋저용량_4월": 53790, "트윈로우_누적": 814800, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 868590, "담당자순위": 196}, {"담당": "조태익", "부지점장": "강희준", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병3팀", "트루셋저용량_4월": 107580, "트윈로우_누적": 760480, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 868060, "담당자순위": 197}, {"담당": "박민지", "부지점장": "박진우", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병1팀", "트루셋저용량_4월": 735130, "트윈로우_누적": 108640, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 843770, "담당자순위": 198}, {"담당": "최우영", "부지점장": "김준환", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병1팀", "트루셋저용량_4월": 93236, "트윈로우_누적": 733320, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 826556, "담당자순위": 199}, {"담당": "김도연", "부지점장": "윤현식", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병1팀", "트루셋저용량_4월": 71720, "트윈로우_누적": 733320, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11590, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11590, "총합": 816630, "담당자순위": 200}, {"담당": "이운오", "부지점장": "강희준", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병3팀", "트루셋저용량_4월": 696276, "트윈로우_누적": 0, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 119500, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 119500, "총합": 815776, "담당자순위": 201}, {"담당": "최재혁", "부지점장": "김영포", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병2팀", "트루셋저용량_4월": 179300, "트윈로우_누적": 624680, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 803980, "담당자순위": 202}, {"담당": "김형일", "부지점장": "전효택", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강원/일병2팀", "트루셋저용량_4월": 0, "트윈로우_누적": 787640, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 787640, "담당자순위": 203}, {"담당": "이재열", "부지점장": "미매칭", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병5팀", "트루셋저용량_4월": 466180, "트윈로우_누적": 312340, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 778520, "담당자순위": 204}, {"담당": "김우진", "부지점장": "이재열", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병5팀", "트루셋저용량_4월": 322740, "트윈로우_누적": 448140, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 770880, "담당자순위": 205}, {"담당": "윤도현", "부지점장": "강민구", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병2팀", "트루셋저용량_4월": 251020, "트윈로우_누적": 516040, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 767060, "담당자순위": 206}, {"담당": "박형호", "부지점장": "최규삼", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병3팀", "트루셋저용량_4월": 640693, "트윈로우_누적": 122220, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 762913, "담당자순위": 207}, {"담당": "구도윤", "부지점장": "장진수", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병6팀", "트루셋저용량_4월": 286880, "트윈로우_누적": 475300, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 762180, "담당자순위": 208}, {"담당": "이재성", "부지점장": "윤현식", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병1팀", "트루셋저용량_4월": 0, "트윈로우_누적": 679000, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 81130, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 81130, "총합": 760130, "담당자순위": 209}, {"담당": "이현빈", "부지점장": "여정현", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "충북/일병2팀", "트루셋저용량_4월": 485060, "트윈로우_누적": 217280, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 47800, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 47800, "총합": 750140, "담당자순위": 210}, {"담당": "전승윤", "부지점장": "김준환", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병1팀", "트루셋저용량_4월": 107580, "트윈로우_누적": 638260, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 745840, "담당자순위": 211}, {"담당": "이동훈", "부지점장": "임찬규", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병5팀", "트루셋저용량_4월": 466180, "트윈로우_누적": 271600, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 737780, "담당자순위": 212}, {"담당": "이창희", "부지점장": "이종찬", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병2팀", "트루셋저용량_4월": 0, "트윈로우_누적": 719740, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": -11590, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": -11590, "총합": 708150, "담당자순위": 213}, {"담당": "박근우", "부지점장": "김영포", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병2팀", "트루셋저용량_4월": 35860, "트윈로우_누적": 665420, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 701280, "담당자순위": 214}, {"담당": "이재익", "부지점장": "임찬규", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병5팀", "트루셋저용량_4월": 17930, "트윈로우_누적": 665420, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 683350, "담당자순위": 215}, {"담당": "김동수", "부지점장": "추재현", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병1팀", "트루셋저용량_4월": 322740, "트윈로우_누적": 353080, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 675820, "담당자순위": 216}, {"담당": "노찬열", "부지점장": "조재윤", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병4팀", "트루셋저용량_4월": 71720, "트윈로우_누적": 597520, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 669240, "담당자순위": 217}, {"담당": "박성기", "부지점장": "김종범", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "전북/일병1팀", "트루셋저용량_4월": 251020, "트윈로우_누적": 353080, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 57950, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 57950, "총합": 662050, "담당자순위": 218}, {"담당": "이재균", "부지점장": "김준환", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병1팀", "트루셋저용량_4월": 358600, "트윈로우_누적": 298760, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 657360, "담당자순위": 219}, {"담당": "견봉기", "부지점장": "김중곤", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병3팀", "트루셋저용량_4월": 358600, "트윈로우_누적": 285180, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 643780, "담당자순위": 220}, {"담당": "김중곤", "부지점장": "미매칭", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병3팀", "트루셋저용량_4월": 215160, "트윈로우_누적": 420980, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 636140, "담당자순위": 221}, {"담당": "이솔", "부지점장": "김종범", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "전북/일병1팀", "트루셋저용량_4월": -17930, "트윈로우_누적": 651840, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 633910, "담당자순위": 222}, {"담당": "최동현", "부지점장": "김현덕", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병1팀", "트루셋저용량_4월": 555830, "트윈로우_누적": 108640, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": -34770, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": -34770, "총합": 629700, "담당자순위": 223}, {"담당": "하정식", "부지점장": "이종찬", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병2팀", "트루셋저용량_4월": 89650, "트윈로우_누적": 502460, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 35130, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 35130, "총합": 627240, "담당자순위": 224}, {"담당": "정의호", "부지점장": "심기운", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병1팀", "트루셋저용량_4월": 591690, "트윈로우_누적": 13580, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 605270, "담당자순위": 225}, {"담당": "김시우", "부지점장": "안형준", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "충남/일병1팀", "트루셋저용량_4월": 412390, "트윈로우_누적": 190120, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 602510, "담당자순위": 226}, {"담당": "한수봉", "부지점장": "김중곤", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병3팀", "트루셋저용량_4월": 412390, "트윈로우_누적": 176540, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 588930, "담당자순위": 227}, {"담당": "서상철", "부지점장": "예명규", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병3팀", "트루셋저용량_4월": 125510, "트윈로우_누적": 461720, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 587230, "담당자순위": 228}, {"담당": "강현도", "부지점장": "박중연", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병2팀", "트루셋저용량_4월": 17930, "트윈로우_누적": 556780, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 574710, "담당자순위": 229}, {"담당": "이상현", "부지점장": "윤규식", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병6팀", "트루셋저용량_4월": 125510, "트윈로우_누적": 448140, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 573650, "담당자순위": 230}, {"담당": "김다영", "부지점장": "이영준", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병3팀", "트루셋저용량_4월": 0, "트윈로우_누적": 570360, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 570360, "담당자순위": 231}, {"담당": "원창식", "부지점장": "윤준기", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "천안/일병2팀", "트루셋저용량_4월": 161370, "트윈로우_누적": 393820, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11590, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11590, "총합": 566780, "담당자순위": 232}, {"담당": "최영준", "부지점장": "박희철", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "충남/일병2팀", "트루셋저용량_4월": 71720, "트윈로우_누적": 583940, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": -94520, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": -94520, "총합": 561140, "담당자순위": 233}, {"담당": "강재구", "부지점장": "윤규식", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병6팀", "트루셋저용량_4월": 233090, "트윈로우_누적": 312340, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11590, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11590, "총합": 557020, "담당자순위": 234}, {"담당": "김준영", "부지점장": "강희준", "지점": "남부지점", "영업부명": "Clinic 3부", "팀명": "남부/일병3팀", "트루셋저용량_4월": 35860, "트윈로우_누적": 556780, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": -47080, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": -47080, "총합": 545560, "담당자순위": 235}, {"담당": "장형수", "부지점장": "미매칭", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병4팀", "트루셋저용량_4월": 251020, "트윈로우_누적": 258020, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 509040, "담당자순위": 236}, {"담당": "김윤욱", "부지점장": "김영포", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병2팀", "트루셋저용량_4월": 125510, "트윈로우_누적": 366660, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 11590, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 11590, "총합": 503760, "담당자순위": 237}, {"담당": "박준상", "부지점장": "임정빈", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병2팀", "트루셋저용량_4월": 340670, "트윈로우_누적": 149380, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 490050, "담당자순위": 238}, {"담당": "강예닮", "부지점장": "안형준", "지점": "충남.전북지점", "영업부명": "Clinic 3부", "팀명": "충남/일병1팀", "트루셋저용량_4월": 304810, "트윈로우_누적": 176540, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 481350, "담당자순위": 239}, {"담당": "이승현", "부지점장": "차환준", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병4팀", "트루셋저용량_4월": 286880, "트윈로우_누적": 190120, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 477000, "담당자순위": 240}, {"담당": "이상협", "부지점장": "윤규식", "지점": "경북지점", "영업부명": "Clinic 1부", "팀명": "경북/일병6팀", "트루셋저용량_4월": 268950, "트윈로우_누적": 203700, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 472650, "담당자순위": 241}, {"담당": "김성준", "부지점장": "여정현", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "충북/일병2팀", "트루셋저용량_4월": 0, "트윈로우_누적": 339500, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 119500, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 119500, "총합": 459000, "담당자순위": 242}, {"담당": "박교준", "부지점장": "이홍주", "지점": "충남.충북지점", "영업부명": "Clinic 3부", "팀명": "충북/일병1팀", "트루셋저용량_4월": 340670, "트윈로우_누적": 95060, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 435730, "담당자순위": 243}, {"담당": "이상명", "부지점장": "박환성", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병1팀", "트루셋저용량_4월": 179300, "트윈로우_누적": 230860, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 410160, "담당자순위": 244}, {"담당": "전민규", "부지점장": "이수현", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병3팀", "트루셋저용량_4월": 0, "트윈로우_누적": 407400, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 407400, "담당자순위": 245}, {"담당": "염경민", "부지점장": "김명선", "지점": "경기지점", "영업부명": "Clinic 3부", "팀명": "경기/일병4팀", "트루셋저용량_4월": 268950, "트윈로우_누적": 122220, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 391170, "담당자순위": 246}, {"담당": "정다운", "부지점장": "박성현", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병5팀", "트루셋저용량_4월": 268950, "트윈로우_누적": 108640, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 377590, "담당자순위": 247}, {"담당": "김강희", "부지점장": "조재윤", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병4팀", "트루셋저용량_4월": 322740, "트윈로우_누적": 27160, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 349900, "담당자순위": 248}, {"담당": "김한주", "부지점장": "정민재", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병3팀", "트루셋저용량_4월": 233090, "트윈로우_누적": 108640, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 341730, "담당자순위": 249}, {"담당": "정용주", "부지점장": "미매칭", "지점": "부산지점", "영업부명": "Clinic 1부", "팀명": "부산/일병3팀", "트루셋저용량_4월": 179300, "트윈로우_누적": 122220, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 301520, "담당자순위": 250}, {"담당": "최제현", "부지점장": "정재헌", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병3팀", "트루셋저용량_4월": -53790, "트윈로우_누적": 339500, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 285710, "담당자순위": 251}, {"담당": "김병국", "부지점장": "조재윤", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병4팀", "트루셋저용량_4월": 107580, "트윈로우_누적": 108640, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 216220, "담당자순위": 252}, {"담당": "장현석", "부지점장": "미매칭", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병4팀", "트루셋저용량_4월": 179300, "트윈로우_누적": 0, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 179300, "담당자순위": 253}, {"담당": "김우현", "부지점장": "장형수", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병4팀", "트루셋저용량_4월": 412390, "트윈로우_누적": -244440, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 167950, "담당자순위": 254}, {"담당": "구본치", "부지점장": "미매칭", "지점": "경남지점", "영업부명": "Clinic 1부", "팀명": "경남/일병2팀", "트루셋저용량_4월": 53790, "트윈로우_누적": 67900, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": -23180, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": -23180, "총합": 98510, "담당자순위": 255}, {"담당": "정상균", "부지점장": "최규삼", "지점": "전남지점", "영업부명": "Clinic 2부", "팀명": "전남/일병3팀", "트루셋저용량_4월": 35860, "트윈로우_누적": 40740, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 76600, "담당자순위": 256}, {"담당": "김현정", "부지점장": "양준영", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병5팀", "트루셋저용량_4월": 17930, "트윈로우_누적": 40740, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 58670, "담당자순위": 257}, {"담당": "추재현", "부지점장": "미매칭", "지점": "강남.강원지점", "영업부명": "Clinic 2부", "팀명": "강남/일병1팀", "트루셋저용량_4월": 17930, "트윈로우_누적": 0, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 17930, "담당자순위": 258}, {"담당": "윤현식", "부지점장": "미매칭", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병1팀", "트루셋저용량_4월": 0, "트윈로우_누적": 0, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 0, "담당자순위": 259}, {"담당": "양준영", "부지점장": "미매칭", "지점": "서부지점", "영업부명": "Clinic 1부", "팀명": "서부/일병5팀", "트루셋저용량_4월": 0, "트윈로우_누적": 0, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 0, "담당자순위": 260}, {"담당": "오광선", "부지점장": "미매칭", "지점": "북부지점", "영업부명": "Clinic 2부", "팀명": "북부/일병1팀", "트루셋저용량_4월": 0, "트윈로우_누적": 0, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 0, "담당자순위": 261}], "지점장": [{"지점": "제주지점", "트루셋저용량_4월": 3747370, "트윈로우_누적": 4209800, "미카클로_누적": 324520, "합산": 8281690, "T.O합": 3.1104968762182907, "담당자수": 3, "평균_판매액": 2662497.4496257305, "지점장순위": 1}, {"지점": "강남.강원지점", "트루셋저용량_4월": 12257555, "트윈로우_누적": 30014516, "미카클로_누적": 468640, "합산": 42740711, "T.O합": 23.795519102202398, "담당자수": 24, "평균_판매액": 1796166.3629369668, "지점장순위": 2}, {"지점": "경기지점", "트루셋저용량_4월": 23703460, "트윈로우_누적": 22990940, "미카클로_누적": 997390, "합산": 47691790, "T.O합": 27.487074500417307, "담당자수": 28, "평균_판매액": 1735062.419948545, "지점장순위": 3}, {"지점": "경남지점", "트루셋저용량_4월": 10620218, "트윈로우_누적": 13088916, "미카클로_누적": 34770, "합산": 23743904, "T.O합": 14.410132401495984, "담당자수": 12, "평균_판매액": 1647722.820196644, "지점장순위": 4}, {"지점": "부산지점", "트루셋저용량_4월": 17644090, "트윈로우_누적": 20786120, "미카클로_누적": 131810, "합산": 38562020, "T.O합": 23.796121080722603, "담당자수": 22, "평균_판매액": 1620517.0527241665, "지점장순위": 5}, {"지점": "남부지점", "트루셋저용량_4월": 8603406, "트윈로우_누적": 19500880, "미카클로_누적": 156070, "합산": 28260356, "T.O합": 17.49826867387251, "담당자수": 18, "평균_판매액": 1615037.266069464, "지점장순위": 6}, {"지점": "충남.전북지점", "트루셋저용량_4월": 15873730, "트윈로우_누적": 18677840, "미카클로_누적": 1175920, "합산": 35727490, "T.O합": 22.98607996221513, "담당자수": 22, "평균_판매액": 1554309.828327814, "지점장순위": 7}, {"지점": "북부지점", "트루셋저용량_4월": 13206124, "트윈로우_누적": 27070700, "미카클로_누적": 409610, "합산": 40686434, "T.O합": 26.796297688466787, "담당자수": 27, "평균_판매액": 1518360.2777152148, "지점장순위": 8}, {"지점": "서부지점", "트루셋저용량_4월": 9233950, "트윈로우_누적": 18849040, "미카클로_누적": 375920, "합산": 28458910, "T.O합": 20.088772013859437, "담당자수": 17, "평균_판매액": 1416657.5229369882, "지점장순위": 9}, {"지점": "인천지점", "트루셋저용량_4월": 15710266, "트윈로우_누적": 14883680, "미카클로_누적": 213660, "합산": 30807606, "T.O합": 21.979493607426097, "담당자수": 20, "평균_판매액": 1401652.2195757593, "지점장순위": 10}, {"지점": "충남.충북지점", "트루셋저용량_4월": 8876300, "트윈로우_누적": 13361480, "미카클로_누적": 731900, "합산": 22969680, "T.O합": 16.679903496151624, "담당자수": 16, "평균_판매액": 1377087.1039691295, "지점장순위": 11}, {"지점": "경북지점", "트루셋저용량_4월": 11152460, "트윈로우_누적": 19568780, "미카클로_누적": 662790, "합산": 31384030, "T.O합": 24.862185215220816, "담당자수": 24, "평균_판매액": 1262319.8535576214, "지점장순위": 12}, {"지점": "전남지점", "트루셋저용량_4월": 10484263, "트윈로우_누적": 7985040, "미카클로_누적": 131450, "합산": 18600753, "T.O합": 16.50965538173103, "담당자수": 16, "평균_판매액": 1126659.0713082298, "지점장순위": 13}], "임정빈팀_담당": [{"담당": "전은성", "부지점장": "임정빈", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병2팀", "트루셋저용량_4월": 1900580, "트윈로우_누적": 1018500, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 35490, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 35490, "총합": 2954570, "담당자순위": 20}, {"담당": "임대현", "부지점장": "임정빈", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병2팀", "트루셋저용량_4월": 1380610, "트윈로우_누적": 814800, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 2195410, "담당자순위": 51}, {"담당": "김혜성", "부지점장": "임정빈", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병2팀", "트루셋저용량_4월": 842710, "트윈로우_누적": 814800, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1657510, "담당자순위": 104}, {"담당": "황태영", "부지점장": "임정빈", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병2팀", "트루셋저용량_4월": 770990, "트윈로우_누적": 366660, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 1137650, "담당자순위": 163}, {"담당": "박준상", "부지점장": "임정빈", "지점": "인천지점", "영업부명": "Clinic 2부", "팀명": "인천/일병2팀", "트루셋저용량_4월": 340670, "트윈로우_누적": 149380, "미카클로_2월": 0, "미카클로_3월": 0, "미카클로_4월": 0, "미카클로_5월": 0, "미카클로_6월": 0, "미카클로_누적": 0, "총합": 490050, "담당자순위": 238}]};
+
+// 탭 전환
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// 검색 필터
+function setupFilter(inputId, tableId) {
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  inp.addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    document.querySelectorAll('#'+tableId+' tbody tr').forEach(tr => {
+      tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  });
+}
+setupFilter('search-bujijeom', 'tbl-bujijeom');
+setupFilter('search-damdang', 'tbl-damdang');
+</script>
+
+</body>
+</html>
